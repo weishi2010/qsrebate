@@ -12,6 +12,11 @@ public class CommissionDaoImpl extends BaseDao implements CommissionDao {
     }
 
     @Override
+    public long update(Commission commission) {
+        return update("Commission.updateCommission",commission);
+    }
+
+    @Override
     public Commission findCommissionByOpenId(Commission commission) {
         return (Commission)queryForObject("Commission.findCommissionByOpenId",commission);
     }

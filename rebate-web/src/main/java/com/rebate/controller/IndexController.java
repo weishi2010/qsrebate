@@ -3,7 +3,10 @@ package com.rebate.controller;
 import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.controller.base.BaseController;
 import com.rebate.domain.CategoryQuery;
+import com.rebate.domain.ExtractDetail;
 import com.rebate.domain.UserInfo;
+import com.rebate.domain.en.EExtractCode;
+import com.rebate.domain.en.EExtractStatus;
 import com.rebate.domain.en.EPromotionTab;
 import com.rebate.domain.query.ExtractDetailQuery;
 import com.rebate.domain.query.ProductQuery;
@@ -73,6 +76,7 @@ public class IndexController extends BaseController {
         ModelAndView view = new ModelAndView(PREFIX + "/index");
         return view;
     }
+
     @RequestMapping({"", "/", "/personal/extract"})
     public ModelAndView extract(HttpServletRequest request) {
         ModelAndView view = new ModelAndView(PREFIX + "/extract");
@@ -93,16 +97,16 @@ public class IndexController extends BaseController {
 
     @RequestMapping({"", "/", "/personal/getExtractDetails.json"})
     @ResponseBody
-    public ResponseEntity<?> getExtractDetails(HttpServletRequest request,int year) {
+    public ResponseEntity<?> getExtractDetails(HttpServletRequest request, int year) {
 
-        ExtractDetailQuery extractDetailQuery = initExtractQuery(request,year);
+        ExtractDetailQuery extractDetailQuery = initExtractQuery(request, year);
 
         //查询列表
-        PaginatedArrayList<ExtractDetailVo>  result = extractDetailService.findExtractDetailList(extractDetailQuery);
+        PaginatedArrayList<ExtractDetailVo> result = extractDetailService.findExtractDetailList(extractDetailQuery);
 
         Map<String, Object> map = new HashMap<String, Object>();
-        map.put("detailList",result);
-        map.put("totalItem",result.getTotalItem());
+        map.put("detailList", result);
+        map.put("totalItem", result.getTotalItem());
 
         return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
 
@@ -111,10 +115,23 @@ public class IndexController extends BaseController {
 
     @RequestMapping({"", "/", "/personal/extractPrice.json"})
     @ResponseBody
-    public ResponseEntity<?> extractPrice(HttpServletRequest request,String extractPhone,Double extractPrice) {
+    public ResponseEntity<?> extractPrice(HttpServletRequest request, String extractPhone, Double extractPrice) {
         Map<String, Object> map = new HashMap<String, Object>();
         UserInfo userInfo = getUserInfo(request);
-        map.put("extractPhone",extractPhone);
+
+        EExtractCode code = EExtractCode.SUCCESS;
+        if (extractPrice < 0 || extractPrice > 99999) {
+            code = EExtractCode.PARAMS_ERROR;
+        } else {
+            ExtractDetail extractDetail = new ExtractDetail();
+            extractDetail.setExtractPrice(extractPrice);
+            extractDetail.setOpenId(userInfo.getOpenId());
+            extractDetail.setStatus(EExtractStatus.UNCHECK.getCode());
+            code = extractDetailService.extract(extractDetail);
+        }
+
+        map.put("code", code.getCode());
+        map.put("msg", code.getName());
 
         return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
     }
@@ -126,59 +143,60 @@ public class IndexController extends BaseController {
 
         UserInfo userInfo = getUserInfo(request);
 
-        view.addObject("userInfo",userInfo);
+        view.addObject("userInfo", userInfo);
         view.addObject("commission", userInfoService.getUserCommission(userInfo.getOpenId()));
 
         return view;
     }
 
     @RequestMapping({"", "/", "/personal/orderDetail"})
-    public ModelAndView orderDetail(HttpServletRequest request,Integer days) {
+    public ModelAndView orderDetail(HttpServletRequest request, Integer days) {
         ModelAndView view = new ModelAndView(PREFIX + "/orderDetail");
         UserInfo userInfo = getUserInfo(request);
 
-        if(null==days){
+        if (null == days) {
             days = 30;//默认只查30天
         }
-        if(days>180){
-            days =180;//大于180天则只取180天
+        if (days > 180) {
+            days = 180;//大于180天则只取180天
         }
         RebateDetailQuery query = new RebateDetailQuery();
         query.setOpenId(userInfo.getOpenId());
         Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE,-days);
+        cal.add(Calendar.DATE, -days);
         query.setEndDate(cal.getTime());
         PaginatedArrayList<RebateDetailVo> result = rebateDetailService.findRebateDetailList(query);
 
-        view.addObject("detailList",result);
-        view.addObject("totalItem",result.getTotalItem());
-        view.addObject("userInfo",userInfo);
-        view.addObject("days",days);
+        view.addObject("detailList", result);
+        view.addObject("totalItem", result.getTotalItem());
+        view.addObject("userInfo", userInfo);
+        view.addObject("days", days);
 
         return view;
     }
+
     @RequestMapping({"", "/", "/personal/orders.json"})
-    public ResponseEntity<?> orders(HttpServletRequest request,Integer days) {
+    public ResponseEntity<?> orders(HttpServletRequest request, Integer days) {
         Map<String, Object> map = new HashMap<String, Object>();
         UserInfo userInfo = getUserInfo(request);
 
-        if(null==days){
+        if (null == days) {
             days = 30;//默认只查30天
         }
-        if(days>180){
-            days =180;//大于180天则只取180天
+        if (days > 180) {
+            days = 180;//大于180天则只取180天
         }
         RebateDetailQuery query = new RebateDetailQuery();
         query.setOpenId(userInfo.getOpenId());
         Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE,-days);
+        cal.add(Calendar.DATE, -days);
         query.setEndDate(cal.getTime());
         PaginatedArrayList<RebateDetailVo> result = rebateDetailService.findRebateDetailList(query);
 
-        map.put("detailList",result);
-        map.put("totalItem",result.getTotalItem());
-        map.put("userInfo",userInfo);
-        map.put("days",days);
+        map.put("detailList", result);
+        map.put("totalItem", result.getTotalItem());
+        map.put("userInfo", userInfo);
+        map.put("days", days);
         return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
     }
 
@@ -188,54 +206,54 @@ public class IndexController extends BaseController {
         ModelAndView view = new ModelAndView(PREFIX + "/income");
         UserInfo userInfo = getUserInfo(request);
 
-        view.addObject("userInfo",userInfo);
+        view.addObject("userInfo", userInfo);
         return view;
     }
 
     /**
      * 每日必买
+     *
      * @param request
      * @param tab
      * @return
      */
     @RequestMapping({"", "/", "/promotion"})
-    public ModelAndView promotion(HttpServletRequest request,Integer tab) {
+    public ModelAndView promotion(HttpServletRequest request, Integer tab) {
         String vm = "/promotion/promotionList";
-        if(null==tab){
+        if (null == tab) {
             tab = EPromotionTab.DAILY.getTab();//默认为"每日必买"
-        }
-        else if(EPromotionTab.SECKILL.getTab()==tab){
-            vm= "/promotion/promotionList";
-        }else if(EPromotionTab.COUPON.getTab()==tab){
+        } else if (EPromotionTab.SECKILL.getTab() == tab) {
+            vm = "/promotion/promotionList";
+        } else if (EPromotionTab.COUPON.getTab() == tab) {
             vm = "/coupon";
-        }else if(EPromotionTab.SHARE.getTab()==tab){
+        } else if (EPromotionTab.SHARE.getTab() == tab) {
             vm = "/share";
-        }else if(EPromotionTab.JD.getTab()==tab){
+        } else if (EPromotionTab.JD.getTab() == tab) {
             vm = "/index";
         }
 
         ModelAndView view = new ModelAndView(PREFIX + vm);
 
-        if(EPromotionTab.DAILY.getTab()==tab || EPromotionTab.SECKILL.getTab()==tab){
+        if (EPromotionTab.DAILY.getTab() == tab || EPromotionTab.SECKILL.getTab() == tab) {
             //每日必买、9.9秒杀时查询分类列表
             CategoryQuery qategoryQuery = new CategoryQuery();
             qategoryQuery.setPageSize(10);
-            view.addObject("topCategories",productService.findByActiveCategories(qategoryQuery));
+            view.addObject("topCategories", productService.findByActiveCategories(qategoryQuery));
             qategoryQuery.setPageSize(50);
-            view.addObject("allCategories",productService.findByActiveCategories(qategoryQuery));
+            view.addObject("allCategories", productService.findByActiveCategories(qategoryQuery));
         }
-        view.addObject("promotionTab",tab);
+        view.addObject("promotionTab", tab);
         return view;
     }
 
     @RequestMapping({"", "/", "/products.json"})
-    public ResponseEntity<?> products(HttpServletRequest request,Integer tab, Integer page, Integer thirdCategory) {
+    public ResponseEntity<?> products(HttpServletRequest request, Integer tab, Integer page, Integer thirdCategory) {
         Map<String, Object> map = new HashMap<String, Object>();
         Double queryPrice = null;
-        if(null==tab){
+        if (null == tab) {
             tab = EPromotionTab.DAILY.getTab();
         }
-        if(EPromotionTab.SECKILL.getTab()==tab){
+        if (EPromotionTab.SECKILL.getTab() == tab) {
             queryPrice = 9.9;
         }
 
@@ -245,15 +263,14 @@ public class IndexController extends BaseController {
         query.setQueryPrice(queryPrice);
         query.setThirdCategory(thirdCategory);
         PaginatedArrayList<ProductVo> products = productService.findProductList(query);
-        LOG.error("page:{},size:{}",page,products.size());
+        LOG.error("page:{},size:{}", page, products.size());
         map.put("products", products);
         map.put("page", page);
         map.put("thirdCategory", thirdCategory);
         map.put("totalItem", products.getTotalItem());
-        map.put("promotionTab",tab);
+        map.put("promotionTab", tab);
         return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
     }
-
 
 
     @RequestMapping({"", "/", "/getOrderInfoList"})
@@ -270,11 +287,12 @@ public class IndexController extends BaseController {
 
     /**
      * 初始化查询条件
+     *
      * @param request
      * @param year
      * @return
      */
-    private ExtractDetailQuery initExtractQuery(HttpServletRequest request,int year){
+    private ExtractDetailQuery initExtractQuery(HttpServletRequest request, int year) {
         SimpleDateFormat endFormat = new SimpleDateFormat("yyyy-MM-dd 23:59:59");
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 

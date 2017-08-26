@@ -5,6 +5,10 @@ package com.rebate.domain.en;
  */
 public enum EExtractCode {
     /**
+     * 参数常
+     */
+    PARAMS_ERROR(-2,"提现失败，接口参数异常！"),
+    /**
      * 系统异常
      */
     SYSTEM_ERROR(-1,"提现失败，系统异常！"),

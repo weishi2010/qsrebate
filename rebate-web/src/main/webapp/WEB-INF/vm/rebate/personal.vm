@@ -10,15 +10,13 @@
     </div>
     <div class="getMoney-record mui-flex justify-between">
         <span>您共提现10000元。</span>
-        <a href="javascript:;">提现记录&gt;</a>
+        <a href="/rebate/personal/extractDetail">提现记录&gt;</a>
     </div>
 </div>
 <div class="person-menu mui-flex">
     <div class="item">
         <img src="/static/img/img-07.png" alt="">
-        <a href="/rebate/personal/orderDetail">
-            <p>订单明细</p>
-        </a>
+            <p><a href="/rebate/personal/orderDetail">订单明细</a></p>
     </div>
     <div class="item">
         <img src="/static/img/img-08.png" alt="">

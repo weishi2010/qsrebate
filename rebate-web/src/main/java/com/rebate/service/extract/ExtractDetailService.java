@@ -2,6 +2,7 @@ package com.rebate.service.extract;
 
 import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.domain.ExtractDetail;
+import com.rebate.domain.en.EExtractCode;
 import com.rebate.domain.query.ExtractDetailQuery;
 import com.rebate.domain.vo.ExtractDetailVo;
 
@@ -12,7 +13,7 @@ public interface ExtractDetailService {
      * @param extractDetail
      * @return 返回错误码
      */
-    int extract(ExtractDetail extractDetail);
+    EExtractCode extract(ExtractDetail extractDetail);
 
     /**
      * 查询列表

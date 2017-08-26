@@ -44,6 +44,11 @@
         </selectKey>
     </insert>
 
+    <update id="updateCommission" parameterClass="Commission" >
+        update commission
+        set total_commission=#totalCommission#
+        where open_id=#openId#
+    </update>
     <select id="findCommissionByOpenId" parameterClass="Commission" resultMap="CommissionResultMap">
         select
         <include refid="fields"/>

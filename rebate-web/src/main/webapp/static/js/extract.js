@@ -12,7 +12,7 @@ $(function () {
     //初始化
     var counter = 1;
     var myDate = new Date();
-    var year = myDate.getYear(); //获取当前年份(2位)
+    var year = myDate.getFullYear(); //获取当前年份(2位)
     //首次加载
     loadExtractData(year);
     //监听加载更多

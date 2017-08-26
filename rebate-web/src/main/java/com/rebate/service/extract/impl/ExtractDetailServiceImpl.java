@@ -32,8 +32,8 @@ public class ExtractDetailServiceImpl implements ExtractDetailService {
     private CommissionDao commissionDao;
 
     @Override
-    public int extract(ExtractDetail extractDetail) {
-        int code = EExtractCode.SUCCESS.getCode();
+    public EExtractCode extract(ExtractDetail extractDetail) {
+        EExtractCode code = EExtractCode.SUCCESS;
         try {
             //查询用户可提现余额
             Commission commissionQuery = new Commission();
@@ -42,12 +42,19 @@ public class ExtractDetailServiceImpl implements ExtractDetailService {
             if (null != commission && commission.getTotalCommission() >= extractDetail.getExtractPrice()) {
                 //有可提现余额时插入提现明细
                 extractDetailDao.insert(extractDetail);
+
+                //TODO 更新总余额,之后改为通过redis解决原子更新问题或都通过事务处理
+                Double totalCommission = commission.getTotalCommission()-extractDetail.getExtractPrice();
+                Commission commissionUpdate = new Commission();
+                commissionUpdate.setOpenId(extractDetail.getOpenId());
+                commissionUpdate.setTotalCommission(totalCommission);
+                commissionDao.update(commissionUpdate);
             }else{
-                code = EExtractCode.LACK_BALANCE.getCode();
+                code = EExtractCode.LACK_BALANCE;
             }
 
         } catch (Exception e) {
-            code = EExtractCode.SYSTEM_ERROR.getCode();
+            code = EExtractCode.SYSTEM_ERROR;
             LOG.error("[extract]提现异常!", e);
         }
         return code;

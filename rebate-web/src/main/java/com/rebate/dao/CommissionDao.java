@@ -15,6 +15,13 @@ public interface CommissionDao {
     long insert(Commission commission);
 
     /**
+     * 更新
+     * @param commission
+     * @return
+     */
+    long update(Commission commission);
+
+    /**
      * 根据openId查询
      * @param commission
      * @return

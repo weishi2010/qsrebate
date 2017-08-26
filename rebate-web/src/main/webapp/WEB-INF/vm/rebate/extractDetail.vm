@@ -18,7 +18,8 @@
 </div>
 <!--/.header-->
 <div class="tixian-record">
-    <table class="table" id="extractDetails">
+    <table class="table">
+        <tbody  id="extractDetails"></tbody>
     </table>
 </div>
 <!--.footer-->

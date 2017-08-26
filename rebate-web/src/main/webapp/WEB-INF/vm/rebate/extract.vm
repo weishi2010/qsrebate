@@ -38,6 +38,7 @@
                 </div>
                 <div class="form-item mui-flex align-center">
                     <p style="color:red" ng-if="(extractForm.extractPhone.$error.minlength||extractForm.extractPhone.$error.pattern)">请输入有效的手机号码!</p>
+                    <p style="color:red" ng-if="extractCode!=1">{{extractMsg}}</p>
                 </div>
             </div>
         </div>
@@ -49,6 +50,8 @@
 <script>
     var app = angular.module('myApp', []);
     app.controller('extractCtrl', function ($scope,$http,$location) {
+        $scope.extractCode = 1;
+        $scope.extractMsg = "";
         $scope.submitExtract  = function () {
                 $http({
                     method: 'GET',
@@ -58,7 +61,13 @@
                     },
                     url: '/rebate/personal/extractPrice.json?callback=1'
                 }).then(function successCallback(response) {
-                    location.href ='/rebate/personal/extractDetail'
+                    resultObj = response.data;
+                    if(resultObj.code==1){
+                        location.href ='/rebate/personal/extractDetail'
+                    }else{
+                        $scope.extractCode = resultObj.code;
+                        $scope.extractMsg = resultObj.msg;
+                    }
                 }, function errorCallback(response) {
                     // 请求失败执行代码
                 });
