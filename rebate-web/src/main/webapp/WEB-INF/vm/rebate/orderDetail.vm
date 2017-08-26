@@ -4,7 +4,7 @@
 <!--.header-->
 <div class="header mui-flex align-center">
     <div class="back cell fixed">
-        <a href="javascript:;"><img src="/static/image/ico-arrow-left-01.png" alt=""></a>
+        <a href="javascript:;"><img src="/static/img/ico-arrow-left-01.png" alt=""></a>
     </div>
     <div class="title cell">
         <span class="text">订单明细</span>
