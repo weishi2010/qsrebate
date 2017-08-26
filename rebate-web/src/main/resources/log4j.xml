@@ -25,10 +25,12 @@
 			<param name="LevelMin" value="DEBUG" />
 		</filter>
 	</appender>
-	
+	<logger name="com.ibatis" additivity="true">
+		<level value="DEBUG" />
+	</logger>
 
 	<root>
-		<priority value="INFO" />
+		<priority value="DEBUG" />
 		<appender-ref ref="FILE-DEBUG" />
 		<appender-ref ref="CONSOLE" />
 	</root>

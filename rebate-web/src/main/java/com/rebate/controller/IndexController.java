@@ -5,10 +5,13 @@ import com.rebate.controller.base.BaseController;
 import com.rebate.domain.CategoryQuery;
 import com.rebate.domain.UserInfo;
 import com.rebate.domain.en.EPromotionTab;
+import com.rebate.domain.query.ExtractDetailQuery;
 import com.rebate.domain.query.ProductQuery;
 import com.rebate.domain.query.RebateDetailQuery;
+import com.rebate.domain.vo.ExtractDetailVo;
 import com.rebate.domain.vo.ProductVo;
 import com.rebate.domain.vo.RebateDetailVo;
+import com.rebate.service.extract.ExtractDetailService;
 import com.rebate.service.order.RebateDetailService;
 import com.rebate.service.product.ProductService;
 import com.rebate.service.userinfo.UserInfoService;
@@ -25,6 +28,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -59,6 +64,10 @@ public class IndexController extends BaseController {
     @Autowired(required = true)
     private RebateDetailService rebateDetailService;
 
+    @Qualifier("extractDetailService")
+    @Autowired(required = true)
+    private ExtractDetailService extractDetailService;
+
     @RequestMapping({"", "/", "/index"})
     public ModelAndView index(HttpServletRequest request) {
         ModelAndView view = new ModelAndView(PREFIX + "/index");
@@ -81,6 +90,24 @@ public class IndexController extends BaseController {
 
         return view;
     }
+
+    @RequestMapping({"", "/", "/personal/getExtractDetails.json"})
+    @ResponseBody
+    public ResponseEntity<?> getExtractDetails(HttpServletRequest request,int year) {
+
+        ExtractDetailQuery extractDetailQuery = initExtractQuery(request,year);
+
+        //查询列表
+        PaginatedArrayList<ExtractDetailVo>  result = extractDetailService.findExtractDetailList(extractDetailQuery);
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("detailList",result);
+        map.put("totalItem",result.getTotalItem());
+
+        return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
+
+    }
+
 
     @RequestMapping({"", "/", "/personal/extractPrice.json"})
     @ResponseBody
@@ -238,4 +265,40 @@ public class IndexController extends BaseController {
         return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
     }
 
+
+    //---------------------------------------------------------------
+
+    /**
+     * 初始化查询条件
+     * @param request
+     * @param year
+     * @return
+     */
+    private ExtractDetailQuery initExtractQuery(HttpServletRequest request,int year){
+        SimpleDateFormat endFormat = new SimpleDateFormat("yyyy-MM-dd 23:59:59");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        //查询用户信息
+        UserInfo userInfo = getUserInfo(request);
+
+
+        ExtractDetailQuery extractDetailQuery = new ExtractDetailQuery();
+        extractDetailQuery.setOpenId(userInfo.getOpenId());
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.clear();
+        calendar.set(Calendar.YEAR, year);
+        //设置查询开始时间
+        extractDetailQuery.setBeginDate(calendar.getTime());
+
+        //设计查询结束时间
+        calendar.roll(Calendar.DAY_OF_YEAR, -1);
+        try {
+            extractDetailQuery.setEndDate(format.parse(endFormat.format(calendar.getTime())));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return extractDetailQuery;
+    }
 }

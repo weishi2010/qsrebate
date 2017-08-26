@@ -20,7 +20,7 @@ import java.util.List;
 
 @Service("productService")
 public class ProductServiceImpl implements ProductService {
-    private static final Logger LOG = LoggerFactory.getLogger(ProductService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ProductServiceImpl.class);
 
     private final static String IMG_SIZE = "s150x150_jfs";
     private final static String DEFAULT_IMG_SIZE = "jfs";

@@ -5,9 +5,6 @@ import lombok.Setter;
 
 import java.util.Date;
 
-/**
- * Created by weishi on 2017/7/15.
- */
 public class Comment {
     /**
      * 主键

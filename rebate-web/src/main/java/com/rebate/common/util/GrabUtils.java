@@ -18,13 +18,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * ????????
- * 
- * @author liujiangping<br>
- *         2010-12-9 06:48:10
- * 
- */
 public class GrabUtils {
 
 	private static final Logger LOG = Logger.getLogger(GrabUtils.class);

@@ -12,41 +12,13 @@
     </div>
     <div class="droplist" name="droplist">
         <ul class="sorts">
-            <li class="sort selected">2016年提现记录</li>
-            <li class="sort">2015年提现记录</li>
-            <li class="sort">2014年提现记录</li>
+            <li data="2017" #if($year==2017) class="sort selected" #else class="sort" #end>2017年提现记录</li>
         </ul>
     </div>
 </div>
 <!--/.header-->
 <div class="tixian-record">
-    <table class="table">
-        <tbody>
-        <tr>
-            <td class="time">2017.07.07 12:00</td>
-            <td>提现金额</td>
-            <td><span class="orange">5000元</span></td>
-            <td class="state"><span class="wait">等待审核</span></td>
-        </tr>
-        <tr>
-            <td class="time">2017.07.07 12:00</td>
-            <td>提现金额</td>
-            <td><span class="orange">5000元</span></td>
-            <td class="state"><span class="pay-done">已付款</span></td>
-        </tr>
-        <tr>
-            <td class="time">2017.07.07 12:00</td>
-            <td>提现金额</td>
-            <td><span class="orange">5000元</span></td>
-            <td class="state"><span class="wait">等待审核</span></td>
-        </tr>
-        <tr>
-            <td class="time">2017.07.07 12:00</td>
-            <td>提现金额</td>
-            <td><span class="orange">5000元</span></td>
-            <td class="state"><span class="pay-done">已付款</span></td>
-        </tr>
-        </tbody>
+    <table class="table" id="extractDetails">
     </table>
 </div>
 <!--.footer-->
@@ -75,5 +47,6 @@
     </footer>
 </div>
     #parse("/common/footer.vm")
+<script type="text/javascript" src="/static/js/extract.js"></script>
 
 </body></html>

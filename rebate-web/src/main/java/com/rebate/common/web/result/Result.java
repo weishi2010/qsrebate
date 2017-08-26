@@ -6,11 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * 结果集对象
- * @author weishi
- * @time 2014-9-29上午10:45:18
- */
 public class Result implements Serializable {
 
 	private static final long serialVersionUID = 1L;

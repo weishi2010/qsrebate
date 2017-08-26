@@ -1,11 +1,12 @@
 package com.rebate.domain;
 
+import com.rebate.domain.query.BaseQuery;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
 
-public class ExtractDetail {
+public class ExtractDetail extends BaseQuery{
   /**
    * 主键
    */
@@ -35,7 +36,7 @@ public class ExtractDetail {
    */
   @Getter
   @Setter
-  private Long status;
+  private Integer status;
   /**
    * 创建时间
    */
@@ -48,4 +49,5 @@ public class ExtractDetail {
   @Getter
   @Setter
   private Date modified;
+
 }

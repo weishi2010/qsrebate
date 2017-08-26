@@ -32,4 +32,8 @@
     <bean id="rebateDetailDao" class="com.rebate.dao.impl.RebateDetailDaoImpl">
         <property name="dataSource" ref="dataSource"/>
     </bean>
+
+    <bean id="extractDetailDao" class="com.rebate.dao.impl.ExtractDetailDaoImpl">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
 </beans>

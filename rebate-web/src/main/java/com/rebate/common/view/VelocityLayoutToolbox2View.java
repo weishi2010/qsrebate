@@ -11,15 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
-/**
- * @author weishi
- * @version 1.0.0
- */
-/*
- * =========================== 维护日志 ===========================
- * 2017/6/19 15:24  weishi 新建代码
- * =========================== 维护日志 ===========================
- */
 public class VelocityLayoutToolbox2View extends VelocityLayoutView {
 
     private static ToolboxFactory toolboxFactory = null;

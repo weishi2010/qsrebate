@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="ExtractDetail">
+
+    <typeAlias alias="ExtractDetail" type="com.rebate.domain.ExtractDetail"/>
+    <typeAlias alias="ExtractDetailQuery" type="com.rebate.domain.query.ExtractDetailQuery"/>
+
+    <resultMap class="ExtractDetail" id="ExtractDetailResultMap">
+        <result property="id" column="id"/>
+        <result property="openId" column="open_id"/>
+        <result property="extractPrice" column="extract_price"/>
+        <result property="extractDate" column="extract_date"/>
+        <result property="status" column="status"/>
+        <result property="created" column="created"/>
+        <result property="modified" column="modified"/>
+    </resultMap>
+
+    <sql id="fields">
+        id,
+        open_id,
+        extract_price,
+        extract_date,
+        status,
+        created,
+        modified
+    </sql>
+
+    <insert id="insert" parameterClass="ExtractDetail">
+        insert into extract_detail
+        (
+        open_id,
+        extract_price,
+        extract_date,
+        status,
+        created,
+        modified
+        )
+        values
+        (
+        #openId#,
+        #extractPrice#,
+        now(),
+        #status#,
+        now(),
+        now()
+        )
+        <selectKey resultClass="long" keyProperty="id">
+            SELECT @@IDENTITY as id
+        </selectKey>
+    </insert>
+
+    <!--查询总数-->
+    <select id="findExtractDetailCount" parameterClass="ExtractDetailQuery" resultClass="int">
+        select
+        count(1)
+        from extract_detail
+        where open_id=#openId#
+        <![CDATA[  and extract_date>#beginDate# and  extract_date<#endDate# ]]>
+    </select>
+    <!--查询列表-->
+    <select id="findExtractDetailList" parameterClass="ExtractDetailQuery" resultMap="ExtractDetailResultMap">
+        select
+        <include refid="fields"/>
+        from extract_detail
+        where open_id=#openId#
+        <![CDATA[  and extract_date>#beginDate# and  extract_date<#endDate# ]]>
+        order by extract_date desc
+        limit #startRow#,#pageSize#
+    </select>
+</sqlMap>

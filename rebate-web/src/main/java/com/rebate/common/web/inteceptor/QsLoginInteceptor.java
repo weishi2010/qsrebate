@@ -25,23 +25,6 @@ import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 
-/**
- * 登录拦截
- * WX授权登录步骤：
- * 1 第一步：用户同意授权，获取code
- * 2 第二步：通过code换取网页授权access_token
- * 3 第三步：刷新access_token（如果需要）
- * 4 第四步：拉取用户信息(需scope为 snsapi_userinfo)
- * 5 附：检验授权凭证（access_token）是否有效
- *
- * @author mengxianglei
- * @version 1.0.0
- */
-/*
- * =========================== 维护日志 ===========================
- * 2015-01-25 mengxianglei 参考M端plus的登陆完成 
- * =========================== 维护日志 ===========================
- */
 public class QsLoginInteceptor extends LoginInteceptor {
 
     private static final Logger LOG = LoggerFactory.getLogger(QsLoginInteceptor.class);
