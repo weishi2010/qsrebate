@@ -13,31 +13,6 @@
 </div>
     #parse("/common/category.vm")
 <div class="g-list">
-#foreach($product in $products)
-    <div class="item mui-flex">
-        <div class="g-img cell fixed">
-            <img src="/static/img/img-14.png" alt="">
-        </div>
-        <div class="cnt cell align-center">
-            <a href="javascript:;" class="tl">华为 P9 Plus全网通手机Plus全网通手机Plus全网通手机</a>
-            <div class="meta">
-                <span class="old-price">原价：<del>5000.00</del></span>
-                <span class="new-price">劵后价：3050.00元</span>
-            </div>
-            <div class="easy">
-                <a href="javascript:;" class="buy">
-                    <img class="cart" src="/static/img/ico-cart-01.png" alt="">
-                    购买返：¥5.00
-                </a>
-                <a href="javascript:;" class="share">
-                    <img class="zhuanfa" src="/static/img/ico-zhuanfa-01.png" alt="">
-                    分享赚：¥5.00
-                </a>
-            </div>
-        </div>
-    </div>
-     #end
-    </div>
 </div>
     #parse("/common/footer.vm")
 <script type="text/javascript" src="/static/js/promotion.js?v1"></script>

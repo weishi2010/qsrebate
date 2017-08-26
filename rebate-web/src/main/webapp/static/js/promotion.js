@@ -165,7 +165,7 @@ function loadProductData(page,category,tab) {
     function getTemplate(product,tab){
         var htmlTemp = "<div class=\"item mui-flex\">" +
             "        <div class=\"g-img cell fixed\">" +
-            "             <a href=\"https://item.m.jd.com/product/" + product.productId + ".html\" ><img class=\"g-img\" src=\"" + product.imgUrl + "\" alt=\"" + product.name + "\" width='64' height='70'></a>" +
+            "             <a href=\"https://item.m.jd.com/product/" + product.productId + ".html\" ><img class=\"g-img\" src=\"" + product.imgUrl + "\" alt=\"" + product.name + "\" width='80' height='90'></a>" +
             "        </div>" +
             "        <div class=\"cnt cell align-center\">" +
             "            <a href=\"https://item.m.jd.com/product/" + product.productId + ".html\" class=\"tl\">"+product.name+"</a>" +
@@ -176,7 +176,7 @@ function loadProductData(page,category,tab) {
             "            <div class=\"easy\">" +
             "                <a href=\"javascript:;\" class=\"buy\">" +
             "                    <img class=\"cart\" src=\"/static/img/ico-cart-01.png\" alt=\"\">" +
-            "                    购买返：¥5.00" +
+            "                    购买返：¥" +product.commission+
             "                </a>" +
             "                <a href=\"javascript:;\" class=\"share\">" +
             "                    <img class=\"zhuanfa\" src=\"/static/img/ico-zhuanfa-01.png\" alt=\"\">" +
