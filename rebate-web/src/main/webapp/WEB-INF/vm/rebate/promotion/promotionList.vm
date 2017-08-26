@@ -1,4 +1,4 @@
-#set( $title = "列表2")
+#set( $title = "促销列表")
 #parse("/common/head.vm")
 <body class="bd bd-pb">
 <div class="header-search">
