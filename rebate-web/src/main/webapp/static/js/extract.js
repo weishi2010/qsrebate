@@ -1,60 +1,40 @@
-$(function () {
+var app = angular.module('myApp', []);
+app.controller('extractCtrl', function ($scope,$http) {
 
-
-    $("#sorts li").click(function(){//点击事件
-
-        var count=$(this).index();//获取li的下标
-        var year = Uarry.eq(count).data;
-        $("#year").val(year);
-        loadExtractData(year);
-    })
-
-    //初始化
-    var counter = 1;
-    var myDate = new Date();
-    var year = myDate.getFullYear(); //获取当前年份(2位)
-    //首次加载
-    loadExtractData(year);
-    //监听加载更多
-    $(window).scroll(function () {
-        var totalheight = parseFloat($(window).height()) + parseFloat($(window).scrollTop());
-        if ($(document).height() <= totalheight) {
-            counter++;
-            var year = $("#year").val();
-            loadExtractData(days);
+    $scope.submitExtract  = function (extractPrice) {
+        $scope.extractCode = 1;
+        $scope.extractMsg = "";
+        extractPhone= $scope.extractPhone;
+        if(extractPhone==''){
+            $scope.extractCode = 0;
+            $scope.extractMsg = "请输入手机号码!";
+            return;
         }
-    });
 
-});
+        if(extractPrice=='' || extractPrice<=0){
+            $scope.extractCode = 0;
+            $scope.extractMsg = "余额不足!";
+            return;
+        }
 
 
-function loadExtractData(year) {
-
-    $.ajax({
-        type: 'GET',
-        url: '/rebate/personal/getExtractDetails.json?year='+year,
-        dataType: 'json',
-        success: function (reponse) {
-            var list = reponse.detailList;
-            var sum = list.length;
-            var result = '';
-            for (var i = 0; i < sum; i++) {
-                result += getTemplate(list[i]);
+        $http({
+            method: 'GET',
+            params:{
+                extractPhone:extractPhone,
+                extractPrice:extractPrice
+            },
+            url: '/rebate/personal/extractPrice.json?callback=1'
+        }).then(function successCallback(response) {
+            resultObj = response.data;
+            if(resultObj.code==1){
+                location.href ='/rebate/personal/extractDetail'
+            }else{
+                $scope.extractCode = resultObj.code;
+                $scope.extractMsg = resultObj.msg;
             }
-            $('#extractDetails').append(result);
-        },
-        error: function (xhr, type) {
-            console.log('加载更多数据错误！');
-        }
-    });
-
-    function getTemplate(detail){
-        var htmlTemp =  "        <tr>" +
-            "            <td class=\"time\">"+detail.extractDate+"</td>" +
-            "            <td>提现金额</td>" +
-            "            <td><span class=\"orange\">"+detail.extractPrice+"元</span></td>" +
-            "            <td class=\"state\"><span class=\"wait\">"+detail.extractStatusShow+"</span></td>" +
-            "        </tr>";
-        return htmlTemp;
+        }, function errorCallback(response) {
+            // 请求失败执行代码
+        });
     }
-}
+});

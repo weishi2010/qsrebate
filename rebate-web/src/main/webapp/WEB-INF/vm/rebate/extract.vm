@@ -33,7 +33,7 @@
                 <div class="form-item mui-flex align-center">
                     <label class="labell cell fixed">可提取金额：</label>
                     <div class="cnt cell">
-                        <span><input class="ipt"  type="number"  id="extractPrice" id="extractPrice" name="extractPrice" ng-model="extractPrice" min="1" max="9999"/>元</span>
+                        <span>$!{commission.totalCommission}元</span>
                     </div>
                 </div>
                 <div class="form-item mui-flex align-center">
@@ -43,35 +43,9 @@
             </div>
         </div>
         <a href="javascript:;" class="submit-btn disabled"  ng-if="(extractForm.extractPhone.$error.minlength||extractForm.extractPhone.$error.pattern)">确认申请</a>
-        <a href="javascript:;" class="submit-btn" ng-click="submitExtract()" ng-if="(!extractForm.extractPhone.$error.minlength && !extractForm.extractPhone.$error.pattern)">确认申请</a>
+        <a href="javascript:;" class="submit-btn" ng-click="submitExtract($!{commission.totalCommission})" ng-if="(!extractForm.extractPhone.$error.minlength && !extractForm.extractPhone.$error.pattern)">确认申请</a>
     </div>
 </div>
 </form>
-<script>
-    var app = angular.module('myApp', []);
-    app.controller('extractCtrl', function ($scope,$http,$location) {
-        $scope.extractCode = 1;
-        $scope.extractMsg = "";
-        $scope.submitExtract  = function () {
-                $http({
-                    method: 'GET',
-                    params:{
-                        extractPhone:$scope.extractPhone,
-                        extractPrice:$scope.extractPrice
-                    },
-                    url: '/rebate/personal/extractPrice.json?callback=1'
-                }).then(function successCallback(response) {
-                    resultObj = response.data;
-                    if(resultObj.code==1){
-                        location.href ='/rebate/personal/extractDetail'
-                    }else{
-                        $scope.extractCode = resultObj.code;
-                        $scope.extractMsg = resultObj.msg;
-                    }
-                }, function errorCallback(response) {
-                    // 请求失败执行代码
-                });
-        }
-    });
-</script>
+    <script type="text/javascript" src="/static/js/extract.js"></script>
 </body></html>

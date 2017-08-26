@@ -48,6 +48,6 @@
     </footer>
 </div>
     #parse("/common/footer.vm")
-<script type="text/javascript" src="/static/js/extract.js"></script>
+<script type="text/javascript" src="/static/js/extractDetail.js"></script>
 
 </body></html>
