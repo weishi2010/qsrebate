@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="RebateDetail">
+
+    <typeAlias alias="RebateDetail" type="com.rebate.domain.RebateDetail"/>
+    <typeAlias alias="RebateDetailQuery" type="com.rebate.domain.query.RebateDetailQuery"/>
+
+    <resultMap class="RebateDetail" id="RebateDetailResultMap">
+        <result property="id" column="id"/>
+        <result property="openId" column="open_id"/>
+        <result property="orderId" column="order_id"/>
+        <result property="productId" column="product_id"/>
+        <result property="price" column="price"/>
+        <result property="productCount" column="product_count"/>
+        <result property="commission" column="commission"/>
+        <result property="commissionRatio" column="commission_ratio"/>
+        <result property="rebateRatio" column="rebate_ratio"/>
+        <result property="submitDate" column="submit_date"/>
+        <result property="finishDate" column="finish_date"/>
+        <result property="orderStatus" column="order_status"/>
+        <result property="status" column="status"/>
+        <result property="created" column="created"/>
+        <result property="modified" column="modified"/>
+    </resultMap>
+
+    <sql id="fields">
+        id,
+        open_id,
+        order_id,
+        product_id,
+        price,
+        product_count,
+        commission,
+        commission_ratio,
+        rebate_ratio,
+        submit_date,
+        finish_date,
+        order_status,
+        status,
+        created,
+        modified
+    </sql>
+
+    <insert id="insert" parameterClass="RebateDetail">
+        insert into  rebate_detail
+        (
+        open_id,
+        order_id,
+        product_id,
+        price,
+        product_count,
+        commission,
+        commission_ratio,
+        rebate_ratio,
+        submit_date,
+        finish_date,
+        order_status,
+        status,
+        created,
+        modified
+        )
+        values
+        (
+        #openId#,
+        #orderId#,
+        #productId#,
+        #price#,
+        #productCount#,
+        #commission#,
+        #commissionRatio#,
+        #rebateRatio#,
+        #submitDate#,
+        #finishDate#,
+        #orderStatus#,
+        #status#,
+        now(),
+        now()
+        )
+        <selectKey resultClass="long" keyProperty="id">
+            SELECT @@IDENTITY as id
+        </selectKey>
+    </insert>
+
+    <select id="findCountByOpenId" parameterClass="RebateDetailQuery" resultClass="int">
+        select
+        count(1)
+        from rebate_detail
+        where open_id=#openId#
+    </select>
+
+    <select id="findListByOpenId" parameterClass="RebateDetailQuery" resultMap="RebateDetailResultMap">
+        select
+        <include refid="fields"/>
+        from rebate_detail
+        where open_id=#openId# and   finish_date>#endDate#
+        order by finish_date desc
+        limit #startRow#,#pageSize#
+    </select>
+
+</sqlMap>

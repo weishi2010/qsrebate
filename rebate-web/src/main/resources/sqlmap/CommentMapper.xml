@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="Comment">
+
+    <typeAlias alias="Comment" type="com.rebate.domain.Comment"/>
+
+    <resultMap class="Comment" id="CommentResultMap">
+        <result property="id" column="id"/>
+        <result property="commentId" column="comment_id"/>
+        <result property="guid" column="guid"/>
+        <result property="content" column="content"/>
+        <result property="productId" column="product_id"/>
+        <result property="status" column="status"/>
+        <result property="nickname" column="nickname"/>
+        <result property="created" column="created"/>
+        <result property="modified" column="modified"/>
+    </resultMap>
+
+    <sql id="fields">
+        id,
+        comment_id,
+        guid,
+        content,
+        product_id,
+        status,
+        nickname,
+        created,
+        modified
+    </sql>
+
+    <insert id="insert" parameterClass="Comment">
+        insert into comment
+        (
+        comment_id,
+        guid,
+        content,
+        product_id,
+        status,
+        nickname,
+        created,
+        modified
+        )
+        values
+        (
+        #commentId#,
+        #guid#,
+        #content#,
+        #productId#,
+        #status#,
+        #nickname#,
+        #created#,
+        now()
+        )
+        <selectKey resultClass="long" keyProperty="id">
+            SELECT @@IDENTITY as id
+        </selectKey>
+    </insert>
+
+    <select id="findById" parameterClass="Comment" resultMap="CommentResultMap">
+        select
+        <include refid="fields"/>
+        from comment
+        where comment_id=#commentId#
+    </select>
+
+</sqlMap>

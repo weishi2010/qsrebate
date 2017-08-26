@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="Product">
+
+    <typeAlias alias="Product" type="com.rebate.domain.Product"/>
+    <typeAlias alias="ProductQuery" type="com.rebate.domain.query.ProductQuery"/>
+
+
+    <resultMap class="Product" id="ProductResultMap">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="imgUrl" column="img_url"/>
+        <result property="productId" column="product_id"/>
+        <result property="firstCategory" column="first_category"/>
+        <result property="secondCategory" column="second_category"/>
+        <result property="thirdCategory" column="third_category"/>
+        <result property="firstCategoryName" column="first_category_name"/>
+        <result property="secondCategoryName" column="second_category_name"/>
+        <result property="thirdCategoryName" column="third_category_name"/>
+        <result property="originalPrice" column="original_price"/>
+        <result property="stock" column="stock"/>
+        <result property="commissionRatio" column="commission_ratio"/>
+        <result property="productType" column="product_type"/>
+        <result property="distribution" column="distribution"/>
+        <result property="status" column="status"/>
+        <result property="created" column="created"/>
+        <result property="modified" column="modified"/>
+    </resultMap>
+    <sql id="fields">
+       id,
+        name,
+        img_url,
+        product_id,
+        first_category,
+        first_category_name,
+        second_category,
+        second_category_name,
+        third_category,
+        third_category_name,
+        original_price,
+        stock,
+        commission_ratio,
+        product_type,
+        distribution,
+        status,
+        created,
+        modified
+        modified
+    </sql>
+    <sql id="condition">
+        <dynamic prepend="where">
+            <isNotNull property="thirdCategory">
+                <isGreaterThan property="thirdCategory" compareValue="0" prepend="and">
+                    third_category = #thirdCategory#
+                </isGreaterThan>
+            </isNotNull>
+            <isNotNull property="secondCategory" prepend="and">
+                <isGreaterThan property="secondCategory" compareValue="0" prepend="and">
+                    second_category = #secondCategory#
+                </isGreaterThan>
+            </isNotNull>
+            <isNotNull property="queryPrice" prepend="and">
+                original_price=#queryPrice#
+            </isNotNull>
+            <isParameterPresent prepend="and" >
+                original_price>0
+            </isParameterPresent>
+        </dynamic>
+    </sql>
+
+    <insert id="insert" parameterClass="Product">
+        INSERT INTO product
+        (
+        name,
+        img_url,
+        product_id,
+        first_category,
+        first_category_name,
+        second_category,
+        second_category_name,
+        third_category,
+        third_category_name,
+        original_price,
+        stock,
+        commission_ratio,
+        product_type,
+        distribution,
+        status,
+        created,
+        modified)
+        VALUES
+        (
+        #name#,
+        #imgUrl#,
+        #productId#,
+        #firstCategory#,
+        #firstCategoryName#,
+        #secondCategory#,
+        #secondCategoryName#,
+        #thirdCategory#,
+        #thirdCategoryName#,
+        #originalPrice#,
+        #stock#,
+        #commissionRatio#,
+        #productType#,
+        #distribution#,
+        #status#,
+        now(),
+        now())
+    </insert>
+
+    <select id="findById" parameterClass="Product" resultMap="ProductResultMap">
+        select
+        <include refid="fields"/>
+        from product
+        where product_id=#productId#
+        limit 1
+    </select>
+
+    <select id="findProductsCount" parameterClass="ProductQuery" resultClass="int">
+        select
+        count(1)
+        from product
+        <include refid="condition"></include>
+
+    </select>
+
+    <select id="findProducts" parameterClass="ProductQuery" resultMap="ProductResultMap">
+        select
+        <include refid="fields"/>
+        from product
+        <include refid="condition"></include>
+        limit #startRow#,#pageSize#
+    </select>
+</sqlMap>

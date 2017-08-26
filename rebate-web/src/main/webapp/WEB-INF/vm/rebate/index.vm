@@ -1,0 +1,83 @@
+#parse("/common/head.vm")
+<body>
+<div class="iframe-wrap" style="overflow-y:hidden;-webkit-overflow-scroll:touch; ">
+   <!--
+    <iframe id="iframeJD" src="/static/img/a.html" scrolling="yes" style="width: 1280px; height: 643px;" frameborder="0"></iframe>
+    -->
+</div>
+<div class="bottom-fxied" style="left: 0px; bottom: 0px; width: 100%; display: block;z-index:99999;">
+    <div class="index-alert">
+        <div class="alert-face"><span>打开</span><img src="/static/img/ico-arrow-down-03.png"></div>
+        <div class="alert-cnt">
+            <div class="jd-logo">
+                <img src="/static/img/img-15.png" alt="">
+            </div>
+            <a href="javascript:;" class="rebate-btn">
+                最高返还6%
+            </a>
+            <div class="tl">返还详情</div>
+            <div class="mall-news">
+                <span class="ftx-blue">商城通知：</span>下单后15分钟(少数情况下1小时)内，您可回返还网
+                账户查看订单信息。
+            </div>
+            <div class="table-tip">自2017年7月1日起，京东非会员PLUS返还比例如下</div>
+            <div class="table">
+                <table>
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <th width="65%">商品类别</th>
+                        <th>返还比例</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td rowspan="5"></td>
+                        <td>
+                            汽车用品
+                        </td>
+                        <td>0.6%~6.0%</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            汽车用品
+                        </td>
+                        <td>0.6%~6.0%</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            汽车用品
+                        </td>
+                        <td>0.6%~6.0%</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            汽车用品
+                        </td>
+                        <td>0.6%~6.0%</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            汽车用品
+                        </td>
+                        <td>0.6%~6.0%</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="alert-shade"></div>
+    </div>
+</div>
+<script>
+    window.onload = function(){
+        var winH = $(window).height();
+        var winW = $(window).width();
+        $('#iframeJD').css({
+            'width': winW + 'px',
+            'height': winH + 'px'
+        });
+    }
+</script>
+
+</body></html>

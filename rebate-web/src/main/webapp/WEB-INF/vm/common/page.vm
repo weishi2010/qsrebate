@@ -1,0 +1,104 @@
+<div class="col-sm-6">
+    每页<select id="pageSize" name="pageSize" aria-controls="sample-table-2" size="1" name="sample-table-2_length" onchange="jump();">
+    <option #if(${page.pageSize} == 10) selected="selected" #end value="10">10</option>
+    <option #if(${page.pageSize} == 25) selected="selected" #end value="25">25</option>
+    <option #if(${page.pageSize} == 50) selected="selected" #end value="50">50</option>
+    <option #if(${page.pageSize} == 100) selected="selected" #end value="100">100</option>
+
+
+</select>条，总共$!{page.totalItem}条数据
+</div>
+<div class="col-sm-6">
+    <div class="dataTables_paginate paging_bootstrap">
+        <input type="hidden" id="totalPage" value="$!{page.totalPage}">
+        <input type="hidden" id="pageIndex" name="pageIndex" value="$!{page.index}"/>
+        <nav>
+            <ul class="pagination">
+                #set($pagePos = 2) ##当前页的尾巴长度
+                #if($page.previousPageAvailable) ##如果能向上翻页
+                    <li>
+                        <a href="javascript:void(0);" onclick="previousPage()" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <li><a href="javascript:void(0);" onclick="__doPostBack(1)">1</a></li>
+                #end
+
+                #if($!page.index>$pagePos+2) <li><a>..</a></li>#end ##显示前面的省略号
+                #foreach($i in [$pagePos..1]) ##增加前面的尾巴
+                    #if($!page.index - $i > 1)
+                        #set($pageIndex= $!page.index - $i)
+                        <li><a href="javascript:void(0);" onclick="__doPostBack($pageIndex)">$pageIndex</a></li>
+                    #end
+                #end
+
+                <li class="active"><a>$!page.index</li></a> ##显示当前页号
+                #foreach($i in [1..$pagePos]) ##增加后面的尾巴
+                    #if($!page.totalPage - $!page.index - $i > 0)
+                        #set($pageIndex= $!page.index + $!i)
+                        <li><a href="javascript:void(0);" onclick="__doPostBack($pageIndex)">$pageIndex</a></li>
+                    #end
+                #end
+
+                #if($!page.totalPage - $!page.index > $pagePos+1)<li><a> ..</a></li> #end ##显示后面的省略号
+                #if($page.nextPageAvailable) ##显示后面的页
+                    <li><a href="javascript:void(0);" onclick="__doPostBack($!page.totalPage)">$!page.totalPage</a></li>
+                    <li>
+                        <a href="javascript:void(0);" onclick="nextPage()" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                #end
+
+
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<script>
+
+    function jump(){
+        var curPage =  $("#pageIndex").val();
+        __doPostBack(curPage);
+    }
+
+    function __doPostBack(page) {
+        if(isNaN(page) || page==''){
+            alert("请输入正确的页码!");
+            return;
+        }
+        if($("#totalPage").val() != "0" && $("#totalPage").val() < page ){
+            return;
+        }
+        var theForm = document.forms['form1'];
+        if (!theForm) {
+            theForm = document.form1;
+        }
+        $("#pageIndex").val(page);
+        theForm.submit();
+    }
+
+    function previousPage(){
+        var pageIndex = parseInt($("#pageIndex").val());
+        if( pageIndex <= 1){
+            return;
+        }else{
+            __doPostBack(pageIndex - 1);
+        }
+
+    }
+
+    function nextPage(){
+        var pageIndex = parseInt($("#pageIndex").val());
+        var totalPage =  $("#totalPage").val();
+        if( pageIndex >= totalPage){
+            return;
+        }else{
+            __doPostBack(pageIndex + 1);
+        }
+    }
+
+</script>
+
+	

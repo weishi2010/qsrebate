@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="UserInfo">
+
+    <typeAlias alias="UserInfo" type="com.rebate.domain.UserInfo"/>
+
+    <resultMap class="UserInfo" id="UserInfoResultMap">
+        <result property="id" column="id"/>
+        <result property="openId" column="open_id"/>
+        <result property="wxImage" column="wx_image"/>
+        <result property="phone" column="phone"/>
+        <result property="nickName" column="nick_name"/>
+        <result property="email" column="email"/>
+        <result property="status" column="status"/>
+        <result property="created" column="created"/>
+        <result property="modified" column="modified"/>
+    </resultMap>
+
+    <sql id="fields">
+       id,
+        open_id,
+        wx_image,
+        phone,
+        nick_name,
+        email,
+        status,
+        created,
+        modified
+    </sql>
+
+    <insert id="insert" parameterClass="UserInfo">
+        insert into user_info
+        (
+        open_id,
+        wx_image,
+        phone,
+        nick_name,
+        email,
+        status,
+        created,
+        modified
+        )
+        values
+        (
+        #openId#,
+        #wxImage#,
+        #phone#,
+        #nickName#,
+        #email#,
+        #status#,
+        now(),
+        now()
+        )
+        <selectKey resultClass="long" keyProperty="id">
+            SELECT @@IDENTITY as id
+        </selectKey>
+    </insert>
+
+    <select id="findByPhone" parameterClass="UserInfo" resultMap="UserInfoResultMap">
+        select
+        <include refid="fields"/>
+        from user_info
+        where phone=#phone#
+        limit 1
+    </select>
+    <select id="findLoginUserInfo" parameterClass="UserInfo" resultMap="UserInfoResultMap">
+        select
+        <include refid="fields"/>
+        from user_info
+        where open_id=#openId#
+        limit 1
+    </select>
+</sqlMap>

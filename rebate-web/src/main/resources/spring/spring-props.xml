@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean class="com.rebate.common.property.ProfilePropertyPlaceholderConfigurer">
+		<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_NEVER" />
+		<property name="nullValue" value="null"/>
+		<property name="ignoreResourceNotFound" value="false" />
+		<!--鎵樺簳閰嶇疆鐩綍-->
+		<property name="fallbackProfile" value="production"/>
+		<property name="locations">
+			<list>
+				<value>classpath:properties/${profile}/common.properties</value>
+			</list>
+		</property>
+	</bean>
+
+</beans>

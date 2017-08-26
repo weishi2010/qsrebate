@@ -1,0 +1,114 @@
+<!doctype html>
+<html class="no-js">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>热门新闻</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="Cache-Control" content="no-siteapp" />
+		<link rel="icon" type="image/png" href="assets/i/favicon.png">
+		<link rel="stylesheet" href="assets/css/amazeui.min.css">
+		<link rel="stylesheet" href="assets/css/app.css">
+		<style>
+			@media only screen and (min-width: 1200px) {
+			      .blog-g-fixed {
+			        max-width: 1200px;
+			      }
+			    }
+			
+			    @media only screen and (min-width: 641px) {
+			      .blog-sidebar {
+			        font-size: 1.4rem;
+			      }
+			    }
+
+			    .blog-footer {
+			      padding: 10px 0;
+			      text-align: center;
+			    }
+		</style>
+	</head>
+	<body>
+		<!-- Header -->
+		<header data-am-widget="header" class="am-header am-header-default">
+			 <h1 class="am-header-title"><a href="index.php">娱乐头条</a></h1>
+		</header>
+		<!-- Menu -->
+		<nav data-am-widget="menu" class="am-menu  am-menu-offcanvas1" data-am-menu-offcanvas>
+			<a href="javascript: void(0)" class="am-menu-toggle"> <i class="am-menu-toggle-icon am-icon-bars"></i>
+			</a>
+			<div class="am-offcanvas">
+				<div class="am-offcanvas-bar">
+					
+				</div>
+			</div>
+		</nav>
+		
+		<!-- List -->
+		<div data-am-widget="list_news" class="am-list-news am-list-news-default">
+			<!--列表标题-->
+			<div class="am-list-news-hd am-cf">
+				<!--带更多链接-->
+				 <h2>图文资讯</h2>
+			</div>
+			<div class="am-list-news-bd">
+				<ul class="am-list">
+				
+				<#list topicMapList as topicMap>  
+				   <li class="am-g am-list-item-desced am-list-item-thumbed am-list-item-thumb-left">
+						<div class="am-u-sm-4 am-list-thumb">	<a href="${topicMap["url"]!("null")}"><img src='${topicMap["thumbnail_pic_s"]!("null")}' border='0' width='150' height='150' alt='${topicMap["imgDesc"]!("null")}'></a>
+						</div>
+						<div class="am-u-sm-8 am-list-main">
+							 <h3 class="am-list-item-hd"><a href="${topicMap["url"]!("null")}">${topicMap["title"]!("null")}</a></h3>
+							<div class="am-list-item-text">点击量：${topicMap["click"]!("null")}&nbsp;发布时间：${topicMap["date"]!("null")}</div>
+						</div>
+					</li>
+				</#list> 
+</ul>
+			</div>
+		</div><div data-am-widget="list_news" class="am-list-news am-list-news-default">
+			<!--列表标题-->
+			<div class="am-list-news-hd am-cf">
+				<!--带更多链接-->
+				<a href="list.php?tid=5">
+					 <h2>ETC</h2>
+				</a>
+			</div>
+			<div class="am-list-news-bd">
+				<ul class="am-list"><li class="am-g"> <a href="view.php?aid=159" class="am-list-item-hd">“海宁皮衣男绵羊皮2016”在成功立足上海市场后</a>
+					</li>
+<li class="am-g"> <a href="view.php?aid=156" class="am-list-item-hd">当细菌从受伤处进入你的血管内时，淋巴结这个</a>
+					</li>
+<li class="am-g"> <a href="view.php?aid=151" class="am-list-item-hd">网站安全性编辑　　因为所有购物完成都是在淘</a>
+					</li>
+<li class="am-g"> <a href="view.php?aid=149" class="am-list-item-hd">输入新名称后点击【重命名】即可，如图1-6所示</a>
+					</li>
+<li class="am-g"> <a href="view.php?aid=134" class="am-list-item-hd">【汽车排气系统总体设计开题报告】由于水蜡洗</a>
+					</li>
+<li class="am-g"> <a href="view.php?aid=130" class="am-list-item-hd">收货前可先验货，签收后将不提供退换货服务，</a>
+					</li>
+<li class="am-g"> <a href="view.php?aid=125" class="am-list-item-hd">孩子淋巴结肿大，最常见的原因是感染</a>
+					</li>
+<li class="am-g"> <a href="view.php?aid=120" class="am-list-item-hd">据调查显示：绝大部分的日本女性都穿塑身衣，</a>
+					</li>
+</ul></div>
+			<!--更多在底部-->
+			<div class="am-list-news-ft"> <a class="am-list-news-more am-btn am-btn-default" href="list.php?tid=10">查看更多 &raquo;</a>
+			</div>
+		</div><footer class="blog-footer">
+热门资讯
+  </p>
+</footer>
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " 
+http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1255663915'%3E%3C/span%3E%3Cscript src='" + 
+cnzz_protocol + "s4.cnzz.com/stat.php%3Fid%3D1255663915%26show%3Dpic' type='text/javascript'%3E%3C/script
+%3E"));</script>
+
+<script language="javascript" type="text/javascript" src="//js.users.51.la/4693018.js"></script>
+<noscript><a href="//www.51.la/?4693018" target="_blank"><img 
+alt="&#x6211;&#x8981;&#x5566;&#x514D;&#x8D39;&#x7EDF;&#x8BA1;" src="//img.users.51.la/4693018.asp" 
+style="border:none" /></a></noscript>
+	</body>
+
+</html>

@@ -1,0 +1,53 @@
+#set( $title = "列表")
+#parse("/common/head.vm")
+
+<body class="bd bd-pb">
+<div class="header-search">
+    <div class="inner mui-flex align-center">
+        <div class="cell fixed ico-search">
+            <img src="/static/img/ico-search-01.png" alt="">
+        </div>
+        <div class="cell">
+            <input class="search-ipt" placeholder="搜商品，买就返钱，分享还能再赚钱！" type="text">
+        </div>
+    </div>
+</div>
+
+    #parse("/common/category.vm")
+
+<div class="must-buy">
+    <div class="must-buy-title">
+        <img class="img" src="/static/img/ico-03.png" alt="">每日必买，每天早10点上新
+    </div>
+    <div class="must-buy-list" style="height: 3416px;">
+        #foreach($product in $products)
+            <div class="item">
+                <div class="inner">
+                    <img class="g-img" src="${product.imgUrl}" alt="${product.name}">
+                    <div class="title">
+                        <a href="javascript:;"><img src="/static/img/ico-jd-01.png">${product.name}</a>
+                        <div class="have-buy">(已售33件)</div>
+                    </div>
+                    <div class="meta">
+                        <div class="old-price">原价¥<del>${product.originalPrice}</del></div>
+##                        <div class="now-price">限时抢:<span>15.9</span></div>
+                    </div>
+                    <div class="easy">
+                        <div class="item1"><img src="/static/img/ico-cart-01.png" alt=""></div>
+                        <div class="item1"><img src="/static/img/ico-zhuanfa-01.png" alt=""></div>
+                    </div>
+                    <div class="total-money">
+                        <p class="fan">买就返¥4.5</p>
+                        <p class="share">分享再赚¥4.55</p>
+                    </div>
+                </div>
+            </div>
+
+        #end
+
+    </div>
+</div>
+    #parse("/common/footer.vm")
+<script type="text/javascript" src="/static/js/promotion.js"></script>
+
+</body></html>

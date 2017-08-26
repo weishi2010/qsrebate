@@ -1,0 +1,27 @@
+<div class="tabs-tabs-wrap">
+    <div class="tabs-tabs mui-flex">
+        <nav class="cell nav-nav">
+            <ul style="width: 2908px;">
+                <li class="active"><a href="javascript:void(0);" onclick="reLoadData(1,-1,$!{promotionTab});">精选</a></li>
+                #foreach($category in $topCategories)
+                    <li #if($thirdCategory==$category.thirdCategory) class="active" #end>
+                        <a href="javascript:void(0);" onclick="reLoadData(1,$!{category.thirdCategory},$!{promotionTab})">$!{category.thirdCategoryName}</a>
+                    </li>
+                #end
+            </ul>
+        </nav>
+        <div class="cell fixed arrow align-center">
+            <img src="/static/img/ico-arrow-down-02.png" alt="">
+        </div>
+    </div>
+    <div class="tabs-droplist">
+        <div class="tl">全部分类</div>
+        <ul class="list">
+            #foreach($category in $allCategories)
+                <li>
+                    <a href="javascript:void(0);" onclick="reLoadData(1,$!{category.thirdCategory},$!{promotionTab})">$!{category.thirdCategoryName}</a>
+                </li>
+            #end
+        </ul>
+    </div>
+</div>

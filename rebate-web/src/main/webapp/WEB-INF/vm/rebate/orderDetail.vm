@@ -1,0 +1,30 @@
+#set( $title = "订单明细")
+#parse("/common/head.vm")
+<body class="bd bd-pb">
+<!--.header-->
+<div class="header mui-flex align-center">
+    <div class="back cell fixed">
+        <a href="javascript:;"><img src="/static/image/ico-arrow-left-01.png" alt=""></a>
+    </div>
+    <div class="title cell">
+        <span class="text">订单明细</span>
+        <span class="arrow"></span>
+    </div>
+    <div class="droplist" name="droplist">
+        <input id="days" type="hidden"/>
+        <ul class="sorts"  id="sorts">
+            <li data="30"  #if($days==30) class="sort selected" #else class="sort" #end>30天</li>
+            <li data="90" #if($days==90) class="sort selected" #else class="sort" #end>90天</li>
+            <li data="180" #if($days==180) class="sort selected" #else class="sort" #end>近半年</li>
+        </ul>
+    </div>
+</div>
+<!--/.header-->
+<div class="o-list">
+
+</div>
+
+    #parse("/common/footer.vm")
+<script type="text/javascript" src="/static/js/order.js"></script>
+
+</body></html>

@@ -1,0 +1,47 @@
+#set( $title = "我的资产")
+#parse("/common/head.vm")
+<body class="bd bd-pb">
+<div class="person-info">
+    <p class="tl">[$!{userInfo.nickName}]我的资产</p>
+    <p class="property">$!{commission.totalCommission}<span>元</span></p>
+    <a href="/rebate/personal/extract" class="get-money">提现</a>
+    <div class="avastar">
+        <img src="$!{userInfo.wxImage}" alt="">
+    </div>
+    <div class="getMoney-record mui-flex justify-between">
+        <span>您共提现10000元。</span>
+        <a href="javascript:;">提现记录&gt;</a>
+    </div>
+</div>
+<div class="person-menu mui-flex">
+    <div class="item">
+        <img src="/static/img/img-07.png" alt="">
+        <a href="/rebate/personal/orderDetail">
+            <p>订单明细</p>
+        </a>
+    </div>
+    <div class="item">
+        <img src="/static/img/img-08.png" alt="">
+        <p>新人福利</p>
+    </div>
+    <div class="item">
+        <img src="/static/img/img-04.png" alt="">
+        <p>新手教程</p>
+    </div>
+    <div class="item" style="border-bottom:0;">
+        <img src="/static/img/img-06.png" alt="">
+        <p>官方微信</p>
+    </div>
+    <div class="item" style="border-bottom:0;">
+        <img src="/static/img/img-03.png" alt="">
+        <p>赚钱秘籍</p>
+    </div>
+    <div class="item" style="border-bottom:0;">
+        <img src="/static/img/img-05.png" alt="">
+        <p>退出账号</p>
+    </div>
+</div>
+
+    #parse("/common/footer.vm")
+
+</body></html>

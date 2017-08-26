@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd"
+	default-autowire="byName" default-lazy-init="false">
+	
+	<context:component-scan base-package="com.rebate.**" />
+
+	<bean id="htmlCreatorMap" class="java.util.HashMap">
+		<constructor-arg>
+			<map>
+				<!--D:\ipbrother\webs\jingcuhui.com\m-->
+				<entry key="templatePath" value="${rebate.templatePath}" ></entry>
+				<entry key="templateName" value="${rebate.templateName}" ></entry>
+				<entry key="htmlPath" value="${rebate.htmlPath}" ></entry>
+				<entry key="htmlName" value="${rebate.htmlName}" ></entry>
+			</map>
+		</constructor-arg>
+	</bean>
+
+
+</beans>

@@ -1,0 +1,99 @@
+#set( $title = "我的收入")
+#parse("/common/head.vm")
+<body class="bd bd-pb">
+<!--.header-->
+<div class="header mui-flex align-center">
+    <div class="back cell fixed">
+        <a href="javascript:;"><img src="/static/img/ico-arrow-left-01.png" alt=""></a>
+    </div>
+    <div class="title cell">
+        <span class="text">最近30天收入</span>
+        <span class="arrow"></span>
+    </div>
+    <div class="droplist" name="droplist">
+        <ul class="sorts">
+            <li class="sort selected">30天</li>
+            <li class="sort">90天</li>
+            <li class="sort">近3个月</li>
+            <li class="sort">近半年</li>
+            <li class="sort">30天</li>
+            <li class="sort">90天</li>
+            <li class="sort">近3个月</li>
+            <li class="sort">近半年</li>
+            <li class="sort">30天</li>
+            <li class="sort">90天</li>
+            <li class="sort">近3个月</li>
+            <li class="sort">近半年</li>
+            <li class="sort">30天</li>
+            <li class="sort">90天</li>
+            <li class="sort">近3个月</li>
+            <li class="sort">近半年</li>
+        </ul>
+    </div>
+</div>
+<!--/.header-->
+<div class="income-record mui-flex align-center">
+    <div class="cell">
+        <span>点击量</span>
+        <p>5524</p>
+    </div>
+    <div class="cell">
+        <span>订单量</span>
+        <p>299</p>
+    </div>
+    <div class="cell">
+        <span>订单金额</span>
+        <p>¥3999.00</p>
+    </div>
+    <div class="cell">
+        <span>预估返钱</span>
+        <p class="ftx-red">¥2800</p>
+    </div>
+</div>
+<div class="income-record-list">
+    <table>
+        <thead>
+        <tr>
+            <th>日期</th>
+            <th>订单量</th>
+            <th>订单金额</th>
+            <th>收入</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>2017.07.07</td>
+            <td>20</td>
+            <td>1587</td>
+            <td>¥280</td>
+        </tr>
+        <tr>
+            <td>2017.07.07</td>
+            <td>20</td>
+            <td>1587</td>
+            <td>¥280</td>
+        </tr>
+        <tr>
+            <td>2017.07.07</td>
+            <td>20</td>
+            <td>1587</td>
+            <td>¥280</td>
+        </tr>
+        <tr>
+            <td>2017.07.07</td>
+            <td>20</td>
+            <td>1587</td>
+            <td>¥280</td>
+        </tr>
+        <tr>
+            <td>2017.07.07</td>
+            <td>20</td>
+            <td>1587</td>
+            <td>¥280</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+    #parse("/common/footer.vm")
+
+</body></html>

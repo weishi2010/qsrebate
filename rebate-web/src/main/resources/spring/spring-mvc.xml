@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd
+    http://www.springframework.org/schema/mvc
+    http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+
+	<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
+		<property name="interceptors">
+			<list>
+			</list>
+		</property>
+	</bean>
+
+	<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+		<property name="messageConverters">
+			<list>
+				<ref bean="stringHttpMessageConverter" />
+				<ref bean="jsonHttpMessageConverter" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="stringHttpMessageConverter" class="org.springframework.http.converter.StringHttpMessageConverter">
+		<property name="supportedMediaTypes">
+			<list>
+				<value>text/html;charset=GBK</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="jsonHttpMessageConverter" class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter" />
+
+	<mvc:resources location="/static/img/" mapping="/static/images/**" cache-period="31556926" />
+	<mvc:resources location="/static/js/" mapping="/static/js/**" cache-period="31556926" />
+	<mvc:resources location="/static/css/" mapping="/static/css/**" cache-period="31556926" />
+
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.velocity.VelocityLayoutViewResolver">
+		<property name="requestContextAttribute" value="request" />
+		<property name="dateToolAttribute" value="dateTool" />
+		<property name="cache" value="true" />
+		<property name="prefix" value="" />
+		<property name="suffix" value=".vm" />
+		<property name="contentType">
+			<value>text/html;charset=UTF-8</value>
+		</property>
+		<property name="layoutUrl" value="layout/default.vm" />
+		<property name="viewClass" value="com.rebate.common.view.VelocityLayoutToolbox2View"/>
+		<property name="toolboxConfigLocation" value="/WEB-INF/toolbox.xml" />
+	</bean>
+
+	<bean id="velocityConfigurer" class="org.springframework.web.servlet.view.velocity.VelocityConfigurer">
+		<property name="resourceLoaderPath" value="/WEB-INF/vm/" />
+		<property name="velocityProperties">
+			<props>
+				<prop key="input.encoding">UTF-8</prop>
+				<prop key="output.encoding">UTF-8</prop>
+			</props>
+		</property>
+	</bean>
+
+	<mvc:interceptors>
+		<!-- 登录/权限拦截器 begin -->
+		<mvc:interceptor>
+			<mvc:mapping path="/rebate/personal/*" />
+			<bean class="com.rebate.common.web.inteceptor.QsLoginInteceptor">
+				<property name="wxConfig" ref="wxConfig" />
+				<property name="cookieUtils" ref="cookieUtils" />
+				<property name="charsetName" value="UTF-8"></property>
+				<property name="domain" value="m.qsrebate.com"></property>
+				<property name="staticResourcePath" value="/static/" />
+			</bean>
+		</mvc:interceptor>
+		<!-- 登录/权限拦截器 end -->
+	</mvc:interceptors>
+
+	<!--微信接口配置-->
+	<bean id="wxConfig" class="com.rebate.domain.wx.WxConfig">
+		<property name="appId" value="${wx.appId}"/>
+		<property name="appSecret" value="${wx.appSecret}"/>
+		<property name="authorizeUrl" value="${wx.authorizeUrl}"/>
+		<property name="jsapiTicketUrl" value="${wx.jsapiTicketUrl}"/>
+		<property name="accessTokenUrl" value="${wx.accessTokenUrl}"/>
+		<property name="userInfoUrl" value="${wx.userInfoUrl}"/>
+	</bean>
+
+	<bean id="cookieUtils" class="com.rebate.common.util.CookieUtils">
+		<property name="qxCookie" ref="qxCookie"></property>
+	</bean>
+	<bean id="cookieCipherTools" class="com.rebate.common.web.cookie.CookieCipherTools">
+		<property name="charsetName" value="UTF-8" />
+	</bean>
+	<bean id="qxCookie" class="java.util.ArrayList">
+		<constructor-arg>
+			<list>
+				<bean class="com.rebate.common.web.cookie.QxCookie">
+					<property name="cookieCipherTools" ref="cookieCipherTools"/>
+					<property name="encrypt" value="true" />
+					<property name="name" value="QS_O_C" />
+					<property name="key" value="QIUSNHYAGHSNEIJAMYEFHQLRIHFADCHE" />
+					<property name="path" value="/" />
+				</bean>
+			</list>
+		</constructor-arg>
+	</bean>
+
+</beans>

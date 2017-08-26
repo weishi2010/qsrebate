@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="GBK"?>
+<!DOCTYPE sqlMapConfig  PUBLIC "-//iBATIS.com//DTD SQL Map
+Config 2.0/" "http://ibatis.apache.org/dtd/sql-map-config-2.dtd">
+<sqlMapConfig>
+	<settings cacheModelsEnabled="true" enhancementEnabled="true" lazyLoadingEnabled="false" errorTracingEnabled="true"
+		maxRequests="32" maxSessions="10" maxTransactions="5" useStatementNamespaces="true" defaultStatementTimeout="5" />
+	<sqlMap resource="sqlmap/ProductMapper.xml" />
+	<sqlMap resource="sqlmap/CategoryMapper.xml" />
+	<sqlMap resource="sqlmap/CommentMapper.xml" />
+	<sqlMap resource="sqlmap/CommissionMapper.xml" />
+	<sqlMap resource="sqlmap/UserInfoMapper.xml" />
+	<sqlMap resource="sqlmap/RebateDetailMapper.xml" />
+
+</sqlMapConfig>

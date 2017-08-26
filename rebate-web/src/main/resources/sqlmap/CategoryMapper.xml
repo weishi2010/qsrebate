@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="Category">
+
+    <typeAlias alias="Category" type="com.rebate.domain.Category"/>
+    <typeAlias alias="CategoryQuery" type="com.rebate.domain.CategoryQuery"/>
+
+
+    <resultMap class="Category" id="CategoryResultMap">
+        <result property="id" column="id"/>
+        <result property="firstCategory" column="first_category"/>
+        <result property="secondCategory" column="second_category"/>
+        <result property="thirdCategory" column="third_category"/>
+        <result property="firstCategoryName" column="first_category_name"/>
+        <result property="secondCategoryName" column="second_category_name"/>
+        <result property="thirdCategoryName" column="third_category_name"/>
+        <result property="source" column="source"/>
+        <result property="created" column="created"/>
+        <result property="modified" column="modified"/>
+    </resultMap>
+
+    <resultMap class="Category" id="ActiveCategoryResultMap">
+        <result property="firstCategory" column="first_category"/>
+        <result property="secondCategory" column="second_category"/>
+        <result property="thirdCategory" column="third_category"/>
+        <result property="firstCategoryName" column="first_category_name"/>
+        <result property="secondCategoryName" column="second_category_name"/>
+        <result property="thirdCategoryName" column="third_category_name"/>
+    </resultMap>
+
+    <sql id="fields">
+       id,
+        first_category,
+        first_category_name,
+        second_category,
+        second_category_name,
+        third_category,
+        third_category_name,
+        source,
+        created,
+        modified
+    </sql>
+
+    <insert id="insert" parameterClass="Category">
+        INSERT INTO Category
+        (
+        first_category,
+        first_category_name,
+        second_category,
+        second_category_name,
+        third_category,
+        third_category_name,
+        source,
+        created,
+        modified)
+        VALUES
+        (
+        #firstCategory#,
+        #firstCategoryName#,
+        #secondCategory#,
+        #secondCategoryName#,
+        #thirdCategory#,
+        #thirdCategoryName#,
+        #source#,
+        now(),
+        now())
+    </insert>
+
+    <select id="findByThirdCategory" parameterClass="CategoryQuery" resultMap="CategoryResultMap">
+        select
+        <include refid="fields"/>
+        from Category
+        where third_category =#thirdCategory#
+        limit 1
+    </select>
+
+    <select id="findByThirdCategories" parameterClass="CategoryQuery" resultMap="CategoryResultMap">
+        select
+        <include refid="fields"/>
+        from Category
+        where third_category in ($categories$)
+    </select>
+
+    <!--查询活跃有效的三级分类-->
+    <select id="findByActiveCategories" parameterClass="CategoryQuery" resultMap="ActiveCategoryResultMap">
+        select
+        distinct p.third_category,c.third_category_name,
+        c.first_category,
+        c.first_category_name,
+        c.second_category,
+        c.second_category_name
+        from product p
+        left join
+        category c
+        on
+        p.third_category = c.third_category
+        limit #pageSize#
+    </select>
+
+</sqlMap>

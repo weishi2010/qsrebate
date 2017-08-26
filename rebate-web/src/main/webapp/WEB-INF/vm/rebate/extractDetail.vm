@@ -1,0 +1,79 @@
+#set( $title = "提现明细")
+#parse("/common/head.vm")
+<body class="bd bd-pb">
+<!--.header-->
+<div class="header mui-flex align-center">
+    <div class="back cell fixed">
+        <a href="javascript:;"><img src="/static/img/ico-arrow-left-01.png" alt=""></a>
+    </div>
+    <div class="title cell">
+        <span class="text">2017年提现记录</span>
+        <span class="arrow"></span>
+    </div>
+    <div class="droplist" name="droplist">
+        <ul class="sorts">
+            <li class="sort selected">2016年提现记录</li>
+            <li class="sort">2015年提现记录</li>
+            <li class="sort">2014年提现记录</li>
+        </ul>
+    </div>
+</div>
+<!--/.header-->
+<div class="tixian-record">
+    <table class="table">
+        <tbody>
+        <tr>
+            <td class="time">2017.07.07 12:00</td>
+            <td>提现金额</td>
+            <td><span class="orange">5000元</span></td>
+            <td class="state"><span class="wait">等待审核</span></td>
+        </tr>
+        <tr>
+            <td class="time">2017.07.07 12:00</td>
+            <td>提现金额</td>
+            <td><span class="orange">5000元</span></td>
+            <td class="state"><span class="pay-done">已付款</span></td>
+        </tr>
+        <tr>
+            <td class="time">2017.07.07 12:00</td>
+            <td>提现金额</td>
+            <td><span class="orange">5000元</span></td>
+            <td class="state"><span class="wait">等待审核</span></td>
+        </tr>
+        <tr>
+            <td class="time">2017.07.07 12:00</td>
+            <td>提现金额</td>
+            <td><span class="orange">5000元</span></td>
+            <td class="state"><span class="pay-done">已付款</span></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<!--.footer-->
+<div class="bottom-fxied" style="left: 0px; bottom: 0px; width: 100%; display: block;z-index:99999;">
+    <footer class="footer">
+        <a class="must-buy active" href="#">
+            <span></span>
+            <p>每日必买</p>
+        </a>
+        <a class="nine-block" href="#">
+            <span></span>
+            <p>9块9</p>
+        </a>
+        <a class="jd" href="#">
+            <span></span>
+            <p>去京东</p>
+        </a>
+        <a class="voucher" href="#">
+            <span></span>
+            <p>优惠券</p>
+        </a>
+        <a class="share-money" href="#">
+            <span></span>
+            <p>分享赚钱</p>
+        </a>
+    </footer>
+</div>
+    #parse("/common/footer.vm")
+
+</body></html>

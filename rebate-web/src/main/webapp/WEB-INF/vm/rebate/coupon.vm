@@ -1,0 +1,59 @@
+#set( $title = "优惠券")
+#parse("/common/head.vm")
+<body class="bd bd-pb">
+<!--.header-->
+<div class="header mui-flex align-center">
+    <div class="back cell fixed">
+        <a href="javascript:;"><img src="/static/images/ico-arrow-left-01.png" alt=""></a>
+    </div>
+    <div class="title cell">最新：优惠券活动</div>
+    <div class="mail cell fixed">
+        <a href="javascript:;"><img src="/static/images/ico-mail-01.png" alt=""></a>
+    </div>
+</div>
+<!--/.header-->
+<div class="voucher-page">
+    <div class="panel">
+        <div class="top-line">
+            <a href="javascript:;">
+                <img src="/static/images/img-09.jpg" alt="">
+                <div class="tl">宝宝湿疹反复怎么破？看中国最权威湿疹专家，首都儿研究所刘小燕主任怎么说</div>
+            </a>
+        </div>
+        <ul class="list">
+            <li>
+                <a href="javascript:;"><em class="green">男装</em>-【<span class="ftx-red">满200-50</span>】极品男装酷爽起义三伏天</a>
+            </li>
+            <li>
+                <a href="javascript:;"><em class="orange">女装</em>-【<span class="ftx-red">满200-50</span>】极品男装酷爽起义三伏天</a>
+            </li>
+            <li>
+                <a href="javascript:;"><em class="green">男装</em>-【<span class="ftx-red">满200-50</span>】极品男装酷爽起义三伏天</a>
+            </li>
+            <li>
+                <a href="javascript:;"><em class="orange">女装</em>-【<span class="ftx-red">满200-50</span>】极品男装酷爽起义三伏天</a>
+            </li>
+            <li>
+                <a href="javascript:;"><em class="green">男装</em>-【<span class="ftx-red">满200-50</span>】极品男装酷爽起义三伏天</a>
+            </li>
+            <li>
+                <a href="javascript:;"><em class="orange">女装</em>-【<span class="ftx-red">满200-50</span>】极品男装酷爽起义三伏天</a>
+            </li>
+            <li>
+                <a href="javascript:;"><em class="green">男装</em>-【<span class="ftx-red">满200-50</span>】极品男装酷爽起义三伏品男装酷爽起义三伏品男装酷爽起义三伏品男装酷爽起义三伏天</a>
+            </li>
+            <li>
+                <a href="javascript:;"><em class="orange">女装</em>-【<span class="ftx-red">满200-50</span>】极品男装酷爽起义三伏天</a>
+            </li>
+            <li>
+                <a href="javascript:;"><em class="green">男装</em>-【<span class="ftx-red">满200-50</span>】极品男装酷爽起义三伏天</a>
+            </li>
+            <li>
+                <a href="javascript:;"><em class="orange">女装</em>-【<span class="ftx-red">满200-50</span>】极品男装酷爽起义三伏天</a>
+            </li>
+        </ul>
+    </div>
+</div>
+    #parse("/common/footer.vm")
+
+</body></html>
