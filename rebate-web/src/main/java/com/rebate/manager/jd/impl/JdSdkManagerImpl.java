@@ -74,7 +74,7 @@ public class JdSdkManagerImpl implements JdSdkManager {
 
                     //抓取商品分类
                     product = JdMediaProductGrapUtil.grapCategory(product);
-                    list.add(product)
+                    list.add(product);
                 }
             }
         }
