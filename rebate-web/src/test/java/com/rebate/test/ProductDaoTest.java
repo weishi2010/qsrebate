@@ -6,6 +6,7 @@ import com.rebate.common.util.rebate.JdMediaProductGrapUtil;
 import com.rebate.dao.ProductDao;
 import com.rebate.domain.Product;
 import com.rebate.domain.query.ProductQuery;
+import com.rebate.manager.jd.JdSdkManager;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -18,6 +19,9 @@ public class ProductDaoTest extends AbstractJUnit4SpringContextTests {
 
     @Autowired
     private ProductDao productDao;
+
+    @Autowired
+    private JdSdkManager jdSdkManager;
 
     @Test
     public void testInsert() {
@@ -43,24 +47,6 @@ public class ProductDaoTest extends AbstractJUnit4SpringContextTests {
                 }
             }
         }
-//        Product product = new Product();
-//        product.setProductId(111l);
-//        product.setName("test商品");
-//        product.setCommissionRatio(1.0);
-//        product.setDistribution(1);
-//        product.setOriginalPrice(123132.0);
-//        product.setProductType(1);
-//        product.setStock(100);
-//        product.setStatus(0);
-//        product.setFirstCategoryName("一级分类 ");
-//        product.setSecondCategoryName("二级分类 ");
-//        product.setThirdCategoryName("三级分类 ");
-//        product.setFirstCategory(1);
-//        product.setSecondCategory(2);
-//        product.setThirdCategory(3);
-//        if (null == productDao.findById(product)) {
-//            productDao.insert(product);
-//        }
     }
 
     @Test
@@ -72,5 +58,10 @@ public class ProductDaoTest extends AbstractJUnit4SpringContextTests {
         System.out.println("list:"+JsonUtil.toJson(list));
     }
 
+    @Test
+    public void testGetMediaProducts(){
+        List list = jdSdkManager.getMediaProducts("1031535957,1031535957");
+        System.out.println("list:"+JsonUtil.toJson(list));
+    }
 
 }

@@ -6,6 +6,7 @@ import com.rebate.common.util.JsonUtil;
 import com.rebate.dao.RebateDetailDao;
 import com.rebate.domain.RebateDetail;
 import com.rebate.domain.query.RebateDetailQuery;
+import com.rebate.manager.jd.JdSdkManager;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -21,6 +22,9 @@ public class RebateDetailDaoTest extends AbstractJUnit4SpringContextTests {
     @Qualifier("rebateDetailDao")
     @Autowired
     private RebateDetailDao rebateDetailDao;
+    @Autowired
+    private JdSdkManager jdSdkManager;
+
 
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -60,6 +64,16 @@ public class RebateDetailDaoTest extends AbstractJUnit4SpringContextTests {
 
         List list = rebateDetailDao.findListByOpenId(query);
         System.out.println("count,"+count+",list"+JsonUtil.toJson(list));
+    }
+
+
+    @Test
+    public void testGetMediaProducts(){
+        String queryTime = "2015010100";//yyyyMMddHHmm,yyyyMMddHHmmss或者yyyyMMddHH格式之一
+        int page =1;
+        int pageSize = 10;
+        List list = jdSdkManager.getRebateDetails(queryTime,page,pageSize);
+        System.out.println("list:"+JsonUtil.toJson(list));
     }
 
 
