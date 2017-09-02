@@ -97,4 +97,12 @@
         limit #startRow#,#pageSize#
     </select>
 
+    <select id="queryRebateDetailByOrderId" parameterClass="RebateDetailQuery" resultMap="RebateDetailResultMap">
+        select
+        <include refid="fields"/>
+        from rebate_detail
+        where order_id=#orderId#
+        limit 1
+    </select>
+
 </sqlMap>

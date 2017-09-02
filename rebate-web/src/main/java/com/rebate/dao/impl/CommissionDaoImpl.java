@@ -12,8 +12,8 @@ public class CommissionDaoImpl extends BaseDao implements CommissionDao {
     }
 
     @Override
-    public long update(Commission commission) {
-        return update("Commission.updateCommission",commission);
+    public long updateTotalCommission(Commission commission) {
+        return update("Commission.updateTotalCommission",commission);
     }
 
     @Override

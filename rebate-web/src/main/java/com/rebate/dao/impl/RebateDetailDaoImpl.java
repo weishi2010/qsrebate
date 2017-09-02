@@ -14,8 +14,18 @@ public class RebateDetailDaoImpl extends BaseDao implements RebateDetailDao {
     }
 
     @Override
+    public RebateDetail queryRebateDetailByOrderId(RebateDetailQuery rebateDetailQuery) {
+        return (RebateDetail)queryForObject("RebateDetail.queryRebateDetailByOrderId",rebateDetailQuery);
+    }
+
+    @Override
     public int findCountByOpenId(RebateDetailQuery rebateDetailQuery) {
         return (int) queryForObject("RebateDetail.findCountByOpenId", rebateDetailQuery);
+    }
+
+    @Override
+    public Double findUserTotalCommission(RebateDetailQuery rebateDetailQuery) {
+        return (Double) queryForObject("RebateDetail.findUserTotalCommission", rebateDetailQuery);
     }
 
     @Override

@@ -18,12 +18,26 @@ public interface RebateDetailDao {
     long insert(RebateDetail rebateDetail);
 
     /**
+     * 根据订单号查询返利明细
+     * @param rebateDetailQuery
+     * @return
+     */
+    RebateDetail queryRebateDetailByOrderId(RebateDetailQuery rebateDetailQuery);
+
+    /**
      * 根据openid查询总数
      *
      * @param rebateDetailQuery
      * @return
      */
     int findCountByOpenId(RebateDetailQuery rebateDetailQuery);
+
+    /**
+     * 查询用户总佣金余额
+     * @param rebateDetailQuery
+     * @return
+     */
+    Double findUserTotalCommission(RebateDetailQuery rebateDetailQuery);
 
     /**
      * 根据id查询列表

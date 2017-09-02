@@ -19,7 +19,7 @@ public interface CommissionDao {
      * @param commission
      * @return
      */
-    long update(Commission commission);
+    long updateTotalCommission(Commission commission);
 
     /**
      * 根据openId查询

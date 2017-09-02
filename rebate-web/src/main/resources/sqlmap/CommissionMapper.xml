@@ -44,7 +44,7 @@
         </selectKey>
     </insert>
 
-    <update id="updateCommission" parameterClass="Commission" >
+    <update id="updateTotalCommission" parameterClass="Commission" >
         update commission
         set total_commission=#totalCommission#
         where open_id=#openId#
