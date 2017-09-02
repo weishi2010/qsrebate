@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @Service("rebateJob")
@@ -30,10 +33,14 @@ public class RebateJobImpl implements RebateJob {
 
     @Override
     public void importMediaOrder() {
-
+        SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHH");
         int page = 1;
         int pageSize = 100;
-        String queryTime = "";
+        //获取前一天的订单
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.add(Calendar.DAY_OF_WEEK,-1);
+        String queryTime = format.format(calendar.getTime());
         List<RebateDetail>  rebateDetails = jdSdkManager.getRebateDetails(queryTime,page,pageSize);
 
         for (RebateDetail rebateDetail:rebateDetails){
