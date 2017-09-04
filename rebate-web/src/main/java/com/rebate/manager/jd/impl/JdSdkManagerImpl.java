@@ -23,26 +23,30 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * {
- * "access_token": "b721dff3-cdf3-4e69-9245-aaf4c2e2e2e4",
- * "code": 0,
- * "expires_in": 31535999,
- * "refresh_token": "88c6a481-9f68-4df8-952c-c9769ef05c13",
- * "time": "1503844477453",
- * "token_type": "bearer",
- * "uid": "2298807957",
- * "user_nick": "yitong0524"
- * }
+ {
+ "access_token": "873049e9-749c-479e-9647-7e91e13eabcf",
+ "code": 0,
+ "expires_in": 31535999,
+ "refresh_token": "c97d6656-9d02-40d5-a59d-2ac26fa093e4",
+ "time": "1504537477085",
+ "token_type": "bearer",
+ "uid": "5730215537",
+ "user_nick": "bestcuitao"
+ }
  */
 @Component("jdSdkManager")
 public class JdSdkManagerImpl implements JdSdkManager {
     private static final Logger LOG = LoggerFactory.getLogger(JdSdkManagerImpl.class);
 
-    private static final String appKey = "58647A717120C93F2B509C79EE554B5C";
-    private static final String appSecret = "0490015803c14051bf4d5763e7cb3a06 ";
-    private static final String accessToken = "b721dff3-cdf3-4e69-9245-aaf4c2e2e2e4";
+    /**
+     * https://oauth.jd.com/oauth/authorize?response_type=code&client_id=BC2C0FCDA61E45DBE36E95D51E29543C&redirect_uri=http://www.jingcuhui.com&state=213
+     https://oauth.jd.com/oauth/token?grant_type=authorization_code&client_id=BC2C0FCDA61E45DBE36E95D51E29543C&redirect_uri=http://www.jingcuhui.com&code=yjEswj&state=213&client_secret=d253bb1c493344c5aa337ff917cfd46b
+     */
+    private static final String appKey = "BC2C0FCDA61E45DBE36E95D51E29543C";
+    private static final String appSecret = "d253bb1c493344c5aa337ff917cfd46b";
+    private static final String accessToken = "873049e9-749c-479e-9647-7e91e13eabcf";
     private static final String apiUrl = "https://api.jd.com/routerjson";
-    private static final Long unionId = 23311026l;
+    private static final Long unionId = 23311026l;//黔ICP备15015084号-2
 
 
     private static final TypeReference<List<Map>> mapTypeReference = new TypeReference<List<Map>>() {

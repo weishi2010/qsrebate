@@ -48,7 +48,7 @@ public class ExtractDetailServiceImpl implements ExtractDetailService {
                 Commission commissionUpdate = new Commission();
                 commissionUpdate.setOpenId(extractDetail.getOpenId());
                 commissionUpdate.setTotalCommission(totalCommission);
-                commissionDao.update(commissionUpdate);
+                commissionDao.updateTotalCommission(commissionUpdate);
             }else{
                 code = EExtractCode.LACK_BALANCE;
             }
