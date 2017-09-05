@@ -46,7 +46,7 @@ public class JdSdkManagerImpl implements JdSdkManager {
     private static final String appSecret = "d253bb1c493344c5aa337ff917cfd46b";
     private static final String accessToken = "873049e9-749c-479e-9647-7e91e13eabcf";
     private static final String apiUrl = "https://api.jd.com/routerjson";
-    private static final Long unionId = 23311026l;//黔ICP备15015084号-2
+    private static final Long unionId = 1000062434l;//黔ICP备15015084号-2
 
 
     private static final TypeReference<List<Map>> mapTypeReference = new TypeReference<List<Map>>() {
@@ -97,7 +97,7 @@ public class JdSdkManagerImpl implements JdSdkManager {
         List<RebateDetail> list = new ArrayList<>();
         String json = getQueryImportOrdersResult(queryTime, page, pageSize);
         JSONObject resultObj = JsonUtil.fromJson(json, JSONObject.class);
-        if (null != resultObj && resultObj.getBoolean("success")) {
+        if (null != resultObj && 1==resultObj.getInt("success")) {
             String resultJson = resultObj.getString("result");
         }
         System.out.println("json:" + json);
@@ -145,14 +145,14 @@ public class JdSdkManagerImpl implements JdSdkManager {
             UnionServiceQueryImportOrdersRequest request = new UnionServiceQueryImportOrdersRequest();
 
             request.setUnionId(unionId);
-            request.setTime("jingdong");
+            request.setTime(queryTime);
             request.setPageIndex(page);
             request.setPageSize(pageSize);
 
             UnionServiceQueryImportOrdersResponse response = client.execute(request);
             json = response.getQueryImportOrdersResult();
         } catch (Exception e) {
-            LOG.error("[查询引入订单]调用异常!");
+            LOG.error("[查询引入订单]调用异常!",e);
         }
         return json;
     }
