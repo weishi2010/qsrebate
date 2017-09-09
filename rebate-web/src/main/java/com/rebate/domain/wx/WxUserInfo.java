@@ -33,7 +33,7 @@ public class WxUserInfo {
 
     @Getter
     @Setter
-    private String COUNTRY;
+    private String country;
 
     @Getter
     @Setter

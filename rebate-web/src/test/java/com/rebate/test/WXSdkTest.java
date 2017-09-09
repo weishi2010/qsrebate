@@ -53,6 +53,9 @@ public class WXSdkTest extends AbstractJUnit4SpringContextTests {
         System.out.println("authorizationCodeInfo:"+authorizationCodeInfo);
     }
 
+    /**
+     * {"openid":"oIAUmv8x60aC5B7FrxVy8Z9-imyY","nickname":"wsh","sex":1,"language":"zh_CN","city":"Chaoyang","province":"Beijing","country":"CN","headimgurl":"http:\/\/wx.qlogo.cn\/mmopen\/vi_32\/DYAIOgq83eqpJdBmwaEgG5QfqPAyxvUBtEtPmeoIP9Zmmxkic8EJvKUXj9FjUAoMwnvb0KySL7NMPJXc6Kic4lOQ\/0","privilege":[]}
+     */
     @Test
     public void getWXUserInfo(){
         Map<String, String> params = new HashMap<String, String>();
