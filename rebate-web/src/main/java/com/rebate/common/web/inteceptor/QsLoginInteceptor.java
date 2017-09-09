@@ -2,12 +2,14 @@
 package com.rebate.common.web.inteceptor;
 
 import com.rebate.common.util.CookieUtils;
+import com.rebate.common.util.JsonUtil;
 import com.rebate.common.util.RequestUtils;
 import com.rebate.dao.UserInfoDao;
 import com.rebate.domain.UserInfo;
 import com.rebate.domain.wx.WxConfig;
 import com.rebate.domain.wx.WxUserInfo;
 import com.rebate.service.wx.WxAccessTokenService;
+import net.sf.json.util.JSONUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
 import org.slf4j.Logger;
@@ -84,6 +86,7 @@ public class QsLoginInteceptor extends LoginInteceptor {
 
         String path = request.getServletPath();
         if (!path.startsWith(staticResourcePath)) {
+
             response.setHeader("Pragma", "No-cache");
             response.setHeader("Cache-Control", "no-cache");
             response.setHeader("Cache-Control", "no-store");
@@ -97,13 +100,14 @@ public class QsLoginInteceptor extends LoginInteceptor {
 //        String path = request.getServletPath();
 
         String openId = cookieUtils.getQsCookieValue(request, QS_USER_OPENID_COOKIE_NAME);
-        openId ="weishi2010";//TODO WX授权后删除此代码
+//        openId ="weishi2010";//TODO WX授权后删除此代码
         if (StringUtils.isBlank(openId)) {
             //获取WX登录code
             String loginCode = getWxLoginCode(request, response);
             if (StringUtils.isNotBlank(loginCode)) {
                 //获取用户信息
                 WxUserInfo wxUserInfo = wxAccessTokenService.getWxUserInfo(loginCode);
+                LOG.error("wxUserInfo:"+ JsonUtil.toJson(wxUserInfo));
                 if (null != wxUserInfo) {
                     //将openId写入到cookie
                     cookieUtils.setCookie(response, QS_USER_OPENID_COOKIE_NAME, wxUserInfo.getOpenid());

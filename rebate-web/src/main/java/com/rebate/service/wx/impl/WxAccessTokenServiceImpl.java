@@ -59,7 +59,7 @@ public class WxAccessTokenServiceImpl implements WxAccessTokenService {
         params.put("code",code);
         params.put("grant_type", "authorization_code");
 
-        String json = HttpClientUtil.get(wxConfig.getAccessTokenUrl(), params);
+        String json = HttpClientUtil.get(wxConfig.getAccessTokenUrl()+"?appid="+wxConfig.getAppId()+"&secret="+wxConfig.getAppSecret()+"&code="+code+"&grant_type=authorization_code");
         AuthorizationCodeInfo authorizationCodeInfo = null;
         if (json.contains("access_token")) {
              authorizationCodeInfo = JsonUtil.fromJson(json,AuthorizationCodeInfo.class);
