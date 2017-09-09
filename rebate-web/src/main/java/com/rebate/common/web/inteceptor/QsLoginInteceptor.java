@@ -107,7 +107,7 @@ public class QsLoginInteceptor extends LoginInteceptor {
             if (StringUtils.isNotBlank(loginCode)) {
                 //获取用户信息
                 WxUserInfo wxUserInfo = wxAccessTokenService.getWxUserInfo(loginCode);
-                LOG.error("wxUserInfo:"+ JsonUtil.toJson(wxUserInfo));
+                LOG.error("wxUserInfo:" + JsonUtil.toJson(wxUserInfo));
                 if (null != wxUserInfo) {
                     //将openId写入到cookie
                     cookieUtils.setCookie(response, QS_USER_OPENID_COOKIE_NAME, wxUserInfo.getOpenid());
@@ -117,7 +117,7 @@ public class QsLoginInteceptor extends LoginInteceptor {
                 redirect2WxAuthorizePage(request, response);
             }
         } else {
-            cookieUtils.setCookie(response, QS_USER_OPENID_COOKIE_NAME,openId);
+            cookieUtils.setCookie(response, QS_USER_OPENID_COOKIE_NAME, openId);
             UserInfo userInfo = new UserInfo();
             userInfo.setOpenId(openId);
             UserInfo existsUserInfo = userInfoDao.findLoginUserInfo(userInfo);
@@ -143,16 +143,7 @@ public class QsLoginInteceptor extends LoginInteceptor {
      */
     private String getWxLoginCode(HttpServletRequest request, HttpServletResponse response) {
         //获取WX登录code
-        String loginCode = cookieUtils.getQsCookieValue(request, WX_LOGIN_CODE_COOKIE_NAME);
-        if (StringUtils.isBlank(loginCode)) {
-            //COOKIE中没有则从URL中获取，授权跳转后则从URL参数中获取
-            loginCode = request.getParameter("code");
-            if (StringUtils.isNotBlank(loginCode)) {
-                //设置到cookie中
-                cookieUtils.setCookie(response, WX_LOGIN_CODE_COOKIE_NAME, loginCode);
-            }
-        }
-
+        String loginCode = request.getParameter("code");
         return loginCode;
     }
 
