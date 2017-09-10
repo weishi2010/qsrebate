@@ -103,6 +103,13 @@
 					<property name="key" value="QIUSNHYAGHSNEIJAMYEFHQLRIHFADCHE" />
 					<property name="path" value="/" />
 				</bean>
+				<bean class="com.rebate.common.web.cookie.QxCookie">
+					<property name="cookieCipherTools" ref="cookieCipherTools"/>
+					<property name="encrypt" value="true" />
+					<property name="name" value="u_i_o" />
+					<property name="key" value="QIUSNHYAGHSNEIJAMYEFHQLRIHFADCHE" />
+					<property name="path" value="/" />
+				</bean>
 			</list>
 		</constructor-arg>
 	</bean>

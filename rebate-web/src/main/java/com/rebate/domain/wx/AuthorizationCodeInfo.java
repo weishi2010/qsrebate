@@ -1,13 +1,15 @@
 package com.rebate.domain.wx;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
+import org.codehaus.jackson.annotate.JsonProperty;
+
+import java.io.Serializable;
 
 /**
  * 用户授权结果信息
  */
-public class AuthorizationCodeInfo {
+public class AuthorizationCodeInfo implements Serializable{
     /**
      * 网页授权接口调用凭证,注意：此access_token与基础支持的access_token不同
      */
@@ -19,7 +21,7 @@ public class AuthorizationCodeInfo {
     /**
      * 用户唯一标识，请注意，在未关注公众号时，用户访问公众号的网页，也会产生一个用户和公众号唯一的OpenID
      */
-    @JsonProperty("open_id")
+    @JsonProperty("openid")
     @Getter
     @Setter
     private String openId;
