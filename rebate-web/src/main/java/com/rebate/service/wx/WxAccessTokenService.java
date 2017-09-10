@@ -38,9 +38,10 @@ public interface WxAccessTokenService {
 
     /**
      * 登录授权code
-     * @param code
+     * @param accessToken
+     * @param openId
      * @return
      */
-    WxUserInfo getWxUserInfo(String code) ;
+    WxUserInfo getWxUserInfo(String accessToken,String openId) ;
 
 } 

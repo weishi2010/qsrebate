@@ -99,7 +99,7 @@
 				<bean class="com.rebate.common.web.cookie.QxCookie">
 					<property name="cookieCipherTools" ref="cookieCipherTools"/>
 					<property name="encrypt" value="true" />
-					<property name="name" value="QS_O_C" />
+					<property name="name" value="WX_T_C" />
 					<property name="key" value="QIUSNHYAGHSNEIJAMYEFHQLRIHFADCHE" />
 					<property name="path" value="/" />
 				</bean>

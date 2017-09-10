@@ -17,7 +17,7 @@
 		<param name="Encoding" value="GBK" />
 		<param name="DatePattern" value="'.'yyyy-MM-dd" />
 		<param name="Append" value="true" />
-		<param name="file" value="/export/Logs/qingsongfanqian.com/rebate.log" />
+		<param name="file" value="/export/Logs/m.qsrebate.com/rebate.log" />
 		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern" value="[%d{ABSOLUTE}] %7r %6p - %.65c - %m%n" />
 		</layout>

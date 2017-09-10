@@ -72,13 +72,11 @@ public class WxAccessTokenServiceImpl implements WxAccessTokenService {
 
 
     @Override
-    public WxUserInfo getWxUserInfo(String code) {
+    public WxUserInfo getWxUserInfo(String accessToken,String openId) {
         WxUserInfo wxUserInfo = null;
-        AuthorizationCodeInfo authorizationCodeInfo = getLoginAccessToken(code);
-
         Map<String, String> params = new HashMap<String, String>();
-        params.put("access_token", authorizationCodeInfo.getAccessToken());
-        params.put("openid",authorizationCodeInfo.getOpenId());
+        params.put("access_token", accessToken);
+        params.put("openid",openId);
 
         String json = HttpClientUtil.get(wxConfig.getUserInfoUrl(), params);
         if (json.contains("openid")) {

@@ -1,6 +1,7 @@
 package com.rebate.service.userinfo.impl;
 
 import com.rebate.dao.CommissionDao;
+import com.rebate.dao.UserInfoDao;
 import com.rebate.domain.Commission;
 import com.rebate.domain.UserInfo;
 import com.rebate.service.userinfo.UserInfoService;
@@ -14,6 +15,15 @@ public class UserInfoServiceImpl implements UserInfoService {
     @Qualifier("commissionDao")
     @Autowired(required = true)
     private CommissionDao commissionDao;
+
+    @Qualifier("userInfoDao")
+    @Autowired(required = true)
+    private UserInfoDao userInfoDao;
+
+    @Override
+    public void registUserInfo(UserInfo userInfo) {
+        userInfoDao.insert(userInfo);
+    }
 
     @Override
     public UserInfo getUserInfo(String openId) {

@@ -9,6 +9,9 @@ import com.rebate.common.util.HttpClientUtil;
 import com.rebate.common.util.JsonUtil;
 import com.rebate.domain.wx.AuthorizationCodeInfo;
 import com.rebate.domain.wx.WxConfig;
+import com.rebate.domain.wx.WxUserInfo;
+import com.rebate.service.wx.WxAccessTokenService;
+import net.sf.json.JSON;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,24 +34,16 @@ public class WXSdkTest extends AbstractJUnit4SpringContextTests {
     /**
      * 微信公众号接口配置
      */
-    @Qualifier("wxConfig")
+    @Qualifier("wxAccessTokenService")
     @Autowired(required = true)
-    private WxConfig wxConfig;
+    private WxAccessTokenService wxAccessTokenService;
 
     @Test
     public void getAccessTokenUrl() {
         String code = "021Og2pc1M3Jtr03i8oc1NUNoc1Og2p1";
-//        String json = HttpClientUtil.get("https://api.weixin.qq.com/sns/oauth2/access_token?appid=wxa460b41c4d7421f0&secret=f6855bc575fc656f0c77f8f46cf624da&code=021Og2pc1M3Jtr03i8oc1NUNoc1Og2p1&grant_type=authorization_code");
-
-        String url = wxConfig.getAccessTokenUrl() + "?appid=" + wxConfig.getAppId() + "&secret=" + wxConfig.getAppSecret() + "&code=" + code + "&grant_type=authorization_code";
-        System.out.println("https://api.weixin.qq.com/sns/oauth2/access_token?appid=wxa460b41c4d7421f0&secret=f6855bc575fc656f0c77f8f46cf624da&code=021Og2pc1M3Jtr03i8oc1NUNoc1Og2p1&grant_type=authorization_code");
-        System.out.println(url);
-        String json = HttpClientUtil.get(url);
-        AuthorizationCodeInfo authorizationCodeInfo = null;
-        if (json.contains("access_token")) {
-            authorizationCodeInfo = JsonUtil.fromJson(json, AuthorizationCodeInfo.class);
-        } else {
-            System.out.println("get access_token error!json:" + json);
+        AuthorizationCodeInfo authorizationCodeInfo = wxAccessTokenService.getLoginAccessToken(code);
+        if (null==authorizationCodeInfo) {
+            System.out.println("authorizationCodeInfo:" + JsonUtil.toJson(authorizationCodeInfo));
         }
         System.out.println("authorizationCodeInfo:"+authorizationCodeInfo);
     }
@@ -58,12 +53,10 @@ public class WXSdkTest extends AbstractJUnit4SpringContextTests {
      */
     @Test
     public void getWXUserInfo(){
-        Map<String, String> params = new HashMap<String, String>();
-        params.put("access_token", "T1zYOY10swUIMzqV5isSGxKj_aDx8hnMD7ZdXt7iuVPu66xmxzaoYBJXU5D_cJ5tT1bkYn_8vUSqzkOBPmz-GQ");
-        params.put("openid","oIAUmv8x60aC5B7FrxVy8Z9-imyY");
-
-        String json = HttpClientUtil.get(wxConfig.getUserInfoUrl(), params);
-        System.out.println(json);
+        String accessToken = "T1zYOY10swUIMzqV5isSGxKj_aDx8hnMD7ZdXt7iuVPu66xmxzaoYBJXU5D_cJ5tT1bkYn_8vUSqzkOBPmz-GQ";
+        String openId ="oIAUmv8x60aC5B7FrxVy8Z9";
+        WxUserInfo wxUserInfo = wxAccessTokenService.getWxUserInfo(accessToken,openId);
+        System.out.println(wxUserInfo);
     }
 
     public static void main(String[] args) throws Exception {

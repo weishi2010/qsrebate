@@ -4,6 +4,8 @@ import com.rebate.domain.Commission;
 import com.rebate.domain.UserInfo;
 
 public interface UserInfoService {
+
+    void registUserInfo(UserInfo userInfo);
     /**
      * 查询用户信息
      * @param openId

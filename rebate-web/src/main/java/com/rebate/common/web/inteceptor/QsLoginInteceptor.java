@@ -6,9 +6,12 @@ import com.rebate.common.util.JsonUtil;
 import com.rebate.common.util.RequestUtils;
 import com.rebate.dao.UserInfoDao;
 import com.rebate.domain.UserInfo;
+import com.rebate.domain.wx.AuthorizationCodeInfo;
 import com.rebate.domain.wx.WxConfig;
 import com.rebate.domain.wx.WxUserInfo;
+import com.rebate.service.userinfo.UserInfoService;
 import com.rebate.service.wx.WxAccessTokenService;
+import freemarker.template.utility.StringUtil;
 import net.sf.json.util.JSONUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
@@ -37,13 +40,9 @@ public class QsLoginInteceptor extends LoginInteceptor {
     private static String LOGIN_OPEN_ID = "wx_openId";
 
     /**
-     * WX授权登录code
+     * WX授权accessToken Cookie
      */
-    private static String WX_LOGIN_CODE_COOKIE_NAME = "WX_LOGIN_CODE";
-    /**
-     * WX用户openId 登录后写入cookie的名称
-     */
-    private static String QS_USER_OPENID_COOKIE_NAME = "QS_O_C";
+    private static String WX_ACCESSTOKEN_COOKIE = "WX_T_C";
 
     /**
      * 用户信息
@@ -61,9 +60,9 @@ public class QsLoginInteceptor extends LoginInteceptor {
     @Autowired(required = false)
     private WxAccessTokenService wxAccessTokenService;
 
-    @Qualifier("userInfoDao")
+    @Qualifier("userInfoService")
     @Autowired(required = false)
-    private UserInfoDao userInfoDao;
+    private UserInfoService userInfoService;
 
     private String loginUrl;
 
@@ -97,40 +96,46 @@ public class QsLoginInteceptor extends LoginInteceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-//        String path = request.getServletPath();
-
-        String openId = cookieUtils.getQsCookieValue(request, QS_USER_OPENID_COOKIE_NAME);
-//        openId ="weishi2010";//TODO WX授权后删除此代码
-        if (StringUtils.isBlank(openId)) {
+        AuthorizationCodeInfo authorizationCodeInfo = null;
+        String cookieValue = cookieUtils.getQsCookieValue(request, WX_ACCESSTOKEN_COOKIE);
+        if (StringUtils.isNotBlank(cookieValue)) {
+            authorizationCodeInfo = JsonUtil.fromJson(cookieValue, AuthorizationCodeInfo.class);
+        } else {
             //获取WX登录code
             String loginCode = getWxLoginCode(request, response);
             if (StringUtils.isNotBlank(loginCode)) {
-                //获取用户信息
-                WxUserInfo wxUserInfo = wxAccessTokenService.getWxUserInfo(loginCode);
-                LOG.error("wxUserInfo:" + JsonUtil.toJson(wxUserInfo));
-                if (null != wxUserInfo) {
-                    //将openId写入到cookie
-                    cookieUtils.setCookie(response, QS_USER_OPENID_COOKIE_NAME, wxUserInfo.getOpenid());
-                }
-            } else {
-                //转跳到WX授权页，用户授权后回跳到当前应用链接并附带code参数
-                redirect2WxAuthorizePage(request, response);
+                authorizationCodeInfo = wxAccessTokenService.getLoginAccessToken(loginCode);
             }
+        }
+        if (null == authorizationCodeInfo) {
+            //转跳到WX授权页，用户授权后回跳到当前应用链接并附带code参数
+            redirect2WxAuthorizePage(request, response);
+        }
+        LOG.error("authorizationCodeInfo:"+JsonUtil.toJson(authorizationCodeInfo));
+
+        UserInfo userInfo = userInfoService.getUserInfo(authorizationCodeInfo.getOpenId());
+        if (null == userInfo) {
+            WxUserInfo wxUserInfo = wxAccessTokenService.getWxUserInfo(authorizationCodeInfo.getAccessToken(), authorizationCodeInfo.getOpenId());
+            LOG.error("wxUserInfo:" + JsonUtil.toJson(wxUserInfo));
+            if (null != wxUserInfo) {
+                userInfo = new UserInfo();
+                userInfo.setPhone("");
+                userInfo.setNickName(wxUserInfo.getNickname());
+                userInfo.setOpenId(wxUserInfo.getOpenid());
+                userInfo.setStatus(0);
+                userInfo.setEmail("");
+                userInfo.setWxImage(wxUserInfo.getHeadimgurl());
+                userInfoService.registUserInfo(userInfo);
+            }
+        }
+
+        if (null != userInfo) {
+            request.setAttribute(USERINFO, userInfo);
         } else {
-            cookieUtils.setCookie(response, QS_USER_OPENID_COOKIE_NAME, openId);
-            UserInfo userInfo = new UserInfo();
-            userInfo.setOpenId(openId);
-            UserInfo existsUserInfo = userInfoDao.findLoginUserInfo(userInfo);
-            if (null != existsUserInfo) {
-                request.setAttribute(USERINFO, existsUserInfo);
-            }
+            //没有用户信息则跳转到wx登录
+            redirect2WxAuthorizePage(request, response);
         }
 
-        if (StringUtils.isNotBlank(openId)) {
-            //设置到request中
-            request.setAttribute(LOGIN_OPEN_ID, openId);
-
-        }
         return true;
     }
 
