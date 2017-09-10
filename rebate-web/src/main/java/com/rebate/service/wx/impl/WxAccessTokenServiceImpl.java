@@ -43,7 +43,7 @@ public class WxAccessTokenServiceImpl implements WxAccessTokenService {
             //获取accessToken
              authorizationCodeInfo  = getWxLoginAccessToken(loginCode);
         } catch (Exception e) {
-            LOG.error("获取redis微信token",e);
+            LOG.error("[getLoginAccessToken]获取redis微信token异常!loginCode:"+loginCode,e);
         }
         return authorizationCodeInfo;
     }
@@ -60,11 +60,12 @@ public class WxAccessTokenServiceImpl implements WxAccessTokenService {
         params.put("grant_type", "authorization_code");
 
         String json = HttpClientUtil.get(wxConfig.getAccessTokenUrl()+"?appid="+wxConfig.getAppId()+"&secret="+wxConfig.getAppSecret()+"&code="+code+"&grant_type=authorization_code");
+        LOG.error("[getWxLoginAccessToken]===================>json:json");
         AuthorizationCodeInfo authorizationCodeInfo = null;
         if (json.contains("access_token")) {
              authorizationCodeInfo = JsonUtil.fromJson(json,AuthorizationCodeInfo.class);
         } else {
-            LOG.error("get access_token error!json:" +json);
+            LOG.error("get access_token error!json:{},code:{}" ,json,code);
         }
         return authorizationCodeInfo;
     }

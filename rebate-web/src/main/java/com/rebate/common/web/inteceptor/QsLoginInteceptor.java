@@ -110,13 +110,14 @@ public class QsLoginInteceptor extends LoginInteceptor {
         if (null == authorizationCodeInfo) {
             //转跳到WX授权页，用户授权后回跳到当前应用链接并附带code参数
             redirect2WxAuthorizePage(request, response);
+            return false;
         }
-        LOG.error("authorizationCodeInfo:"+JsonUtil.toJson(authorizationCodeInfo));
+        LOG.error("===================>authorizationCodeInfo:"+JsonUtil.toJson(authorizationCodeInfo));
 
         UserInfo userInfo = userInfoService.getUserInfo(authorizationCodeInfo.getOpenId());
         if (null == userInfo) {
             WxUserInfo wxUserInfo = wxAccessTokenService.getWxUserInfo(authorizationCodeInfo.getAccessToken(), authorizationCodeInfo.getOpenId());
-            LOG.error("wxUserInfo:" + JsonUtil.toJson(wxUserInfo));
+            LOG.error("===================>wxUserInfo:" + JsonUtil.toJson(wxUserInfo));
             if (null != wxUserInfo) {
                 userInfo = new UserInfo();
                 userInfo.setPhone("");
@@ -131,9 +132,6 @@ public class QsLoginInteceptor extends LoginInteceptor {
 
         if (null != userInfo) {
             request.setAttribute(USERINFO, userInfo);
-        } else {
-            //没有用户信息则跳转到wx登录
-            redirect2WxAuthorizePage(request, response);
         }
 
         return true;
@@ -168,7 +166,6 @@ public class QsLoginInteceptor extends LoginInteceptor {
         String currentUrl = RequestUtils.getDomainUrl(request);
         String encodeCurrentUrl = "";
         try {
-            LOG.error("currentUrl:" + currentUrl);
             encodeCurrentUrl = RequestUtils.encode(currentUrl, charsetName);
 
         } catch (Exception e) {
