@@ -100,10 +100,11 @@ public class QsLoginInteceptor extends LoginInteceptor {
         UserInfo userInfo = null;
         String userInfoCookieValue = cookieUtils.getQsCookieValue(request, USERINFO_COOKIE);
 
+        LOG.error("===================>userInfoCookieValue:" + userInfoCookieValue);
         if (StringUtils.isNotBlank(userInfoCookieValue)) {
-            LOG.error("===================>userInfoCookieValue:" + userInfoCookieValue);
             userInfo = JsonUtil.fromJson(userInfoCookieValue, UserInfo.class);
         } else {
+            //获取accessToken
             AuthorizationCodeInfo authorizationCodeInfo = null;
             String cookieValue = cookieUtils.getQsCookieValue(request, WX_ACCESSTOKEN_COOKIE);
             if (StringUtils.isNotBlank(cookieValue)) {
@@ -122,12 +123,10 @@ public class QsLoginInteceptor extends LoginInteceptor {
                     cookieUtils.setCookie(response, WX_ACCESSTOKEN_COOKIE, JsonUtil.toJson(authorizationCodeInfo));
                 }
             }
-            LOG.error("===================>authorizationCodeInfo:" + JsonUtil.toJson(authorizationCodeInfo));
-
+            //查询是否已存在此用户
             userInfo = userInfoService.getUserInfo(authorizationCodeInfo.getOpenId());
             if (null == userInfo) {
                 WxUserInfo wxUserInfo = wxAccessTokenService.getWxUserInfo(authorizationCodeInfo.getAccessToken(), authorizationCodeInfo.getOpenId());
-                LOG.error("===================>wxUserInfo:" + JsonUtil.toJson(wxUserInfo));
                 if (null != wxUserInfo) {
                     userInfo = new UserInfo();
                     userInfo.setPhone("");
@@ -139,10 +138,22 @@ public class QsLoginInteceptor extends LoginInteceptor {
                     userInfoService.registUserInfo(userInfo);
                 }
             }
+
+            //设置cookie
+            if (null != userInfo) {
+                LOG.error("[set cookie]===================>userInfo:" + JsonUtil.toJson(userInfo));
+
+                cookieUtils.setCookie(response, USERINFO_COOKIE, JsonUtil.toJson(userInfo));
+                String cv = cookieUtils.getQsCookieValue(request, USERINFO_COOKIE);
+                LOG.error("[set cookie]===================>cv:" +cv);
+
+            }
         }
+
+        LOG.error("===================>userInfo:" + JsonUtil.toJson(userInfo));
+
         if (null != userInfo) {
             request.setAttribute(USERINFO, userInfo);
-            cookieUtils.setCookie(response, USERINFO_COOKIE, JsonUtil.toJson(userInfo));
         }
 
         return true;
@@ -183,7 +194,7 @@ public class QsLoginInteceptor extends LoginInteceptor {
             LOG.error("RequestUtils.encodeCurrentUrl error!! {}:", new Object[]{currentUrl, charsetName}, e);
         }
         String log = getWxReturnUrl(encodeCurrentUrl);
-        LOG.error("wxReturnUrl:" + log);
+        LOG.error("[redirect2WxAuthorizePage]####################>returnUrl:" + log);
 
         response.sendRedirect(log);
     }

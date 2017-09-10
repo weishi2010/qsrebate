@@ -3,12 +3,13 @@ package com.rebate.domain;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * 用户信息
  */
-public class UserInfo {
+public class UserInfo implements Serializable{
 
     /**
      * 主键

@@ -78,6 +78,7 @@ public class CookieUtils {
         if (this.cookieMap != null && this.cookieMap.containsKey(name)) {
             QxCookie qxCookie = (QxCookie)this.cookieMap.get(name);
             Cookie cookie = qxCookie.newCookie(value);
+            cookie.setMaxAge(10000000);
             servletResponse.addCookie(cookie);
         } else {
             throw new RuntimeException("Cookie " + name + " is undefined!");

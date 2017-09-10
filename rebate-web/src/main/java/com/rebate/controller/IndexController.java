@@ -1,5 +1,7 @@
 package com.rebate.controller;
 
+import com.rebate.common.util.CookieUtils;
+import com.rebate.common.util.JsonUtil;
 import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.controller.base.BaseController;
 import com.rebate.domain.CategoryQuery;
@@ -31,6 +33,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -71,9 +74,22 @@ public class IndexController extends BaseController {
     @Autowired(required = true)
     private ExtractDetailService extractDetailService;
 
+    @Qualifier("cookieUtils")
+    @Autowired(required = true)
+    private CookieUtils cookieUtils;
+
+    /**
+     * 用户信息COOKIE
+     */
+    private static String USERINFO_COOKIE = "u_i_o";
+
     @RequestMapping({"", "/", "/index"})
-    public ModelAndView index(HttpServletRequest request) {
+    public ModelAndView index(HttpServletRequest request, HttpServletResponse response) {
         ModelAndView view = new ModelAndView(PREFIX + "/index");
+
+        cookieUtils.setCookie(response, "test_ws", "testetsets");
+        String cv = cookieUtils.getQsCookieValue(request, "test_ws");
+        System.out.println(cv);
         return view;
     }
 

@@ -80,7 +80,6 @@ public class WxAccessTokenServiceImpl implements WxAccessTokenService {
         params.put("openid",openId);
 
         String json = HttpClientUtil.get(wxConfig.getUserInfoUrl(), params);
-        LOG.error("[getWxUserInfo]===================>json:"+json);
 
         if (json.contains("openid")) {
             wxUserInfo = JsonUtil.fromJson(json,WxUserInfo.class);

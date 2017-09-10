@@ -27,13 +27,20 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     @Override
     public UserInfo getUserInfo(String openId) {
-        return null;
+        UserInfo userInfo = new UserInfo();
+        userInfo.setOpenId(openId);
+        return userInfoDao.findLoginUserInfo(userInfo);
     }
 
     @Override
     public Commission getUserCommission(String openId) {
-        Commission commission = new Commission();
-        commission.setOpenId(openId);
-        return commissionDao.findCommissionByOpenId(commission);
+        Commission query = new Commission();
+        query.setOpenId(openId);
+        Commission commission  = commissionDao.findCommissionByOpenId(query);
+        if(null==commission){
+            commission = new Commission();
+            commission.setTotalCommission(0.0);
+        }
+        return commission;
     }
 }
