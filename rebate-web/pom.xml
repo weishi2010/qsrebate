@@ -226,6 +226,11 @@
             <groupId>net.sf.morph</groupId>
             <artifactId>morph</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
