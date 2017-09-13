@@ -19,7 +19,8 @@
         <result property="thirdCategoryName" column="third_category_name"/>
         <result property="originalPrice" column="original_price"/>
         <result property="stock" column="stock"/>
-        <result property="commissionRatio" column="commission_ratio"/>
+        <result property="commissionRatioPc" column="commission_ratio_wl"/>
+        <result property="commissionRatioWl" column="commission_ratio_pc"/>
         <result property="productType" column="product_type"/>
         <result property="distribution" column="distribution"/>
         <result property="status" column="status"/>
@@ -39,7 +40,8 @@
         third_category_name,
         original_price,
         stock,
-        commission_ratio,
+        commission_ratio_pc,
+        commission_ratio_wl,
         product_type,
         distribution,
         status,
@@ -82,7 +84,8 @@
         third_category_name,
         original_price,
         stock,
-        commission_ratio,
+        commission_ratio_pc,
+        commission_ratio_wl,
         product_type,
         distribution,
         status,
@@ -101,7 +104,8 @@
         #thirdCategoryName#,
         #originalPrice#,
         #stock#,
-        #commissionRatio#,
+        #commissionRatioPc#,
+        #commissionRatioWl#,
         #productType#,
         #distribution#,
         #status#,

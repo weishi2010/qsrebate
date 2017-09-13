@@ -3,7 +3,7 @@
 	xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
     http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd"
-	default-autowire="byName" default-lazy-init="false">
+	 default-lazy-init="false">
 
 	<bean id="topicJobTimer" class="org.springframework.scheduling.quartz.CronTriggerBean">
 		<property name="jobDetail">
@@ -19,6 +19,23 @@
 		</property>
 		<property name="cronExpression">
 			<value>0 0/2 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="importProductJobTimer" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="concurrent" value="false"></property>
+				<property name="targetObject">
+					<ref bean="rebateJob" />
+				</property>
+				<property name="targetMethod">
+					<value>importMediaThemeProducts</value>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>0/1 * * * * ?</value>
 		</property>
 	</bean>
 </beans>

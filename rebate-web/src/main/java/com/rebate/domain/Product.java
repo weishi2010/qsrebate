@@ -99,18 +99,31 @@ public class Product extends BaseQuery {
     private Integer stock;
 
     /**
-     * 佣金比例
+     * 移动佣金比例
      */
     @Getter
     @Setter
-    private Double commissionRatio;
+    private Double commissionRatioWl;
 
     /**
-     * 佣金
+     * PC佣金比例
      */
     @Getter
     @Setter
-    private Double commission;
+    private Double commissionRatioPc;
+
+    /**
+     * PC佣金
+     */
+    @Getter
+    @Setter
+    private Double commissionPc;
+    /**
+    * 移动佣金
+    */
+    @Getter
+    @Setter
+    private Double commissionWl;
 
     /**
      * 商品类型

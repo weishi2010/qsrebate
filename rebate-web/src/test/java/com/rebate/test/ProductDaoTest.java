@@ -68,4 +68,9 @@ public class ProductDaoTest extends AbstractJUnit4SpringContextTests {
         List list = jdSdkManager.getMediaCouponProducts(1,10);
         System.out.println("list:"+JsonUtil.toJson(list));
     }
+    @Test
+    public void testGetMediaThemeProducts(){
+        List list = jdSdkManager.getMediaThemeProducts(1,10);
+        System.out.println("list:"+JsonUtil.toJson(list));
+    }
 }

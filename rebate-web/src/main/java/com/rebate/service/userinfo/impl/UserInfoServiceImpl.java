@@ -79,10 +79,14 @@ public class UserInfoServiceImpl implements UserInfoService {
      */
     private UserInfo getUserInfoCache(String openId) {
         UserInfo userInfo = null;
-        //设置到缓存
-        String json = redisUtil.get(RedisKey.USER_INFO.getPrefix(openId));
-        if (StringUtils.isNotBlank(json)) {
-            userInfo = JsonUtil.fromJson(json, UserInfo.class);
+        try {
+            //设置到缓存
+            String json = redisUtil.get(RedisKey.USER_INFO.getPrefix(openId));
+            if (StringUtils.isNotBlank(json)) {
+                userInfo = JsonUtil.fromJson(json, UserInfo.class);
+            }
+        } catch (Exception e) {
+            LOG.error("getUserInfoCache error!openId:{}", openId);
         }
         return userInfo;
     }
@@ -93,7 +97,11 @@ public class UserInfoServiceImpl implements UserInfoService {
      * @param userInfo
      */
     private void setUserInfoCache(UserInfo userInfo) {
-        //设置到缓存
-        redisUtil.set(RedisKey.USER_INFO.getPrefix(userInfo.getOpenId()), JsonUtil.toJson(userInfo), RedisKey.USER_INFO.getTimeout());
+        try {
+            //设置到缓存
+            redisUtil.set(RedisKey.USER_INFO.getPrefix(userInfo.getOpenId()), JsonUtil.toJson(userInfo), RedisKey.USER_INFO.getTimeout());
+        } catch (Exception e) {
+            LOG.error("setUserInfoCache error!userInfo:{}", JsonUtil.toJson(userInfo));
+        }
     }
 }

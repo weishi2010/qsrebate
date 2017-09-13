@@ -56,16 +56,16 @@ public class JdMediaProductGrapUtil {
                 List<Element> imgElements = GrabUtils.evaluatesXPath2(element, PRDUCT_IMG_XPATH);
                 product.setImgUrl(imgElements.get(0).attribute("src").getValue());
 
-                //佣金比例
-                String commissionRate = GrabUtils.getValueByEvaluateXPath2(element, COMMISSION_RATE_XPATH);
-                product.setCommissionRatio(Double.parseDouble(commissionRate.replace("%", "")) / 100);
-                product.setCommissionRatio(new BigDecimal(product.getCommissionRatio()).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
-                //原价
-                String originalPrice = GrabUtils.getValueByEvaluateXPath2(element, ORIGINAL_PRICE_XPATH);
-                product.setOriginalPrice(Double.parseDouble(originalPrice.replace("￥", "").replace(",", "")));
-                //佣金
-                product.setCommission(product.getOriginalPrice() * product.getCommissionRatio());
-                product.setCommission(new BigDecimal(product.getCommission()).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
+//                //佣金比例
+//                String commissionRate = GrabUtils.getValueByEvaluateXPath2(element, COMMISSION_RATE_XPATH);
+//                product.setCommissionRatio(Double.parseDouble(commissionRate.replace("%", "")) / 100);
+//                product.setCommissionRatio(new BigDecimal(product.getCommissionRatio()).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
+//                //原价
+//                String originalPrice = GrabUtils.getValueByEvaluateXPath2(element, ORIGINAL_PRICE_XPATH);
+//                product.setOriginalPrice(Double.parseDouble(originalPrice.replace("￥", "").replace(",", "")));
+//                //佣金
+//                product.setCommission(product.getOriginalPrice() * product.getCommissionRatio());
+//                product.setCommission(new BigDecimal(product.getCommission()).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
 
                 list.add(product);
             }

@@ -5,9 +5,11 @@ import com.jd.open.api.sdk.JdClient;
 import com.jd.open.api.sdk.request.cps.ServicePromotionGoodsInfoRequest;
 import com.jd.open.api.sdk.request.cps.UnionServiceQueryImportOrdersRequest;
 import com.jd.open.api.sdk.request.cps.UnionThemeGoodsServiceQueryCouponGoodsRequest;
+import com.jd.open.api.sdk.request.cps.UnionThemeGoodsServiceQueryExplosiveGoodsRequest;
 import com.jd.open.api.sdk.response.cps.ServicePromotionGoodsInfoResponse;
 import com.jd.open.api.sdk.response.cps.UnionServiceQueryImportOrdersResponse;
 import com.jd.open.api.sdk.response.cps.UnionThemeGoodsServiceQueryCouponGoodsResponse;
+import com.jd.open.api.sdk.response.cps.UnionThemeGoodsServiceQueryExplosiveGoodsResponse;
 import com.rebate.common.util.JsonUtil;
 import com.rebate.common.util.rebate.JdMediaProductGrapUtil;
 import com.rebate.common.web.page.PaginatedArrayList;
@@ -68,13 +70,15 @@ public class JdSdkManagerImpl implements JdSdkManager {
                 for (Map map : mapList) {
                     Product product = new Product();
                     product.setProductId(Long.parseLong(map.get("skuId").toString()));
-                    product.setCommissionRatio(Double.parseDouble(map.get("commisionRatioWl").toString()) / 100);
-                    product.setCommissionRatio(new BigDecimal(product.getCommissionRatio()).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
+                    product.setCommissionRatioWl(Double.parseDouble(map.get("commisionRatioWl").toString()) / 100);
+                    product.setCommissionRatioWl(new BigDecimal(product.getCommissionRatioWl()).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
+                    product.setCommissionRatioPc(Double.parseDouble(map.get("commisionRatioPc").toString()) / 100);
+                    product.setCommissionRatioPc(new BigDecimal(product.getCommissionRatioPc()).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
                     product.setName(map.get("goodsName").toString());
                     product.setImgUrl(map.get("imgUrl").toString());
                     product.setOriginalPrice(Double.parseDouble(map.get("unitPrice").toString()));
-                    product.setCommission(product.getOriginalPrice() * product.getCommissionRatio());
-                    product.setCommission(new BigDecimal(product.getCommission()).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
+                    product.setCommissionPc(product.getOriginalPrice() * product.getCommissionRatioPc());
+                    product.setCommissionWl(product.getOriginalPrice() * product.getCommissionRatioWl());
                     product.setDistribution(1);
                     product.setProductType(1);
                     product.setStock(0);
@@ -112,13 +116,64 @@ public class JdSdkManagerImpl implements JdSdkManager {
                 for (Map map : mapList) {
                     Product product = new Product();
                     product.setProductId(Long.parseLong(map.get("skuId").toString()));
-                    product.setCommissionRatio(Double.parseDouble(map.get("commision").toString()) / 100);
-                    product.setCommissionRatio(new BigDecimal(product.getCommissionRatio()).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
+                    product.setCommissionRatioWl(Double.parseDouble(map.get("commisionRatioWl").toString()) / 100);
+                    product.setCommissionRatioWl(new BigDecimal(product.getCommissionRatioWl()).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
+                    product.setCommissionRatioPc(Double.parseDouble(map.get("commisionRatioPc").toString()) / 100);
+                    product.setCommissionRatioPc(new BigDecimal(product.getCommissionRatioPc()).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
                     product.setName(map.get("skuName").toString());
                     product.setImgUrl(map.get("imgUrl").toString());
                     product.setOriginalPrice(Double.parseDouble(map.get("unitPrice").toString()));
-                    product.setCommission(product.getOriginalPrice() * product.getCommissionRatio());
-                    product.setCommission(new BigDecimal(product.getCommission()).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
+                    product.setCommissionPc(product.getOriginalPrice() * product.getCommissionRatioPc());
+                    product.setCommissionWl(product.getOriginalPrice() * product.getCommissionRatioWl());
+                    product.setDistribution(1);
+                    product.setProductType(1);
+                    product.setStock(0);
+                    product.setStatus(0);
+                    product.setFirstCategoryName("");
+                    product.setSecondCategoryName("");
+                    product.setThirdCategoryName("");
+                    product.setFirstCategory(1);
+                    product.setSecondCategory(2);
+                    product.setThirdCategory(3);
+
+                    //抓取商品分类
+                    product = JdMediaProductGrapUtil.grapCategory(product);
+                    list.add(product);
+                }
+            }
+        }
+        return list;
+    }
+
+    @Override
+    public PaginatedArrayList<Product> getMediaThemeProducts(int page, int pageSize) {
+        PaginatedArrayList<Product> list = new PaginatedArrayList<>(page,pageSize);
+
+        String json = getGetpromotioninfoResult(page,pageSize);
+
+        JSONObject resultObj = JsonUtil.fromJson(json, JSONObject.class);
+        if (null != resultObj && resultObj.getInt("resultCode")==200) {
+            int total = resultObj.getInt("total");
+            list.setTotalItem(total);
+
+            String resultJson = resultObj.get("data").toString();
+            List<Map> mapList = JsonUtil.fromJson(resultJson, mapTypeReference);
+            if (null != mapList) {
+                for (Map map : mapList) {
+                    Product product = new Product();
+                    product.setProductId(Long.parseLong(map.get("skuId").toString()));
+                    product.setCommissionRatioWl(Double.parseDouble(map.get("pcCommissionShare").toString()) / 100);
+                    product.setCommissionRatioWl(new BigDecimal(product.getCommissionRatioWl()).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
+                    product.setCommissionRatioPc(Double.parseDouble(map.get("wlCommissionShare").toString()) / 100);
+                    product.setCommissionRatioPc(new BigDecimal(product.getCommissionRatioPc()).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
+                    product.setName(map.get("skuName").toString());
+                    product.setImgUrl(map.get("imgUrl").toString());
+                    product.setOriginalPrice(Double.parseDouble(map.get("wlPrice").toString()));//获取移动端价格
+                    product.setCommissionPc(product.getOriginalPrice() * product.getCommissionRatioPc());
+                    product.setCommissionWl(product.getOriginalPrice() * product.getCommissionRatioWl());
+                    product.setCommissionPc(new BigDecimal(product.getCommissionPc()).setScale(0, BigDecimal.ROUND_HALF_UP).doubleValue());
+                    product.setCommissionWl(new BigDecimal(product.getCommissionWl()).setScale(0, BigDecimal.ROUND_HALF_UP).doubleValue());
+
                     product.setDistribution(1);
                     product.setProductType(1);
                     product.setStock(0);
@@ -197,6 +252,33 @@ public class JdSdkManagerImpl implements JdSdkManager {
             UnionThemeGoodsServiceQueryCouponGoodsResponse response=client.execute(request);
 
             json = response.getQueryCouponGoodsResult();
+        } catch (Exception e) {
+            LOG.error("[获取优惠商品]调用异常!page:" + page);
+        }
+        return json;
+    }
+
+    /**
+     * 获取爆款商品
+     * @param page
+     * @param pageSize
+     * @return
+     */
+    private String getGetThemeGoodsResult(int page ,int pageSize) {
+        String json = "";
+        try {
+
+            JdClient client=new DefaultJdClient(apiUrl,accessToken,appKey,appSecret);
+
+            UnionThemeGoodsServiceQueryExplosiveGoodsRequest request=new UnionThemeGoodsServiceQueryExplosiveGoodsRequest();
+
+            request.setFrom( 123 );
+            request.setPageSize( 123 );
+
+            UnionThemeGoodsServiceQueryExplosiveGoodsResponse response=client.execute(request);
+
+            json = response.getQueryExplosiveGoodsResult();
+
         } catch (Exception e) {
             LOG.error("[获取优惠商品]调用异常!page:" + page);
         }
