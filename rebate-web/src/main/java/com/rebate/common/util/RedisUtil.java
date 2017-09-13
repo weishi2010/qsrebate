@@ -88,6 +88,21 @@ public class RedisUtil {
         return false;
     }
 
+    public boolean set(String key, Object obj,int timeout) {
+
+        String value = JSONObject.toJSONString(obj);
+        try {
+            String code = jedis.set(key, value);
+            jedis.expire(key,timeout);
+            if (code.equals("ok")) {
+                return true;
+            }
+        } catch (Exception e) {
+            logger.debug("插入数据有异常.");
+            return false;
+        }
+        return false;
+    }
 
     public String get(String key) {
         try {
