@@ -61,11 +61,17 @@ public class ProductServiceImpl implements ProductService {
                         vo.setImgUrl(product.getImgUrl().replace(DEFAULT_IMG_SIZE, IMG_SIZE));
                         //获取推广链接
                         vo.setPromotionUrl(jdSdkManager.getPromotinUrl(getJdItemUrl(product.getProductId()), openId));
-                        //是否返佣判断
-                        vo.setRebate(isRebate(vo.getCommissionWl()));
+
+                        //轻松返平台获取佣金
+                        Double qsCommissionWl = getCommissionWl(vo.getCommissionRatioWl(),vo.getOriginalPrice());//移动端
+                        Double qsCommissionPc = getCommissionPc(vo.getCommissionRatioPc(),vo.getOriginalPrice());//PC端
+
                         //按比例给用户返佣金
-                        vo.setCommissionWl(getCommission(getCommissionWl(vo.getCommissionRatioWl(),vo.getOriginalPrice())));
-                        vo.setCommissionPc(getCommissionPc(vo.getCommissionRatioPc(),vo.getOriginalPrice()));
+                        vo.setCommissionWl(getUserCommission(qsCommissionWl));
+                        vo.setCommissionPc(qsCommissionPc);
+
+                        //轻松返平台是否返佣判断，符合规则再给予用户佣金返利
+                        vo.setRebate(isRebate(qsCommissionWl));
                         products.add(vo);
                     }catch (Exception e){
                         LOG.error("findProductList error!product:{}",JsonUtil.toJson(product),e);
@@ -97,7 +103,7 @@ public class ProductServiceImpl implements ProductService {
     /**
      * 获取返利佣金
      */
-    public Double getCommission(Double commission) {
+    public Double getUserCommission(Double commission) {
         Double rateForUser = 0.5;//TODO 广告佣金计算后再按此比例给用户返利
         return new BigDecimal(commission * rateForUser).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue();
     }

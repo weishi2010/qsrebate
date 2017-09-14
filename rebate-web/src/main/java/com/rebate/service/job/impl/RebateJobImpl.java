@@ -77,7 +77,7 @@ public class RebateJobImpl implements RebateJob {
         int pageSize = 1000;
         List<Product> products = jdSdkManager.getMediaThemeProducts(page, pageSize);
         while (products.size() > 0) {
-            LOG.error("[importMediaThemeProducts]商品导入任务!size:", products.size());
+            LOG.error("[importMediaThemeProducts]商品导入任务!size:"+ products.size());
             for (Product product : products) {
                 if (null == productDao.findById(product)) {
                     productDao.insert(product);
