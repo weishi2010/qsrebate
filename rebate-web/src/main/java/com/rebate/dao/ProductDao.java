@@ -16,6 +16,12 @@ public interface ProductDao {
     void insert(Product product);
 
     /**
+     * 更新
+     * @param product
+     */
+    void update(Product product);
+
+    /**
      * 根据id查询商品
      * @param product
      * @return

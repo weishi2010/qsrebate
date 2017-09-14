@@ -2,14 +2,8 @@ package com.rebate.manager.jd.impl;
 
 import com.jd.open.api.sdk.DefaultJdClient;
 import com.jd.open.api.sdk.JdClient;
-import com.jd.open.api.sdk.request.cps.ServicePromotionGoodsInfoRequest;
-import com.jd.open.api.sdk.request.cps.UnionServiceQueryImportOrdersRequest;
-import com.jd.open.api.sdk.request.cps.UnionThemeGoodsServiceQueryCouponGoodsRequest;
-import com.jd.open.api.sdk.request.cps.UnionThemeGoodsServiceQueryExplosiveGoodsRequest;
-import com.jd.open.api.sdk.response.cps.ServicePromotionGoodsInfoResponse;
-import com.jd.open.api.sdk.response.cps.UnionServiceQueryImportOrdersResponse;
-import com.jd.open.api.sdk.response.cps.UnionThemeGoodsServiceQueryCouponGoodsResponse;
-import com.jd.open.api.sdk.response.cps.UnionThemeGoodsServiceQueryExplosiveGoodsResponse;
+import com.jd.open.api.sdk.request.cps.*;
+import com.jd.open.api.sdk.response.cps.*;
 import com.rebate.common.util.JsonUtil;
 import com.rebate.common.util.rebate.JdMediaProductGrapUtil;
 import com.rebate.common.web.page.PaginatedArrayList;
@@ -28,16 +22,16 @@ import java.util.List;
 import java.util.Map;
 
 /**
- {
- "access_token": "873049e9-749c-479e-9647-7e91e13eabcf",
- "code": 0,
- "expires_in": 31535999,
- "refresh_token": "c97d6656-9d02-40d5-a59d-2ac26fa093e4",
- "time": "1504537477085",
- "token_type": "bearer",
- "uid": "5730215537",
- "user_nick": "bestcuitao"
- }
+ * {
+ * "access_token": "873049e9-749c-479e-9647-7e91e13eabcf",
+ * "code": 0,
+ * "expires_in": 31535999,
+ * "refresh_token": "c97d6656-9d02-40d5-a59d-2ac26fa093e4",
+ * "time": "1504537477085",
+ * "token_type": "bearer",
+ * "uid": "5730215537",
+ * "user_nick": "bestcuitao"
+ * }
  */
 @Component("jdSdkManager")
 public class JdSdkManagerImpl implements JdSdkManager {
@@ -45,7 +39,7 @@ public class JdSdkManagerImpl implements JdSdkManager {
 
     /**
      * https://oauth.jd.com/oauth/authorize?response_type=code&client_id=BC2C0FCDA61E45DBE36E95D51E29543C&redirect_uri=http://www.jingcuhui.com&state=213
-     https://oauth.jd.com/oauth/token?grant_type=authorization_code&client_id=BC2C0FCDA61E45DBE36E95D51E29543C&redirect_uri=http://www.jingcuhui.com&code=yjEswj&state=213&client_secret=d253bb1c493344c5aa337ff917cfd46b
+     * https://oauth.jd.com/oauth/token?grant_type=authorization_code&client_id=BC2C0FCDA61E45DBE36E95D51E29543C&redirect_uri=http://www.jingcuhui.com&code=yjEswj&state=213&client_secret=d253bb1c493344c5aa337ff917cfd46b
      */
     private static final String appKey = "BC2C0FCDA61E45DBE36E95D51E29543C";
     private static final String appSecret = "d253bb1c493344c5aa337ff917cfd46b";
@@ -101,12 +95,12 @@ public class JdSdkManagerImpl implements JdSdkManager {
 
     @Override
     public PaginatedArrayList<Product> getMediaCouponProducts(int page, int pageSize) {
-        PaginatedArrayList<Product> list = new PaginatedArrayList<>(page,pageSize);
+        PaginatedArrayList<Product> list = new PaginatedArrayList<>(page, pageSize);
 
-        String json = getGetpromotioninfoResult(page,pageSize);
+        String json = getGetpromotioninfoResult(page, pageSize);
 
         JSONObject resultObj = JsonUtil.fromJson(json, JSONObject.class);
-        if (null != resultObj && resultObj.getInt("resultCode")==200) {
+        if (null != resultObj && resultObj.getInt("resultCode") == 200) {
             int total = resultObj.getInt("total");
             list.setTotalItem(total);
 
@@ -147,12 +141,12 @@ public class JdSdkManagerImpl implements JdSdkManager {
 
     @Override
     public PaginatedArrayList<Product> getMediaThemeProducts(int page, int pageSize) {
-        PaginatedArrayList<Product> list = new PaginatedArrayList<>(page,pageSize);
+        PaginatedArrayList<Product> list = new PaginatedArrayList<>(page, pageSize);
 
-        String json = getGetpromotioninfoResult(page,pageSize);
+        String json = getGetpromotioninfoResult(page, pageSize);
 
         JSONObject resultObj = JsonUtil.fromJson(json, JSONObject.class);
-        if (null != resultObj && resultObj.getInt("resultCode")==200) {
+        if (null != resultObj && resultObj.getInt("resultCode") == 200) {
             int total = resultObj.getInt("total");
             list.setTotalItem(total);
 
@@ -199,12 +193,25 @@ public class JdSdkManagerImpl implements JdSdkManager {
         List<RebateDetail> list = new ArrayList<>();
         String json = getQueryImportOrdersResult(queryTime, page, pageSize);
         JSONObject resultObj = JsonUtil.fromJson(json, JSONObject.class);
-        if (null != resultObj && 1==resultObj.getInt("success")) {
+        if (null != resultObj && 1 == resultObj.getInt("success")) {
             String resultJson = resultObj.getString("result");
         }
         System.out.println("json:" + json);
         return list;
     }
+
+    @Override
+    public String getPromotinUrl(String itemUrl, String subUnionId) {
+
+        String url = itemUrl;
+        String json = getServicePromotionCode(itemUrl, subUnionId);
+        JSONObject resultObj = JsonUtil.fromJson(json, JSONObject.class);
+        if (null != resultObj && 0 == Integer.parseInt(resultObj.getString("resultCode"))) {
+            url = resultObj.getString("url");
+        }
+        return url;
+    }
+
 
     /**
      * 获取推广商品信息
@@ -231,25 +238,64 @@ public class JdSdkManagerImpl implements JdSdkManager {
         return json;
     }
 
+    /**
+     * 获取自定义推广链接
+     *
+     * @param itemUrl
+     * @param subUnionId
+     * @return
+     */
+    private String getServicePromotionCode(String itemUrl, String subUnionId) {
+        String json = "";
+
+        try {
+            JdClient client = new DefaultJdClient(apiUrl, accessToken, appKey, appSecret);
+
+            int promotionType = 7;//自定义推广
+            Long unionId = 1000062434l;
+            String channel = "WL";
+            String webId = "444088091";
+            String adtType = "6";
+            ServicePromotionGetcodeRequest request = new ServicePromotionGetcodeRequest();
+
+            request.setPromotionType(promotionType);
+            request.setMaterialId(itemUrl);
+            request.setUnionId(unionId);
+            request.setSubUnionId(subUnionId);
+            request.setChannel(channel);
+            request.setWebId(webId);
+            request.setAdttype(adtType);
+            request.setProtocol(123);
+
+            ServicePromotionGetcodeResponse response = client.execute(request);
+
+            json = response.getQueryjsResult();
+        } catch (Exception e) {
+            LOG.error("[获取推广链接]调用异常!itemUrl:{},subUnionId:{}", itemUrl, subUnionId);
+        }
+        return json;
+    }
+
 
     /**
      * 获取优惠商品
+     *
      * @param page
      * @param pageSize
      * @return
      */
-    private String getGetpromotioninfoResult(int page ,int pageSize) {
+    private String getGetpromotioninfoResult(int page, int pageSize) {
         String json = "";
         try {
 
-            JdClient client=new DefaultJdClient(apiUrl,accessToken,appKey,appSecret);
+            JdClient client = new DefaultJdClient(apiUrl, accessToken, appKey, appSecret);
 
-            UnionThemeGoodsServiceQueryCouponGoodsRequest request=new UnionThemeGoodsServiceQueryCouponGoodsRequest();
+            UnionThemeGoodsServiceQueryCouponGoodsRequest request = new UnionThemeGoodsServiceQueryCouponGoodsRequest();
 
-            request.setFrom( page );
-            request.setPageSize( pageSize );
+            request.setFrom(page);
+            request.setPageSize(pageSize);
 
-            UnionThemeGoodsServiceQueryCouponGoodsResponse response=client.execute(request);
+            UnionThemeGoodsServiceQueryCouponGoodsResponse response = client.execute(request);
 
             json = response.getQueryCouponGoodsResult();
         } catch (Exception e) {
@@ -260,22 +306,23 @@ public class JdSdkManagerImpl implements JdSdkManager {
 
     /**
      * 获取爆款商品
+     *
      * @param page
      * @param pageSize
      * @return
      */
-    private String getGetThemeGoodsResult(int page ,int pageSize) {
+    private String getGetThemeGoodsResult(int page, int pageSize) {
         String json = "";
         try {
 
-            JdClient client=new DefaultJdClient(apiUrl,accessToken,appKey,appSecret);
+            JdClient client = new DefaultJdClient(apiUrl, accessToken, appKey, appSecret);
 
-            UnionThemeGoodsServiceQueryExplosiveGoodsRequest request=new UnionThemeGoodsServiceQueryExplosiveGoodsRequest();
+            UnionThemeGoodsServiceQueryExplosiveGoodsRequest request = new UnionThemeGoodsServiceQueryExplosiveGoodsRequest();
 
-            request.setFrom( 123 );
-            request.setPageSize( 123 );
+            request.setFrom(123);
+            request.setPageSize(123);
 
-            UnionThemeGoodsServiceQueryExplosiveGoodsResponse response=client.execute(request);
+            UnionThemeGoodsServiceQueryExplosiveGoodsResponse response = client.execute(request);
 
             json = response.getQueryExplosiveGoodsResult();
 
@@ -290,6 +337,7 @@ public class JdSdkManagerImpl implements JdSdkManager {
      * success：接口调用是否成功（1：成功，0：失败）;
      * msg: 接口调用失败success为0时的信息描述;
      * hasMore：是否还有数据(true：还有数据 false:已查询完毕，没有数据了);
+     *
      * @return
      */
     private String getQueryImportOrdersResult(String queryTime, int page, int pageSize) {
@@ -308,7 +356,7 @@ public class JdSdkManagerImpl implements JdSdkManager {
             UnionServiceQueryImportOrdersResponse response = client.execute(request);
             json = response.getQueryImportOrdersResult();
         } catch (Exception e) {
-            LOG.error("[查询引入订单]调用异常!",e);
+            LOG.error("[查询引入订单]调用异常!", e);
         }
         return json;
     }

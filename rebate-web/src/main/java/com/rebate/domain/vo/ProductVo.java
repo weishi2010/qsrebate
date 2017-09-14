@@ -102,11 +102,31 @@ public class ProductVo extends BaseQuery {
     private Integer stock;
 
     /**
-     * 佣金比例
+     * 移动佣金比例
      */
     @Getter
     @Setter
-    private Double commissionRatio;
+    private Double commissionRatioWl;
+
+    /**
+     * PC佣金比例
+     */
+    @Getter
+    @Setter
+    private Double commissionRatioPc;
+
+    /**
+     * PC佣金
+     */
+    @Getter
+    @Setter
+    private Double commissionPc;
+    /**
+     * 移动佣金
+     */
+    @Getter
+    @Setter
+    private Double commissionWl;
 
 
     /**
@@ -136,21 +156,23 @@ public class ProductVo extends BaseQuery {
     @Setter
     private Date modified;
 
+
+    /**
+     * 推广链接
+     */
+    @Getter
+    @Setter
+    private String promotionUrl;
+
+    /**
+     * 是否返佣
+     */
+    @Getter
+    @Setter
+    private boolean isRebate;
+
     public ProductVo(Product product){
         BeanUtils.copyProperties(product,this);
     }
-
-    /**
-     * 获取返利佣金
-     */
-    public Double getCommission() {
-        if (null != commissionRatio && null != originalPrice) {
-            Double commission = commissionRatio * originalPrice;
-            Double rateForUser = 0.5;//广告佣金计算后再按此比例给用户返利
-            return new BigDecimal(commission * rateForUser).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue();
-        }
-        return 0.0;
-    }
-
 
 }

@@ -165,25 +165,28 @@ function loadProductData(page,category,tab) {
     function getTemplate(product,tab){
         var htmlTemp = "<div class=\"item mui-flex\">" +
             "        <div class=\"g-img cell fixed\">" +
-            "             <a href=\"https://item.m.jd.com/product/" + product.productId + ".html\" ><img class=\"g-img\" src=\"" + product.imgUrl + "\" alt=\"" + product.name + "\" width='80' height='90'></a>" +
+            "             <a href=\"" + product.promotionUrl + "\" ><img class=\"g-img\" src=\"" + product.imgUrl + "\" alt=\"" + product.name + "\" width='80' height='90'></a>" +
             "        </div>" +
             "        <div class=\"cnt cell align-center\">" +
-            "            <a href=\"https://item.m.jd.com/product/" + product.productId + ".html\" class=\"tl\">"+product.name+"</a>" +
+            "            <a href=\"" + product.promotionUrl + "\" class=\"tl\">" + product.name + "</a>" +
             "            <div class=\"meta\">" +
-            "                <span class=\"old-price\">原价：<del>"+product.originalPrice+"</del></span>" +
+            "                <span class=\"old-price\">原价：<del>" + product.originalPrice + "</del></span>" +
             "                <!--<span class=\"new-price\">劵后价：3050.00元</span>-->" +
-            "            </div>" +
-            "            <div class=\"easy\">" +
-            "                <a href=\"javascript:;\" class=\"buy\">" +
-            "                    <img class=\"cart\" src=\"/static/img/ico-cart-01.png\" alt=\"\">" +
-            "                    购买返：¥" +product.commission+
-            "                </a>" +
-            "                <a href=\"javascript:;\" class=\"share\">" +
-            "                    <img class=\"zhuanfa\" src=\"/static/img/ico-zhuanfa-01.png\" alt=\"\">" +
-            "                    分享赚：¥1.00" +
-            "                </a>" +
-            "            </div>" +
-            "        </div>" +
+            "            </div>";
+
+        if (product.rebate) {
+            htmlTemp += "            <div class=\"easy\">" +
+                "                <a href=\"" + product.promotionUrl + "\" class=\"buy\">" +
+                "                    <img class=\"cart\" src=\"/static/img/ico-cart-01.png\" alt=\"\">" +
+                "                    购买返：¥" + product.commissionWl +
+                "                </a>" +
+                "                <a href=\"javascript:;\" class=\"share\">" +
+                "                    <img class=\"zhuanfa\" src=\"/static/img/ico-zhuanfa-01.png\" alt=\"\">" +
+                "                    分享赚：¥1.00" +
+                "                </a>" +
+                "            </div>";
+        }
+        htmlTemp += "        </div>" +
             "    </div>";
         return htmlTemp;
     }

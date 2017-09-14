@@ -4,9 +4,7 @@ package com.rebate.test;
 import com.rebate.common.util.HttpClientUtil;
 import com.rebate.common.util.JsonUtil;
 import com.rebate.dao.CommentDao;
-import com.rebate.dao.ProductDao;
 import com.rebate.domain.Comment;
-import com.rebate.domain.Product;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -14,7 +12,6 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 

@@ -273,12 +273,18 @@ public class IndexController extends BaseController {
             queryPrice = 9.9;
         }
 
+        UserInfo userInfo = getUserInfo(request);
+        String openId ="";
+        if (null != userInfo) {
+            openId = userInfo.getOpenId();
+        }
+
         ProductQuery query = new ProductQuery();
         query.setIndex(page);
         query.setPageSize(10);
         query.setQueryPrice(queryPrice);
         query.setThirdCategory(thirdCategory);
-        PaginatedArrayList<ProductVo> products = productService.findProductList(query);
+        PaginatedArrayList<ProductVo> products = productService.findProductList(query, openId);
         LOG.error("page:{},size:{}", page, products.size());
         map.put("products", products);
         map.put("page", page);

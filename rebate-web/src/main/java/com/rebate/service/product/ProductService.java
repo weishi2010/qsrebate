@@ -22,7 +22,8 @@ public interface ProductService {
     /**
      * 查询列表
      * @param productQuery
+     * @param openId
      * @return
      */
-    PaginatedArrayList<ProductVo> findProductList(ProductQuery productQuery);
+    PaginatedArrayList<ProductVo> findProductList(ProductQuery productQuery,String openId);
 }

@@ -17,6 +17,11 @@ public class ProductDaoImpl extends BaseDao implements ProductDao {
     }
 
     @Override
+    public void update(Product product) {
+        update("Product.update",product);
+    }
+
+    @Override
     public Product findById(Product product) {
         return (Product)queryForObject("Product.findById",product);
     }

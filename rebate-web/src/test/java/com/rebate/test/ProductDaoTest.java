@@ -26,10 +26,8 @@ public class ProductDaoTest extends AbstractJUnit4SpringContextTests {
     @Test
     public void testInsert() {
         int pageSize = 100;
-        for(int page=1;page<1000;page++){
-
-            List<Product> list = JdMediaProductGrapUtil.grabProducts(page, pageSize);
-            for (Product product : list) {
+        for (int page = 1; page < 1000; page++) {
+                Product product = new Product();
                 product.setDistribution(1);
                 product.setProductType(1);
                 product.setStock(100);
@@ -40,37 +38,49 @@ public class ProductDaoTest extends AbstractJUnit4SpringContextTests {
                 product.setFirstCategory(1);
                 product.setSecondCategory(2);
                 product.setThirdCategory(3);
-
+                product.setProductId(4702986l);
+            product.setCommissionRatioPc(1.0);
+            product.setCommissionRatioWl(2.0);
                 product = JdMediaProductGrapUtil.grapCategory(product);
                 if (null == productDao.findById(product)) {
                     productDao.insert(product);
+                }else{
+                    productDao.update(product);
+
                 }
             }
-        }
     }
 
     @Test
-    public void testGetProducts(){
+    public void testGetProducts() {
         ProductQuery query = new ProductQuery();
         query.setPageSize(10);
         query.setThirdCategory(1195);
         List list = productDao.findProducts(query);
-        System.out.println("list:"+JsonUtil.toJson(list));
+        System.out.println("list:" + JsonUtil.toJson(list));
     }
 
     @Test
-    public void testGetMediaProducts(){
+    public void testGetMediaProducts() {
         List list = jdSdkManager.getMediaProducts("1615786");
-        System.out.println("list:"+JsonUtil.toJson(list));
+        System.out.println("list:" + JsonUtil.toJson(list));
     }
+
     @Test
-    public void testGetMediaCouponProducts(){
-        List list = jdSdkManager.getMediaCouponProducts(1,10);
-        System.out.println("list:"+JsonUtil.toJson(list));
+    public void testGetMediaCouponProducts() {
+        List list = jdSdkManager.getMediaCouponProducts(1, 10);
+        System.out.println("list:" + JsonUtil.toJson(list));
     }
+
     @Test
-    public void testGetMediaThemeProducts(){
-        List list = jdSdkManager.getMediaThemeProducts(1,10);
-        System.out.println("list:"+JsonUtil.toJson(list));
+    public void testGetMediaThemeProducts() {
+        List list = jdSdkManager.getMediaThemeProducts(1, 10);
+        System.out.println("list:" + JsonUtil.toJson(list));
+    }
+
+    @Test
+    public void testGetPromotinUrl() {
+        String url = jdSdkManager.getPromotinUrl("https://item.jd.com/4586850.html", "weishi2010");
+        System.out.println("url:" + url);
     }
 }

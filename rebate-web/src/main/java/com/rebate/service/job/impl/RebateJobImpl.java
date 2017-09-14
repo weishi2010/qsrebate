@@ -81,6 +81,10 @@ public class RebateJobImpl implements RebateJob {
             for (Product product : products) {
                 if (null == productDao.findById(product)) {
                     productDao.insert(product);
+                }else{
+
+                    //存在则更新
+                    productDao.update(product);
                 }
             }
             page++;

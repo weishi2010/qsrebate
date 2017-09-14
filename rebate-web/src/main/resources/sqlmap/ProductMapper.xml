@@ -113,6 +113,22 @@
         now())
     </insert>
 
+    <update id="update">
+        update product
+        set  modified=now()
+        <dynamic>
+            <isNotNull property="originalPrice" prepend=",">
+                original_price = #originalPrice#
+            </isNotNull>
+            <isNotNull property="commissionRatioPc" prepend=",">
+                commission_ratio_pc=#commissionRatioPc#
+            </isNotNull>
+            <isNotNull property="commissionRatioWl" prepend=",">
+                commission_ratio_wl=#commissionRatioWl#
+            </isNotNull>
+        </dynamic>
+        where product_id=#productId#
+    </update>
     <select id="findById" parameterClass="Product" resultMap="ProductResultMap">
         select
         <include refid="fields"/>
@@ -134,6 +150,7 @@
         <include refid="fields"/>
         from product
         <include refid="condition"></include>
+        order by sort desc
         limit #startRow#,#pageSize#
     </select>
 </sqlMap>
