@@ -89,6 +89,7 @@
         product_type,
         distribution,
         status,
+        sort_weight,
         created,
         modified)
         VALUES
@@ -109,6 +110,7 @@
         #productType#,
         #distribution#,
         #status#,
+        0,
         now(),
         now())
     </insert>
