@@ -143,10 +143,9 @@ function reLoadData(page,category,tab){
 }
 
 function loadProductData(page,category,tab) {
-
     $.ajax({
         type: 'GET',
-        url: '/rebate/products.json?page='+page+"&thirdCategory="+category+"&tab="+tab,
+        url: '/rebate/products.json?page='+page+"&thirdCategory="+category+"&tab="+tab+"&r="+Math.random(),
         dataType: 'json',
         success: function (reponse) {
             var list = reponse.products;
@@ -183,6 +182,17 @@ function loadProductData(page,category,tab) {
                 "                <a href=\"javascript:;\" class=\"share\">" +
                 "                    <img class=\"zhuanfa\" src=\"/static/img/ico-zhuanfa-01.png\" alt=\"\">" +
                 "                    分享赚：¥1.00" +
+                "                </a>" +
+                "            </div>";
+        }else{
+            htmlTemp += "            <div class=\"easy\">" +
+                "                <a href=\"" + product.promotionUrl + "\" class=\"buy\">" +
+                "                    <img class=\"cart\" src=\"/static/img/ico-cart-01.png\" alt=\"\">" +
+                "                    去购买" +
+                "                </a>" +
+                "                <a href=\"javascript:;\" class=\"share\">" +
+                "                    <img class=\"zhuanfa\" src=\"/static/img/ico-zhuanfa-01.png\" alt=\"\">" +
+                "                    去分享" +
                 "                </a>" +
                 "            </div>";
         }

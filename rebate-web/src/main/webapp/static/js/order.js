@@ -32,7 +32,7 @@ function loadOrderData(days) {
 
     $.ajax({
         type: 'GET',
-        url: '/rebate/personal/orders.json?days='+days,
+        url: '/rebate/personal/orders.json?days='+days+"&r="+Math.random(),
         dataType: 'json',
         success: function (reponse) {
             var list = reponse.detailList;
