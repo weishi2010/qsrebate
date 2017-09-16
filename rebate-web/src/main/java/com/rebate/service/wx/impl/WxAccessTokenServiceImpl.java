@@ -68,7 +68,7 @@ public class WxAccessTokenServiceImpl implements WxAccessTokenService {
         params.put("code",code);
         params.put("grant_type", "authorization_code");
 
-        String json = HttpClientUtil.get(wxConfig.getAccessTokenUrl()+"?appid="+wxConfig.getAppId()+"&secret="+wxConfig.getAppSecret()+"&code="+code+"&grant_type=authorization_code");
+        String json = HttpClientUtil.get(wxConfig.getLoginAccessTokenUrl()+"?appid="+wxConfig.getAppId()+"&secret="+wxConfig.getAppSecret()+"&code="+code+"&grant_type=authorization_code");
         LOG.error("[getWxLoginAccessToken]===================>json:"+json);
         AuthorizationCodeInfo authorizationCodeInfo = null;
         if (json.contains("access_token")) {
@@ -104,7 +104,7 @@ public class WxAccessTokenServiceImpl implements WxAccessTokenService {
         params.put("appid",wxConfig.getAppId());
         params.put("secret",wxConfig.getAppSecret());
 
-        String json = HttpClientUtil.get(wxConfig.getAccessTokenUrl(), params);
+        String json = HttpClientUtil.get(wxConfig.getApiAccessTokenUrl(), params);
 
         if (json.contains("access_token")) {
             apiAccessToken = JsonUtil.fromJson(json,ApiAccessToken.class);

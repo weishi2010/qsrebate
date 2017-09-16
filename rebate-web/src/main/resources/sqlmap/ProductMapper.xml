@@ -24,6 +24,7 @@
         <result property="productType" column="product_type"/>
         <result property="distribution" column="distribution"/>
         <result property="status" column="status"/>
+        <result property="isRebate" column="is_rebate"/>
         <result property="created" column="created"/>
         <result property="modified" column="modified"/>
     </resultMap>
@@ -45,6 +46,7 @@
         product_type,
         distribution,
         status,
+        is_rebate,
         created,
         modified
         modified

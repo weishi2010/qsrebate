@@ -169,7 +169,7 @@ public class ProductVo extends BaseQuery {
      */
     @Getter
     @Setter
-    private boolean isRebate;
+    private int isRebate;
 
     public ProductVo(Product product){
         BeanUtils.copyProperties(product,this);

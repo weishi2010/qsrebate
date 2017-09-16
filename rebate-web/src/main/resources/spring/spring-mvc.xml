@@ -83,7 +83,8 @@
 		<property name="appSecret" value="${wx.appSecret}"/>
 		<property name="authorizeUrl" value="${wx.authorizeUrl}"/>
 		<property name="jsapiTicketUrl" value="${wx.jsapiTicketUrl}"/>
-		<property name="accessTokenUrl" value="${wx.accessTokenUrl}"/>
+		<property name="apiAccessTokenUrl" value="${wx.apiAccessToken}"/>
+		<property name="loginAccessTokenUrl" value="${wx.accessTokenUrl}"/>
 		<property name="userInfoUrl" value="${wx.userInfoUrl}"/>
 	</bean>
 

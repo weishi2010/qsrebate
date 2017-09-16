@@ -140,6 +140,13 @@ public class Product extends BaseQuery {
     private Integer distribution;
 
     /**
+     * 是否返佣,0返佣 1返佣
+     */
+    @Getter
+    @Setter
+    private Integer isRebate;
+
+    /**
      * 创建时间
      */
     @Getter

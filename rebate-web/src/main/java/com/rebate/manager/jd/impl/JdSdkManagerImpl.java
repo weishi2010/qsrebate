@@ -6,6 +6,7 @@ import com.jd.open.api.sdk.request.cps.*;
 import com.jd.open.api.sdk.response.cps.*;
 import com.rebate.common.util.JsonUtil;
 import com.rebate.common.util.rebate.JdMediaProductGrapUtil;
+import com.rebate.common.util.rebate.RebateRuleUtil;
 import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.domain.Product;
 import com.rebate.domain.RebateDetail;
@@ -153,6 +154,10 @@ public class JdSdkManagerImpl implements JdSdkManager {
                     product.setCommissionWl(product.getOriginalPrice() * product.getCommissionRatioWl());
                     product.setCommissionPc(new BigDecimal(product.getCommissionPc()).setScale(0, BigDecimal.ROUND_HALF_UP).doubleValue());
                     product.setCommissionWl(new BigDecimal(product.getCommissionWl()).setScale(0, BigDecimal.ROUND_HALF_UP).doubleValue());
+
+                    if(RebateRuleUtil.isRebate(product.getCommissionWl(),false)){
+                        product.setIsRebate(1);
+                    }
 
                     product.setDistribution(1);
                     product.setProductType(1);

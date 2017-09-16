@@ -190,7 +190,7 @@ function loadProductData(page,category,tab) {
                 "                    <img class=\"cart\" src=\"/static/img/ico-cart-01.png\" alt=\"\">" +
                 "                    去购买" +
                 "                </a>" +
-                "                <a href=\"/rebate/share?skuId=\""+product.productId+" class=\"share\">" +
+                "                <a href=\"/rebate/share?skuId="+product.productId+" class=\"share\">" +
                 "                    <img class=\"zhuanfa\" src=\"/static/img/ico-zhuanfa-01.png\" alt=\"\">" +
                 "                    去分享" +
                 "                </a>" +

@@ -32,7 +32,12 @@ public class WxConfig {
     /**
      * 公众号接口接入token获取地址
      */
-    private String accessTokenUrl = "https://api.weixin.qq.com/cgi-bin/token";
+    private String apiAccessTokenUrl = "https://api.weixin.qq.com/cgi-bin/token";
+
+    /**
+     * 公众号接口接入token获取地址
+     */
+    private String loginAccessTokenUrl = "https://api.weixin.qq.com/sns/oauth2/access_token";
 
     /**
      * 用户信息API地址
@@ -75,12 +80,20 @@ public class WxConfig {
         this.jsapiTicketUrl = jsapiTicketUrl;
     }
 
-    public String getAccessTokenUrl() {
-        return accessTokenUrl;
+    public String getApiAccessTokenUrl() {
+        return apiAccessTokenUrl;
     }
 
-    public void setAccessTokenUrl(String accessTokenUrl) {
-        this.accessTokenUrl = accessTokenUrl;
+    public void setApiAccessTokenUrl(String apiAccessTokenUrl) {
+        this.apiAccessTokenUrl = apiAccessTokenUrl;
+    }
+
+    public String getLoginAccessTokenUrl() {
+        return loginAccessTokenUrl;
+    }
+
+    public void setLoginAccessTokenUrl(String loginAccessTokenUrl) {
+        this.loginAccessTokenUrl = loginAccessTokenUrl;
     }
 
     public String getUserInfoUrl() {

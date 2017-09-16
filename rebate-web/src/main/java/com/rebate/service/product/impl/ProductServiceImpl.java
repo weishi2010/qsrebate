@@ -70,8 +70,6 @@ public class ProductServiceImpl implements ProductService {
                         vo.setCommissionWl(getUserCommission(qsCommissionWl));
                         vo.setCommissionPc(qsCommissionPc);
 
-                        //轻松返平台是否返佣判断，符合规则再给予用户佣金返利
-                        vo.setRebate(isRebate(qsCommissionWl));
                         products.add(vo);
                     } catch (Exception e) {
                         LOG.error("findProductList error!product:{}", JsonUtil.toJson(product), e);
@@ -107,9 +105,6 @@ public class ProductServiceImpl implements ProductService {
             //按比例给用户返佣金
             vo.setCommissionWl(getUserCommission(qsCommissionWl));
             vo.setCommissionPc(qsCommissionPc);
-
-            //轻松返平台是否返佣判断，符合规则再给予用户佣金返利
-            vo.setRebate(isRebate(qsCommissionWl));
 
 
         } catch (Exception e) {
