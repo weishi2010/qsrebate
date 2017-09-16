@@ -7,6 +7,7 @@ import com.jd.open.api.sdk.request.cps.ServicePromotionGoodsInfoRequest;
 import com.jd.open.api.sdk.response.cps.ServicePromotionGoodsInfoResponse;
 import com.rebate.common.util.HttpClientUtil;
 import com.rebate.common.util.JsonUtil;
+import com.rebate.domain.UserInfo;
 import com.rebate.domain.wx.AuthorizationCodeInfo;
 import com.rebate.domain.wx.WxConfig;
 import com.rebate.domain.wx.WxUserInfo;
@@ -42,32 +43,30 @@ public class WXSdkTest extends AbstractJUnit4SpringContextTests {
     public void getAccessTokenUrl() {
         String code = "021Og2pc1M3Jtr03i8oc1NUNoc1Og2p1";
         AuthorizationCodeInfo authorizationCodeInfo = wxAccessTokenService.getLoginAccessToken(code);
-        if (null==authorizationCodeInfo) {
+        if (null == authorizationCodeInfo) {
             System.out.println("authorizationCodeInfo:" + JsonUtil.toJson(authorizationCodeInfo));
         }
-        System.out.println("authorizationCodeInfo:"+authorizationCodeInfo);
+        System.out.println("authorizationCodeInfo:" + authorizationCodeInfo);
     }
 
     /**
      * {"openid":"oIAUmv8x60aC5B7FrxVy8Z9-imyY","nickname":"wsh","sex":1,"language":"zh_CN","city":"Chaoyang","province":"Beijing","country":"CN","headimgurl":"http:\/\/wx.qlogo.cn\/mmopen\/vi_32\/DYAIOgq83eqpJdBmwaEgG5QfqPAyxvUBtEtPmeoIP9Zmmxkic8EJvKUXj9FjUAoMwnvb0KySL7NMPJXc6Kic4lOQ\/0","privilege":[]}
      */
     @Test
-    public void getWXUserInfo(){
-        String accessToken = "T1zYOY10swUIMzqV5isSGxKj_aDx8hnMD7ZdXt7iuVPu66xmxzaoYBJXU5D_cJ5tT1bkYn_8vUSqzkOBPmz-GQ";
-        String openId ="oIAUmv8x60aC5B7FrxVy8Z9";
-        WxUserInfo wxUserInfo = wxAccessTokenService.getWxUserInfo(accessToken,openId);
-        System.out.println(wxUserInfo);
+    public void getWXUserInfo() {
+        String accessToken = "Uf0xvO9MHvROFIK78NGDXtL8XnOeXODAVV7XvF0YXnScsmzzGj47xl4LSSdAt2hCT6TfT8IhT1zWedONDBZ5dA";
+        String openId = "oIAUmv8x60aC5B7FrxVy8Z9";
+        WxUserInfo wxUserInfo = wxAccessTokenService.getWxUserInfo(accessToken, openId);
+        System.out.println(JsonUtil.toJson(wxUserInfo));
     }
+    @Test
+    public void testJson() {
+        UserInfo userInfo = new UserInfo();
+        userInfo.setWxImage("asdfsdf");
+        System.out.println(JsonUtil.toJson(userInfo));
 
-    public static void main(String[] args) throws Exception {
-        Map<String, String> params = new HashMap<String, String>();
-        params.put("appid", "wxa460b41c4d7421f0");
-        params.put("secret", "f6855bc575fc656f0c77f8f46cf624da");
-        params.put("code", "021Og2pc1M3Jtr03i8oc1NUNoc1Og2p1");
-        params.put("grant_type", "authorization_code");
-
-        String json = HttpClientUtil.get("https://api.weixin.qq.com/sns/oauth2/access_token?appid=wxa460b41c4d7421f0&secret=f6855bc575fc656f0c77f8f46cf624da&code=021Og2pc1M3Jtr03i8oc1NUNoc1Og2p1&grant_type=authorization_code");
-
-        System.out.println(json);
+        String json = "{\"access_token\":\"rifBleWm-XwM7NlS9FM4uyBrFPiucHM3r1Ihs2UmbUEi8F-zxtWSO4vWDQR5hvqR992UxB-d0UmqLaABJ1qpSA\",\"expires_in\":7200,\"refresh_token\":\"o8lQMJnWlz2j5HrBMqzJz4mSu8ed_0gYBfncJ5A05h6R1LPoBmin-e7s31NzbNZvAl0f4N1H2lFs2eowSstWRw\",\"openid\":\"oIAUmv8x60aC5B7FrxVy8Z9-imyY\",\"scope\":\"snsapi_userinfo\"}";
+        AuthorizationCodeInfo authorizationCodeInfo = JsonUtil.fromJson(json, AuthorizationCodeInfo.class);
+        System.out.println(authorizationCodeInfo.getAccessToken());
     }
 }

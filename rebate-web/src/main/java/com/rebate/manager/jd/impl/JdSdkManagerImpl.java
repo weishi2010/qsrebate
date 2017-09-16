@@ -9,11 +9,14 @@ import com.rebate.common.util.rebate.JdMediaProductGrapUtil;
 import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.domain.Product;
 import com.rebate.domain.RebateDetail;
+import com.rebate.domain.jd.JDConfig;
 import com.rebate.manager.jd.JdSdkManager;
 import net.sf.json.JSONObject;
 import org.codehaus.jackson.type.TypeReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -21,31 +24,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/**
- * {
- * "access_token": "873049e9-749c-479e-9647-7e91e13eabcf",
- * "code": 0,
- * "expires_in": 31535999,
- * "refresh_token": "c97d6656-9d02-40d5-a59d-2ac26fa093e4",
- * "time": "1504537477085",
- * "token_type": "bearer",
- * "uid": "5730215537",
- * "user_nick": "bestcuitao"
- * }
- */
+
 @Component("jdSdkManager")
 public class JdSdkManagerImpl implements JdSdkManager {
     private static final Logger LOG = LoggerFactory.getLogger(JdSdkManagerImpl.class);
 
-    /**
-     * https://oauth.jd.com/oauth/authorize?response_type=code&client_id=BC2C0FCDA61E45DBE36E95D51E29543C&redirect_uri=http://www.jingcuhui.com&state=213
-     * https://oauth.jd.com/oauth/token?grant_type=authorization_code&client_id=BC2C0FCDA61E45DBE36E95D51E29543C&redirect_uri=http://www.jingcuhui.com&code=yjEswj&state=213&client_secret=d253bb1c493344c5aa337ff917cfd46b
-     */
-    private static final String appKey = "BC2C0FCDA61E45DBE36E95D51E29543C";
-    private static final String appSecret = "d253bb1c493344c5aa337ff917cfd46b";
-    private static final String accessToken = "873049e9-749c-479e-9647-7e91e13eabcf";
-    private static final String apiUrl = "https://api.jd.com/routerjson";
-    private static final Long unionId = 1000062434l;//黔ICP备15015084号-2
+    @Qualifier("jdConfig")
+    @Autowired(required = true)
+    private JDConfig jdConfig;
 
 
     private static final TypeReference<List<Map>> mapTypeReference = new TypeReference<List<Map>>() {
@@ -223,7 +209,7 @@ public class JdSdkManagerImpl implements JdSdkManager {
         String json = "";
         try {
 
-            JdClient client = new DefaultJdClient(apiUrl, accessToken, appKey, appSecret);
+            JdClient client = new DefaultJdClient(jdConfig.getApiUrl(), jdConfig.getAccessToken(), jdConfig.getAppKey(), jdConfig.getAppSecret());
 
             ServicePromotionGoodsInfoRequest request = new ServicePromotionGoodsInfoRequest();
 
@@ -249,23 +235,18 @@ public class JdSdkManagerImpl implements JdSdkManager {
         String json = "";
 
         try {
-            JdClient client = new DefaultJdClient(apiUrl, accessToken, appKey, appSecret);
+            JdClient client = new DefaultJdClient(jdConfig.getApiUrl(), jdConfig.getAccessToken(), jdConfig.getAppKey(), jdConfig.getAppSecret());
 
-            int promotionType = 7;//自定义推广
-            Long unionId = 1000062434l;
-            String channel = "WL";
-            String webId = "444088091";
-            String adtType = "6";
+
             ServicePromotionGetcodeRequest request = new ServicePromotionGetcodeRequest();
 
-            request.setPromotionType(promotionType);
+            request.setPromotionType(jdConfig.getPromotionType());
             request.setMaterialId(itemUrl);
-            request.setUnionId(unionId);
+            request.setUnionId(jdConfig.getUnionId());
             request.setSubUnionId(subUnionId);
-            request.setChannel(channel);
-            request.setWebId(webId);
-            request.setAdttype(adtType);
-            request.setProtocol(123);
+            request.setChannel(jdConfig.getChannel());
+            request.setWebId(jdConfig.getWebId());
+            request.setAdttype(jdConfig.getAdtType());
 
             ServicePromotionGetcodeResponse response = client.execute(request);
 
@@ -288,7 +269,7 @@ public class JdSdkManagerImpl implements JdSdkManager {
         String json = "";
         try {
 
-            JdClient client = new DefaultJdClient(apiUrl, accessToken, appKey, appSecret);
+            JdClient client = new DefaultJdClient(jdConfig.getApiUrl(), jdConfig.getAccessToken(), jdConfig.getAppKey(), jdConfig.getAppSecret());
 
             UnionThemeGoodsServiceQueryCouponGoodsRequest request = new UnionThemeGoodsServiceQueryCouponGoodsRequest();
 
@@ -315,7 +296,7 @@ public class JdSdkManagerImpl implements JdSdkManager {
         String json = "";
         try {
 
-            JdClient client = new DefaultJdClient(apiUrl, accessToken, appKey, appSecret);
+            JdClient client = new DefaultJdClient(jdConfig.getApiUrl(), jdConfig.getAccessToken(), jdConfig.getAppKey(), jdConfig.getAppSecret());
 
             UnionThemeGoodsServiceQueryExplosiveGoodsRequest request = new UnionThemeGoodsServiceQueryExplosiveGoodsRequest();
 
@@ -344,11 +325,11 @@ public class JdSdkManagerImpl implements JdSdkManager {
         String json = "";
         try {
 
-            JdClient client = new DefaultJdClient(apiUrl, accessToken, appKey, appSecret);
+            JdClient client = new DefaultJdClient(jdConfig.getApiUrl(), jdConfig.getAccessToken(), jdConfig.getAppKey(), jdConfig.getAppSecret());
 
             UnionServiceQueryImportOrdersRequest request = new UnionServiceQueryImportOrdersRequest();
 
-            request.setUnionId(unionId);
+            request.setUnionId(jdConfig.getUnionId());
             request.setTime(queryTime);
             request.setPageIndex(page);
             request.setPageSize(pageSize);
