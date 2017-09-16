@@ -7,13 +7,17 @@
 
 package com.rebate.service.wx.impl;
 
+import com.rebate.common.cache.RedisKey;
 import com.rebate.common.util.HttpClientUtil;
 import com.rebate.common.util.JsonUtil;
+import com.rebate.common.util.RedisUtil;
+import com.rebate.domain.wx.ApiAccessToken;
 import com.rebate.domain.wx.AuthorizationCodeInfo;
 import com.rebate.domain.wx.WxConfig;
 import com.rebate.domain.wx.WxUserInfo;
 import com.rebate.service.wx.WxAccessTokenService;
 import net.sf.json.JSONObject;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +39,11 @@ public class WxAccessTokenServiceImpl implements WxAccessTokenService {
     @Qualifier("wxConfig")
     @Autowired(required = true)
     private WxConfig wxConfig;
+
+    @Qualifier("redisUtil")
+    @Autowired(required = false)
+    private RedisUtil redisUtil;
+
 
     @Override
     public AuthorizationCodeInfo getLoginAccessToken(String loginCode) {
@@ -88,20 +97,52 @@ public class WxAccessTokenServiceImpl implements WxAccessTokenService {
     }
 
     @Override
+    public ApiAccessToken getApiAccessToken() {
+        ApiAccessToken apiAccessToken = null;
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("grant_type", "client_credential");
+        params.put("appid",wxConfig.getAppId());
+        params.put("secret",wxConfig.getAppSecret());
+
+        String json = HttpClientUtil.get(wxConfig.getAccessTokenUrl(), params);
+
+        if (json.contains("access_token")) {
+            apiAccessToken = JsonUtil.fromJson(json,ApiAccessToken.class);
+        }
+        return apiAccessToken;
+    }
+
+    @Override
     public String getTicket() {
         String jsapiTicket = "";
 
-        //TODO 获取普通API accessToken
-        String accessToken = null;
-        Map<String, String> params = new HashMap<String, String>();
-        params.put("access_token", accessToken);
-        params.put("type", "jsapi");
+        String accessToken = "";
+//                //从缓存获取
+//        String accessToken = redisUtil.get(RedisKey.WX_API_ACCESSTOKEN.getKey());
+//
+//        if(StringUtils.isNotBlank(accessToken)){
+//            return accessToken;
+//        }
 
-        JSONObject obj = HttpClientUtil.getWithJsonObj(wxConfig.getJsapiTicketUrl(), params);
-        if ("0".equalsIgnoreCase(obj.get("errcode").toString())) {
-            jsapiTicket = obj.get("ticket").toString();
-        } else {
-            LOG.error("get jsapiTicket error!errmsg:" + obj.get("errmsg").toString());
+        //获取普通API accessToken
+        ApiAccessToken apiAccessToken = getApiAccessToken();
+        if (null != apiAccessToken) {
+            accessToken = apiAccessToken.getAccessToken();
+            int timeOut = Integer.parseInt( apiAccessToken.getExpiresIn());
+            redisUtil.set(RedisKey.WX_API_ACCESSTOKEN.getKey(),accessToken,timeOut);
+        }
+
+        if(StringUtils.isNotBlank(accessToken)){
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("access_token", accessToken);
+            params.put("type", "jsapi");
+
+            JSONObject obj = HttpClientUtil.getWithJsonObj(wxConfig.getJsapiTicketUrl(), params);
+            if ("0".equalsIgnoreCase(obj.get("errcode").toString())) {
+                jsapiTicket = obj.get("ticket").toString();
+            } else {
+                LOG.error("get jsapiTicket error!errmsg:" + obj.get("errmsg").toString());
+            }
         }
         return jsapiTicket;
     }

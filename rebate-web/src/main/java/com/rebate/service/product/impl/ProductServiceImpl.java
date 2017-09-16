@@ -54,7 +54,7 @@ public class ProductServiceImpl implements ProductService {
                 productQuery.setStartRow(products.getStartRow());
                 List<Product> list = productDao.findProducts(productQuery);
                 for (Product product : list) {
-                    try{
+                    try {
                         ProductVo vo = new ProductVo(product);
 
                         //获取商品链接
@@ -63,8 +63,8 @@ public class ProductServiceImpl implements ProductService {
                         vo.setPromotionUrl(jdSdkManager.getPromotinUrl(getJdItemUrl(product.getProductId()), openId));
 
                         //轻松返平台获取佣金
-                        Double qsCommissionWl = getCommissionWl(vo.getCommissionRatioWl(),vo.getOriginalPrice());//移动端
-                        Double qsCommissionPc = getCommissionPc(vo.getCommissionRatioPc(),vo.getOriginalPrice());//PC端
+                        Double qsCommissionWl = getCommissionWl(vo.getCommissionRatioWl(), vo.getOriginalPrice());//移动端
+                        Double qsCommissionPc = getCommissionPc(vo.getCommissionRatioPc(), vo.getOriginalPrice());//PC端
 
                         //按比例给用户返佣金
                         vo.setCommissionWl(getUserCommission(qsCommissionWl));
@@ -73,8 +73,8 @@ public class ProductServiceImpl implements ProductService {
                         //轻松返平台是否返佣判断，符合规则再给予用户佣金返利
                         vo.setRebate(isRebate(qsCommissionWl));
                         products.add(vo);
-                    }catch (Exception e){
-                        LOG.error("findProductList error!product:{}",JsonUtil.toJson(product),e);
+                    } catch (Exception e) {
+                        LOG.error("findProductList error!product:{}", JsonUtil.toJson(product), e);
                     }
 
                 }
@@ -84,6 +84,38 @@ public class ProductServiceImpl implements ProductService {
             LOG.error("findProductList error!productQuery:" + JsonUtil.toJson(productQuery), e);
         }
         return products;
+    }
+
+    @Override
+    public ProductVo findProduct(Long skuId, String openId) {
+        ProductVo vo = null;
+        try {
+            Product productQuery = new Product();
+            productQuery.setProductId(skuId);
+            Product product = productDao.findById(productQuery);
+            vo = new ProductVo(product);
+
+            //获取商品链接
+            vo.setImgUrl(product.getImgUrl().replace(DEFAULT_IMG_SIZE, IMG_SIZE));
+            //获取推广链接
+            vo.setPromotionUrl(jdSdkManager.getPromotinUrl(getJdItemUrl(product.getProductId()), openId));
+
+            //轻松返平台获取佣金
+            Double qsCommissionWl = getCommissionWl(vo.getCommissionRatioWl(), vo.getOriginalPrice());//移动端
+            Double qsCommissionPc = getCommissionPc(vo.getCommissionRatioPc(), vo.getOriginalPrice());//PC端
+
+            //按比例给用户返佣金
+            vo.setCommissionWl(getUserCommission(qsCommissionWl));
+            vo.setCommissionPc(qsCommissionPc);
+
+            //轻松返平台是否返佣判断，符合规则再给予用户佣金返利
+            vo.setRebate(isRebate(qsCommissionWl));
+
+
+        } catch (Exception e) {
+            LOG.error("findProduct error!skuId:" + skuId, e);
+        }
+        return vo;
     }
 
     /**
@@ -111,9 +143,9 @@ public class ProductServiceImpl implements ProductService {
     /**
      * 获取移动返利佣金
      */
-    public Double getCommissionWl(Double commissionRatioWl,Double originalPrice) {
+    public Double getCommissionWl(Double commissionRatioWl, Double originalPrice) {
         if (null != commissionRatioWl && null != originalPrice) {
-            return new BigDecimal(commissionRatioWl * originalPrice ).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+            return new BigDecimal(commissionRatioWl * originalPrice).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
         }
         return 0.0;
     }
@@ -121,9 +153,9 @@ public class ProductServiceImpl implements ProductService {
     /**
      * 获取PC返利佣金
      */
-    public Double getCommissionPc(Double commissionRatioPc,Double originalPrice) {
+    public Double getCommissionPc(Double commissionRatioPc, Double originalPrice) {
         if (null != commissionRatioPc && null != originalPrice) {
-            return new BigDecimal(commissionRatioPc * originalPrice ).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+            return new BigDecimal(commissionRatioPc * originalPrice).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
         }
         return 0.0;
     }

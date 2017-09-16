@@ -7,6 +7,7 @@
 
 package com.rebate.service.wx;
 
+import com.rebate.domain.wx.ApiAccessToken;
 import com.rebate.domain.wx.AuthorizationCodeInfo;
 import com.rebate.domain.wx.WxUserInfo;
 
@@ -34,7 +35,13 @@ public interface WxAccessTokenService {
      * 获取票据
      * @return
      */
-    public String getTicket();
+    String getTicket();
+
+    /**
+     * 获取API 访问token
+     * @return
+     */
+    ApiAccessToken getApiAccessToken();
 
     /**
      * 登录授权code

@@ -26,4 +26,13 @@ public interface ProductService {
      * @return
      */
     PaginatedArrayList<ProductVo> findProductList(ProductQuery productQuery,String openId);
+
+    /**
+     * 根据skuId查询
+     * @param skuId
+     * @param openId
+     * @return
+     */
+    ProductVo findProduct(Long skuId,String openId);
+
 }

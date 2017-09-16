@@ -1,5 +1,123 @@
 #set( $title = "分享")
 #parse("/common/head.vm")
+
+<script type="text/javascript">
+
+    wx.config({
+        debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+        appId: '$!{wxConfig.appId}', // 必填，公众号的唯一标识
+        timestamp: $!{timeStamp}, // 必填，生成签名的时间戳
+        nonceStr: '$!{nonceStr}', // 必填，生成签名的随机串
+        signature: '$!{signature}',// 必填，签名，见附录1
+        jsApiList: [''] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+    });
+
+    wx.ready(function(){
+        // config信息验证后会执行ready方法，所有接口调用都必须在config接口获得结果之后，config是一个客户端的异步操作，所以如果需要在页面加载时就调用相关接口，则须把相关接口放在ready函数中调用来确保正确执行。对于用户触发时才调用的接口，则可以直接调用，不需要放在ready函数中。
+    });
+    wx.error(function(res){
+        // config信息验证失败会执行error函数，如签名过期导致验证失败，具体错误信息可以打开config的debug模式查看，也可以在返回的res参数中查看，对于SPA可以在这里更新签名。
+    });
+
+    //分享给朋友圈
+    function shareToTimeline(title, desc, link, imgUrl) {
+        wx.onMenuShareTimeline({
+            title: title, // 分享标题
+            link: link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+            imgUrl: imgUrl, // 分享图标
+            success: function () {
+                // 用户确认分享后执行的回调函数
+            },
+            cancel: function () {
+                // 用户取消分享后执行的回调函数
+            }
+        });
+    }
+    //分享给朋友
+    function shareToFriend(title, desc, link, imgUrl) {
+        wx.onMenuShareAppMessage({
+            title: title, // 分享标题
+            desc: desc, // 分享描述
+            link: link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+            imgUrl: imgUrl, // 分享图标
+            type: '', // 分享类型,music、video或link，不填默认为link
+            dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
+            success: function () {
+                // 用户确认分享后执行的回调函数
+            },
+            cancel: function () {
+                // 用户取消分享后执行的回调函数
+            }
+        });
+    }
+    //分享到QQ
+    function shareToQQ(title, desc, link, imgUrl) {
+        wx.onMenuShareQQ({
+            title: title, // 分享标题
+            desc: desc, // 分享描述
+            link: link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+            imgUrl: imgUrl, // 分享图标
+            success: function () {
+                // 用户确认分享后执行的回调函数
+            },
+            cancel: function () {
+                // 用户取消分享后执行的回调函数
+            }
+        });
+    }
+
+    //分享到腾讯微博
+    function shareToWeibo(title, desc, link, imgUrl) {
+        wx.onMenuShareWeibo({
+            title: title, // 分享标题
+            desc: desc, // 分享描述
+            link: link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+            imgUrl: imgUrl, // 分享图标
+            success: function () {
+                // 用户确认分享后执行的回调函数
+            },
+            cancel: function () {
+                // 用户取消分享后执行的回调函数
+            }
+        });
+    }
+
+    function shareToQZone(title, desc, link, imgUrl) {
+        wx.onMenuShareQZone({
+            title: title, // 分享标题
+            desc: desc, // 分享描述
+            link: link, // 分享链接
+            imgUrl: imgUrl, // 分享图标
+            success: function () {
+                // 用户确认分享后执行的回调函数
+            },
+            cancel: function () {
+                // 用户取消分享后执行的回调函数
+            }
+        });
+    }
+
+    function shareProduct(tab){
+        var productName = $("#productName").val();
+        var originalPrice = $("#originalPrice").val();
+        var couponPrice = $("#couponPrice").val();
+
+        var title="";
+        var desc =productName+"<br/>"+originalPrice+"<br/>"+couponPrice;
+        var link = $("#promotionUrl").val();
+        var imgUrl = $("#imgUrl").val();
+        if(1==tab){
+
+        }else if(1==tab){
+            shareToTimeline(title,desc,link,imgUrl)
+        }else if(2==tab){
+            shareToFriend(title,desc,link,imgUrl)
+        }else if(3==tab){
+            shareToQQ(title,desc,link,imgUrl)
+        }
+
+    }
+</script>
 <body class="bd">
 <!--.header-->
 <div class="header mui-flex align-center">
@@ -20,7 +138,9 @@
         </div>
         <div class="cnt">
             <div class="share-good-info">
-                <img src="/static/img/img-02.jpg" alt="">
+                <img src="$!{product.imgUrl}" alt="">
+                <input value="$!{product.imgUrl}" id="imgUrl" type="hidden">
+
             </div>
             <div class="recomm-words">
                 <div class="tl">推荐语（<span>用于微信朋友圈、群引导</span>）</div>
@@ -39,25 +159,23 @@
                 <div class="tl">您可以编辑发送朋友的推广内容</div>
                 <div class="info">
                     <div class="sec mui-flex align-center">
-                        <div class="cell fixed">【京东超市】</div>
+                        <div class="cell fixed"></div>
                         <div class="cell">
-                            <input value="智利进口红酒" type="text">
+                            <input value="【京东超市】$!{product.name}" id="productName" type="text">
                         </div>
                     </div>
                     <div class="sec mui-flex align-center">
                         <div class="cell fixed">
-                            【原价】
                         </div>
                         <div class="cell">
-                            <input value="188元" type="text">
+                            <input value="【原价】$!{product.originalPrice}元" id="originalPrice" type="text">
                         </div>
                     </div>
                     <div class="sec mui-flex align-center">
                         <div class="cell fixed">
-                            【我推荐给你后】
                         </div>
                         <div class="cell">
-                            <input value="专享价：98元" type="text">
+                            <input value="【我推荐给你后】：$!{product.couponPrice}元" id="couponPrice" type="text">
                         </div>
                     </div>
                     <div class="sec mui-flex align-center">
@@ -65,7 +183,7 @@
                             【购买链接】
                         </div>
                         <div class="cell">
-                            <input style="color:#898989;" value="{推广链接}（此处不要修改，否则无法返钱）" type="text">
+                            <input style="color:#898989;" value="${product.promotionUrl}" id="promotionUrl" type="text">
                         </div>
                     </div>
                 </div>
@@ -96,5 +214,5 @@
         </div>
     </div>
 </div>
-
+<script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
 </body></html>

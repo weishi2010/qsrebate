@@ -14,7 +14,11 @@ public enum RedisKey {
     /**
      * 用户信息
      */
-    USER_INFO ("u_i_",60*60*5);
+    USER_INFO ("u_i_",60*60*5),
+    /**
+     * 微信API访问TOKEN
+     */
+    WX_API_ACCESSTOKEN("wx_api_at_",7200);
 
     RedisKey(String key,int timeout){
         this.key = key;

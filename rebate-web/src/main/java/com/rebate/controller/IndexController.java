@@ -1,6 +1,8 @@
 package com.rebate.controller;
 
 import com.rebate.common.util.CookieUtils;
+import com.rebate.common.util.RequestUtils;
+import com.rebate.common.util.Sha1Util;
 import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.controller.base.BaseController;
 import com.rebate.domain.CategoryQuery;
@@ -15,10 +17,13 @@ import com.rebate.domain.query.RebateDetailQuery;
 import com.rebate.domain.vo.ExtractDetailVo;
 import com.rebate.domain.vo.ProductVo;
 import com.rebate.domain.vo.RebateDetailVo;
+import com.rebate.domain.wx.WxConfig;
 import com.rebate.service.extract.ExtractDetailService;
 import com.rebate.service.order.RebateDetailService;
 import com.rebate.service.product.ProductService;
 import com.rebate.service.userinfo.UserInfoService;
+import com.rebate.service.wx.WxAccessTokenService;
+import com.sun.jmx.snmp.Timestamp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +43,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Description:
@@ -76,6 +82,18 @@ public class IndexController extends BaseController {
     @Qualifier("cookieUtils")
     @Autowired(required = true)
     private CookieUtils cookieUtils;
+
+    /**
+     * 微信公众号接口配置
+     */
+    @Qualifier("wxConfig")
+    @Autowired(required = true)
+    private WxConfig wxConfig;
+
+    @Qualifier("wxAccessTokenService")
+    @Autowired(required = true)
+    private WxAccessTokenService wxAccessTokenService;
+
 
     /**
      * 用户信息COOKIE
@@ -238,8 +256,6 @@ public class IndexController extends BaseController {
             vm = "/promotion/promotionList";
         } else if (EPromotionTab.COUPON.getTab() == tab) {
             vm = "/coupon";
-        } else if (EPromotionTab.SHARE.getTab() == tab) {
-            vm = "/share";
         } else if (EPromotionTab.JD.getTab() == tab) {
             vm = "/index";
         }
@@ -258,6 +274,39 @@ public class IndexController extends BaseController {
         return view;
     }
 
+    @RequestMapping({"", "/", "/share"})
+    public ModelAndView share(HttpServletRequest request, Long skuId) {
+        String vm = "/share";
+        UserInfo userInfo = getUserInfo(request);
+        String openId = "";
+        if (null != userInfo) {
+            openId = userInfo.getOpenId();
+        }
+
+        ModelAndView view = new ModelAndView(PREFIX + vm);
+        //查询商品
+        ProductVo product = productService.findProduct(skuId, openId);
+        //获取临时票据
+        String jsapiTicket = wxAccessTokenService.getTicket();
+        //生成时间戳
+        String timeStamp = Sha1Util.getTimeStamp();
+        //生成noncestr
+        String noncestr = Sha1Util.getNonceStr();
+        //生成签名
+        String currentUrl = RequestUtils.getDomainUrl(request);
+        String signature = Sha1Util.getSha1("jsapi_ticket=" + jsapiTicket + "&noncestr=" + noncestr + "&timestamp=" + timeStamp + "&url=" + currentUrl);
+
+        LOG.error("[share]signature:"+signature);
+        view.addObject("product", product);
+        view.addObject("wxConfig", wxConfig);
+        view.addObject("timeStamp", timeStamp);
+        view.addObject("signature", signature);
+        view.addObject("noncestr", noncestr);
+
+
+        return view;
+    }
+
     @RequestMapping({"", "/", "/products.json"})
     public ResponseEntity<?> products(HttpServletRequest request, Integer tab, Integer page, Integer thirdCategory) {
         Map<String, Object> map = new HashMap<String, Object>();
@@ -270,7 +319,7 @@ public class IndexController extends BaseController {
         }
 
         UserInfo userInfo = getUserInfo(request);
-        String openId ="";
+        String openId = "";
         if (null != userInfo) {
             openId = userInfo.getOpenId();
         }
