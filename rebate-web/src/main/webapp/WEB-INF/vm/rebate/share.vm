@@ -1,5 +1,6 @@
 #set( $title = "分享")
 #parse("/common/head.vm")
+<script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
 
 <script type="text/javascript">
 
@@ -7,9 +8,9 @@
         debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
         appId: '$!{wxConfig.appId}', // 必填，公众号的唯一标识
         timestamp: $!{timeStamp}, // 必填，生成签名的时间戳
-        nonceStr: '$!{nonceStr}', // 必填，生成签名的随机串
+        nonceStr: '$!{noncestr}', // 必填，生成签名的随机串
         signature: '$!{signature}',// 必填，签名，见附录1
-        jsApiList: [''] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+        jsApiList: ['onMenuShareTimeline','onMenuShareAppMessage','onMenuShareQQ','onMenuShareWeibo'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
     });
 
     wx.ready(function(){
@@ -27,6 +28,8 @@
             imgUrl: imgUrl, // 分享图标
             success: function () {
                 // 用户确认分享后执行的回调函数
+                alert('分享成功!');
+                location.href ='/rebate/promotion'
             },
             cancel: function () {
                 // 用户取消分享后执行的回调函数
@@ -35,18 +38,25 @@
     }
     //分享给朋友
     function shareToFriend(title, desc, link, imgUrl) {
+        alert(title)
+        alert(desc)
+        alert(link)
+        alert(imgUrl)
         wx.onMenuShareAppMessage({
             title: title, // 分享标题
             desc: desc, // 分享描述
             link: link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
             imgUrl: imgUrl, // 分享图标
-            type: '', // 分享类型,music、video或link，不填默认为link
+            type: 'link', // 分享类型,music、video或link，不填默认为link
             dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
             success: function () {
                 // 用户确认分享后执行的回调函数
+                alert('分享成功!');
+                location.href ='/rebate/promotion'
             },
             cancel: function () {
                 // 用户取消分享后执行的回调函数
+                alert("error")
             }
         });
     }
@@ -59,6 +69,8 @@
             imgUrl: imgUrl, // 分享图标
             success: function () {
                 // 用户确认分享后执行的回调函数
+                alert('分享成功!');
+                location.href ='/rebate/promotion'
             },
             cancel: function () {
                 // 用户取消分享后执行的回调函数
@@ -75,6 +87,8 @@
             imgUrl: imgUrl, // 分享图标
             success: function () {
                 // 用户确认分享后执行的回调函数
+                alert('分享成功!');
+                location.href ='/rebate/promotion'
             },
             cancel: function () {
                 // 用户取消分享后执行的回调函数
@@ -106,12 +120,11 @@
         var desc =productName+"<br/>"+originalPrice+"<br/>"+couponPrice;
         var link = $("#promotionUrl").val();
         var imgUrl = $("#imgUrl").val();
-        if(1==tab){
 
-        }else if(1==tab){
-            shareToTimeline(title,desc,link,imgUrl)
-        }else if(2==tab){
+        if(1==tab){
             shareToFriend(title,desc,link,imgUrl)
+        }else if(2==tab){
+            shareToTimeline(title,desc,link,imgUrl)
         }else if(3==tab){
             shareToQQ(title,desc,link,imgUrl)
         }
@@ -183,7 +196,7 @@
                             【购买链接】
                         </div>
                         <div class="cell">
-                            <input style="color:#898989;" value="${product.promotionUrl}" id="promotionUrl" type="text">
+                            <input style="color:#898989;" value="http://m.qingsongfan.com/rebate/promotion" id="promotionUrl" type="text">
                         </div>
                     </div>
                 </div>
@@ -194,15 +207,15 @@
         <div class="inner">
             <h4 class="tl">分享到</h4>
             <div class="share-way mui-flex align-center">
-                <a href="javascript:;" class="cell">
+                <a href="javascript:void(0);" class="cell" onclick="shareProduct(1)">
                     <img src="/static/img/ico-wechat-01.png" alt="">
                     <p>微信好友</p>
                 </a>
-                <a href="javascript:;" class="cell">
+                <a href="javascript:void(0);" class="cell" onclick="shareProduct(2)">
                     <img src="/static/img/ico-pyq-01.png" alt="">
                     <p>朋友圈</p>
                 </a>
-                <a href="javascript:;" class="cell">
+                <a href="javascript:void(0);" class="cell" onclick="shareProduct(3)">
                     <img src="/static/img/ico-qq-01.png" alt="">
                     <p>QQ</p>
                 </a>
@@ -214,5 +227,4 @@
         </div>
     </div>
 </div>
-<script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
 </body></html>

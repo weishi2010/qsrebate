@@ -293,8 +293,10 @@ public class IndexController extends BaseController {
         //生成noncestr
         String noncestr = Sha1Util.getNonceStr();
         //生成签名
-        String currentUrl = RequestUtils.getDomainUrl(request);
-        String signature = Sha1Util.getSha1("jsapi_ticket=" + jsapiTicket + "&noncestr=" + noncestr + "&timestamp=" + timeStamp + "&url=" + currentUrl);
+        String currentUrl = RequestUtils.getFullUrl(request);
+        String str = "jsapi_ticket=" + jsapiTicket + "&noncestr=" + noncestr + "&timestamp=" + timeStamp + "&url=" + currentUrl;
+        LOG.error("[share]str:"+str);
+        String signature = Sha1Util.getSha1(str);
 
         LOG.error("[share]signature:"+signature);
         view.addObject("product", product);

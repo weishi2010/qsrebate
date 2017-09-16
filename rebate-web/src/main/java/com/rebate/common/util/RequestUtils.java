@@ -26,6 +26,10 @@ public class RequestUtils {
         return request.getRequestURL().toString();
     }
 
+    public static String getFullUrl(HttpServletRequest request) {
+        return request.getRequestURL().toString()+"?"+request.getQueryString();
+    }
+
     public static String getCurrentUrl(HttpServletRequest request, String URIEncoding) {
         String queryString = request.getQueryString();
         List parameterNamesByGet = parameterNamesByGet(queryString);
