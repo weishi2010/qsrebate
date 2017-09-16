@@ -1,7 +1,6 @@
 package com.rebate.controller;
 
 import com.rebate.common.util.CookieUtils;
-import com.rebate.common.util.JsonUtil;
 import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.controller.base.BaseController;
 import com.rebate.domain.CategoryQuery;
@@ -87,9 +86,6 @@ public class IndexController extends BaseController {
     public ModelAndView index(HttpServletRequest request, HttpServletResponse response) {
         ModelAndView view = new ModelAndView(PREFIX + "/index");
 
-        cookieUtils.setCookie(response, "test_ws", "testetsets");
-        String cv = cookieUtils.getQsCookieValue(request, "test_ws");
-        System.out.println(cv);
         return view;
     }
 

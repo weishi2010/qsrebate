@@ -66,7 +66,10 @@
         <servlet-name>default</servlet-name>
         <url-pattern>*.woff</url-pattern>
     </servlet-mapping>
-
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>*.txt</url-pattern>
+    </servlet-mapping>
 
     <servlet>
         <servlet-name>rebate</servlet-name>

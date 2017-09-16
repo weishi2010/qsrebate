@@ -74,11 +74,11 @@ public class CookieUtils {
      * @param name
      * @param value
      */
-    public void setCookie(HttpServletResponse servletResponse, String name, String value) {
+    public void setCookie(HttpServletResponse servletResponse, String name, String value,int timeout) {
         if (this.cookieMap != null && this.cookieMap.containsKey(name)) {
             QxCookie qxCookie = (QxCookie)this.cookieMap.get(name);
             Cookie cookie = qxCookie.newCookie(value);
-            cookie.setMaxAge(10000000);
+            cookie.setMaxAge(timeout);
             servletResponse.addCookie(cookie);
         } else {
             throw new RuntimeException("Cookie " + name + " is undefined!");

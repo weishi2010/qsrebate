@@ -43,7 +43,7 @@ public class QsLoginInteceptor extends LoginInteceptor {
     /**
      * 用户信息COOKIE
      */
-    private static String USERINFO_COOKIE = "u_i_o";
+    private static String USERINFO_COOKIE = "qs_u_i_o";
 
     /**
      * 用户信息
@@ -120,7 +120,7 @@ public class QsLoginInteceptor extends LoginInteceptor {
                     redirect2WxAuthorizePage(request, response);
                     return false;
                 } else {
-                    cookieUtils.setCookie(response, WX_ACCESSTOKEN_COOKIE, JsonUtil.toJson(authorizationCodeInfo));
+                    cookieUtils.setCookie(response, WX_ACCESSTOKEN_COOKIE, JsonUtil.toJson(authorizationCodeInfo),300);
                 }
             }
             //查询是否已存在此用户
@@ -143,7 +143,7 @@ public class QsLoginInteceptor extends LoginInteceptor {
             if (null != userInfo) {
                 LOG.error("[set cookie]===================>userInfo:" + JsonUtil.toJson(userInfo));
 
-                cookieUtils.setCookie(response, USERINFO_COOKIE, JsonUtil.toJson(userInfo));
+                cookieUtils.setCookie(response, USERINFO_COOKIE, JsonUtil.toJson(userInfo),120);
                 String cv = cookieUtils.getQsCookieValue(request, USERINFO_COOKIE);
                 LOG.error("[set cookie]===================>cv:" +cv);
 
