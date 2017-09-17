@@ -59,8 +59,6 @@ public class ProductServiceImpl implements ProductService {
 
                         //获取商品链接
                         vo.setImgUrl(product.getImgUrl().replace(DEFAULT_IMG_SIZE, IMG_SIZE));
-                        //获取推广链接
-                        vo.setPromotionUrl(jdSdkManager.getPromotinUrl(getJdItemUrl(product.getProductId()), openId));
 
                         //轻松返平台获取佣金
                         Double qsCommissionWl = getCommissionWl(vo.getCommissionRatioWl(), vo.getOriginalPrice());//移动端
@@ -95,8 +93,6 @@ public class ProductServiceImpl implements ProductService {
 
             //获取商品链接
             vo.setImgUrl(product.getImgUrl().replace(DEFAULT_IMG_SIZE, IMG_SIZE));
-            //获取推广链接
-            vo.setPromotionUrl(jdSdkManager.getPromotinUrl(getJdItemUrl(product.getProductId()), openId));
 
             //轻松返平台获取佣金
             Double qsCommissionWl = getCommissionWl(vo.getCommissionRatioWl(), vo.getOriginalPrice());//移动端

@@ -1,8 +1,8 @@
 package com.rebate.controller;
 
-import com.rebate.common.util.CookieUtils;
 import com.rebate.common.util.RequestUtils;
 import com.rebate.common.util.Sha1Util;
+import com.rebate.common.util.rebate.RebateUrlUtil;
 import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.controller.base.BaseController;
 import com.rebate.domain.CategoryQuery;
@@ -18,12 +18,12 @@ import com.rebate.domain.vo.ExtractDetailVo;
 import com.rebate.domain.vo.ProductVo;
 import com.rebate.domain.vo.RebateDetailVo;
 import com.rebate.domain.wx.WxConfig;
+import com.rebate.manager.jd.JdSdkManager;
 import com.rebate.service.extract.ExtractDetailService;
 import com.rebate.service.order.RebateDetailService;
 import com.rebate.service.product.ProductService;
 import com.rebate.service.userinfo.UserInfoService;
 import com.rebate.service.wx.WxAccessTokenService;
-import com.sun.jmx.snmp.Timestamp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +43,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * Description:
@@ -79,9 +78,9 @@ public class IndexController extends BaseController {
     @Autowired(required = true)
     private ExtractDetailService extractDetailService;
 
-    @Qualifier("cookieUtils")
+    @Qualifier("jdSdkManager")
     @Autowired(required = true)
-    private CookieUtils cookieUtils;
+    private JdSdkManager jdSdkManager;
 
     /**
      * 微信公众号接口配置
@@ -286,6 +285,10 @@ public class IndexController extends BaseController {
         ModelAndView view = new ModelAndView(PREFIX + vm);
         //查询商品
         ProductVo product = productService.findProduct(skuId, openId);
+
+        product.setPromotionShortUrl(RebateUrlUtil.jdPromotionUrlToQsrebateShortUrl(jdSdkManager.getShortPromotinUrl(skuId, openId)));
+
+
         //获取临时票据
         String jsapiTicket = wxAccessTokenService.getTicket();
         //生成时间戳

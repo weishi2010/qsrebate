@@ -13,6 +13,7 @@ import java.util.List;
 public interface JdSdkManager {
     /**
      * 根据sku获取商品
+     *
      * @param skuIds
      * @return
      */
@@ -20,14 +21,16 @@ public interface JdSdkManager {
 
     /**
      * 获取优惠商品
+     *
      * @param page
      * @param pageSize
      * @return
      */
-    List<Product> getMediaCouponProducts(int page,int pageSize);
+    List<Product> getMediaCouponProducts(int page, int pageSize);
 
     /**
      * 获取爆款商品
+     *
      * @param page
      * @param pageSize
      * @return
@@ -35,12 +38,30 @@ public interface JdSdkManager {
     PaginatedArrayList<Product> getMediaThemeProducts(int page, int pageSize);
 
     /**
-     * 获取推广链接
+     * 获取推广长链接
+     *
      * @param itemUrl
      * @param subUnionId
      * @return
      */
-    String getPromotinUrl(String itemUrl,String subUnionId);
+    String getLongPromotinUrl(String itemUrl, String subUnionId);
 
-    List<RebateDetail> getRebateDetails(String queryTime,int page,int pageSize);
+    /**
+     * 获取推广短链接
+     *
+     * @param skuId
+     * @param subUnionId
+     * @return
+     */
+    String getShortPromotinUrl(Long skuId, String subUnionId);
+
+    /**
+     * 查询返佣明细
+     * @param queryTime
+     * @param page
+     * @param pageSize
+     * @return
+     */
+
+    List<RebateDetail> getRebateDetails(String queryTime, int page, int pageSize);
 }

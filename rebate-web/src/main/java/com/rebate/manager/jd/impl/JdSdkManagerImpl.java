@@ -12,6 +12,7 @@ import com.rebate.domain.Product;
 import com.rebate.domain.RebateDetail;
 import com.rebate.domain.jd.JDConfig;
 import com.rebate.manager.jd.JdSdkManager;
+import net.sf.json.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.codehaus.jackson.type.TypeReference;
@@ -231,7 +232,7 @@ public class JdSdkManagerImpl implements JdSdkManager {
     }
 
     @Override
-    public String getPromotinUrl(String itemUrl, String subUnionId) {
+    public String getLongPromotinUrl(String itemUrl, String subUnionId) {
 
         String url = itemUrl;
         String json = getServicePromotionCode(itemUrl, subUnionId);
@@ -242,6 +243,17 @@ public class JdSdkManagerImpl implements JdSdkManager {
         return url;
     }
 
+    @Override
+    public String getShortPromotinUrl(Long skuId, String subUnionId) {
+        String url = "";
+        String json = getServicePromotionWxsqCode(skuId, subUnionId);
+        JSONObject resultObj = JsonUtil.fromJson(json, JSONObject.class);
+        if (null != resultObj && 0 == Integer.parseInt(resultObj.getString("resultCode"))) {
+            JSONObject urlListObj  = (JSONObject) resultObj.get("urlList");
+            url = urlListObj.getString(skuId.toString());
+        }
+        return url;
+    }
 
     /**
      * 获取推广商品信息
@@ -269,7 +281,7 @@ public class JdSdkManagerImpl implements JdSdkManager {
     }
 
     /**
-     * 获取自定义推广链接
+     * 获取自定义推广长链接
      *
      * @param itemUrl
      * @param subUnionId
@@ -297,6 +309,35 @@ public class JdSdkManagerImpl implements JdSdkManager {
             json = response.getQueryjsResult();
         } catch (Exception e) {
             LOG.error("[获取推广链接]调用异常!itemUrl:{},subUnionId:{}", itemUrl, subUnionId);
+        }
+        return json;
+    }
+
+
+    /**
+     * 获取自定义推广短链接
+     *
+     * @param skuId
+     * @param subUnionId
+     * @return
+     */
+    private String getServicePromotionWxsqCode(Long skuId, String subUnionId) {
+        String json = "";
+
+        try {
+            JdClient client = new DefaultJdClient(jdConfig.getApiUrl(), jdConfig.getAccessToken(), jdConfig.getAppKey(), jdConfig.getAppSecret());
+
+            ServicePromotionWxsqGetCodeBySubUnionIdRequest request=new ServicePromotionWxsqGetCodeBySubUnionIdRequest();
+
+            request.setProCont( 1 );
+            request.setMaterialIds( skuId.toString() );
+            request.setSubUnionId( subUnionId);
+
+            ServicePromotionWxsqGetCodeBySubUnionIdResponse response=client.execute(request);
+
+            json = response.getGetcodebysubunionidResult();
+        } catch (Exception e) {
+            LOG.error("[获取推广短链接]调用异常!skuId:{},subUnionId:{}", skuId, subUnionId);
         }
         return json;
     }

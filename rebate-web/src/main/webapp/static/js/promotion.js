@@ -7,18 +7,18 @@ $(function () {
     var counter = 1;
 
     promotionTab = $("#promotionTab").val();
-    if(1==promotionTab){
+    if (1 == promotionTab) {
         //  Waterfall();
     }
 
     //首次加载
-    loadProductData(counter,-1,promotionTab);
+    loadProductData(counter, -1, promotionTab);
     //监听加载更多
     $(window).scroll(function () {
         var totalheight = parseFloat($(window).height()) + parseFloat($(window).scrollTop());
         if ($(document).height() <= totalheight) {
             counter++;
-            loadProductData(counter,-1,promotionTab);
+            loadProductData(counter, -1, promotionTab);
         }
     });
 
@@ -131,28 +131,28 @@ function Waterfall() {
 
     //样式
     var h = parseInt($('.must-buy-list .item').last().css('top')) + $('.must-buy-list .item').last().height();
-    $('.must-buy-list').css('height', h+'px');
+    $('.must-buy-list').css('height', h + 'px');
 
 }
 
 //1为每日购买 2为9.9秒杀
-function reLoadData(page,category,tab){
+function reLoadData(page, category, tab) {
     $('.g-list').html("");
 
-    loadProductData(page,category,tab);
+    loadProductData(page, category, tab);
 }
 
-function loadProductData(page,category,tab) {
+function loadProductData(page, category, tab) {
     $.ajax({
         type: 'GET',
-        url: '/rebate/products.json?page='+page+"&thirdCategory="+category+"&tab="+tab+"&r="+Math.random(),
+        url: '/rebate/products.json?page=' + page + "&thirdCategory=" + category + "&tab=" + tab + "&r=" + Math.random(),
         dataType: 'json',
         success: function (reponse) {
             var list = reponse.products;
             var sum = list.length;
             var result = '';
             for (var i = 0; i < sum; i++) {
-                result += getTemplate(list[i],tab);
+                result += getTemplate(list[i], tab);
             }
             $('.g-list').append(result);
         },
@@ -161,43 +161,59 @@ function loadProductData(page,category,tab) {
         }
     });
 
-    function getTemplate(product,tab){
-        var htmlTemp = "<div class=\"item mui-flex\">" +
-            "        <div class=\"g-img cell fixed\">" +
-            "             <a href=\"" + product.promotionUrl + "\" ><img class=\"g-img\" src=\"" + product.imgUrl + "\" alt=\"" + product.name + "\" width='80' height='90'></a>" +
-            "        </div>" +
-            "        <div class=\"cnt cell align-center\">" +
-            "            <a href=\"" + product.promotionUrl + "\" class=\"tl\">" + product.name + "</a>" +
-            "            <div class=\"meta\">" +
-            "                <span class=\"old-price\">原价：<del>" + product.originalPrice + "</del></span>" +
-            "                <!--<span class=\"new-price\">劵后价：3050.00元</span>-->" +
-            "            </div>";
+}
 
-        if (product.rebate) {
-            htmlTemp += "            <div class=\"easy\">" +
-                "                <a href=\"" + product.promotionUrl + "\" class=\"buy\">" +
-                "                    <img class=\"cart\" src=\"/static/img/ico-cart-01.png\" alt=\"\">" +
-                "                    购买返：¥" + product.commissionWl +
-                "                </a>" +
-                "                <a href=\"/rebate/share?skuId=\""+product.productId+" class=\"share\">" +
-                "                    <img class=\"zhuanfa\" src=\"/static/img/ico-zhuanfa-01.png\" alt=\"\">" +
-                "                    分享赚：¥1.00" +
-                "                </a>" +
-                "            </div>";
-        }else{
-            htmlTemp += "            <div class=\"easy\">" +
-                "                <a href=\"" + product.promotionUrl + "\" class=\"buy\">" +
-                "                    <img class=\"cart\" src=\"/static/img/ico-cart-01.png\" alt=\"\">" +
-                "                    去购买" +
-                "                </a>" +
-                "                <a href=\"/rebate/share?skuId="+product.productId+"\" class=\"share\">" +
-                "                    <img class=\"zhuanfa\" src=\"/static/img/ico-zhuanfa-01.png\" alt=\"\">" +
-                "                    去分享" +
-                "                </a>" +
-                "            </div>";
-        }
-        htmlTemp += "        </div>" +
-            "    </div>";
-        return htmlTemp;
+function getTemplate(product, tab) {
+    var htmlTemp = "<div class=\"item mui-flex\">" +
+        "        <div class=\"g-img cell fixed\">" +
+        "             <a href=\"" + product.promotionUrl + "\" ><img class=\"g-img\" src=\"" + product.imgUrl + "\" alt=\"" + product.name + "\" width='80' height='90'></a>" +
+        "        </div>" +
+        "        <div class=\"cnt cell align-center\">" +
+        "            <a href=\"" + product.promotionUrl + "\" class=\"tl\">" + product.name + "</a>" +
+        "            <div class=\"meta\">" +
+        "                <span class=\"old-price\">原价：<del>" + product.originalPrice + "</del></span>" +
+        "                <!--<span class=\"new-price\">劵后价：3050.00元</span>-->" +
+        "            </div>";
+
+    if (product.rebate) {
+        htmlTemp += "            <div class=\"easy\">" +
+            "                <a href=\"javascript:void(0);\" onclick=\"redirectJdPromotionUrl(" + product.productId + ")\" class=\"buy\">" +
+            "                    <img class=\"cart\" src=\"/static/img/ico-cart-01.png\" alt=\"\">" +
+            "                    购买返：¥" + product.commissionWl +
+            "                </a>" +
+            "                <a href=\"/rebate/share?skuId=\"" + product.productId + " class=\"share\">" +
+            "                    <img class=\"zhuanfa\" src=\"/static/img/ico-zhuanfa-01.png\" alt=\"\">" +
+            "                    分享赚：¥1.00" +
+            "                </a>" +
+            "            </div>";
+    } else {
+        htmlTemp += "            <div class=\"easy\">" +
+            "                <a href=\"javascript:void(0);\" onclick=\"redirectJdPromotionUrl(" + product.productId + ")\" class=\"buy\">" +
+            "                    <img class=\"cart\" src=\"/static/img/ico-cart-01.png\" alt=\"\">" +
+            "                    去购买" +
+            "                </a>" +
+            "                <a href=\"/rebate/share?skuId=" + product.productId + "\" class=\"share\">" +
+            "                    <img class=\"zhuanfa\" src=\"/static/img/ico-zhuanfa-01.png\" alt=\"\">" +
+            "                    去分享" +
+            "                </a>" +
+            "            </div>";
     }
+    htmlTemp += "        </div>" +
+        "    </div>";
+    return htmlTemp;
+}
+
+function redirectJdPromotionUrl(skuId) {
+    $.ajax({
+        type: 'GET',
+        url: '/qsc/jdShortUrl.json?skuId=' + skuId + "&r=" + Math.random(),
+        dataType: 'json',
+        success: function (reponse) {
+            var url = reponse.url;
+            location.href = url;
+        },
+        error: function (xhr, type) {
+            console.log('加载更多数据错误！');
+        }
+    });
 }

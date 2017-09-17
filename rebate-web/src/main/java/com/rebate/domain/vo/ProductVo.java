@@ -165,6 +165,13 @@ public class ProductVo extends BaseQuery {
     private String promotionUrl;
 
     /**
+     * 推广短链接
+     */
+    @Getter
+    @Setter
+    private String promotionShortUrl;
+
+    /**
      * 是否返佣
      */
     @Getter

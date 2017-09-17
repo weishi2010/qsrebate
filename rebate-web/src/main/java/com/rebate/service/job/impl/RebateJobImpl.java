@@ -65,6 +65,7 @@ public class RebateJobImpl implements RebateJob {
                 if (null == product || 0 == product.getIsRebate()) {
                     rebateDetail.setCommission(0.0);
                 }
+
                 //插入明细
                 rebateDetailDao.insert(rebateDetail);
 

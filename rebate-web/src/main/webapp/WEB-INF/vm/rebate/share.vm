@@ -5,7 +5,7 @@
 <script type="text/javascript">
 
     wx.config({
-        debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+        debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
         appId: '$!{wxConfig.appId}', // 必填，公众号的唯一标识
         timestamp: $!{timeStamp}, // 必填，生成签名的时间戳
         nonceStr: '$!{noncestr}', // 必填，生成签名的随机串
@@ -14,14 +14,15 @@
     });
 
     wx.ready(function(){
-        // config信息验证后会执行ready方法，所有接口调用都必须在config接口获得结果之后，config是一个客户端的异步操作，所以如果需要在页面加载时就调用相关接口，则须把相关接口放在ready函数中调用来确保正确执行。对于用户触发时才调用的接口，则可以直接调用，不需要放在ready函数中。
-    });
-    wx.error(function(res){
-        // config信息验证失败会执行error函数，如签名过期导致验证失败，具体错误信息可以打开config的debug模式查看，也可以在返回的res参数中查看，对于SPA可以在这里更新签名。
-    });
+        var productName = $("#productName").val();
+        var originalPrice = $("#originalPrice").val();
+        var couponPrice = $("#couponPrice").val();
 
-    //分享给朋友圈
-    function shareToTimeline(title, desc, link, imgUrl) {
+        var title="";
+        var desc =productName+"<br/>"+originalPrice+"<br/>"+couponPrice;
+        var link = $("#promotionUrl").val();
+        var imgUrl = $("#imgUrl").val();
+
         wx.onMenuShareTimeline({
             title: title, // 分享标题
             link: link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
@@ -33,15 +34,12 @@
             },
             cancel: function () {
                 // 用户取消分享后执行的回调函数
+            },
+            fail: function (res) {
+                alert(res);
             }
         });
-    }
-    //分享给朋友
-    function shareToFriend(title, desc, link, imgUrl) {
-        alert(title)
-        alert(desc)
-        alert(link)
-        alert(imgUrl)
+
         wx.onMenuShareAppMessage({
             title: title, // 分享标题
             desc: desc, // 分享描述
@@ -59,9 +57,7 @@
                 alert("error")
             }
         });
-    }
-    //分享到QQ
-    function shareToQQ(title, desc, link, imgUrl) {
+
         wx.onMenuShareQQ({
             title: title, // 分享标题
             desc: desc, // 分享描述
@@ -76,10 +72,7 @@
                 // 用户取消分享后执行的回调函数
             }
         });
-    }
 
-    //分享到腾讯微博
-    function shareToWeibo(title, desc, link, imgUrl) {
         wx.onMenuShareWeibo({
             title: title, // 分享标题
             desc: desc, // 分享描述
@@ -94,9 +87,7 @@
                 // 用户取消分享后执行的回调函数
             }
         });
-    }
 
-    function shareToQZone(title, desc, link, imgUrl) {
         wx.onMenuShareQZone({
             title: title, // 分享标题
             desc: desc, // 分享描述
@@ -109,17 +100,16 @@
                 // 用户取消分享后执行的回调函数
             }
         });
-    }
+
+        // config信息验证后会执行ready方法，所有接口调用都必须在config接口获得结果之后，config是一个客户端的异步操作，所以如果需要在页面加载时就调用相关接口，则须把相关接口放在ready函数中调用来确保正确执行。对于用户触发时才调用的接口，则可以直接调用，不需要放在ready函数中。
+    });
+    wx.error(function(res){
+        // config信息验证失败会执行error函数，如签名过期导致验证失败，具体错误信息可以打开config的debug模式查看，也可以在返回的res参数中查看，对于SPA可以在这里更新签名。
+    });
+
+
 
     function shareProduct(tab){
-        var productName = $("#productName").val();
-        var originalPrice = $("#originalPrice").val();
-        var couponPrice = $("#couponPrice").val();
-
-        var title="";
-        var desc =productName+"<br/>"+originalPrice+"<br/>"+couponPrice;
-        var link = $("#promotionUrl").val();
-        var imgUrl = $("#imgUrl").val();
 
         if(1==tab){
             shareToFriend(title,desc,link,imgUrl)
@@ -174,7 +164,7 @@
                     <div class="sec mui-flex align-center">
                         <div class="cell fixed"></div>
                         <div class="cell">
-                            <input value="【京东超市】$!{product.name}" id="productName" type="text">
+                            <input value="$!{product.name}" id="productName" type="text">
                         </div>
                     </div>
                     <div class="sec mui-flex align-center">
@@ -196,7 +186,7 @@
                             【购买链接】
                         </div>
                         <div class="cell">
-                            <input style="color:#898989;" value="http://m.qingsongfan.com/rebate/promotion" id="promotionUrl" type="text">
+                            <input style="color:#898989;" value="$!{product.promotionShortUrl}" id="promotionUrl" type="text">
                         </div>
                     </div>
                 </div>
