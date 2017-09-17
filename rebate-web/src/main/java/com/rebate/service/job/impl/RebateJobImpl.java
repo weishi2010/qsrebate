@@ -55,13 +55,22 @@ public class RebateJobImpl implements RebateJob {
         for (RebateDetail rebateDetail : rebateDetails) {
             RebateDetailQuery rebateDetailQuery = new RebateDetailQuery();
             rebateDetailQuery.setOrderId(rebateDetail.getOrderId());
+            rebateDetailQuery.setProductId(rebateDetail.getProductId());
             rebateDetailQuery.setOpenId(rebateDetail.getOpenId());
             if (null != rebateDetailDao.queryRebateDetailByOrderId(rebateDetailQuery)) {
-                //1.插入明细
+                //查询商品，如果为不可返佣商品则返佣金额设置为0
+                Product productQuery = new Product();
+                productQuery.setProductId(rebateDetail.getProductId());
+                Product product = productDao.findById(productQuery);
+                if (null == product || 0 == product.getIsRebate()) {
+                    rebateDetail.setCommission(0.0);
+                }
+                //插入明细
                 rebateDetailDao.insert(rebateDetail);
-                //2.重新获取用户可用余额
+
+                //重新获取用户可用余额
                 Double totalCommission = rebateDetailDao.findUserTotalCommission(rebateDetailQuery);
-                //3.重新计算用户余额
+                //重新计算用户余额
                 Commission commission = new Commission();
                 commission.setOpenId(rebateDetail.getOpenId());
                 commission.setTotalCommission(totalCommission);
@@ -77,11 +86,11 @@ public class RebateJobImpl implements RebateJob {
         int pageSize = 1000;
         List<Product> products = jdSdkManager.getMediaThemeProducts(page, pageSize);
         while (products.size() > 0) {
-            LOG.error("[importMediaThemeProducts]商品导入任务!size:"+ products.size());
+            LOG.error("[importMediaThemeProducts]商品导入任务!size:" + products.size());
             for (Product product : products) {
                 if (null == productDao.findById(product)) {
                     productDao.insert(product);
-                }else{
+                } else {
 
                     //存在则更新
                     productDao.update(product);

@@ -12,6 +12,7 @@ import com.rebate.domain.Product;
 import com.rebate.domain.RebateDetail;
 import com.rebate.domain.jd.JDConfig;
 import com.rebate.manager.jd.JdSdkManager;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.codehaus.jackson.type.TypeReference;
 import org.slf4j.Logger;
@@ -21,9 +22,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @Component("jdSdkManager")
@@ -184,10 +183,50 @@ public class JdSdkManagerImpl implements JdSdkManager {
         List<RebateDetail> list = new ArrayList<>();
         String json = getQueryImportOrdersResult(queryTime, page, pageSize);
         JSONObject resultObj = JsonUtil.fromJson(json, JSONObject.class);
-        if (null != resultObj && 1 == resultObj.getInt("success")) {
-            String resultJson = resultObj.getString("result");
+        if (null != resultObj && 1 == resultObj.getInt("success")&& resultObj.containsKey("data")) {
+            JSONArray data = resultObj.getJSONArray("data");
+            Iterator it = data.iterator();
+
+            while(it.hasNext()){
+                JSONObject orderObj = (JSONObject) it.next();
+
+                JSONArray skuArray = orderObj.getJSONArray("skus");
+                Iterator skuIterator = skuArray.iterator();
+                while (skuIterator.hasNext()){
+                    JSONObject skuObj = (JSONObject) skuIterator.next();
+
+                    RebateDetail detail = new RebateDetail();
+                    if(orderObj.containsKey("orderTime")){
+                        detail.setSubmitDate(new Date(orderObj.getLong("orderTime")));
+                    }else{
+                        //未完成的订单，订单时间完成时间设置为一个超大的时间
+                        detail.setSubmitDate(new Date(3505625155l));
+                    }
+
+                    if(orderObj.containsKey("finishTime")){
+                        detail.setFinishDate(new Date(orderObj.getLong("finishTime")));
+                    }else{
+                        //未完成的订单，订单时间完成时间设置为一个超大的时间
+                        detail.setFinishDate(new Date(3505625155l));
+                    }
+                    if(orderObj.containsKey("subUnionId")){
+                        detail.setOpenId(orderObj.getString("subUnionId"));
+                    }
+                    detail.setStatus(0);
+                    detail.setOrderStatus(orderObj.getInt("balance"));
+                    detail.setOrderId(orderObj.getLong("orderId"));
+
+                    detail.setProductId(skuObj.getLong("skuId"));
+                    detail.setRebateRatio(skuObj.getDouble("subsidyRate"));
+                    detail.setCommissionRatio(skuObj.getDouble("commissionRate"));
+                    detail.setProductCount(skuObj.getInt("skuNum"));
+                    detail.setProductName(skuObj.getString("skuName"));
+                    detail.setPrice(skuObj.getDouble("cosPrice"));
+                    list.add(detail);
+                }
+
+            }
         }
-        System.out.println("json:" + json);
         return list;
     }
 
