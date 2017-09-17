@@ -80,7 +80,7 @@ public class ProductDaoTest extends AbstractJUnit4SpringContextTests {
 
     @Test
     public void testGetPromotinUrl() {
-        String url = jdSdkManager.getPromotinUrl("https://item.jd.com/4586850.html", "weishi2010");
+        String url = jdSdkManager.getShortPromotinUrl(4586850l, "weishi2010");
         System.out.println("url:" + url);
     }
 }

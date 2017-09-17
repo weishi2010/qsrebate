@@ -59,6 +59,13 @@ public class WXSdkTest extends AbstractJUnit4SpringContextTests {
         WxUserInfo wxUserInfo = wxAccessTokenService.getWxUserInfo(accessToken, openId);
         System.out.println(JsonUtil.toJson(wxUserInfo));
     }
+
+    @Test
+    public void ticket() {
+        String ticket = wxAccessTokenService.getTicket();
+        System.out.println("ticket:" + ticket);
+    }
+
     @Test
     public void testJson() {
         UserInfo userInfo = new UserInfo();
