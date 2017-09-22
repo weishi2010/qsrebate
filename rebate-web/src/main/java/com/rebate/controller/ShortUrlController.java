@@ -73,7 +73,7 @@ public class ShortUrlController extends BaseController {
 
         String url = jdSdkManager.getShortPromotinUrl(skuId, openId);
         map.put("url", RebateUrlUtil.jdPromotionUrlToQsrebateShortUrl(url));
-
+        LOG.error("jdPromotionShortUrl===============>url:"+url+",openId:"+openId);
         return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
     }
 

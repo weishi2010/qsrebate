@@ -1,6 +1,13 @@
 package com.rebate.controller.base;
 
+import com.rebate.common.util.CookieUtils;
+import com.rebate.common.util.JsonUtil;
 import com.rebate.domain.UserInfo;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.ui.ModelMap;
@@ -12,6 +19,8 @@ import java.util.Locale;
 
 
 public class BaseController implements MessageSourceAware {
+    private static final Log LOG = LogFactory.getLog(BaseController.class);
+
     /**
      * 登录后微信用户openId
      */
@@ -20,6 +29,16 @@ public class BaseController implements MessageSourceAware {
      * 用户信息
      */
     private static String USERINFO = "userInfo";
+
+    /**
+     * 用户信息COOKIE
+     */
+    private static String USERINFO_COOKIE = "qs_u_i_o";
+
+    @Qualifier("cookieUtils")
+    @Autowired(required = false)
+    private CookieUtils cookieUtils;
+
 
     private MessageSource messageSource;
 
@@ -70,6 +89,16 @@ public class BaseController implements MessageSourceAware {
      * @return
      */
     public UserInfo getUserInfo(HttpServletRequest request){
-        return (UserInfo)request.getAttribute(USERINFO);
+        UserInfo userInfo = (UserInfo)request.getAttribute(USERINFO);
+        if(null!=userInfo){
+            return userInfo;
+        }
+
+        String userInfoCookieValue = cookieUtils.getQsCookieValue(request, USERINFO_COOKIE);
+        LOG.error("[BaseController]userInfoCookieValue:"+userInfoCookieValue);
+        if (StringUtils.isNotBlank(userInfoCookieValue)) {
+            userInfo = JsonUtil.fromJson(userInfoCookieValue, UserInfo.class);
+        }
+        return userInfo;
     }
 }

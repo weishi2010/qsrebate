@@ -144,8 +144,6 @@ public class QsLoginInteceptor extends LoginInteceptor {
                 LOG.error("[set cookie]===================>userInfo:" + JsonUtil.toJson(userInfo));
 
                 cookieUtils.setCookie(response, USERINFO_COOKIE, JsonUtil.toJson(userInfo),120);
-                String cv = cookieUtils.getQsCookieValue(request, USERINFO_COOKIE);
-                LOG.error("[set cookie]===================>cv:" +cv);
 
             }
         }

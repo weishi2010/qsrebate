@@ -69,7 +69,7 @@ public class RebateDetailDaoTest extends AbstractJUnit4SpringContextTests {
 
     @Test
     public void testGetMediaProducts(){
-        String queryTime = "20170910";//yyyyMMddHHmm,yyyyMMddHHmmss或者yyyyMMddHH格式之一
+        String queryTime = "20170922";//yyyyMMddHHmm,yyyyMMddHHmmss或者yyyyMMddHH格式之一
         int page =1;
         int pageSize = 10;
         List list = jdSdkManager.getRebateDetails(queryTime,page,pageSize);
