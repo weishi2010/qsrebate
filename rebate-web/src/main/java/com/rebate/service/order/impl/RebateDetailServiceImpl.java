@@ -36,17 +36,20 @@ public class RebateDetailServiceImpl implements RebateDetailService {
             if (totalItem > 0) {
                 rebateDetails.setTotalItem(totalItem);
                 rebateDetailQuery.setStartRow(rebateDetails.getStartRow());
-                List<RebateDetail> list = rebateDetailDao.findListBySubUnionId(rebateDetailQuery);
-                for (RebateDetail rebateDetail : list) {
-                    RebateDetailVo vo = new RebateDetailVo(rebateDetail);
-                    Product query = new Product();
-                    query.setProductId(rebateDetail.getProductId());
-                    Product product = productDao.findById(query);
-                    if (null!=product) {
-                        vo.setProductName(product.getName());
-                        vo.setProductImg(product.getImgUrl());
+                if(rebateDetailQuery.getIndex()<=rebateDetails.getTotalPage()) {
+
+                    List<RebateDetail> list = rebateDetailDao.findListBySubUnionId(rebateDetailQuery);
+                    for (RebateDetail rebateDetail : list) {
+                        RebateDetailVo vo = new RebateDetailVo(rebateDetail);
+                        Product query = new Product();
+                        query.setProductId(rebateDetail.getProductId());
+                        Product product = productDao.findById(query);
+                        if (null != product) {
+                            vo.setProductName(product.getName());
+                            vo.setProductImg(product.getImgUrl());
+                        }
+                        rebateDetails.add(vo);
                     }
-                    rebateDetails.add(vo);
                 }
             }
 

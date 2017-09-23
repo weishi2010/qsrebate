@@ -88,28 +88,31 @@ public class ProductServiceImpl implements ProductService {
             if (totalItem > 0) {
                 products.setTotalItem(totalItem);
                 productQuery.setStartRow(products.getStartRow());
-                List<Product> list = productDao.findProducts(productQuery);
-                for (Product product : list) {
-                    try {
-                        ProductVo vo = new ProductVo(product);
+                if(productQuery.getIndex()<=products.getTotalPage()){
+                    List<Product> list = productDao.findProducts(productQuery);
+                    for (Product product : list) {
+                        try {
+                            ProductVo vo = new ProductVo(product);
 
-                        //获取商品链接
-                        vo.setImgUrl(product.getImgUrl().replace(DEFAULT_IMG_SIZE, IMG_SIZE));
+                            //获取商品链接
+                            vo.setImgUrl(product.getImgUrl().replace(DEFAULT_IMG_SIZE, IMG_SIZE));
 
-                        //轻松返平台获取佣金
-                        Double qsCommissionWl = getCommissionWl(vo.getCommissionRatioWl(), vo.getOriginalPrice());//移动端
-                        Double qsCommissionPc = getCommissionPc(vo.getCommissionRatioPc(), vo.getOriginalPrice());//PC端
+                            //轻松返平台获取佣金
+                            Double qsCommissionWl = getCommissionWl(vo.getCommissionRatioWl(), vo.getOriginalPrice());//移动端
+                            Double qsCommissionPc = getCommissionPc(vo.getCommissionRatioPc(), vo.getOriginalPrice());//PC端
 
-                        //按比例给用户返佣金
-                        vo.setCommissionWl(getUserCommission(qsCommissionWl));
-                        vo.setCommissionPc(qsCommissionPc);
+                            //按比例给用户返佣金
+                            vo.setCommissionWl(getUserCommission(qsCommissionWl));
+                            vo.setCommissionPc(qsCommissionPc);
 
-                        products.add(vo);
-                    } catch (Exception e) {
-                        LOG.error("findProductList error!product:{}", JsonUtil.toJson(product), e);
+                            products.add(vo);
+                        } catch (Exception e) {
+                            LOG.error("findProductList error!product:{}", JsonUtil.toJson(product), e);
+                        }
+
                     }
-
                 }
+
             }
 
         } catch (Exception e) {

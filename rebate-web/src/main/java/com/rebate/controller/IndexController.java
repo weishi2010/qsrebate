@@ -203,7 +203,7 @@ public class IndexController extends BaseController {
     }
 
     @RequestMapping({"", "/", "/personal/orders.json"})
-    public ResponseEntity<?> orders(HttpServletRequest request, Integer days) {
+    public ResponseEntity<?> orders(HttpServletRequest request,Integer page, Integer days) {
         Map<String, Object> map = new HashMap<String, Object>();
         UserInfo userInfo = getUserInfo(request);
 
@@ -218,7 +218,9 @@ public class IndexController extends BaseController {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -days);
         query.setEndDate(cal.getTime());
+        query.setIndex(page);
         PaginatedArrayList<RebateDetailVo> result = rebateDetailService.findRebateDetailList(query);
+        LOG.error("page:{},size:{}", page, result.size());
 
         map.put("detailList", result);
         map.put("totalItem", result.getTotalItem());

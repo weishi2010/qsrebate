@@ -14,25 +14,25 @@ $(function () {
 
 
     //首次加载
-    loadOrderData(30);
+    loadOrderData(counter,30);
     //监听加载更多
     $(window).scroll(function () {
         var totalheight = parseFloat($(window).height()) + parseFloat($(window).scrollTop());
         if ($(document).height() <= totalheight) {
             counter++;
             var days = $("#days").val();
-            loadOrderData(days);
+            loadOrderData(counter,days);
         }
     });
 
 });
 
 
-function loadOrderData(days) {
+function loadOrderData(page,days) {
 
     $.ajax({
         type: 'GET',
-        url: '/rebate/personal/orders.json?days='+days+"&r="+Math.random(),
+        url: '/rebate/personal/orders.json?days='+days+'&page='+page+"&r="+Math.random(),
         dataType: 'json',
         success: function (reponse) {
             var list = reponse.detailList;
@@ -79,7 +79,7 @@ function loadOrderData(days) {
             "            </div>" +
             "        </div>" +
             "        <div class=\"ft\">" +
-            "            <div class=\"state-ok\">已确认</div>" +
+            "            <div class=\"state-ok\">"+detail.orderStatusShow+"</div>" +
             "            <div class=\"return-m\">" +
             "                预估返钱：¥<b>"+detail.commission+"</b>" +
             "            </div>" +
