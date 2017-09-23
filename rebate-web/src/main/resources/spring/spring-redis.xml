@@ -3,9 +3,9 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
        default-autowire="byName">
 
-    <!--<bean id="redisUtil" class="com.rebate.common.util.RedisUtil" init-method="init">-->
-        <!--<property name="masterAddrs" value="${qs.rebate.redis}"></property>-->
-        <!--<property name="timeout" value="432000"></property>-->
-    <!--</bean>-->
+    <bean id="redisUtil" class="com.rebate.common.util.RedisUtil" init-method="init">
+        <property name="masterAddrs" value="${qs.rebate.redis}"></property>
+        <property name="timeout" value="432000"></property>
+    </bean>
 
 </beans>

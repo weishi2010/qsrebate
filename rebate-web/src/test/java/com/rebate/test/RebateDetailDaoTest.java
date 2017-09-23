@@ -52,7 +52,7 @@ public class RebateDetailDaoTest extends AbstractJUnit4SpringContextTests {
     @Test
     public void query() {
         RebateDetailQuery query = new RebateDetailQuery();
-        query.setOpenId("weishi2010");
+        query.setSubUnionId("oIAUmv8x60aC5B7FrxVy8Z9-imyY");
         int count = rebateDetailDao.findCountBySubUnionId(query);
 
         query.setStartRow(0);

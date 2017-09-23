@@ -67,4 +67,12 @@
         order by extract_date desc
         limit #startRow#,#pageSize#
     </select>
+
+    <!--用户总提现金额-->
+    <select id="findUserTotalExtract" parameterClass="RebateDetailQuery"  resultClass="double">
+        select
+        sum(extract_price)
+        from extract_detail
+        where open_id=#openId# and status=#status#
+    </select>
 </sqlMap>

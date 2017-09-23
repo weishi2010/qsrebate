@@ -17,4 +17,9 @@ public class UserInfoDaoImpl extends BaseDao implements UserInfoDao {
     public UserInfo findLoginUserInfo(UserInfo userInfo) {
         return (UserInfo) queryForObject("UserInfo.findLoginUserInfo",userInfo);
     }
+
+    @Override
+    public UserInfo findUserInfoBySubUnionId(UserInfo userInfo) {
+        return (UserInfo) queryForObject("UserInfo.findUserInfoBySubUnionId",userInfo);
+    }
 }

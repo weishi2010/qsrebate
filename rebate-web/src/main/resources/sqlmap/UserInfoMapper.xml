@@ -78,4 +78,13 @@
         where open_id=#openId#
         limit 1
     </select>
+
+    <!--根据子联盟ID查询用户信息-->
+    <select id="findUserInfoBySubUnionId" parameterClass="UserInfo" resultMap="UserInfoResultMap">
+        select
+        <include refid="fields"/>
+        from user_info
+        where sub_union_id=#subUnionId#
+        limit 1
+    </select>
 </sqlMap>

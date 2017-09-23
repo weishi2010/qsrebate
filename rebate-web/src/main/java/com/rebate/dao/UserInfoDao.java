@@ -19,4 +19,11 @@ public interface UserInfoDao {
      * @return
      */
     UserInfo findLoginUserInfo(UserInfo userInfo);
+
+    /**
+     * 根据子联盟ID查询
+     * @param userInfo
+     * @return
+     */
+    UserInfo findUserInfoBySubUnionId(UserInfo userInfo);
 }

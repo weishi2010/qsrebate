@@ -29,4 +29,11 @@ public interface ExtractDetailDao {
      * @return
      */
     List<ExtractDetail> findExtractDetailList(ExtractDetailQuery extractDetailQuery);
+
+    /**
+     *用户总提现金额-
+     * @param extractDetailQuery
+     * @return
+     */
+    Double findUserTotalExtract(ExtractDetailQuery extractDetailQuery);
 }

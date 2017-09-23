@@ -134,7 +134,7 @@
         select
         <include refid="fields"/>
         from rebate_detail
-        where sub_union_id=#subUnionId# and   finish_date>#endDate#
+        where sub_union_id=#subUnionId#
         order by finish_date desc
         limit #startRow#,#pageSize#
     </select>
@@ -147,4 +147,12 @@
         limit 1
     </select>
 
+    <!--用户总返佣金额-->
+    <select id="findUserTotalCommission" parameterClass="RebateDetailQuery" resultClass="double">
+        select
+        sum(user_commission)
+        from rebate_detail
+        where sub_union_id=#subUnionId# and status=#status#
+        limit 1
+    </select>
 </sqlMap>

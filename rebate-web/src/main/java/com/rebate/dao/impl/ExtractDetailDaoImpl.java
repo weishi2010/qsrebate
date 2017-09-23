@@ -22,4 +22,10 @@ public class ExtractDetailDaoImpl extends BaseDao implements ExtractDetailDao {
     public List<ExtractDetail> findExtractDetailList(ExtractDetailQuery extractDetailQuery) {
         return queryForList("ExtractDetail.findExtractDetailList",extractDetailQuery);
     }
+
+    @Override
+    public Double findUserTotalExtract(ExtractDetailQuery extractDetailQuery) {
+        return (Double)queryForObject("ExtractDetail.findUserTotalExtract",extractDetailQuery);
+
+    }
 }

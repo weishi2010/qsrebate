@@ -37,6 +37,16 @@ public class ExtractDetailDaoTest extends AbstractJUnit4SpringContextTests {
     }
 
     @Test
+    public void findUserTotalExtract() {
+        ExtractDetailQuery extractDetailQuery = new ExtractDetailQuery();
+        extractDetailQuery.setOpenId("weishi2010");
+        Double price = extractDetailDao.findUserTotalExtract(extractDetailQuery);
+
+        System.out.println("price:"+price);
+
+    }
+
+    @Test
     public void testFindExtractDetailList() throws ParseException {
         SimpleDateFormat endFormat = new SimpleDateFormat("yyyy-MM-dd 23:59:59");
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
