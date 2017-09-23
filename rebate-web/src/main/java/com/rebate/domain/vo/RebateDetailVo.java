@@ -1,6 +1,7 @@
 package com.rebate.domain.vo;
 
 import com.rebate.domain.RebateDetail;
+import com.rebate.domain.en.EOrderStatus;
 import com.rebate.domain.en.ERebateDetailStatus;
 import com.rebate.domain.query.BaseQuery;
 import lombok.Getter;
@@ -124,6 +125,10 @@ public class RebateDetailVo extends BaseQuery{
     }
 
     public String getOrderStatusShow(){
+        return EOrderStatus.getStatusShow(status);
+    }
+
+    public String getRebateDetailStatusShow(){
         return ERebateDetailStatus.getStatusShow(orderStatus);
     }
 }

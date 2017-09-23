@@ -224,8 +224,8 @@ public class JdSdkManagerImpl implements JdSdkManager {
                     if (orderObj.containsKey("subUnionId")) {
                         detail.setOpenId(orderObj.getString("subUnionId"));
                     }
-                    detail.setStatus(0);
-                    detail.setOrderStatus(orderObj.getInt("balance"));
+                    detail.setStatus(orderObj.getInt("balance"));
+                    detail.setOrderStatus(orderObj.getInt("yn"));
                     detail.setOrderId(orderObj.getLong("orderId"));
 
                     detail.setProductId(skuObj.getLong("skuId"));

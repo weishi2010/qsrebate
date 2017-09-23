@@ -106,6 +106,19 @@
         </selectKey>
     </insert>
 
+    <sql id="condition">
+        <dynamic prepend="where">
+            <isNotNull property="orderStatus" prepend=",">
+                order_status = #orderStatus#
+            </isNotNull>
+            <isNotNull property="status" prepend=",">
+                status = #status#
+            </isNotNull>
+            <isNotNull property="orderId" prepend=",">
+                order_id=#orderId#
+            </isNotNull>
+        </dynamic>
+    </sql>
     <update id="update">
         update rebate_detail
         set  modified=now()
@@ -143,7 +156,7 @@
         select
         <include refid="fields"/>
         from rebate_detail
-        where order_id=#orderId#
+        <include refid="condition"/>
         limit 1
     </select>
 

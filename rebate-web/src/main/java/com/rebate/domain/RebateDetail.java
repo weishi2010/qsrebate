@@ -94,7 +94,7 @@ public class RebateDetail extends BaseQuery {
     @Setter
     private Integer orderStatus;
     /**
-     * 状态
+     * 结算状态
      */
     @Getter
     @Setter

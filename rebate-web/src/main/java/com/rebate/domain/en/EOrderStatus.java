@@ -1,28 +1,28 @@
 package com.rebate.domain.en;
 
 /**
- * 订单返利明细状态
+ * 订单状态
  */
-public enum ERebateDetailStatus {
+public enum EOrderStatus {
     /**
-     * 未结算
+     * 已取消
      */
-    NEVER_SETTLEMENT(2,"未结算"),
+    CANCEL(0,"已取消"),
 
     /**
-     * 已结算
+     * 正常
      */
-    SETTLEMENT(1,"已结算");
+    SETTLEMENT(1,"正常");
     private int code;
     private String name;
 
-    ERebateDetailStatus(int code, String name){
+    EOrderStatus(int code, String name){
         this.code = code;
         this.name = name;
     }
 
     public static String getStatusShow(int code){
-        for(ERebateDetailStatus eExtractStatus:values()){
+        for(EOrderStatus eExtractStatus:values()){
             if(code==eExtractStatus.getCode()){
                 return eExtractStatus.name;
             }

@@ -58,4 +58,9 @@ public class UserInfoDaoTest extends AbstractJUnit4SpringContextTests {
     }
 
 
+    public static void main(String[] args){
+    String userInfoJson = "{\"id\":3,\"openId\":\"oIAUmv8x60aC5B7FrxVy8Z9-imyY\",\"wxImage\":\"http://wx.qlogo.cn/mmopen/vi_32/DYAIOgq83eqpJdBmwaEgG5QfqPAyxvUBtEtPmeoIP9Zmmxkic8EJvKUXj9FjUAoMwnvb0KySL7NMPJXc6Kic4lOQ/0\",\"phone\":\"\",\"nickName\":\"wsh\",\"email\":\"\",\"status\":0,\"subUnionId\":\"JD100000251\",\"recommendAccount\":\"\",\"created\":\"2017-09-23 16:26:57\",\"modified\":\"2017-09-23 16:26:57\"}";
+    UserInfo userInfo = JsonUtil.fromJson(userInfoJson,UserInfo.class);
+    System.out.println(userInfo.getOpenId());
+    }
 }

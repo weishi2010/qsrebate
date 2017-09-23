@@ -65,9 +65,8 @@ public class RebateJobImpl implements RebateJob {
         for (RebateDetail rebateDetail : rebateDetails) {
             RebateDetailQuery rebateDetailQuery = new RebateDetailQuery();
             rebateDetailQuery.setOrderId(rebateDetail.getOrderId());
-            rebateDetailQuery.setProductId(rebateDetail.getProductId());
-            rebateDetailQuery.setSubUnionId(rebateDetail.getSubUnionId());
-            if (null == rebateDetailDao.queryRebateDetailByOrderId(rebateDetailQuery)) {
+            RebateDetail existsRebateDetail = rebateDetailDao.queryRebateDetailByOrderId(rebateDetailQuery);
+            if (null == existsRebateDetail) {
                 //查询商品，如果为不可返佣商品则返佣金额设置为0
                 Product productQuery = new Product();
                 productQuery.setProductId(rebateDetail.getProductId());
@@ -79,19 +78,23 @@ public class RebateJobImpl implements RebateJob {
                 //插入明细
                 rebateDetailDao.insert(rebateDetail);
 
-                if(StringUtils.isNotBlank(rebateDetail.getSubUnionId())){
+            } else {
 
-                    //重新获取用户可用余额
-                    RebateDetailQuery userTotalCommissionQuery = new RebateDetailQuery();
-                    userTotalCommissionQuery.setSubUnionId(rebateDetail.getSubUnionId());
-                    userTotalCommissionQuery.setStatus(ERebateDetailStatus.SETTLEMENT.getCode());//查询已经结算总的用户返佣金额
-                    Double totalUserCommission = rebateDetailDao.findUserTotalCommission(userTotalCommissionQuery);
+                //有子联盟ID，且未结算过的订单返佣明细再进行用户提现余额更新
+                if (StringUtils.isNotBlank(rebateDetail.getSubUnionId()) && ERebateDetailStatus.NEVER_SETTLEMENT.getCode() == existsRebateDetail.getStatus()
+                        && ERebateDetailStatus.SETTLEMENT.getCode() == rebateDetail.getStatus()) {
 
 
                     UserInfo userInfoQuery = new UserInfo();
                     userInfoQuery.setSubUnionId(rebateDetail.getSubUnionId());
-                    UserInfo userInfo = userInfoDao.findLoginUserInfo(userInfoQuery);
+                    UserInfo userInfo = userInfoDao.findUserInfoBySubUnionId(userInfoQuery);
                     if (null != userInfo) {
+
+                        //重新获取用户可用余额
+                        RebateDetailQuery userTotalCommissionQuery = new RebateDetailQuery();
+                        userTotalCommissionQuery.setSubUnionId(rebateDetail.getSubUnionId());
+                        userTotalCommissionQuery.setStatus(ERebateDetailStatus.SETTLEMENT.getCode());//查询已经结算总的用户返佣金额
+                        Double totalUserCommission = rebateDetailDao.findUserTotalCommission(userTotalCommissionQuery);
 
                         //查询已提现金额
                         ExtractDetailQuery extractDetailQuery = new ExtractDetailQuery();
@@ -111,7 +114,7 @@ public class RebateJobImpl implements RebateJob {
                             Commission commission = new Commission();
                             commission.setOpenId(rebateDetail.getOpenId());
                             commission.setTotalCommission(totalCommission);
-                            Commission  userCommission = commissionDao.findCommissionByOpenId(commission);
+                            Commission userCommission = commissionDao.findCommissionByOpenId(commission);
 
                             if (null == userCommission) {
                                 commission.setStatus(0);
@@ -124,11 +127,12 @@ public class RebateJobImpl implements RebateJob {
 
                         }
                     }
+                    //更新明细状态
+                    rebateDetailDao.update(rebateDetail);
+
                 }
 
 
-            } else {
-                rebateDetailDao.update(rebateDetail);
             }
 
         }

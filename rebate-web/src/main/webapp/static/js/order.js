@@ -78,9 +78,19 @@ function loadOrderData(page,days) {
             "                <span>¥"+detail.commission+"</span>" +
             "            </div>" +
             "        </div>" +
-            "        <div class=\"ft\">" +
-            "            <div class=\"state-ok\">"+detail.orderStatusShow+"</div>" +
-            "            <div class=\"return-m\">" +
+            "        <div class=\"ft\">";
+            var statusTemp = "";
+            if(1==detail.orderStatus){
+                if(1==detail.status){
+                    statusTemp="            <div class=\"state-ok\">已经结算</div>";
+                }else{
+                    statusTemp="            <div class=\"state-wait\">未结算</div>";
+                }
+            }else{
+                statusTemp="            <div class=\"state-wait\">已取消</div>";
+            }
+        htmlTemp +=statusTemp;
+        htmlTemp +="            <div class=\"return-m\">" +
             "                预估返钱：¥<b>"+detail.commission+"</b>" +
             "            </div>" +
             "        </div>" +
