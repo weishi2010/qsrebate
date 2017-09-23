@@ -191,7 +191,7 @@ public class IndexController extends BaseController {
         query.setOpenId(userInfo.getOpenId());
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -days);
-        query.setEndDate(cal.getTime());
+        query.setStartDate(cal.getTime());
         PaginatedArrayList<RebateDetailVo> result = rebateDetailService.findRebateDetailList(query);
 
         view.addObject("detailList", result);
@@ -217,7 +217,7 @@ public class IndexController extends BaseController {
         query.setSubUnionId(userInfo.getSubUnionId());
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -days);
-        query.setEndDate(cal.getTime());
+        query.setStartDate(cal.getTime());
         query.setIndex(page);
         PaginatedArrayList<RebateDetailVo> result = rebateDetailService.findRebateDetailList(query);
         LOG.error("page:{},size:{}", page, result.size());

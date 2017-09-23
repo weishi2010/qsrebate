@@ -140,15 +140,15 @@
         select
         count(1)
         from rebate_detail
-        where sub_union_id=#subUnionId#
+        where sub_union_id=#subUnionId# and submit_date>=#startDate#
     </select>
 
     <select id="findListBySubUnionId" parameterClass="RebateDetailQuery" resultMap="RebateDetailResultMap">
         select
         <include refid="fields"/>
         from rebate_detail
-        where sub_union_id=#subUnionId#
-        order by finish_date desc
+        where sub_union_id=#subUnionId# and submit_date>=#startDate#
+        order by submit_date desc
         limit #startRow#,#pageSize#
     </select>
 

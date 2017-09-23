@@ -3,9 +3,11 @@ package com.rebate.test;
 
 import com.rebate.common.util.JsonUtil;
 import com.rebate.common.util.rebate.JdMediaProductGrapUtil;
+import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.dao.ProductDao;
 import com.rebate.domain.Product;
 import com.rebate.domain.query.ProductQuery;
+import com.rebate.domain.vo.ProductVo;
 import com.rebate.manager.jd.JdSdkManager;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,11 +41,22 @@ public class ProductDaoTest extends AbstractJUnit4SpringContextTests {
 
     @Test
     public void testGetProducts() {
-        ProductQuery query = new ProductQuery();
-        query.setPageSize(10);
-        query.setThirdCategory(1195);
-        List list = productDao.findProducts(query);
-        System.out.println("list:" + JsonUtil.toJson(list));
+        ProductQuery productQuery = new ProductQuery();
+        productQuery.setIndex(3);
+        productQuery.setPageSize(10);
+        PaginatedArrayList<ProductVo> products = new PaginatedArrayList<ProductVo>(productQuery.getIndex(), productQuery.getPageSize());
+
+        int totalItem = productDao.findProductsCount(productQuery);
+        if (totalItem > 0) {
+            products.setTotalItem(totalItem);
+            productQuery.setStartRow(products.getStartRow());
+            System.out.println(products.getStartRow());
+            if(productQuery.getIndex()<=products.getTotalPage()) {
+                List<Product> list = productDao.findProducts(productQuery);
+                System.out.println("list:" + JsonUtil.toJson(list));
+            }
+        }
+
     }
 
     @Test

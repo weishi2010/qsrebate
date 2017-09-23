@@ -59,7 +59,7 @@ public class RebateDetailDaoTest extends AbstractJUnit4SpringContextTests {
         query.setPageSize(100);
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -100);
-        query.setEndDate(cal.getTime());
+        query.setStartDate(cal.getTime());
 
         List list = rebateDetailDao.findListBySubUnionId(query);
         System.out.println("count," + count + ",list" + JsonUtil.toJson(list));

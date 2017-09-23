@@ -12,5 +12,5 @@ import java.util.Date;
 public class RebateDetailQuery extends RebateDetail {
     @Getter
     @Setter
-    private Date endDate;
+    private Date startDate;
 }
