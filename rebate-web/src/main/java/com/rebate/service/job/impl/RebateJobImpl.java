@@ -42,7 +42,7 @@ public class RebateJobImpl implements RebateJob {
 
     @Override
     public void importMediaOrder() {
-        SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHH");
+        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
         int page = 1;
         int pageSize = 100;
         //获取前一天的订单
