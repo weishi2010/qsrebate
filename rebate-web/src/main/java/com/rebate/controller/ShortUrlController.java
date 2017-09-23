@@ -66,14 +66,14 @@ public class ShortUrlController extends BaseController {
         Map<String, Object> map = new HashMap<String, Object>();
 
         UserInfo userInfo = getUserInfo(request);
-        String openId = "";
+        String subUnionId = "";
         if (null != userInfo) {
-            openId = userInfo.getOpenId();
+            subUnionId = userInfo.getSubUnionId();
         }
 
-        String url = jdSdkManager.getShortPromotinUrl(skuId, openId);
+        String url = jdSdkManager.getShortPromotinUrl(skuId, subUnionId);
         map.put("url", RebateUrlUtil.jdPromotionUrlToQsrebateShortUrl(url));
-        LOG.error("jdPromotionShortUrl===============>url:"+url+",openId:"+openId);
+        LOG.error("jdPromotionShortUrl===============>url:"+url+",subUnionId:"+subUnionId);
         return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
     }
 

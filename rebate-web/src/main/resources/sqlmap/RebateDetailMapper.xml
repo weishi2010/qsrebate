@@ -7,7 +7,6 @@
 
     <resultMap class="RebateDetail" id="RebateDetailResultMap">
         <result property="id" column="id"/>
-        <result property="openId" column="open_id"/>
         <result property="orderId" column="order_id"/>
         <result property="productId" column="product_id"/>
         <result property="price" column="price"/>
@@ -21,11 +20,19 @@
         <result property="status" column="status"/>
         <result property="created" column="created"/>
         <result property="modified" column="modified"/>
+        <result property="price" column="price"/>
+        <result property="productId" column="product_id"/>
+        <result property="productName" column="product_name"/>
+        <result property="unionId" column="union_id"/>
+        <result property="subUnionId" column="sub_union_id"/>
+        <result property="platformRatio" column="platform_ratio"/>
+        <result property="userCommission" column="user_commission"/>
+        <result property="positionId" column="position_id"/>
+
     </resultMap>
 
     <sql id="fields">
         id,
-        open_id,
         order_id,
         product_id,
         price,
@@ -37,6 +44,14 @@
         finish_date,
         order_status,
         status,
+        price,
+        product_id,
+        product_name,
+        union_id,
+        sub_union_id,
+        platform_ratio,
+        user_commission,
+        position_id,
         created,
         modified
     </sql>
@@ -44,9 +59,9 @@
     <insert id="insert" parameterClass="RebateDetail">
         insert into  rebate_detail
         (
-        open_id,
         order_id,
         product_id,
+        product_name,
         price,
         product_count,
         commission,
@@ -56,14 +71,19 @@
         finish_date,
         order_status,
         status,
+        union_id,
+        sub_union_id,
+        platform_ratio,
+        user_commission,
+        position_id,
         created,
         modified
         )
         values
         (
-        #openId#,
         #orderId#,
         #productId#,
+        #productName#,
         #price#,
         #productCount#,
         #commission#,
@@ -73,6 +93,11 @@
         #finishDate#,
         #orderStatus#,
         #status#,
+        #unionId#,
+        #subUnionId#,
+        #platformRatio#,
+        #userCommission#,
+        #positionId#,
         now(),
         now()
         )
@@ -81,18 +106,35 @@
         </selectKey>
     </insert>
 
-    <select id="findCountByOpenId" parameterClass="RebateDetailQuery" resultClass="int">
+    <update id="update">
+        update rebate_detail
+        set  modified=now()
+        <dynamic>
+            <isNotNull property="orderStatus" prepend=",">
+                order_status = #orderStatus#
+            </isNotNull>
+            <isNotNull property="status" prepend=",">
+                status = #status#
+            </isNotNull>
+            <isNotNull property="finishDate" prepend=",">
+                finish_date = #finishDate#
+            </isNotNull>
+        </dynamic>
+        where order_id=#orderId#
+    </update>
+
+    <select id="findCountBySubUnionId" parameterClass="RebateDetailQuery" resultClass="int">
         select
         count(1)
         from rebate_detail
-        where open_id=#openId#
+        where sub_union_id=#subUnionId#
     </select>
 
-    <select id="findListByOpenId" parameterClass="RebateDetailQuery" resultMap="RebateDetailResultMap">
+    <select id="findListBySubUnionId" parameterClass="RebateDetailQuery" resultMap="RebateDetailResultMap">
         select
         <include refid="fields"/>
         from rebate_detail
-        where open_id=#openId# and   finish_date>#endDate#
+        where sub_union_id=#subUnionId# and   finish_date>#endDate#
         order by finish_date desc
         limit #startRow#,#pageSize#
     </select>

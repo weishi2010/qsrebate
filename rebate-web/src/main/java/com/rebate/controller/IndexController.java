@@ -8,9 +8,7 @@ import com.rebate.controller.base.BaseController;
 import com.rebate.domain.CategoryQuery;
 import com.rebate.domain.ExtractDetail;
 import com.rebate.domain.UserInfo;
-import com.rebate.domain.en.EExtractCode;
-import com.rebate.domain.en.EExtractStatus;
-import com.rebate.domain.en.EPromotionTab;
+import com.rebate.domain.en.*;
 import com.rebate.domain.query.ExtractDetailQuery;
 import com.rebate.domain.query.ProductQuery;
 import com.rebate.domain.query.RebateDetailQuery;
@@ -216,7 +214,7 @@ public class IndexController extends BaseController {
             days = 180;//大于180天则只取180天
         }
         RebateDetailQuery query = new RebateDetailQuery();
-        query.setOpenId(userInfo.getOpenId());
+        query.setSubUnionId(userInfo.getSubUnionId());
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -days);
         query.setEndDate(cal.getTime());
@@ -250,7 +248,7 @@ public class IndexController extends BaseController {
     public ModelAndView promotion(HttpServletRequest request, Integer tab) {
         String vm = "/promotion/promotionList";
         if (null == tab) {
-            tab = EPromotionTab.DAILY.getTab();//默认为"每日必买"
+            tab = EPromotionTab.COUPON_PROMOTION.getTab();//默认为"独家优惠券"
         } else if (EPromotionTab.SECKILL.getTab() == tab) {
             vm = "/promotion/promotionList";
         } else if (EPromotionTab.COUPON.getTab() == tab) {
@@ -261,8 +259,9 @@ public class IndexController extends BaseController {
 
         ModelAndView view = new ModelAndView(PREFIX + vm);
 
-        if (EPromotionTab.DAILY.getTab() == tab || EPromotionTab.SECKILL.getTab() == tab) {
-            //每日必买、9.9秒杀时查询分类列表
+        if (EPromotionTab.COUPON_PROMOTION.getTab() == tab || EPromotionTab.SECKILL.getTab() == tab) {
+
+            //独家优惠券、9.9秒杀时查询分类列表
             CategoryQuery qategoryQuery = new CategoryQuery();
             qategoryQuery.setPageSize(10);
             view.addObject("topCategories", productService.findByActiveCategories(qategoryQuery));
@@ -298,10 +297,10 @@ public class IndexController extends BaseController {
         //生成签名
         String currentUrl = RequestUtils.getFullUrl(request);
         String str = "jsapi_ticket=" + jsapiTicket + "&noncestr=" + noncestr + "&timestamp=" + timeStamp + "&url=" + currentUrl;
-        LOG.error("[share]str:"+str);
+        LOG.error("[share]str:" + str);
         String signature = Sha1Util.getSha1(str);
 
-        LOG.error("[share]signature:"+signature);
+        LOG.error("[share]signature:" + signature);
         view.addObject("product", product);
         view.addObject("wxConfig", wxConfig);
         view.addObject("timeStamp", timeStamp);
@@ -316,8 +315,10 @@ public class IndexController extends BaseController {
     public ResponseEntity<?> products(HttpServletRequest request, Integer tab, Integer page, Integer thirdCategory) {
         Map<String, Object> map = new HashMap<String, Object>();
         Double queryPrice = null;
+        Integer couponType = null;
         if (null == tab) {
-            tab = EPromotionTab.DAILY.getTab();
+            tab = EPromotionTab.COUPON_PROMOTION.getTab();
+            couponType = EProudctCouponType.COUPON.getCode();
         }
         if (EPromotionTab.SECKILL.getTab() == tab) {
             queryPrice = 9.9;
@@ -334,6 +335,7 @@ public class IndexController extends BaseController {
         query.setPageSize(10);
         query.setQueryPrice(queryPrice);
         query.setThirdCategory(thirdCategory);
+        query.setCouponType(couponType);
         PaginatedArrayList<ProductVo> products = productService.findProductList(query, openId);
         LOG.error("page:{},size:{}", page, products.size());
         map.put("products", products);
@@ -350,11 +352,27 @@ public class IndexController extends BaseController {
 
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("ok", id);
-
         return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
     }
 
 
+    @RequestMapping({"", "/", "/importProducts.json"})
+    public ResponseEntity<?> importProducts(HttpServletRequest request, String productIds) {
+        //导入普通返利商品
+        productService.importProducts(productIds, EProudctCouponType.GENERAL.getCode());
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("success", true);
+        return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
+    }
+
+    @RequestMapping({"", "/", "/importCouponProduct.json"})
+    public ResponseEntity<?> importCouponProduct(HttpServletRequest request, String productIds) {
+        //导入优惠券商品
+        productService.importProducts(productIds, EProudctCouponType.COUPON.getCode());
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("success", true);
+        return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
+    }
     //---------------------------------------------------------------
 
     /**

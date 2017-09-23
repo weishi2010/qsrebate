@@ -10,6 +10,7 @@ import com.rebate.common.util.rebate.RebateRuleUtil;
 import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.domain.Product;
 import com.rebate.domain.RebateDetail;
+import com.rebate.domain.en.EProductSource;
 import com.rebate.domain.jd.JDConfig;
 import com.rebate.manager.jd.JdSdkManager;
 import net.sf.json.JSON;
@@ -23,6 +24,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 
@@ -41,7 +44,7 @@ public class JdSdkManagerImpl implements JdSdkManager {
     @Override
     public List<Product> getMediaProducts(String skuIds) {
         List<Product> list = new ArrayList<>();
-
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String json = getGetpromotioninfoResult(skuIds);
         JSONObject resultObj = JsonUtil.fromJson(json, JSONObject.class);
         if (null != resultObj && resultObj.getBoolean("sucessed")) {
@@ -57,13 +60,21 @@ public class JdSdkManagerImpl implements JdSdkManager {
                     product.setCommissionRatioPc(new BigDecimal(product.getCommissionRatioPc()).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
                     product.setName(map.get("goodsName").toString());
                     product.setImgUrl(map.get("imgUrl").toString());
+                    product.setMaterialUrl(map.get("materialUrl").toString());
+                    product.setSourcePlatform(EProductSource.JD.getCode());//来源JD
                     product.setOriginalPrice(Double.parseDouble(map.get("unitPrice").toString()));
+                    product.setUnitPrice(Double.parseDouble(map.get("unitPrice").toString()));
+                    product.setWlUnitPrice(Double.parseDouble(map.get("wlUnitPrice").toString()));
+                    product.setStartDate(new Date(Long.parseLong(map.get("startDate").toString())));
+                    product.setEndDate(new Date(Long.parseLong(map.get("endDate").toString())));
                     product.setCommissionPc(product.getOriginalPrice() * product.getCommissionRatioPc());
                     product.setCommissionWl(product.getOriginalPrice() * product.getCommissionRatioWl());
+                    product.setShopId(Long.parseLong(map.get("shopId").toString()));
                     product.setDistribution(1);
                     product.setProductType(1);
                     product.setStock(0);
                     product.setStatus(0);
+                    product.setSortWeight(0);
                     product.setFirstCategoryName("");
                     product.setSecondCategoryName("");
                     product.setThirdCategoryName("");
@@ -155,7 +166,7 @@ public class JdSdkManagerImpl implements JdSdkManager {
                     product.setCommissionPc(new BigDecimal(product.getCommissionPc()).setScale(0, BigDecimal.ROUND_HALF_UP).doubleValue());
                     product.setCommissionWl(new BigDecimal(product.getCommissionWl()).setScale(0, BigDecimal.ROUND_HALF_UP).doubleValue());
 
-                    if(RebateRuleUtil.isRebate(product.getCommissionWl(),false)){
+                    if (RebateRuleUtil.isRebate(product.getCommissionWl(), false)) {
                         product.setIsRebate(1);
                     }
 
@@ -184,33 +195,33 @@ public class JdSdkManagerImpl implements JdSdkManager {
         List<RebateDetail> list = new ArrayList<>();
         String json = getQueryImportOrdersResult(queryTime, page, pageSize);
         JSONObject resultObj = JsonUtil.fromJson(json, JSONObject.class);
-        if (null != resultObj && 1 == resultObj.getInt("success")&& resultObj.containsKey("data")) {
+        if (null != resultObj && 1 == resultObj.getInt("success") && resultObj.containsKey("data")) {
             JSONArray data = resultObj.getJSONArray("data");
             Iterator it = data.iterator();
 
-            while(it.hasNext()){
+            while (it.hasNext()) {
                 JSONObject orderObj = (JSONObject) it.next();
 
                 JSONArray skuArray = orderObj.getJSONArray("skus");
                 Iterator skuIterator = skuArray.iterator();
-                while (skuIterator.hasNext()){
+                while (skuIterator.hasNext()) {
                     JSONObject skuObj = (JSONObject) skuIterator.next();
 
                     RebateDetail detail = new RebateDetail();
-                    if(orderObj.containsKey("orderTime")){
+                    if (orderObj.containsKey("orderTime")) {
                         detail.setSubmitDate(new Date(orderObj.getLong("orderTime")));
-                    }else{
+                    } else {
                         //未完成的订单，订单时间完成时间设置为一个超大的时间
                         detail.setSubmitDate(new Date(3505625155l));
                     }
 
-                    if(orderObj.containsKey("finishTime")){
+                    if (orderObj.containsKey("finishTime")) {
                         detail.setFinishDate(new Date(orderObj.getLong("finishTime")));
-                    }else{
+                    } else {
                         //未完成的订单，订单时间完成时间设置为一个超大的时间
                         detail.setFinishDate(new Date(3505625155l));
                     }
-                    if(orderObj.containsKey("subUnionId")){
+                    if (orderObj.containsKey("subUnionId")) {
                         detail.setOpenId(orderObj.getString("subUnionId"));
                     }
                     detail.setStatus(0);
@@ -223,6 +234,16 @@ public class JdSdkManagerImpl implements JdSdkManager {
                     detail.setProductCount(skuObj.getInt("skuNum"));
                     detail.setProductName(skuObj.getString("skuName"));
                     detail.setPrice(skuObj.getDouble("cosPrice"));
+                    detail.setUnionId("");
+                    if(skuObj.containsKey("subUnionId")){
+                        detail.setSubUnionId(skuObj.getString("subUnionId"));
+                    }else{
+                        detail.setSubUnionId("");
+                    }
+                    detail.setCommission(skuObj.getDouble("commission"));
+                    detail.setPositionId(orderObj.getString("positionId"));
+                    detail.setPlatformRatio(RebateRuleUtil.PLATFORM_USER_COMMISSION_RATIO);//平台抽成比例
+                    detail.setUserCommission(RebateRuleUtil.getJDUserCommission(detail.getCommission()));//用户返佣金额
                     list.add(detail);
                 }
 
@@ -249,7 +270,7 @@ public class JdSdkManagerImpl implements JdSdkManager {
         String json = getServicePromotionWxsqCode(skuId, subUnionId);
         JSONObject resultObj = JsonUtil.fromJson(json, JSONObject.class);
         if (null != resultObj && 0 == Integer.parseInt(resultObj.getString("resultCode"))) {
-            JSONObject urlListObj  = (JSONObject) resultObj.get("urlList");
+            JSONObject urlListObj = (JSONObject) resultObj.get("urlList");
             url = urlListObj.getString(skuId.toString());
         }
         return url;
@@ -327,13 +348,13 @@ public class JdSdkManagerImpl implements JdSdkManager {
         try {
             JdClient client = new DefaultJdClient(jdConfig.getApiUrl(), jdConfig.getAccessToken(), jdConfig.getAppKey(), jdConfig.getAppSecret());
 
-            ServicePromotionWxsqGetCodeBySubUnionIdRequest request=new ServicePromotionWxsqGetCodeBySubUnionIdRequest();
+            ServicePromotionWxsqGetCodeBySubUnionIdRequest request = new ServicePromotionWxsqGetCodeBySubUnionIdRequest();
 
-            request.setProCont( 1 );
-            request.setMaterialIds( skuId.toString() );
-            request.setSubUnionId( subUnionId);
+            request.setProCont(1);
+            request.setMaterialIds(skuId.toString());
+            request.setSubUnionId(subUnionId);
 
-            ServicePromotionWxsqGetCodeBySubUnionIdResponse response=client.execute(request);
+            ServicePromotionWxsqGetCodeBySubUnionIdResponse response = client.execute(request);
 
             json = response.getGetcodebysubunionidResult();
         } catch (Exception e) {
@@ -364,34 +385,6 @@ public class JdSdkManagerImpl implements JdSdkManager {
             UnionThemeGoodsServiceQueryCouponGoodsResponse response = client.execute(request);
 
             json = response.getQueryCouponGoodsResult();
-        } catch (Exception e) {
-            LOG.error("[获取优惠商品]调用异常!page:" + page);
-        }
-        return json;
-    }
-
-    /**
-     * 获取爆款商品
-     *
-     * @param page
-     * @param pageSize
-     * @return
-     */
-    private String getGetThemeGoodsResult(int page, int pageSize) {
-        String json = "";
-        try {
-
-            JdClient client = new DefaultJdClient(jdConfig.getApiUrl(), jdConfig.getAccessToken(), jdConfig.getAppKey(), jdConfig.getAppSecret());
-
-            UnionThemeGoodsServiceQueryExplosiveGoodsRequest request = new UnionThemeGoodsServiceQueryExplosiveGoodsRequest();
-
-            request.setFrom(123);
-            request.setPageSize(123);
-
-            UnionThemeGoodsServiceQueryExplosiveGoodsResponse response = client.execute(request);
-
-            json = response.getQueryExplosiveGoodsResult();
-
         } catch (Exception e) {
             LOG.error("[获取优惠商品]调用异常!page:" + page);
         }

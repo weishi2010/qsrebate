@@ -56,8 +56,8 @@ public class RebateJobImpl implements RebateJob {
             RebateDetailQuery rebateDetailQuery = new RebateDetailQuery();
             rebateDetailQuery.setOrderId(rebateDetail.getOrderId());
             rebateDetailQuery.setProductId(rebateDetail.getProductId());
-            rebateDetailQuery.setOpenId(rebateDetail.getOpenId());
-            if (null != rebateDetailDao.queryRebateDetailByOrderId(rebateDetailQuery)) {
+            rebateDetailQuery.setSubUnionId(rebateDetail.getSubUnionId());
+            if (null == rebateDetailDao.queryRebateDetailByOrderId(rebateDetailQuery)) {
                 //查询商品，如果为不可返佣商品则返佣金额设置为0
                 Product productQuery = new Product();
                 productQuery.setProductId(rebateDetail.getProductId());
@@ -76,6 +76,8 @@ public class RebateJobImpl implements RebateJob {
                 commission.setOpenId(rebateDetail.getOpenId());
                 commission.setTotalCommission(totalCommission);
                 commissionDao.updateTotalCommission(commission);
+            }else {
+                rebateDetailDao.update(rebateDetail);
             }
 
         }
@@ -83,23 +85,23 @@ public class RebateJobImpl implements RebateJob {
 
     @Override
     public void importMediaThemeProducts() {
-        int page = 1;
-        int pageSize = 1000;
-        List<Product> products = jdSdkManager.getMediaThemeProducts(page, pageSize);
-        while (products.size() > 0) {
-            LOG.error("[importMediaThemeProducts]商品导入任务!size:" + products.size());
-            for (Product product : products) {
-                if (null == productDao.findById(product)) {
-                    productDao.insert(product);
-                } else {
-
-                    //存在则更新
-                    productDao.update(product);
-                }
-            }
-            page++;
-            products = jdSdkManager.getMediaThemeProducts(page, pageSize);
-        }
+//        int page = 1;
+//        int pageSize = 1000;
+//        List<Product> products = jdSdkManager.getMediaThemeProducts(page, pageSize);
+//        while (products.size() > 0) {
+//            LOG.error("[importMediaThemeProducts]商品导入任务!size:" + products.size());
+//            for (Product product : products) {
+//                if (null == productDao.findById(product)) {
+//                    productDao.insert(product);
+//                } else {
+//
+//                    //存在则更新
+//                    productDao.update(product);
+//                }
+//            }
+//            page++;
+//            products = jdSdkManager.getMediaThemeProducts(page, pageSize);
+//        }
 
     }
 }

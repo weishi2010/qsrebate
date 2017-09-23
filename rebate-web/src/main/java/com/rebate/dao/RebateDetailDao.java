@@ -18,6 +18,14 @@ public interface RebateDetailDao {
     long insert(RebateDetail rebateDetail);
 
     /**
+     * 更新
+     *
+     * @param rebateDetail
+     * @return
+     */
+    void update(RebateDetail rebateDetail);
+
+    /**
      * 根据订单号查询返利明细
      * @param rebateDetailQuery
      * @return
@@ -30,7 +38,7 @@ public interface RebateDetailDao {
      * @param rebateDetailQuery
      * @return
      */
-    int findCountByOpenId(RebateDetailQuery rebateDetailQuery);
+    int findCountBySubUnionId(RebateDetailQuery rebateDetailQuery);
 
     /**
      * 查询用户总佣金余额
@@ -45,5 +53,5 @@ public interface RebateDetailDao {
      * @param rebateDetailQuery
      * @return
      */
-    List<RebateDetail> findListByOpenId(RebateDetailQuery rebateDetailQuery);
+    List<RebateDetail> findListBySubUnionId(RebateDetailQuery rebateDetailQuery);
 }

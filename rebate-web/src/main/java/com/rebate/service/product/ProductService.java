@@ -13,6 +13,13 @@ import java.util.List;
 public interface ProductService {
 
     /**
+     * 导入商品
+     * @param productIds 商品id列表
+     * @param productCouponType 商品优惠类型
+     */
+    void importProducts(String productIds,int productCouponType);
+
+    /**
      * 查询有效分类
      * @param qategoryQuery
      * @return

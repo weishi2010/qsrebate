@@ -32,11 +32,11 @@ public class RebateDetailServiceImpl implements RebateDetailService {
     public PaginatedArrayList<RebateDetailVo> findRebateDetailList(RebateDetailQuery rebateDetailQuery) {
         PaginatedArrayList<RebateDetailVo> rebateDetails = new PaginatedArrayList<RebateDetailVo>(rebateDetailQuery.getIndex(), rebateDetailQuery.getPageSize());
         try {
-            int totalItem = rebateDetailDao.findCountByOpenId(rebateDetailQuery);
+            int totalItem = rebateDetailDao.findCountBySubUnionId(rebateDetailQuery);
             if (totalItem > 0) {
                 rebateDetails.setTotalItem(totalItem);
                 rebateDetailQuery.setStartRow(rebateDetails.getStartRow());
-                List<RebateDetail> list = rebateDetailDao.findListByOpenId(rebateDetailQuery);
+                List<RebateDetail> list = rebateDetailDao.findListBySubUnionId(rebateDetailQuery);
                 for (RebateDetail rebateDetail : list) {
                     RebateDetailVo vo = new RebateDetailVo(rebateDetail);
                     Product query = new Product();

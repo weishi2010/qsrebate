@@ -25,30 +25,16 @@ public class ProductDaoTest extends AbstractJUnit4SpringContextTests {
 
     @Test
     public void testInsert() {
-        int pageSize = 100;
-        for (int page = 1; page < 1000; page++) {
-                Product product = new Product();
-                product.setDistribution(1);
-                product.setProductType(1);
-                product.setStock(100);
-                product.setStatus(0);
-                product.setFirstCategoryName("");
-                product.setSecondCategoryName("");
-                product.setThirdCategoryName("");
-                product.setFirstCategory(1);
-                product.setSecondCategory(2);
-                product.setThirdCategory(3);
-                product.setProductId(4702986l);
-            product.setCommissionRatioPc(1.0);
-            product.setCommissionRatioWl(2.0);
-                product = JdMediaProductGrapUtil.grapCategory(product);
-                if (null == productDao.findById(product)) {
-                    productDao.insert(product);
-                }else{
-                    productDao.update(product);
+        List<Product> list = jdSdkManager.getMediaProducts("1615786");
 
-                }
+        for (Product product : list) {
+            if (null == productDao.findById(product)) {
+                product.setIsRebate(1);
+                productDao.insert(product);
+            } else {
+                productDao.update(product);
             }
+        }
     }
 
     @Test

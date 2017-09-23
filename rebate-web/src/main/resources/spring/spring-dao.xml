@@ -10,6 +10,17 @@
         <property name="configLocation" value="classpath:sqlmap-config.xml"/>
     </bean>
 
+    <!-- 分片序列工具-->
+    <bean id="sequenceUtil" class="com.rebate.common.data.seq.SequenceUtil">
+        <property name="defaultSequence">
+            <bean class="com.rebate.common.data.seq.Sequence">
+                <property name="dataSource" ref="dataSource"/>
+                <property name="blockSize" value="50"/>
+                <property name="startValue" value="100000000"/>
+            </bean>
+        </property>
+    </bean>
+
     <bean id="categoryDao" class="com.rebate.dao.impl.CategoryDaoImpl">
         <property name="dataSource" ref="dataSource"/>
     </bean>

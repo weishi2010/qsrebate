@@ -53,6 +53,21 @@ public class UserInfo implements Serializable{
     @Getter
     @Setter
     private Integer status;
+
+    /**
+     * 子联盟账号
+     */
+    @Getter
+    @Setter
+    private String subUnionId;
+
+    /**
+     * 推荐账号
+     */
+    @Getter
+    @Setter
+    private String recommendAccount;
+
     /**
      * 创建时间
      */

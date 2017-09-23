@@ -4,7 +4,7 @@
     <footer class="footer">
         <a #if($promotionTab == 1) class="must-buy active" #else class="must-buy" #end href="/rebate/promotion?tab=1">
             <span></span>
-            <p>每日必买</p>
+            <p>独家优惠券</p>
         </a>
         <a  #if($promotionTab == 2) class="nine-block active" #else class="nine-block" #end href="/rebate/promotion?tab=2">
             <span></span>

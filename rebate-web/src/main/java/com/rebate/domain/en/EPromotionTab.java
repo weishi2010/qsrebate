@@ -11,7 +11,7 @@ public enum EPromotionTab {
     /**
      * 每日必买
      */
-    DAILY(1,"每日必买"),
+    COUPON_PROMOTION(1,"独家优惠券"),
     /**
      * 9块9秒杀
      */

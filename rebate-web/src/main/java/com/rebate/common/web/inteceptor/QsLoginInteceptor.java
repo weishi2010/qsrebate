@@ -1,10 +1,13 @@
 
 package com.rebate.common.web.inteceptor;
 
+import com.rebate.common.data.seq.SequenceUtil;
 import com.rebate.common.util.CookieUtils;
 import com.rebate.common.util.JsonUtil;
 import com.rebate.common.util.RequestUtils;
 import com.rebate.domain.UserInfo;
+import com.rebate.domain.en.ESequence;
+import com.rebate.domain.en.ESubUnionIdPrefix;
 import com.rebate.domain.wx.AuthorizationCodeInfo;
 import com.rebate.domain.wx.WxConfig;
 import com.rebate.domain.wx.WxUserInfo;
@@ -64,6 +67,11 @@ public class QsLoginInteceptor extends LoginInteceptor {
     @Qualifier("userInfoService")
     @Autowired(required = false)
     private UserInfoService userInfoService;
+
+
+    @Qualifier("sequenceUtil")
+    @Autowired(required = true)
+    private SequenceUtil sequenceUtil;
 
     private String loginUrl;
 
@@ -135,6 +143,9 @@ public class QsLoginInteceptor extends LoginInteceptor {
                     userInfo.setStatus(0);
                     userInfo.setEmail("");
                     userInfo.setWxImage(wxUserInfo.getHeadimgurl());
+                    String subUnionId = ESubUnionIdPrefix.getSubUnionId(ESubUnionIdPrefix.JD.getCode(),sequenceUtil.get(ESequence.SUB_UNION_ID.getSequenceName()));
+                    userInfo.setSubUnionId(subUnionId);
+                    userInfo.setRecommendAccount("");
                     userInfoService.registUserInfo(userInfo);
                 }
             }

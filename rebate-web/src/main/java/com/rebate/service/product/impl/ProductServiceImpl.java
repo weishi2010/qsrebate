@@ -1,16 +1,20 @@
 package com.rebate.service.product.impl;
 
 import com.rebate.common.util.JsonUtil;
+import com.rebate.common.util.rebate.RebateRuleUtil;
 import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.dao.CategoryDao;
 import com.rebate.dao.ProductDao;
 import com.rebate.domain.Category;
 import com.rebate.domain.CategoryQuery;
 import com.rebate.domain.Product;
+import com.rebate.domain.en.EProudctCouponType;
+import com.rebate.domain.en.EProudctRebateType;
 import com.rebate.domain.query.ProductQuery;
 import com.rebate.domain.vo.ProductVo;
 import com.rebate.manager.jd.JdSdkManager;
 import com.rebate.service.product.ProductService;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +42,38 @@ public class ProductServiceImpl implements ProductService {
     @Qualifier("jdSdkManager")
     @Autowired(required = true)
     private JdSdkManager jdSdkManager;
+
+    @Override
+    public void importProducts(String products,int productCouponType) {
+        if (StringUtils.isBlank(products)) {
+            return;
+        }
+
+        if (StringUtils.isBlank(products)) {
+            return;
+        }
+
+        List<Product> list = jdSdkManager.getMediaProducts(products);
+
+        for (Product product : list) {
+            product.setCouponType(productCouponType);
+            //是否返利设置
+            if(productCouponType == EProudctCouponType.COUPON.getCode()){
+                //计算优惠券商品返利规则
+                product.setIsRebate(RebateRuleUtil.couponProductRebateRule(product.getCommissionWl()));
+            }else{
+                product.setIsRebate(EProudctRebateType.REBATE.getCode());
+            }
+
+            //插入或更新商品
+            if (null == productDao.findById(product)) {
+                productDao.insert(product);
+            } else {
+                productDao.update(product);
+            }
+        }
+
+    }
 
     @Override
     public List<Category> findByActiveCategories(CategoryQuery qategoryQuery) {
@@ -107,20 +143,6 @@ public class ProductServiceImpl implements ProductService {
             LOG.error("findProduct error!skuId:" + skuId, e);
         }
         return vo;
-    }
-
-    /**
-     * 是否返还佣金规则判断
-     * TODO 目前只简单判断，大于5元再返佣金
-     *
-     * @param commission
-     * @return
-     */
-    private boolean isRebate(Double commission) {
-        if (commission > 5) {
-            return true;
-        }
-        return false;
     }
 
     /**

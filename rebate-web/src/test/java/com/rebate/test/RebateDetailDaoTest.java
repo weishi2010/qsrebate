@@ -30,21 +30,20 @@ public class RebateDetailDaoTest extends AbstractJUnit4SpringContextTests {
 
     @Test
     public void batchInsert() {
-        for(int i =1000;i<1100;i++){
-            RebateDetail rebateDetail = new RebateDetail();
-            rebateDetail.setOpenId("weishi2010");
-            rebateDetail.setCommission(100.0);
-            rebateDetail.setCommissionRatio(80.0);
-            rebateDetail.setFinishDate(new Date());
-            rebateDetail.setOrderId(1l+i);
-            rebateDetail.setProductId(1l);
-            rebateDetail.setPrice(100.0);
-            rebateDetail.setOrderStatus(0);
-            rebateDetail.setStatus(0);
-            rebateDetail.setProductCount(10);
-            rebateDetail.setRebateRatio(50.0);
-            rebateDetail.setSubmitDate(new Date());
-            rebateDetailDao.insert(rebateDetail);
+        String queryTime = "20170922";//yyyyMMddHHmm,yyyyMMddHHmmss或者yyyyMMddHH格式之一
+        int page = 1;
+        int pageSize = 10;
+        List<RebateDetail> list = jdSdkManager.getRebateDetails(queryTime, page, pageSize);
+
+
+        for (RebateDetail rebateDetail : list) {
+            RebateDetailQuery rebateDetailQuery = new RebateDetailQuery();
+            rebateDetailQuery.setOrderId(rebateDetail.getOrderId());
+            if (null == rebateDetailDao.queryRebateDetailByOrderId(rebateDetailQuery)) {
+                rebateDetailDao.insert(rebateDetail);
+            } else {
+                rebateDetailDao.update(rebateDetail);
+            }
 
         }
     }
@@ -54,26 +53,16 @@ public class RebateDetailDaoTest extends AbstractJUnit4SpringContextTests {
     public void query() {
         RebateDetailQuery query = new RebateDetailQuery();
         query.setOpenId("weishi2010");
-        int count = rebateDetailDao.findCountByOpenId(query);
+        int count = rebateDetailDao.findCountBySubUnionId(query);
 
         query.setStartRow(0);
         query.setPageSize(100);
         Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE,-100);
+        cal.add(Calendar.DATE, -100);
         query.setEndDate(cal.getTime());
 
-        List list = rebateDetailDao.findListByOpenId(query);
-        System.out.println("count,"+count+",list"+JsonUtil.toJson(list));
-    }
-
-
-    @Test
-    public void testGetMediaProducts(){
-        String queryTime = "20170922";//yyyyMMddHHmm,yyyyMMddHHmmss或者yyyyMMddHH格式之一
-        int page =1;
-        int pageSize = 10;
-        List list = jdSdkManager.getRebateDetails(queryTime,page,pageSize);
-        System.out.println("list:"+JsonUtil.toJson(list));
+        List list = rebateDetailDao.findListBySubUnionId(query);
+        System.out.println("count," + count + ",list" + JsonUtil.toJson(list));
     }
 
 

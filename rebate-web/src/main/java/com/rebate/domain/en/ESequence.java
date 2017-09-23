@@ -1,4 +1,4 @@
-package com.rebate.domain;
+package com.rebate.domain.en;
 
 /**
  * 自增序列枚举
