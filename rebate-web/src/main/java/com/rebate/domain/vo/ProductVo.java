@@ -1,6 +1,7 @@
 package com.rebate.domain.vo;
 
 import com.rebate.domain.Product;
+import com.rebate.domain.ProductCoupon;
 import com.rebate.domain.query.BaseQuery;
 import lombok.Getter;
 import lombok.Setter;
@@ -177,6 +178,10 @@ public class ProductVo extends BaseQuery {
     @Getter
     @Setter
     private int isRebate;
+
+    @Getter
+    @Setter
+    private ProductCoupon productCoupon;
 
     public ProductVo(Product product){
         BeanUtils.copyProperties(product,this);

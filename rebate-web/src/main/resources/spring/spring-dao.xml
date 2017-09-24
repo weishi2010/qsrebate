@@ -29,6 +29,10 @@
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
+    <bean id="productCouponDao" class="com.rebate.dao.impl.ProductCouponDaoImpl">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
     <bean id="commentDao" class="com.rebate.dao.impl.CommentDaoImpl">
         <property name="dataSource" ref="dataSource"/>
     </bean>

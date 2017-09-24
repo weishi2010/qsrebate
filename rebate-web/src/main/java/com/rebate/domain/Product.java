@@ -204,7 +204,6 @@ public class Product extends BaseQuery {
     @Setter
     private Date endDate;
 
-
     /**
      * 创建时间
      */

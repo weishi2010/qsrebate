@@ -1,8 +1,8 @@
 package com.rebate.manager.jd;
 
 import com.rebate.common.web.page.PaginatedArrayList;
-import com.rebate.domain.OrderSummary;
 import com.rebate.domain.Product;
+import com.rebate.domain.ProductCoupon;
 import com.rebate.domain.RebateDetail;
 
 import java.util.List;
@@ -18,6 +18,8 @@ public interface JdSdkManager {
      * @return
      */
     List<Product> getMediaProducts(String skuIds);
+
+    PaginatedArrayList<ProductCoupon> getMediaCoupons(int page, int pageSize);
 
     /**
      * 获取优惠商品

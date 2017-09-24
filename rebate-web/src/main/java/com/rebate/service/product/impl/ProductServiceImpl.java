@@ -4,10 +4,12 @@ import com.rebate.common.util.JsonUtil;
 import com.rebate.common.util.rebate.RebateRuleUtil;
 import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.dao.CategoryDao;
+import com.rebate.dao.ProductCouponDao;
 import com.rebate.dao.ProductDao;
 import com.rebate.domain.Category;
 import com.rebate.domain.CategoryQuery;
 import com.rebate.domain.Product;
+import com.rebate.domain.ProductCoupon;
 import com.rebate.domain.en.EProudctCouponType;
 import com.rebate.domain.en.EProudctRebateType;
 import com.rebate.domain.query.ProductQuery;
@@ -42,6 +44,9 @@ public class ProductServiceImpl implements ProductService {
     @Qualifier("jdSdkManager")
     @Autowired(required = true)
     private JdSdkManager jdSdkManager;
+
+    @Autowired
+    private ProductCouponDao productCouponDao;
 
     @Override
     public void importProducts(String products,int productCouponType) {
@@ -105,6 +110,11 @@ public class ProductServiceImpl implements ProductService {
                             vo.setCommissionWl(getUserCommission(qsCommissionWl));
                             vo.setCommissionPc(qsCommissionPc);
 
+                            //查询优惠券信息
+                            ProductCoupon productCouponQuery =new ProductCoupon();
+                            productCouponQuery.setProductId(vo.getProductId());
+                            ProductCoupon coupon = productCouponDao.findById(productCouponQuery);
+                            vo.setProductCoupon(coupon);
                             products.add(vo);
                         } catch (Exception e) {
                             LOG.error("findProductList error!product:{}", JsonUtil.toJson(product), e);

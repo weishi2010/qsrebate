@@ -2,10 +2,10 @@ package com.rebate.test;
 
 
 import com.rebate.common.util.JsonUtil;
-import com.rebate.common.util.rebate.JdMediaProductGrapUtil;
 import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.dao.ProductDao;
 import com.rebate.domain.Product;
+import com.rebate.domain.ProductCoupon;
 import com.rebate.domain.query.ProductQuery;
 import com.rebate.domain.vo.ProductVo;
 import com.rebate.manager.jd.JdSdkManager;
@@ -61,13 +61,13 @@ public class ProductDaoTest extends AbstractJUnit4SpringContextTests {
 
     @Test
     public void testGetMediaProducts() {
-        List list = jdSdkManager.getMediaProducts("1615786");
+        List<Product> list = jdSdkManager.getMediaProducts("1615786");
         System.out.println("list:" + JsonUtil.toJson(list));
     }
 
     @Test
     public void testGetMediaCouponProducts() {
-        List list = jdSdkManager.getMediaCouponProducts(1, 10);
+        List<ProductCoupon> list = jdSdkManager.getMediaCoupons(1, 10);
         System.out.println("list:" + JsonUtil.toJson(list));
     }
 

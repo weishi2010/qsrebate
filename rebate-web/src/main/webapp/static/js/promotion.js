@@ -171,9 +171,11 @@ function getTemplate(product, tab) {
         "        <div class=\"cnt cell align-center\">" +
         "            <a href=\"" + product.promotionUrl + "\" class=\"tl\">" + product.name + "</a>" +
         "            <div class=\"meta\">" +
-        "                <span class=\"old-price\">原价：<del>" + product.originalPrice + "</del></span>" +
-        "                <!--<span class=\"new-price\">劵后价：3050.00元</span>-->" +
-        "            </div>";
+        "                <span class=\"old-price\">原价：" + product.originalPrice + "</span>";
+        if(null!=product.productCoupon){
+            htmlTemp += " <span class=\"new-price\">"+product.productCoupon.couponNote+"</span>";
+        }
+        htmlTemp +="            </div>";
 
     if (product.rebate) {
         htmlTemp += "            <div class=\"easy\">" +

@@ -1,7 +1,6 @@
 package com.rebate.test;
 
 
-import com.rebate.common.util.HttpClientUtil;
 import com.rebate.common.util.JsonUtil;
 import com.rebate.dao.RebateDetailDao;
 import com.rebate.domain.RebateDetail;
@@ -14,7 +13,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.List;
 
 @ContextConfiguration(locations = {"/spring-config.xml"})
 public class RebateDetailDaoTest extends AbstractJUnit4SpringContextTests {

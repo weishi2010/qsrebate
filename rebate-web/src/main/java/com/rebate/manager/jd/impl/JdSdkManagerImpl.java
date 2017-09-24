@@ -9,11 +9,11 @@ import com.rebate.common.util.rebate.JdMediaProductGrapUtil;
 import com.rebate.common.util.rebate.RebateRuleUtil;
 import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.domain.Product;
+import com.rebate.domain.ProductCoupon;
 import com.rebate.domain.RebateDetail;
 import com.rebate.domain.en.EProductSource;
 import com.rebate.domain.jd.JDConfig;
 import com.rebate.manager.jd.JdSdkManager;
-import net.sf.json.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.codehaus.jackson.type.TypeReference;
@@ -24,7 +24,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -92,10 +91,46 @@ public class JdSdkManagerImpl implements JdSdkManager {
     }
 
     @Override
+    public PaginatedArrayList<ProductCoupon> getMediaCoupons(int page, int pageSize) {
+        PaginatedArrayList<ProductCoupon> list = new PaginatedArrayList<>(page, pageSize);
+
+        String json = getGetCouponGoodsResult(page, pageSize);
+
+        JSONObject resultObj = JsonUtil.fromJson(json, JSONObject.class);
+        if (null != resultObj && resultObj.getInt("resultCode") == 200) {
+            int total = resultObj.getInt("total");
+            list.setTotalItem(total);
+
+            String resultJson = resultObj.get("data").toString();
+            List<Map> mapList = JsonUtil.fromJson(resultJson, mapTypeReference);
+            if (null != mapList) {
+                for (Map map : mapList) {
+                    ProductCoupon coupon = new ProductCoupon();
+                    coupon.setProductId(Long.parseLong(map.get("skuId").toString()));
+                    coupon.setCouponNote(map.get("couponNote").toString());
+                    coupon.setStartDate(new Date(Long.parseLong(map.get("startTime").toString())));
+                    coupon.setEndDate(new Date(Long.parseLong(map.get("endTime").toString())));
+                    coupon.setCouponTab(Integer.parseInt(map.get("couponTab").toString()));
+                    coupon.setSourcePlatform(EProductSource.JD.getCode());
+                    coupon.setYn(0);
+                    coupon.setNum(0);
+                    coupon.setRemainNum(0);
+                    coupon.setCouponLink("");
+                    coupon.setCouponPrice(0.0);
+                    coupon.setStatus(0);
+                    coupon.setPlatform(0);
+                    list.add(coupon);
+                }
+            }
+        }
+        return list;
+    }
+
+    @Override
     public PaginatedArrayList<Product> getMediaCouponProducts(int page, int pageSize) {
         PaginatedArrayList<Product> list = new PaginatedArrayList<>(page, pageSize);
 
-        String json = getGetpromotioninfoResult(page, pageSize);
+        String json = getGetCouponGoodsResult(page, pageSize);
 
         JSONObject resultObj = JsonUtil.fromJson(json, JSONObject.class);
         if (null != resultObj && resultObj.getInt("resultCode") == 200) {
@@ -141,7 +176,7 @@ public class JdSdkManagerImpl implements JdSdkManager {
     public PaginatedArrayList<Product> getMediaThemeProducts(int page, int pageSize) {
         PaginatedArrayList<Product> list = new PaginatedArrayList<>(page, pageSize);
 
-        String json = getGetpromotioninfoResult(page, pageSize);
+        String json = getGetCouponGoodsResult(page, pageSize);
 
         JSONObject resultObj = JsonUtil.fromJson(json, JSONObject.class);
         if (null != resultObj && resultObj.getInt("resultCode") == 200) {
@@ -235,9 +270,9 @@ public class JdSdkManagerImpl implements JdSdkManager {
                     detail.setProductName(skuObj.getString("skuName"));
                     detail.setPrice(skuObj.getDouble("cosPrice"));
                     detail.setUnionId("");
-                    if(skuObj.containsKey("subUnionId")){
+                    if (skuObj.containsKey("subUnionId")) {
                         detail.setSubUnionId(skuObj.getString("subUnionId"));
-                    }else{
+                    } else {
                         detail.setSubUnionId("");
                     }
                     detail.setCommission(skuObj.getDouble("commission"));
@@ -371,7 +406,7 @@ public class JdSdkManagerImpl implements JdSdkManager {
      * @param pageSize
      * @return
      */
-    private String getGetpromotioninfoResult(int page, int pageSize) {
+    private String getGetCouponGoodsResult(int page, int pageSize) {
         String json = "";
         try {
 

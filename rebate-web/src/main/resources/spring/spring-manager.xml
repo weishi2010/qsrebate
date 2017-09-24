@@ -25,15 +25,15 @@
 
 	<!--JD SDK config-->
 	<bean id="jdConfig" class="com.rebate.domain.jd.JDConfig">
-		<property name="appKey" value="BC2C0FCDA61E45DBE36E95D51E29543C"/>
-		<property name="appSecret" value="d253bb1c493344c5aa337ff917cfd46b"/>
-		<property name="accessToken" value="873049e9-749c-479e-9647-7e91e13eabcf"/>
-		<property name="apiUrl" value="https://api.jd.com/routerjson"/>
-		<property name="unionId" value="1000062434" />
-		<property name="promotionType" value="7"/>
-		<property name="webId" value="444088091"/>
-		<property name="adtType" value="6"/>
-		<property name="channel" value="WL"/>
+		<property name="appKey" value="${jd.jos.appKey}"/>
+		<property name="appSecret" value="${jd.jos.appSecret}"/>
+		<property name="accessToken" value="${jd.jos.accessToken}"/>
+		<property name="apiUrl" value="${jd.jos.apiUrl}"/>
+		<property name="unionId" value="${jd.jos.unionId}" />
+		<property name="promotionType" value="${jd.jos.promotionType}"/>
+		<property name="webId" value="${jd.jos.webId}"/>
+		<property name="adtType" value="${jd.jos.adtType}"/>
+		<property name="channel" value="${jd.jos.channel}"/>
 
 	</bean>
 </beans>

@@ -1,11 +1,12 @@
 package com.rebate.service.job.impl;
 
+import com.google.common.base.Joiner;
+import com.rebate.common.util.JsonUtil;
 import com.rebate.dao.*;
-import com.rebate.domain.Commission;
-import com.rebate.domain.Product;
-import com.rebate.domain.RebateDetail;
-import com.rebate.domain.UserInfo;
+import com.rebate.domain.*;
 import com.rebate.domain.en.EExtractStatus;
+import com.rebate.domain.en.EProudctCouponType;
+import com.rebate.domain.en.EProudctRebateType;
 import com.rebate.domain.en.ERebateDetailStatus;
 import com.rebate.domain.query.ExtractDetailQuery;
 import com.rebate.domain.query.RebateDetailQuery;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -50,6 +52,11 @@ public class RebateJobImpl implements RebateJob {
     @Qualifier("userInfoDao")
     @Autowired(required = true)
     private UserInfoDao userInfoDao;
+
+
+    @Qualifier("productCouponDao")
+    @Autowired(required = true)
+    private ProductCouponDao productCouponDao;
 
     @Override
     public void importMediaOrder() {
@@ -157,6 +164,40 @@ public class RebateJobImpl implements RebateJob {
 //            page++;
 //            products = jdSdkManager.getMediaThemeProducts(page, pageSize);
 //        }
+
+    }
+    @Override
+    public void importCouponProducts(){
+        int page=1;
+        int pageSize=20;
+        List<ProductCoupon> list = jdSdkManager.getMediaCoupons(page, pageSize);
+        while(list.size()>0){
+           LOG.error("[importCouponProducts]page:"+page+",list:" + list.size());
+            List<Long> skuList = new ArrayList<>();
+            for (ProductCoupon productCoupon : list) {
+                if (null == productCouponDao.findById(productCoupon)) {
+                    productCouponDao.insert(productCoupon);
+                }else{
+                    productCouponDao.update(productCoupon);
+                }
+                skuList.add(productCoupon.getProductId());
+            }
+
+            List<Product> products = jdSdkManager.getMediaProducts(Joiner.on(",").join(skuList));
+
+            for (Product product : products) {
+                product.setCouponType(EProudctCouponType.COUPON.getCode());
+
+                if (null == productDao.findById(product)) {
+                    product.setIsRebate(EProudctRebateType.NOT_REBATE.getCode());
+                    productDao.insert(product);
+                } else {
+                    productDao.update(product);
+                }
+            }
+            page++;
+            list = jdSdkManager.getMediaCoupons(page, pageSize);
+        }
 
     }
 }
