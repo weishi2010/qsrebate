@@ -45,7 +45,7 @@ public class RebateRuleUtil {
      */
     public static int couponProductRebateRule(Double commission){
         //TODO 优惠券规则设置，目前优惠券商品都不返利
-        return EProudctRebateType.REBATE.getCode();
+        return EProudctRebateType.NOT_REBATE.getCode();
     }
 
     /**
