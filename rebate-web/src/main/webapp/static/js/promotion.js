@@ -166,14 +166,14 @@ function loadProductData(page, category, tab) {
 function getTemplate(product, tab) {
     var htmlTemp = "<div class=\"item mui-flex\">" +
         "        <div class=\"g-img cell fixed\">" +
-        "             <a href=\"" + product.promotionUrl + "\" ><img class=\"g-img\" src=\"" + product.imgUrl + "\" alt=\"" + product.name + "\" width='80' height='90'></a>" +
+        "             <a href=\"javascript:void(0);\" onclick=\"redirectJdPromotionUrl(" + product.productId + ")\" ><img class=\"g-img\" src=\"" + product.imgUrl + "\" alt=\"" + product.name + "\" width='80' height='90'></a>" +
         "        </div>" +
         "        <div class=\"cnt cell align-center\">" +
-        "            <a href=\"" + product.promotionUrl + "\" class=\"tl\">" + product.name + "</a>" +
+        "            <a href=\"javascript:void(0);\" onclick=\"redirectJdPromotionUrl(" + product.productId + ")\" class=\"tl\">" + product.name + "</a>" +
         "            <div class=\"meta\">" +
         "                <span class=\"old-price\">原价：" + product.originalPrice + "</span>";
-        if(null!=product.productCoupon){
-            htmlTemp += " <span class=\"new-price\">"+product.productCoupon.couponNote+"</span>";
+        if(null!=product.productCoupon&&(product.originalPrice>product.productCoupon.quota)){
+            htmlTemp += " <span class=\"new-price\">券后价："+(product.originalPrice-product.productCoupon.quota)+"</span>";
         }
         htmlTemp +="            </div>";
 
@@ -194,10 +194,10 @@ function getTemplate(product, tab) {
             "                    <img class=\"cart\" src=\"/static/img/ico-cart-01.png\" alt=\"\">" +
             "                    去购买" +
             "                </a>" +
-            "                <a href=\"/rebate/share?skuId=" + product.productId + "\" class=\"share\">" +
+            "                <!--<a href=\"/rebate/share?skuId=" + product.productId + "\" class=\"share\">" +
             "                    <img class=\"zhuanfa\" src=\"/static/img/ico-zhuanfa-01.png\" alt=\"\">" +
             "                    去分享" +
-            "                </a>" +
+            "                </a>-->" +
             "            </div>";
     }
     htmlTemp += "        </div>" +
