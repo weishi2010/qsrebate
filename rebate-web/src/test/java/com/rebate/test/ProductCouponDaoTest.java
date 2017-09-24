@@ -10,7 +10,10 @@ import com.rebate.domain.ProductCoupon;
 import com.rebate.domain.en.EProudctCouponType;
 import com.rebate.domain.en.EProudctRebateType;
 import com.rebate.manager.jd.JdSdkManager;
+import com.rebate.service.job.impl.RebateJobImpl;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
@@ -20,6 +23,7 @@ import java.util.List;
 
 @ContextConfiguration(locations = {"/spring-config.xml"})
 public class ProductCouponDaoTest extends AbstractJUnit4SpringContextTests {
+    private static final Logger LOG = LoggerFactory.getLogger(ProductCouponDaoTest.class);
 
     @Autowired
     private ProductCouponDao productCouponDao;
@@ -32,29 +36,17 @@ public class ProductCouponDaoTest extends AbstractJUnit4SpringContextTests {
 
     @Test
     public void testGetMediaCouponProducts() {
-        List<ProductCoupon> list = jdSdkManager.getMediaCoupons(1, 10);
-        System.out.println("list:" + JsonUtil.toJson(list));
-        List<Long> skuList = new ArrayList<>();
-        for (ProductCoupon productCoupon : list) {
-            if (null == productCouponDao.findById(productCoupon)) {
-                productCouponDao.insert(productCoupon);
-            }else{
-                productCouponDao.update(productCoupon);
+        int page=1;
+        int pageSize=20;
+        List<ProductCoupon> list = jdSdkManager.getMediaCoupons(page, pageSize);
+        while(list.size()>0){
+            List<Long> skus = new ArrayList<>();
+            for(ProductCoupon coupon:list){
+                skus.add(coupon.getProductId());
             }
-            skuList.add(productCoupon.getProductId());
-        }
-
-        List<Product> products = jdSdkManager.getMediaProducts(Joiner.on(",").join(skuList));
-
-        for (Product product : products) {
-            product.setCouponType(EProudctCouponType.COUPON.getCode());
-
-            if (null == productDao.findById(product)) {
-                product.setIsRebate(EProudctRebateType.NOT_REBATE.getCode());
-                productDao.insert(product);
-            } else {
-                productDao.update(product);
-            }
+            LOG.error("[importCouponProducts]page:"+page+",list:" + skus);
+            page++;
+            list = jdSdkManager.getMediaCoupons(page, pageSize);
         }
 
 

@@ -14,6 +14,8 @@
         <result property="couponTab" column="coupon_tab"/>
         <result property="status" column="status"/>
         <result property="couponNote" column="coupon_note"/>
+        <result property="discount" column="discount"/>
+        <result property="quota" column="quota"/>
         <result property="platform" column="platform"/>
         <result property="num" column="num"/>
         <result property="remainNum" column="remain_num"/>
@@ -33,6 +35,8 @@
         coupon_tab,
         status,
         coupon_note,
+        discount,
+        quota,
         platform,
         num,
         remain_num,
@@ -63,6 +67,8 @@
             coupon_tab,
             status,
             coupon_note,
+            discount,
+            quota,
             platform,
             num,
             remain_num,
@@ -81,6 +87,8 @@
             #couponTab#,
             #status#,
             #couponNote#,
+            #discount#,
+            #quota#,
             #platform#,
             #num#,
             #remainNum#,

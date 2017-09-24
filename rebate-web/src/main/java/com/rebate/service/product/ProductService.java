@@ -5,6 +5,7 @@ import com.rebate.common.web.result.Result;
 import com.rebate.domain.Category;
 import com.rebate.domain.CategoryQuery;
 import com.rebate.domain.Product;
+import com.rebate.domain.ProductCoupon;
 import com.rebate.domain.query.ProductQuery;
 import com.rebate.domain.vo.ProductVo;
 
@@ -15,9 +16,14 @@ public interface ProductService {
     /**
      * 导入商品
      * @param productIds 商品id列表
-     * @param productCouponType 商品优惠类型
      */
-    void importProducts(String productIds,int productCouponType);
+    void importProducts(String productIds);
+
+    /**
+     * 导入优惠券商品
+     * @param couponMapList
+     */
+    void importCouponProducts(List<ProductCoupon> couponMapList);
 
     /**
      * 查询有效分类

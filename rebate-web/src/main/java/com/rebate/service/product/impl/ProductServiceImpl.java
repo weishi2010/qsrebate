@@ -1,6 +1,8 @@
 package com.rebate.service.product.impl;
 
+import com.google.common.base.Joiner;
 import com.rebate.common.util.JsonUtil;
+import com.rebate.common.util.rebate.CouponUtil;
 import com.rebate.common.util.rebate.RebateRuleUtil;
 import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.dao.CategoryDao;
@@ -10,6 +12,7 @@ import com.rebate.domain.Category;
 import com.rebate.domain.CategoryQuery;
 import com.rebate.domain.Product;
 import com.rebate.domain.ProductCoupon;
+import com.rebate.domain.en.EProductSource;
 import com.rebate.domain.en.EProudctCouponType;
 import com.rebate.domain.en.EProudctRebateType;
 import com.rebate.domain.query.ProductQuery;
@@ -24,7 +27,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.*;
 
 @Service("productService")
 public class ProductServiceImpl implements ProductService {
@@ -49,7 +52,7 @@ public class ProductServiceImpl implements ProductService {
     private ProductCouponDao productCouponDao;
 
     @Override
-    public void importProducts(String products,int productCouponType) {
+    public void importProducts(String products) {
         if (StringUtils.isBlank(products)) {
             return;
         }
@@ -61,14 +64,8 @@ public class ProductServiceImpl implements ProductService {
         List<Product> list = jdSdkManager.getMediaProducts(products);
 
         for (Product product : list) {
-            product.setCouponType(productCouponType);
-            //是否返利设置
-            if(productCouponType == EProudctCouponType.COUPON.getCode()){
-                //计算优惠券商品返利规则
-                product.setIsRebate(RebateRuleUtil.couponProductRebateRule(product.getCommissionWl()));
-            }else{
-                product.setIsRebate(EProudctRebateType.REBATE.getCode());
-            }
+            product.setCouponType(EProudctCouponType.GENERAL.getCode());
+            product.setIsRebate(EProudctRebateType.REBATE.getCode());
 
             //插入或更新商品
             if (null == productDao.findById(product)) {
@@ -76,6 +73,62 @@ public class ProductServiceImpl implements ProductService {
             } else {
                 productDao.update(product);
             }
+        }
+
+    }
+
+    @Override
+    public void importCouponProducts(List<ProductCoupon> couponMapList) {
+        if (couponMapList.size()==0) {
+            return;
+        }
+
+        List<Long> skuList = new ArrayList<>();
+        Map discountMap = new HashMap();
+        Map quotaMap = new HashMap();
+        for (ProductCoupon productCoupon : couponMapList) {
+            Long skuId = productCoupon.getProductId();
+            skuList.add(skuId);
+            discountMap.put(skuId,productCoupon.getDiscount());
+            quotaMap.put(skuId,productCoupon.getQuota());
+        }
+
+        List<Product> list = jdSdkManager.getMediaProducts(Joiner.on(",").join(skuList));
+
+        for (Product product : list) {
+            product.setCouponType(EProudctCouponType.COUPON.getCode());
+            //计算优惠券商品返利规则
+            product.setIsRebate(RebateRuleUtil.couponProductRebateRule(product.getCommissionWl()));
+
+            //插入或更新商品
+            if (null == productDao.findById(product)) {
+                productDao.insert(product);
+            } else {
+                productDao.update(product);
+            }
+
+            //商品优惠券信息解析入库
+            ProductCoupon productCoupon = productToCoupon(product);
+            Double discount = (Double) discountMap.get(product.getProductId());
+            Double quota = (Double) quotaMap.get(product.getProductId());
+            if (null != discount) {
+                productCoupon.setDiscount(discount);
+            } else {
+                productCoupon.setDiscount(0.0);
+            }
+
+            if (null != quota) {
+                productCoupon.setQuota(quota);
+            } else {
+                productCoupon.setQuota(0.0);
+            }
+
+            if (null == productCouponDao.findById(productCoupon)) {
+                productCouponDao.insert(productCoupon);
+            }else{
+                productCouponDao.update(productCoupon);
+            }
+
         }
 
     }
@@ -186,14 +239,28 @@ public class ProductServiceImpl implements ProductService {
         return 0.0;
     }
 
-
+//------------------------------------------------------------------------------
     /**
-     * 获取京东商品链接
-     *
-     * @param skuId
+     * 商品信息转优惠券信息
+     * @param product
      * @return
      */
-    private String getJdItemUrl(Long skuId) {
-        return "https://item.jd.com/" + skuId + ".html";
+    private ProductCoupon productToCoupon(Product product){
+        ProductCoupon coupon = new ProductCoupon();
+        coupon.setProductId(product.getProductId());
+        coupon.setStartDate(product.getStartDate());
+        coupon.setEndDate(product.getEndDate());
+        coupon.setCouponTab(0);
+        coupon.setCouponNote("");
+        coupon.setSourcePlatform(EProductSource.JD.getCode());
+        coupon.setYn(0);
+        coupon.setNum(0);
+        coupon.setRemainNum(0);
+        coupon.setCouponLink("");
+        coupon.setCouponPrice(0.0);
+        coupon.setStatus(0);
+        coupon.setPlatform(0);
+        return coupon;
     }
+
 }

@@ -53,6 +53,18 @@ public class ProductCoupon extends BaseQuery {
     @Setter
     private String couponNote;
     /**
+     * 优惠券面额
+     */
+    @Getter
+    @Setter
+    private Double discount;
+    /**
+     * 优惠券限额
+     */
+    @Getter
+    @Setter
+    private Double quota;
+    /**
      * 券使用平台
      */
     @Getter

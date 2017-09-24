@@ -5,6 +5,7 @@ import com.jd.open.api.sdk.JdClient;
 import com.jd.open.api.sdk.request.cps.*;
 import com.jd.open.api.sdk.response.cps.*;
 import com.rebate.common.util.JsonUtil;
+import com.rebate.common.util.rebate.CouponUtil;
 import com.rebate.common.util.rebate.JdMediaProductGrapUtil;
 import com.rebate.common.util.rebate.RebateRuleUtil;
 import com.rebate.common.web.page.PaginatedArrayList;
@@ -16,6 +17,7 @@ import com.rebate.domain.jd.JDConfig;
 import com.rebate.manager.jd.JdSdkManager;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.type.TypeReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,6 +114,8 @@ public class JdSdkManagerImpl implements JdSdkManager {
                     coupon.setEndDate(new Date(Long.parseLong(map.get("endTime").toString())));
                     coupon.setCouponTab(Integer.parseInt(map.get("couponTab").toString()));
                     coupon.setSourcePlatform(EProductSource.JD.getCode());
+                    coupon.setDiscount(CouponUtil.getCouponDiscount(coupon.getCouponNote()));
+                    coupon.setQuota(CouponUtil.getCouponQuota(coupon.getCouponNote()));
                     coupon.setYn(0);
                     coupon.setNum(0);
                     coupon.setRemainNum(0);
@@ -454,4 +458,5 @@ public class JdSdkManagerImpl implements JdSdkManager {
         }
         return json;
     }
+
 }

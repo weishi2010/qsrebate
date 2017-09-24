@@ -357,24 +357,6 @@ public class IndexController extends BaseController {
         return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
     }
 
-
-    @RequestMapping({"", "/", "/importProducts.json"})
-    public ResponseEntity<?> importProducts(HttpServletRequest request, String productIds) {
-        //导入普通返利商品
-        productService.importProducts(productIds, EProudctCouponType.GENERAL.getCode());
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("success", true);
-        return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
-    }
-
-    @RequestMapping({"", "/", "/importCouponProduct.json"})
-    public ResponseEntity<?> importCouponProduct(HttpServletRequest request, String productIds) {
-        //导入优惠券商品
-        productService.importProducts(productIds, EProudctCouponType.COUPON.getCode());
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("success", true);
-        return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
-    }
     //---------------------------------------------------------------
 
     /**

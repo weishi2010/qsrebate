@@ -1,5 +1,6 @@
 package com.rebate.controller;
 
+import com.rebate.common.util.JsonUtil;
 import com.rebate.common.util.RequestUtils;
 import com.rebate.common.util.Sha1Util;
 import com.rebate.common.util.rebate.RebateUrlUtil;
@@ -7,6 +8,7 @@ import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.controller.base.BaseController;
 import com.rebate.domain.CategoryQuery;
 import com.rebate.domain.ExtractDetail;
+import com.rebate.domain.ProductCoupon;
 import com.rebate.domain.UserInfo;
 import com.rebate.domain.en.EExtractCode;
 import com.rebate.domain.en.EExtractStatus;
@@ -25,6 +27,7 @@ import com.rebate.service.order.RebateDetailService;
 import com.rebate.service.product.ProductService;
 import com.rebate.service.userinfo.UserInfoService;
 import com.rebate.service.wx.WxAccessTokenService;
+import org.codehaus.jackson.type.TypeReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +46,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -59,10 +63,12 @@ import java.util.Map;
 @Controller
 @RequestMapping(AdminController.PREFIX)
 public class AdminController extends BaseController {
+    public static final String PREFIX = "/admin";
     private static final Logger LOG = LoggerFactory.getLogger(AdminController.class);
 
-    public static final String PREFIX = "/admin";
 
+    private static final TypeReference<List<ProductCoupon>> productCouponTypeReference = new TypeReference<List<ProductCoupon>>() {
+    };
 
     @Qualifier("productService")
     @Autowired(required = true)
@@ -72,18 +78,31 @@ public class AdminController extends BaseController {
     @RequestMapping({"", "/", "/importProducts.json"})
     public ResponseEntity<?> importProducts(HttpServletRequest request, String productIds) {
         //导入普通返利商品
-        productService.importProducts(productIds, EProudctCouponType.GENERAL.getCode());
+        productService.importProducts(productIds);
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("success", true);
         return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
     }
 
     @RequestMapping({"", "/", "/importCouponProduct.json"})
-    public ResponseEntity<?> importCouponProduct(HttpServletRequest request, String productIds) {
-        //导入优惠券商品
-        productService.importProducts(productIds, EProudctCouponType.COUPON.getCode());
+    public ResponseEntity<?> importCouponProduct(HttpServletRequest request, String paramJson) {
+
+        List<ProductCoupon> couponMapList = null;
         Map<String, Object> map = new HashMap<String, Object>();
-        map.put("success", true);
+        boolean success = true;
+
+        try{
+            couponMapList = JsonUtil.fromJson(paramJson,productCouponTypeReference);
+        }catch (Exception e){
+            LOG.error("paramJson error!",e);
+            success = false;
+            map.put("msg", "param error!");
+        }
+
+
+        //导入优惠券商品
+        productService.importCouponProducts(couponMapList);
+        map.put("success", success);
         return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
     }
 }
