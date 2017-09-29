@@ -19,7 +19,7 @@ public enum EPromotionTab {
     /**
      * 优惠券活动
      */
-    COUPON(3,"优惠券"),
+    ACTIVITY(3,"优惠券"),
     /**
      * 分享
      */

@@ -32,7 +32,7 @@ function loadExtractData(year) {
 
     $.ajax({
         type: 'GET',
-        url: '/rebate/personal/getExtractDetails.json?year='+year,
+        url: '/personal/getExtractDetails.json?year='+year,
         dataType: 'json',
         success: function (reponse) {
             var list = reponse.detailList;

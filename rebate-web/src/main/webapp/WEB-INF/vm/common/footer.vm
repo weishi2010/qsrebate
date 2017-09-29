@@ -2,15 +2,15 @@
 <div class="bottom-fxied" style="left: 0px; bottom: 0px; width: 100%; display: block;z-index:99999;">
     <input type="hidden" id="promotionTab" value="$!{promotionTab}"/>
     <footer class="footer">
-        <a #if($promotionTab == 1) class="must-buy active" #else class="must-buy" #end href="/rebate/promotion?tab=1">
+        <a #if($promotionTab == 1) class="must-buy active" #else class="must-buy" #end href="/product/couponProducts">
             <span></span>
             <p>独家优惠券</p>
         </a>
-        <a  #if($promotionTab == 2) class="nine-block active" #else class="nine-block" #end href="/rebate/promotion?tab=2">
+        <!--<a  #if($promotionTab == 2) class="nine-block active" #else class="nine-block" #end href="/product/seckill">
             <span></span>
             <p>9块9</p>
-        </a>
-        <a  #if($promotionTab == 0) class="jd active" #else class="jd" #end href="/rebate/promotion?tab=0"">
+        </a>-->
+        <a  #if($promotionTab == 0) class="jd active" #else class="jd" #end href="/product/jdIndex"">
             <span></span>
             <p>去京东</p>
         </a>
@@ -18,7 +18,7 @@
             <span></span>
             <p>优惠券</p>
         </a>
-        <a  #if($promotionTab == 4) class="share-money active" #else class="share-money" #end  href="/rebate/personal/index?tab=4">
+        <a  #if($promotionTab == 4) class="share-money active" #else class="share-money" #end  href="/personal/index?tab=4">
             <span></span>
             <p>个人中心</p>
         </a>

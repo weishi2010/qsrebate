@@ -6,10 +6,7 @@ import com.rebate.common.util.Sha1Util;
 import com.rebate.common.util.rebate.RebateUrlUtil;
 import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.controller.base.BaseController;
-import com.rebate.domain.CategoryQuery;
-import com.rebate.domain.ExtractDetail;
-import com.rebate.domain.ProductCoupon;
-import com.rebate.domain.UserInfo;
+import com.rebate.domain.*;
 import com.rebate.domain.en.EExtractCode;
 import com.rebate.domain.en.EExtractStatus;
 import com.rebate.domain.en.EPromotionTab;
@@ -22,6 +19,7 @@ import com.rebate.domain.vo.ProductVo;
 import com.rebate.domain.vo.RebateDetailVo;
 import com.rebate.domain.wx.WxConfig;
 import com.rebate.manager.jd.JdSdkManager;
+import com.rebate.service.activity.ActivityService;
 import com.rebate.service.extract.ExtractDetailService;
 import com.rebate.service.order.RebateDetailService;
 import com.rebate.service.product.ProductService;
@@ -49,17 +47,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Description:
- *
- * @author weishi
- * @version 1.0.0
- */
-/*
- * =========================== 维护日志 ===========================
- * 2016-08-05 16:46  weishi 新建代码
- * =========================== 维护日志 ===========================
- */
 @Controller
 @RequestMapping(AdminController.PREFIX)
 public class AdminController extends BaseController {
@@ -69,11 +56,16 @@ public class AdminController extends BaseController {
 
     private static final TypeReference<List<ProductCoupon>> productCouponTypeReference = new TypeReference<List<ProductCoupon>>() {
     };
+    private static final TypeReference<List<Activity>> activityTypeReference = new TypeReference<List<Activity>>() {
+    };
 
     @Qualifier("productService")
     @Autowired(required = true)
     private ProductService productService;
 
+    @Qualifier("activityService")
+    @Autowired(required = true)
+    private ActivityService activityService;
 
     @RequestMapping({"", "/", "/importProducts.json"})
     public ResponseEntity<?> importProducts(HttpServletRequest request, String productIds) {
@@ -102,6 +94,28 @@ public class AdminController extends BaseController {
 
         //导入优惠券商品
         productService.importCouponProducts(couponMapList);
+        map.put("success", success);
+        return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
+    }
+
+    @RequestMapping({"", "/", "/importActivity.json"})
+    public ResponseEntity<?> importActivity(HttpServletRequest request, String paramJson) {
+
+        List<Activity> activityListList = null;
+        Map<String, Object> map = new HashMap<String, Object>();
+        boolean success = true;
+
+        try{
+            activityListList = JsonUtil.fromJson(paramJson,activityTypeReference);
+        }catch (Exception e){
+            LOG.error("paramJson error!",e);
+            success = false;
+            map.put("msg", "param error!");
+        }
+
+
+        //导入活动
+        activityService.importActivity(activityListList);
         map.put("success", success);
         return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
     }

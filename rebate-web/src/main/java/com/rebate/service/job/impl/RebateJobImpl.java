@@ -1,7 +1,6 @@
 package com.rebate.service.job.impl;
 
 import com.google.common.base.Joiner;
-import com.rebate.common.util.JsonUtil;
 import com.rebate.dao.*;
 import com.rebate.domain.*;
 import com.rebate.domain.en.EExtractStatus;

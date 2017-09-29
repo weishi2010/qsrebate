@@ -145,7 +145,7 @@ function reLoadData(page, category, tab) {
 function loadProductData(page, category, tab) {
     $.ajax({
         type: 'GET',
-        url: '/rebate/products.json?page=' + page + "&thirdCategory=" + category + "&tab=" + tab + "&r=" + Math.random(),
+        url: '/product/products.json?page=' + page + "&thirdCategory=" + category + "&tab=" + tab + "&r=" + Math.random(),
         dataType: 'json',
         success: function (reponse) {
             var list = reponse.products;
@@ -183,7 +183,7 @@ function getTemplate(product, tab) {
             "                    <img class=\"cart\" src=\"/static/img/ico-cart-01.png\" alt=\"\">" +
             "                    购买返：¥" + product.commissionWl +
             "                </a>" +
-            "                <a href=\"/rebate/share?skuId=\"" + product.productId + " class=\"share\">" +
+            "                <a href=\"/share/shareIndex?skuId=\"" + product.productId + " class=\"share\">" +
             "                    <img class=\"zhuanfa\" src=\"/static/img/ico-zhuanfa-01.png\" alt=\"\">" +
             "                    分享赚：¥1.00" +
             "                </a>" +
@@ -194,7 +194,7 @@ function getTemplate(product, tab) {
             "                    <img class=\"cart\" src=\"/static/img/ico-cart-01.png\" alt=\"\">" +
             "                    去购买" +
             "                </a>" +
-            "                <!--<a href=\"/rebate/share?skuId=" + product.productId + "\" class=\"share\">" +
+            "                <!--<a href=\"/share/shareIndex?skuId=" + product.productId + "\" class=\"share\">" +
             "                    <img class=\"zhuanfa\" src=\"/static/img/ico-zhuanfa-01.png\" alt=\"\">" +
             "                    去分享" +
             "                </a>-->" +
@@ -208,7 +208,7 @@ function getTemplate(product, tab) {
 function redirectJdPromotionUrl(skuId) {
     $.ajax({
         type: 'GET',
-        url: '/qsc/jdShortUrl.json?skuId=' + skuId + "&r=" + Math.random(),
+        url: '/product/jdShortUrl.json?skuId=' + skuId + "&r=" + Math.random(),
         dataType: 'json',
         success: function (reponse) {
             var url = reponse.url;
