@@ -1,5 +1,6 @@
 package com.rebate.domain;
 
+import com.rebate.domain.query.BaseQuery;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,7 +9,7 @@ import java.util.Date;
 /**
  * 活动
  */
-public class Activity {
+public class Activity extends BaseQuery {
     /**
      * 主键
      */
@@ -62,7 +63,7 @@ public class Activity {
      */
     @Getter
     @Setter
-    private Long status;
+    private Integer status;
     /**
      * 创建时间
      */

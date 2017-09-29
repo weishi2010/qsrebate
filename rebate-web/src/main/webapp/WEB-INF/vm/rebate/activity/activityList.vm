@@ -1,0 +1,33 @@
+#set( $title = "优惠券")
+#parse("/common/head.vm")
+<body class="bd bd-pb"  ng-app="myApp">
+<!--.header-->
+<div class="header mui-flex align-center">
+    <div class="back cell fixed">
+        <a href="javascript:;"><img src="/static/images/ico-arrow-left-01.png" alt=""></a>
+    </div>
+    <div class="title cell">最新：优惠券活动</div>
+    <div class="mail cell fixed">
+        <a href="javascript:;"><img src="/static/images/ico-mail-01.png" alt=""></a>
+    </div>
+</div>
+<!--/.header-->
+<div class="voucher-page"  ng-controller="activityCtrl">
+    <div class="panel">
+        <div class="top-line">
+            <a href="javascript:;">
+                <img src="/static/images/img-09.jpg" alt="">
+                <div class="tl">宝宝湿疹反复怎么破？看中国最权威湿疹专家，首都儿研究所刘小燕主任怎么说</div>
+            </a>
+        </div>
+        <ul class="list">
+            <li ng-repeat="activity in activityList">
+                <a href="javascript:;"><em class="green">男装</em>-【<span class="ftx-red">{{activity.benefit}}</span>】{{activity.title}}</a>
+            </li>
+        </ul>
+    </div>
+</div>
+    #parse("/common/footer.vm")
+<script type="text/javascript" src="/static/js/activity.js"></script>
+
+</body></html>

@@ -12,7 +12,7 @@
                 </div>
                 <div class="item two">
                     <img class="img" src="/static/img/img-10.png" alt="">
-                    <a href="/rebate/personal/extractDetail">提现记录&gt;</a>
+                    <a href="/personal/extractDetail">提现记录&gt;</a>
                 </div>
             </div>
             <div class="box-bd">

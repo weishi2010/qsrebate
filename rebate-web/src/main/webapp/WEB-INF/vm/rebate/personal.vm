@@ -4,19 +4,19 @@
 <div class="person-info">
     <p class="tl">[$!{userInfo.nickName}]我的资产</p>
     <p class="property">$!{commission.totalCommission}<span>元</span></p>
-    <a href="/rebate/personal/extract" class="get-money">提现</a>
+    <a href="/personal/extract" class="get-money">提现</a>
     <div class="avastar">
         <img src="$!{userInfo.wxImage}" alt="">
     </div>
     <div class="getMoney-record mui-flex justify-between">
         <span>您共提现$!{commission.totalCommission}元。</span>
-        <a href="/rebate/personal/extractDetail">提现记录&gt;</a>
+        <a href="/personal/extractDetail">提现记录&gt;</a>
     </div>
 </div>
 <div class="person-menu mui-flex">
     <div class="item">
         <img src="/static/img/img-07.png" alt="">
-            <p><a href="/rebate/personal/orderDetail">订单明细</a></p>
+            <p><a href="/personal/orderDetail">订单明细</a></p>
     </div>
     <div class="item">
         <img src="/static/img/img-08.png" alt="">

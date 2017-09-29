@@ -24,11 +24,11 @@ app.controller('extractCtrl', function ($scope,$http) {
                 extractPhone:extractPhone,
                 extractPrice:extractPrice
             },
-            url: '/rebate/personal/extractPrice.json?callback=1'
+            url: '/personal/extractPrice.json?callback=1'
         }).then(function successCallback(response) {
             resultObj = response.data;
             if(resultObj.code==1){
-                location.href ='/rebate/personal/extractDetail'
+                location.href ='/personal/extractDetail'
             }else{
                 $scope.extractCode = resultObj.code;
                 $scope.extractMsg = resultObj.msg;

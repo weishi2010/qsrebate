@@ -36,4 +36,9 @@
 		<property name="channel" value="${jd.jos.channel}"/>
 
 	</bean>
+	<!--URL处理工具类-->
+	<bean id="rebateUrlUtil" class="com.rebate.common.util.rebate.RebateUrlUtil">
+		<property name="jdUnionUrlPrefix" value="https://union-click.jd.com/jdc?"></property>
+		<property name="rebateUrlPrefix" value="http://m.qingsongfan.com/product/jumpJdUnionUrl?"></property>
+	</bean>
 </beans>
