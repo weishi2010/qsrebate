@@ -2,10 +2,10 @@
     <div class="tabs-tabs mui-flex">
         <nav class="cell nav-nav">
             <ul style="width: 2908px;">
-                <li class="active"><a href="javascript:void(0);" onclick="reLoadData(1,-1,$!{promotionTab});">精选</a></li>
+                <li class="active"><a href="javascript:void(0);" onclick="reLoadData(1,'',$!{promotionTab});">全部</a></li>
                 #foreach($category in $topCategories)
-                    <li #if($thirdCategory==$category.thirdCategory) class="active" #end>
-                        <a href="javascript:void(0);" onclick="reLoadData(1,$!{category.thirdCategory},$!{promotionTab})">$!{category.thirdCategoryName}</a>
+                    <li>
+                        <a href="javascript:void(0);" onclick="reLoadData(1,'$!{category.secondCategoryList}',$!{promotionTab})">$!{category.name}</a>
                     </li>
                 #end
             </ul>
@@ -19,7 +19,7 @@
         <ul class="list">
             #foreach($category in $allCategories)
                 <li>
-                    <a href="javascript:void(0);" onclick="reLoadData(1,$!{category.thirdCategory},$!{promotionTab})">$!{category.thirdCategoryName}</a>
+                    <a href="javascript:void(0);" onclick="reLoadData(1,'$!{category.secondCategoryList}',$!{promotionTab})">$!{category.name}</a>
                 </li>
             #end
         </ul>

@@ -8,10 +8,7 @@ import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.dao.CategoryDao;
 import com.rebate.dao.ProductCouponDao;
 import com.rebate.dao.ProductDao;
-import com.rebate.domain.Category;
-import com.rebate.domain.CategoryQuery;
-import com.rebate.domain.Product;
-import com.rebate.domain.ProductCoupon;
+import com.rebate.domain.*;
 import com.rebate.domain.en.EProductSource;
 import com.rebate.domain.en.EProudctCouponType;
 import com.rebate.domain.en.EProudctRebateType;
@@ -134,8 +131,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Category> findByActiveCategories(CategoryQuery qategoryQuery) {
-        return categoryDao.findByActiveCategories(qategoryQuery);
+    public List<RecommendCategory> findByRecommendCategories(RecommendCategory recommendCategory) {
+        return categoryDao.findByRecommendCategories(recommendCategory);
     }
 
     @Override

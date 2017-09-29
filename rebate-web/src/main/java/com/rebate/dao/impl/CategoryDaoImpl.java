@@ -4,6 +4,7 @@ import com.rebate.common.dao.BaseDao;
 import com.rebate.dao.CategoryDao;
 import com.rebate.domain.Category;
 import com.rebate.domain.CategoryQuery;
+import com.rebate.domain.RecommendCategory;
 
 import java.util.List;
 
@@ -24,7 +25,8 @@ public class CategoryDaoImpl extends BaseDao implements CategoryDao {
     }
 
     @Override
-    public List<Category> findByActiveCategories(CategoryQuery categoryQuery) {
-        return queryForList("Category.findByActiveCategories",categoryQuery);
+    public List<RecommendCategory> findByRecommendCategories(RecommendCategory recommendCategory) {
+        return queryForList("Category.findByRecommendCategories",recommendCategory);
     }
+
 }

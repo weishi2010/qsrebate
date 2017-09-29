@@ -14,4 +14,8 @@ public class ProductQuery extends Product{
     @Getter
     @Setter
     private Double queryPrice;
+
+    @Getter
+    @Setter
+    private String secondCategoryList;
 }

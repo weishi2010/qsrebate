@@ -4,6 +4,7 @@ import com.rebate.common.util.rebate.RebateUrlUtil;
 import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.controller.base.BaseController;
 import com.rebate.domain.CategoryQuery;
+import com.rebate.domain.RecommendCategory;
 import com.rebate.domain.UserInfo;
 import com.rebate.domain.en.EPromotionTab;
 import com.rebate.domain.en.EProudctCouponType;
@@ -76,11 +77,11 @@ public class ProductController extends BaseController {
         ModelAndView view = new ModelAndView(VIEW_PREFIX+ vm);
 
         //独家优惠券、9.9秒杀时查询分类列表
-        CategoryQuery qategoryQuery = new CategoryQuery();
-        qategoryQuery.setPageSize(10);
-        view.addObject("topCategories", productService.findByActiveCategories(qategoryQuery));
-        qategoryQuery.setPageSize(50);
-        view.addObject("allCategories", productService.findByActiveCategories(qategoryQuery));
+        RecommendCategory recommendCategory = new RecommendCategory();
+        recommendCategory.setPageSize(10);
+        view.addObject("topCategories", productService.findByRecommendCategories(recommendCategory));
+        recommendCategory.setPageSize(50);
+        view.addObject("allCategories", productService.findByRecommendCategories(recommendCategory));
         view.addObject("promotionTab", EPromotionTab.SECKILL.getTab());
         return view;
     }
@@ -99,17 +100,17 @@ public class ProductController extends BaseController {
         ModelAndView view = new ModelAndView(VIEW_PREFIX+ vm);
 
         //独家优惠券、9.9秒杀时查询分类列表
-        CategoryQuery qategoryQuery = new CategoryQuery();
-        qategoryQuery.setPageSize(10);
-        view.addObject("topCategories", productService.findByActiveCategories(qategoryQuery));
-        qategoryQuery.setPageSize(50);
-        view.addObject("allCategories", productService.findByActiveCategories(qategoryQuery));
+        RecommendCategory recommendCategory = new RecommendCategory();
+        recommendCategory.setPageSize(10);
+        view.addObject("topCategories", productService.findByRecommendCategories(recommendCategory));
+        recommendCategory.setPageSize(50);
+        view.addObject("allCategories", productService.findByRecommendCategories(recommendCategory));
         view.addObject("promotionTab", EPromotionTab.COUPON_PROMOTION.getTab());
         return view;
     }
 
     @RequestMapping({"", "/", "/products.json"})
-    public ResponseEntity<?> products(HttpServletRequest request, Integer tab, Integer page, Integer thirdCategory) {
+    public ResponseEntity<?> products(HttpServletRequest request, Integer tab, Integer page, String secondCategoryList) {
         Map<String, Object> map = new HashMap<String, Object>();
         Double queryPrice = null;
         Integer couponType = null;
@@ -131,13 +132,13 @@ public class ProductController extends BaseController {
         query.setIndex(page);
         query.setPageSize(10);
         query.setQueryPrice(queryPrice);
-        query.setThirdCategory(thirdCategory);
+        query.setSecondCategoryList(secondCategoryList);
         query.setCouponType(couponType);
         PaginatedArrayList<ProductVo> products = productService.findProductList(query, openId);
         LOG.error("page:{},size:{}", page, products.size());
         map.put("products", products);
         map.put("page", page);
-        map.put("thirdCategory", thirdCategory);
+        map.put("secondCategoryList", secondCategoryList);
         map.put("totalItem", products.getTotalItem());
         map.put("promotionTab", tab);
         return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);

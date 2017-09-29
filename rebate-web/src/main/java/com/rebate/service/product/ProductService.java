@@ -2,10 +2,7 @@ package com.rebate.service.product;
 
 import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.common.web.result.Result;
-import com.rebate.domain.Category;
-import com.rebate.domain.CategoryQuery;
-import com.rebate.domain.Product;
-import com.rebate.domain.ProductCoupon;
+import com.rebate.domain.*;
 import com.rebate.domain.query.ProductQuery;
 import com.rebate.domain.vo.ProductVo;
 
@@ -27,11 +24,10 @@ public interface ProductService {
 
     /**
      * 查询有效分类
-     * @param qategoryQuery
+     * @param recommendCategory
      * @return
      */
-    List<Category> findByActiveCategories(CategoryQuery qategoryQuery);
-
+    public List<RecommendCategory> findByRecommendCategories(RecommendCategory recommendCategory);
     /**
      * 查询列表
      * @param productQuery

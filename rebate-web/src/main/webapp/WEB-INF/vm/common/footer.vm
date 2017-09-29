@@ -6,17 +6,18 @@
             <span></span>
             <p>独家优惠券</p>
         </a>
-        <!--<a  #if($promotionTab == 2) class="nine-block active" #else class="nine-block" #end href="/product/seckill">
+        <a  #if($promotionTab == 2) class="nine-block active" #else class="nine-block" #end href="/product/seckill">
             <span></span>
             <p>9块9</p>
-        </a>-->
+        </a>
+
         <a  #if($promotionTab == 0) class="jd active" #else class="jd" #end href="/product/jdIndex"">
             <span></span>
             <p>去京东</p>
         </a>
-        <a #if($promotionTab == 3) class="voucher active" #else class="voucher" #end href="/rebate/promotion?tab=3">
+        <a #if($promotionTab == 3) class="voucher active" #else class="voucher" #end href="/activity/activityIndex">
             <span></span>
-            <p>优惠券</p>
+            <p>优惠活动</p>
         </a>
         <a  #if($promotionTab == 4) class="share-money active" #else class="share-money" #end  href="/personal/index?tab=4">
             <span></span>

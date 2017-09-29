@@ -66,6 +66,13 @@ public class Category extends BaseQuery {
     private Integer source;
 
     /**
+     * 排序权重
+     */
+    @Getter
+    @Setter
+    private Integer sortWeight;
+
+    /**
      * 创建时间
      */
     @Getter

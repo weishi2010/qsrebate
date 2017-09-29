@@ -74,6 +74,12 @@
                     third_category = #thirdCategory#
                 </isGreaterThan>
             </isNotNull>
+            <isNotNull property="secondCategoryList">
+                <isNotEmpty property="secondCategoryList"  prepend="and">
+                    second_category in ($secondCategoryList$)
+                </isNotEmpty>
+            </isNotNull>
+
             <isNotNull property="secondCategory" prepend="and">
                 <isGreaterThan property="secondCategory" compareValue="0" prepend="and">
                     second_category = #secondCategory#

@@ -2,6 +2,7 @@ package com.rebate.controller;
 
 import com.rebate.controller.base.BaseController;
 import com.rebate.domain.CategoryQuery;
+import com.rebate.domain.RecommendCategory;
 import com.rebate.domain.en.EPromotionTab;
 import com.rebate.domain.wx.WxConfig;
 import com.rebate.manager.jd.JdSdkManager;
@@ -97,11 +98,11 @@ public class IndexController extends BaseController {
         if (EPromotionTab.COUPON_PROMOTION.getTab() == tab || EPromotionTab.SECKILL.getTab() == tab) {
 
             //独家优惠券、9.9秒杀时查询分类列表
-            CategoryQuery qategoryQuery = new CategoryQuery();
-            qategoryQuery.setPageSize(10);
-            view.addObject("topCategories", productService.findByActiveCategories(qategoryQuery));
-            qategoryQuery.setPageSize(50);
-            view.addObject("allCategories", productService.findByActiveCategories(qategoryQuery));
+            RecommendCategory recommendCategory = new RecommendCategory();
+            recommendCategory.setPageSize(10);
+            view.addObject("topCategories", productService.findByRecommendCategories(recommendCategory));
+            recommendCategory.setPageSize(50);
+            view.addObject("allCategories", productService.findByRecommendCategories(recommendCategory));
         }
         view.addObject("promotionTab", tab);
         return view;

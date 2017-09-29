@@ -3,6 +3,8 @@
 <sqlMap namespace="Category">
 
     <typeAlias alias="Category" type="com.rebate.domain.Category"/>
+    <typeAlias alias="RecommendCategory" type="com.rebate.domain.RecommendCategory"/>
+
     <typeAlias alias="CategoryQuery" type="com.rebate.domain.CategoryQuery"/>
 
 
@@ -19,13 +21,14 @@
         <result property="modified" column="modified"/>
     </resultMap>
 
-    <resultMap class="Category" id="ActiveCategoryResultMap">
-        <result property="firstCategory" column="first_category"/>
-        <result property="secondCategory" column="second_category"/>
-        <result property="thirdCategory" column="third_category"/>
-        <result property="firstCategoryName" column="first_category_name"/>
-        <result property="secondCategoryName" column="second_category_name"/>
-        <result property="thirdCategoryName" column="third_category_name"/>
+    <resultMap class="RecommendCategory" id="RecommendCategoryResultMap">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="secondCategoryList" column="second_category_list"/>
+        <result property="sortWeight" column="sort_weight"/>
+        <result property="status" column="status"/>
+        <result property="created" column="created"/>
+        <result property="modified" column="modified"/>
     </resultMap>
 
     <sql id="fields">
@@ -82,18 +85,18 @@
     </select>
 
     <!--查询活跃有效的三级分类-->
-    <select id="findByActiveCategories" parameterClass="CategoryQuery" resultMap="ActiveCategoryResultMap">
-        select
-        distinct p.third_category,c.third_category_name,
-        c.first_category,
-        c.first_category_name,
-        c.second_category,
-        c.second_category_name
-        from product p
-        left join
-        category c
-        on
-        p.third_category = c.third_category
+    <select id="findByRecommendCategories" parameterClass="RecommendCategory" resultMap="RecommendCategoryResultMap">
+      select
+        id,
+        name,
+        second_category_list,
+        sort_weight,
+        status,
+        created,
+        modified
+        from
+        recommend_category
+        order by sort_weight desc
         limit #pageSize#
     </select>
 

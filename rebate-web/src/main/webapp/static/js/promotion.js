@@ -12,7 +12,7 @@ $(function () {
     }
 
     //首次加载
-    loadProductData(counter, -1, promotionTab);
+    loadProductData(counter,'', promotionTab);
     //监听加载更多
     $(window).scroll(function () {
         var totalheight = parseFloat($(window).height()) + parseFloat($(window).scrollTop());
@@ -136,16 +136,16 @@ function Waterfall() {
 }
 
 //1为每日购买 2为9.9秒杀
-function reLoadData(page, category, tab) {
+function reLoadData(page, secondCategoryList, tab) {
     $('.g-list').html("");
 
-    loadProductData(page, category, tab);
+    loadProductData(page, secondCategoryList, tab);
 }
 
-function loadProductData(page, category, tab) {
+function loadProductData(page, secondCategoryList, tab) {
     $.ajax({
         type: 'GET',
-        url: '/product/products.json?page=' + page + "&thirdCategory=" + category + "&tab=" + tab + "&r=" + Math.random(),
+        url: '/product/products.json?page=' + page + "&secondCategoryList=" + secondCategoryList + "&tab=" + tab + "&r=" + Math.random(),
         dataType: 'json',
         success: function (reponse) {
             var list = reponse.products;

@@ -3,6 +3,7 @@ package com.rebate.dao;
 import com.rebate.domain.Category;
 import com.rebate.domain.CategoryQuery;
 import com.rebate.domain.Product;
+import com.rebate.domain.RecommendCategory;
 import com.rebate.domain.query.ProductQuery;
 
 import java.util.List;
@@ -32,11 +33,11 @@ public interface CategoryDao {
     List<Category> findByThirdCategories(CategoryQuery categoryQuery);
 
     /**
-     * 查询返利活跃分类列表
-     * @param categoryQuery
+     * 查询推荐分类归类列表
+     * @param recommendCategory
      * @return
      */
-    List<Category> findByActiveCategories(CategoryQuery categoryQuery);
+    List<RecommendCategory> findByRecommendCategories(RecommendCategory recommendCategory);
 
 
 }
