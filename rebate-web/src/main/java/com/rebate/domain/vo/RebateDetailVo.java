@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.BeanUtils;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -124,6 +125,14 @@ public class RebateDetailVo extends BaseQuery{
         BeanUtils.copyProperties(rebateDetail,this);
     }
 
+    public String getSubmitDateShow(){
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String show = "";
+        if (null != submitDate) {
+            show = format.format(submitDate);
+        }
+        return show;
+    }
     public String getOrderStatusShow(){
         return EOrderStatus.getStatusShow(status);
     }

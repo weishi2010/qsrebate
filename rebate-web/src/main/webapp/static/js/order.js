@@ -49,10 +49,21 @@ function loadOrderData(page,days) {
     });
 
     function getTemplate(detail){
+        var statusTemp = "";
+        if(1==detail.orderStatus){
+            if(1==detail.status){
+                statusTemp="<div class=\"ft\" style='float: right'><div class=\"state-ok\">已经结算</div></div>";
+            }else{
+                statusTemp="<div class=\"ft\" style='float: right'><div class=\"state-wait\">未结算</div></div>";
+            }
+        }else{
+            statusTemp="<div class=\"ft\" style='float: right'><div class=\"state-wait\">已取消</div></div>";
+        }
+
         var htmlTemp =  "<div class=\"item\">" +
             "        <div class=\"hd\">" +
-            "            <div class=\"o-number\">订单号："+detail.orderId+"</div>" +
-            "            <div class=\"o-number\">下单时间："+detail.submitDate+"</div>" +
+            "            <div class=\"o-number\">订单号："+detail.orderId+" </div>" +
+             statusTemp +
             "        </div>" +
             "        <div class=\"o-item mui-flex\">" +
             "            <div class=\"g-img cell fixed\">" +
@@ -79,19 +90,9 @@ function loadOrderData(page,days) {
             "                <span>¥"+detail.commission+"</span>" +
             "            </div>" +
             "        </div>" +
-            "        <div class=\"ft\">";
-            var statusTemp = "";
-            if(1==detail.orderStatus){
-                if(1==detail.status){
-                    statusTemp="            <div class=\"state-ok\">已经结算</div>";
-                }else{
-                    statusTemp="            <div class=\"state-wait\">未结算</div>";
-                }
-            }else{
-                statusTemp="            <div class=\"state-wait\">已取消</div>";
-            }
-        htmlTemp +=statusTemp;
-        htmlTemp +="            <div class=\"return-m\">" +
+            "        <div class=\"ft\">"+
+        "            <div class=\"return-m\" style='float: left'>下单时间："+detail.submitDateShow+"</div>" +
+        "            <div class=\"return-m\">" +
             "                预估返钱：¥<b>"+detail.commission+"</b>" +
             "            </div>" +
             "        </div>" +
