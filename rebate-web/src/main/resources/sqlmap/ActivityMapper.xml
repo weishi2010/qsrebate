@@ -34,7 +34,7 @@
     </sql>
 
     <insert id="insert" parameterClass="Activity">
-        INSERT INTO Activity
+        INSERT INTO activity
         (
           title,
           activity_link,
@@ -65,7 +65,7 @@
     <select id="findActivity" parameterClass="ActivityQuery" resultMap="ActivityResultMap">
         select
         <include refid="fields"/>
-        from Activity
+        from activity
         where title =#title# and activity_link=#activityLink#
         limit 1
     </select>
@@ -73,7 +73,7 @@
     <select id="findActivityList" parameterClass="ActivityQuery" resultMap="ActivityResultMap">
         select
         <include refid="fields"/>
-        from Activity
+        from activity
         where status in ($statusList$)
         order by id desc
         limit #pageSize#

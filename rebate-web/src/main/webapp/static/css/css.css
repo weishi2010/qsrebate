@@ -1064,7 +1064,6 @@ img {
     margin-top: .08rem;
 }
 .tabs-tabs-wrap .tabs-droplist {
-    position: absolute;
     left: 0;
     display: none;
     z-index: 9999;
