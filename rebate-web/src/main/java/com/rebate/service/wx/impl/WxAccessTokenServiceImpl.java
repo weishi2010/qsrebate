@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -89,7 +90,11 @@ public class WxAccessTokenServiceImpl implements WxAccessTokenService {
         params.put("openid",openId);
 
         String json = HttpClientUtil.get(wxConfig.getUserInfoUrl(), params);
-
+        try {
+            json = new String(json.getBytes(),"ISO8859-1");
+        } catch (UnsupportedEncodingException e) {
+            LOG.error("getWxUserInfo charset convert error!json:{}" ,json);
+        }
         if (json.contains("openid")) {
             wxUserInfo = JsonUtil.fromJson(json,WxUserInfo.class);
         }

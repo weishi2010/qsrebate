@@ -1,8 +1,8 @@
 package com.rebate.service.product;
 
 import com.rebate.common.web.page.PaginatedArrayList;
-import com.rebate.common.web.result.Result;
-import com.rebate.domain.*;
+import com.rebate.domain.ProductCoupon;
+import com.rebate.domain.RecommendCategory;
 import com.rebate.domain.query.ProductQuery;
 import com.rebate.domain.vo.ProductVo;
 
