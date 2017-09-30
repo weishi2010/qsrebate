@@ -2,7 +2,7 @@ var app = angular.module('myApp', []);
 app.controller('activityCtrl', function ($scope,$http) {
 
     $scope.activityList = [];
-    $scope.loadData  = function (extractPrice) {
+    $scope.loadData  = function () {
 
         $http({
             method: 'GET',

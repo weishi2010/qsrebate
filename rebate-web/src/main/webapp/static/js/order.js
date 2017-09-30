@@ -52,6 +52,7 @@ function loadOrderData(page,days) {
         var htmlTemp =  "<div class=\"item\">" +
             "        <div class=\"hd\">" +
             "            <div class=\"o-number\">订单号："+detail.orderId+"</div>" +
+            "            <div class=\"o-number\">下单时间："+detail.submitDate+"</div>" +
             "        </div>" +
             "        <div class=\"o-item mui-flex\">" +
             "            <div class=\"g-img cell fixed\">" +

@@ -136,7 +136,7 @@ public class PersonalController extends BaseController {
             days = 180;//大于180天则只取180天
         }
         RebateDetailQuery query = new RebateDetailQuery();
-        query.setOpenId(userInfo.getOpenId());
+        query.setOpenId(userInfo.getSubUnionId());
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -days);
         query.setStartDate(cal.getTime());

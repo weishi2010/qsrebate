@@ -1,0 +1,42 @@
+#set( $title = "专属优惠券")
+#parse("/common/head.vm")
+<body class="bd bd-pb" ng-app="myApp">
+<form  ng-controller="productCtrl">
+<div class="header-search"  >
+    <div class="inner mui-flex align-center">
+        <div class="cell">
+            <input class="search-ipt" placeholder="搜商品，买就返钱，分享还能再赚钱！" ng-model="searchParam" type="text">
+        </div>
+        <div class="cell fixed ico-search" >
+            <a  ng-click="search()"><img src="/static/img/ico-search-01.png" alt=""></a>
+        </div>
+    </div>
+</div>
+    #parse("/common/category.vm")
+    <div class="g-list" >
+        <div class="item mui-flex" ng-repeat="product in products">
+            <div class="g-img cell fixed"><a href="javascript:void(0);" onclick="redirectJdPromotionUrl({{product.productId}})">
+                <img class="g-img" ng-src="{{product.imgUrl}}" alt="{{product.name}}" width="80" height="90"></a>
+            </div>
+            <div class="cnt cell align-center"><a href="javascript:void(0);" onclick="redirectJdPromotionUrl({{product.productId}})"
+                                                  class="tl">{{product.name}}</a>
+                <div class="meta">
+                    <span class="old-price">原价：{{product.originalPrice}}</span>
+                    <span class="new-price" ng-if="product.originalPrice gt product.productCoupon.quota" >券后价：{{(roduct.originalPrice-product.productCoupon.quota}}</span>
+                </div>
+                <div class="easy">
+                    <a href="javascript:void(0);" onclick="redirectJdPromotionUrl({{product.productId}})" class="buy">
+                        <img class="cart" src="/static/img/ico-cart-01.png" alt="">
+                        去购买
+                    </a>
+                </div>
+            </div>
+        </div>
+</div>
+
+</form>
+    #parse("/common/footer.vm")
+<script type="text/javascript" src="/static/js/promotion.js?v2"></script>
+<script type="text/javascript" src="/static/js/product.js?v2"></script>
+
+</body></html>

@@ -91,6 +91,12 @@
             <isNotNull property="couponType" prepend="and">
                 coupon_type=#couponType#
             </isNotNull>
+            <isNotNull property="name" prepend="and">
+                name like '%$name$%'
+            </isNotNull>
+            <isNotNull property="productId" prepend="and">
+                product_id like '%$productId$%'
+            </isNotNull>
             <isParameterPresent prepend="and" >
                 original_price>0
             </isParameterPresent>

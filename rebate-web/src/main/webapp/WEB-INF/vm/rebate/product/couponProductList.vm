@@ -1,18 +1,19 @@
 #set( $title = "专属优惠券")
 #parse("/common/head.vm")
 <body class="bd bd-pb">
-<div class="header-search">
+<div class="header-search" >
     <div class="inner mui-flex align-center">
-        <div class="cell fixed ico-search">
-            <img src="/static/img/ico-search-01.png" alt="">
-        </div>
         <div class="cell">
-            <input class="search-ipt" placeholder="搜商品，买就返钱，分享还能再赚钱！" type="text">
+            <input class="search-ipt" placeholder="搜商品，买就返钱，分享还能再赚钱！" id="searchParam" type="text">
+        </div>
+        <div class="cell fixed ico-search" >
+            <a  onclick="searchProducts()"><img src="/static/img/ico-search-01.png" alt=""></a>
         </div>
     </div>
 </div>
     #parse("/common/category.vm")
-<div class="g-list">
+<div class="g-list"  >
+
 </div>
     #parse("/common/footer.vm")
 <script type="text/javascript" src="/static/js/promotion.js?v2"></script>

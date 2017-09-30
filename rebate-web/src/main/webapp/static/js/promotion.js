@@ -163,6 +163,32 @@ function loadProductData(page, secondCategoryList, tab) {
 
 }
 
+function searchProducts() {
+    page =1
+    searchParam = $("#searchParam").val();
+    searchParam = encodeURIComponent(encodeURIComponent(searchParam))
+    $.ajax({
+        type: 'GET',
+        url: '/product/searchProducts.json?page=1&params='+searchParam+ '&r=' + Math.random(),
+        dataType: 'json',
+        success: function (reponse) {
+            var list = reponse.products;
+            var sum = list.length;
+            var result = '';
+            for (var i = 0; i < sum; i++) {
+                result += getTemplate(list[i]);
+            }
+            $('.g-list').html('');
+
+            $('.g-list').append(result);
+        },
+        error: function (xhr, type) {
+            console.log('加载更多数据错误！');
+        }
+    });
+
+}
+
 function getTemplate(product, tab) {
     var htmlTemp = "<div class=\"item mui-flex\">" +
         "        <div class=\"g-img cell fixed\">" +
