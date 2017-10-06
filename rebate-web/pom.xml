@@ -236,6 +236,10 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
+        <dependency>
+            <groupId>xstream</groupId>
+            <artifactId>xstream</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

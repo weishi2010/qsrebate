@@ -88,6 +88,7 @@
 		<property name="apiAccessTokenUrl" value="${wx.apiAccessToken}"/>
 		<property name="loginAccessTokenUrl" value="${wx.accessTokenUrl}"/>
 		<property name="userInfoUrl" value="${wx.userInfoUrl}"/>
+		<property name="messageCheckToken" value="${wx.messageCheckToken}"/>
 	</bean>
 
 	<bean id="cookieUtils" class="com.rebate.common.util.CookieUtils">

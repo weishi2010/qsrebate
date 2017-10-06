@@ -48,6 +48,8 @@ public class WxConfig {
      */
     private String authorizeUrl = "https://open.weixin.qq.com/connect/oauth2/authorize";
 
+    private String messageCheckToken;
+
     public String getAppId() {
         return appId;
     }
@@ -110,5 +112,13 @@ public class WxConfig {
 
     public void setAuthorizeUrl(String authorizeUrl) {
         this.authorizeUrl = authorizeUrl;
+    }
+
+    public String getMessageCheckToken() {
+        return messageCheckToken;
+    }
+
+    public void setMessageCheckToken(String messageCheckToken) {
+        this.messageCheckToken = messageCheckToken;
     }
 }
