@@ -45,7 +45,8 @@ public class ProductServiceImpl implements ProductService {
     @Autowired(required = true)
     private JdSdkManager jdSdkManager;
 
-    @Autowired
+    @Qualifier("productCouponDao")
+    @Autowired(required = true)
     private ProductCouponDao productCouponDao;
 
     @Override
@@ -136,7 +137,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public PaginatedArrayList<ProductVo> findProductList(ProductQuery productQuery, String openId) {
+    public PaginatedArrayList<ProductVo> findProductList(ProductQuery productQuery) {
         PaginatedArrayList<ProductVo> products = new PaginatedArrayList<ProductVo>(productQuery.getIndex(), productQuery.getPageSize());
         try {
             int totalItem = productDao.findProductsCount(productQuery);

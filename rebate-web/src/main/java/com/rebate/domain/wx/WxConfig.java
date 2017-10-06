@@ -50,6 +50,10 @@ public class WxConfig {
 
     private String messageCheckToken;
 
+    private String menuCreateUrl;
+
+    private String menuGetUrl;
+
     public String getAppId() {
         return appId;
     }
@@ -120,5 +124,21 @@ public class WxConfig {
 
     public void setMessageCheckToken(String messageCheckToken) {
         this.messageCheckToken = messageCheckToken;
+    }
+
+    public String getMenuCreateUrl() {
+        return menuCreateUrl;
+    }
+
+    public void setMenuCreateUrl(String menuCreateUrl) {
+        this.menuCreateUrl = menuCreateUrl;
+    }
+
+    public String getMenuGetUrl() {
+        return menuGetUrl;
+    }
+
+    public void setMenuGetUrl(String menuGetUrl) {
+        this.menuGetUrl = menuGetUrl;
     }
 }

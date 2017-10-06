@@ -1,14 +1,18 @@
 package com.rebate.controller;
 
 import com.google.common.base.Joiner;
-import com.rebate.common.util.JsonUtil;
-import com.rebate.common.util.RequestUtils;
 import com.rebate.common.util.SerializeXmlUtil;
 import com.rebate.common.util.Sha1Util;
 import com.rebate.common.util.rebate.RebateUrlUtil;
+import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.controller.base.BaseController;
+import com.rebate.dao.ProductCouponDao;
+import com.rebate.dao.ProductDao;
+import com.rebate.domain.Product;
+import com.rebate.domain.ProductCoupon;
 import com.rebate.domain.UserInfo;
 import com.rebate.domain.en.EWxMsgType;
+import com.rebate.domain.query.ProductQuery;
 import com.rebate.domain.vo.ProductVo;
 import com.rebate.domain.wx.ImageMessage;
 import com.rebate.domain.wx.InputMessage;
@@ -23,8 +27,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -32,7 +34,6 @@ import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -43,9 +44,17 @@ public class WsMessageController extends BaseController {
     private static final Logger LOG = LoggerFactory.getLogger(WsMessageController.class);
     public static final String PREFIX = "/wxmsg";
 
+    @Qualifier("productCouponDao")
+    @Autowired(required = true)
+    private ProductCouponDao productCouponDao;
+
     @Qualifier("productService")
     @Autowired(required = true)
     private ProductService productService;
+
+    @Qualifier("productDao")
+    @Autowired(required = true)
+    private ProductDao productDao;
 
     @Qualifier("jdSdkManager")
     @Autowired(required = true)
@@ -77,6 +86,7 @@ public class WsMessageController extends BaseController {
         }
 
     }
+
 
     /**
      * 签名检查
@@ -119,7 +129,7 @@ public class WsMessageController extends BaseController {
             // 处理接收消息
             InputMessage inputMsg = getInputMessage(request);
 
-            LOG.error("accept["+inputMsg.getFromUserName()+"] content:" + inputMsg.getContent());
+            LOG.error("accept[" + inputMsg.getFromUserName() + "] content:" + inputMsg.getContent());
             if (null != inputMsg) {
                 // 取得消息类型
                 String msgType = inputMsg.getMsgType();
@@ -166,31 +176,36 @@ public class WsMessageController extends BaseController {
      */
     private String getRecommendContent(String content, String subUnionId) {
         StringBuffer recommendContent = new StringBuffer();
-        ProductVo product = null;
+        ProductQuery query = new ProductQuery();
+        query.setIndex(1);
+        query.setPageSize(5);
+
         List<Long> skus = getSkuListFromMessage(content);
         if (skus.size() > 0) {
+            //消息中有SKU信息则按SKU进行搜索
             Long skuId = skus.get(0);
-            //查询商品
-            product = productService.findProduct(skuId, subUnionId);
-            if(null!=product){
-                product.setPromotionShortUrl(rebateUrlUtil.jdPromotionUrlToQsrebateShortUrl(jdSdkManager.getShortPromotinUrl(skuId, subUnionId)));
-
-                //商品名
-                recommendContent.append(product.getName()).append("<br>");
-                //券后价
-                Double couponPrice = product.getOriginalPrice();//默认为原价
-                if (null != product.getProductCoupon() && product.getOriginalPrice() > product.getProductCoupon().getQuota()) {
-                    couponPrice = product.getOriginalPrice() - product.getProductCoupon().getQuota();
-                }
-                recommendContent.append("优惠价：").append(couponPrice).append("<br>");
-                //推广地址
-                recommendContent.append("抢购：").append(product.getPromotionShortUrl()).append("<br>");
-            }
-
+            query.setProductId(skuId);
+        } else {
+            //如果没有SKU则按名称做模糊查询进行推荐
+            query.setName(content);
         }
 
-        if(StringUtils.isBlank(recommendContent.toString())){
-            recommendContent.append("很抱歉，暂时没有推荐的商品!");
+        PaginatedArrayList<ProductVo> productVos =  productService.findProductList(query);
+
+
+        if (null != productVos && productVos.size()>0) {
+            ProductVo producVo = productVos.get(0);
+            String shortUrl = rebateUrlUtil.jdPromotionUrlToQsrebateShortUrl(jdSdkManager.getShortPromotinUrl(producVo.getProductId(), subUnionId));
+            //商品名
+            recommendContent.append("已成功转成把钱链接，从返利链接下单，才可以返钱哦！\n");
+            //可返钱
+            recommendContent.append("[Packet]可返钱：").append(producVo.getCommissionRatioWl()).append("元\n");
+            //推广地址
+            recommendContent.append("/:gift返钱链接：").append(shortUrl).append("\n");
+        }
+
+        if (StringUtils.isBlank(recommendContent.toString())) {
+            recommendContent.append("很抱歉，暂时没有可返钱的商品!");
         }
         return recommendContent.toString();
     }
@@ -220,7 +235,7 @@ public class WsMessageController extends BaseController {
 
 //            inputMessage = JsonUtil.fromJson(xmlMsg.toString(), InputMessage.class);
         } catch (Exception e) {
-           LOG.error("getInputMessage error!",e);
+            LOG.error("getInputMessage error!", e);
         }
         return inputMessage;
     }

@@ -178,4 +178,23 @@ public class HttpClientUtil {
         }
         return result;
     }
+
+    public static String post(String url, String paramJson) {
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        HttpPost post = new HttpPost(url);
+        String result = null;
+        try {
+            StringEntity s = new StringEntity(paramJson);
+            s.setContentEncoding("UTF-8");
+            s.setContentType("application/json");
+            post.setEntity(s);
+            CloseableHttpResponse res = httpclient.execute(post);
+            if (res.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+                result = EntityUtils.toString(res.getEntity());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return result;
+    }
 }
