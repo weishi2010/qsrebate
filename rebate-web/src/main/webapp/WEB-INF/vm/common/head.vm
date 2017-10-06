@@ -12,7 +12,7 @@
     <title>${title}</title>
     <link rel="apple-touch-icon-precomposed" href="">
     <link rel="apple-touch-startup-image" href="">
-    <link rel="stylesheet" href="/static/css/css.css?v1"/>
+    <link rel="stylesheet" href="/static/css/css.css?v4"/>
     <script type="text/javascript" src="/static/lib/zpeto/zepto-1.2.0.min.js"></script>
     <script type="text/javascript" src="/static/lib/zpeto/zepto.fx.js"></script>
     <script type="text/javascript" src="/static/lib/angular/angular.min.js"></script>
