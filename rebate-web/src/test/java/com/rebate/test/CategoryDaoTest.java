@@ -45,10 +45,10 @@ public class CategoryDaoTest extends AbstractJUnit4SpringContextTests {
 
     @Test
     public void findByActiveCategories() {
-        CategoryQuery query = new CategoryQuery();
-        query.setPageSize(100);
-        List list = categoryDao.findByActiveCategories(query);
-        System.out.println("list:" + JsonUtil.toJson(list));
+//        CategoryQuery query = new CategoryQuery();
+//        query.setPageSize(100);
+//        List list = categoryDao.findByActiveCategories(query);
+//        System.out.println("list:" + JsonUtil.toJson(list));
     }
 
     @Test
