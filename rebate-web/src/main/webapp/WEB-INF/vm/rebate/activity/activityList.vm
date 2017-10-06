@@ -4,11 +4,11 @@
 <!--.header-->
 <div class="header mui-flex align-center">
     <div class="back cell fixed">
-        <a href="javascript:;"><img src="/static/images/ico-arrow-left-01.png" alt=""></a>
+        <a href="javascript:;"><img src="/static/img/ico-arrow-left-01.png" alt=""></a>
     </div>
     <div class="title cell">最新：优惠券活动</div>
     <div class="mail cell fixed">
-        <a href="javascript:;"><img src="/static/images/ico-mail-01.png" alt=""></a>
+        <a href="javascript:;"><img src="/static/img/ico-mail-01.png" alt=""></a>
     </div>
 </div>
 <!--/.header-->
