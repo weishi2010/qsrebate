@@ -4,7 +4,6 @@ import com.rebate.common.util.EncodeUtils;
 import com.rebate.common.util.rebate.RebateUrlUtil;
 import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.controller.base.BaseController;
-import com.rebate.domain.CategoryQuery;
 import com.rebate.domain.RecommendCategory;
 import com.rebate.domain.UserInfo;
 import com.rebate.domain.en.EPromotionTab;
@@ -26,7 +25,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -125,19 +123,13 @@ public class ProductController extends BaseController {
             queryPrice = 9.9;
         }
 
-        UserInfo userInfo = getUserInfo(request);
-        String openId = "";
-        if (null != userInfo) {
-            openId = userInfo.getOpenId();
-        }
-
         ProductQuery query = new ProductQuery();
         query.setIndex(page);
         query.setPageSize(10);
         query.setQueryPrice(queryPrice);
         query.setSecondCategoryList(secondCategoryList);
         query.setCouponType(couponType);
-        PaginatedArrayList<ProductVo> products = productService.findProductList(query, openId);
+        PaginatedArrayList<ProductVo> products = productService.findProductList(query);
         LOG.error("page:{},size:{}", page, products.size());
         map.put("products", products);
         map.put("page", page);
@@ -181,16 +173,9 @@ public class ProductController extends BaseController {
             query.setName(params);
         }
 
-        UserInfo userInfo = getUserInfo(request);
-        String openId = "";
-        if (null != userInfo) {
-            openId = userInfo.getOpenId();
-        }
-
-
         query.setIndex(page);
         query.setPageSize(10);
-        PaginatedArrayList<ProductVo> products = productService.findProductList(query, openId);
+        PaginatedArrayList<ProductVo> products = productService.findProductList(query);
         map.put("products", products);
         map.put("page", page);
         map.put("totalItem", products.getTotalItem());

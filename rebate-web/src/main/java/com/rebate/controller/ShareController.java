@@ -54,16 +54,16 @@ public class ShareController extends BaseController {
     public ModelAndView shareIndex(HttpServletRequest request, Long skuId) {
         String vm = "/share";
         UserInfo userInfo = getUserInfo(request);
-        String openId = "";
+        String subUnionId = "";
         if (null != userInfo) {
-            openId = userInfo.getOpenId();
+            subUnionId = userInfo.getSubUnionId();
         }
 
         ModelAndView view = new ModelAndView(VIEW_PREFIX+ vm);
         //查询商品
-        ProductVo product = productService.findProduct(skuId, openId);
+        ProductVo product = productService.findProduct(skuId, subUnionId);
 
-        product.setPromotionShortUrl(rebateUrlUtil.jdPromotionUrlToQsrebateShortUrl(jdSdkManager.getShortPromotinUrl(skuId, openId)));
+        product.setPromotionShortUrl(rebateUrlUtil.jdPromotionUrlToQsrebateShortUrl(jdSdkManager.getShortPromotinUrl(skuId, subUnionId)));
 
 
         //获取临时票据

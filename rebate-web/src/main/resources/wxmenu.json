@@ -1,0 +1,59 @@
+{
+  "button": [
+    {
+      "name": "京东返钱",
+      "sub_button": [
+        {
+          "type": "view",
+          "name": "【内购券】",
+          "url": "http://m.qingsongfan.com/product/couponProducts"
+        },
+        {
+          "type": "view",
+          "name": "超值9.9元",
+          "url": "http://m.qingsongfan.com/product/seckill"
+        },
+        {
+          "type": "click",
+          "name": "大型促销",
+          "key": "http://m.qingsongfan.com/activity/activityIndex"
+        },
+        {
+          "type": "click",
+          "name": "京东首页",
+          "key": "https://union-click.jd.com/jdc?d=P9VC3G"
+        }
+      ]
+    },
+    {
+      "name": "返钱教程",
+      "sub_button": [
+        {
+          "type": "view",
+          "name": "怎么返？",
+          "url": "http://m.qingsongfan.com/product/couponProducts"
+        },
+        {
+          "type": "view",
+          "name": "怎么赚？",
+          "url": "http://m.qingsongfan.com/product/couponProducts"
+        }
+      ]
+    },
+    {
+      "name": "个人中心",
+      "sub_button": [
+        {
+          "type": "view",
+          "name": "我的收入",
+          "url": "http://m.qingsongfan.com/personal/index"
+        },
+        {
+          "type": "view",
+          "name": "订单明细",
+          "url": "http://m.qingsongfan.com/personal/orderDetail"
+        }
+      ]
+    }
+  ]
+}

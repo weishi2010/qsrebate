@@ -45,7 +45,8 @@ public class ProductServiceImpl implements ProductService {
     @Autowired(required = true)
     private JdSdkManager jdSdkManager;
 
-    @Autowired
+    @Qualifier("productCouponDao")
+    @Autowired(required = true)
     private ProductCouponDao productCouponDao;
 
     @Override
@@ -76,7 +77,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void importCouponProducts(List<ProductCoupon> couponMapList) {
-        if (couponMapList.size()==0) {
+        if (couponMapList.size() == 0) {
             return;
         }
 
@@ -86,8 +87,8 @@ public class ProductServiceImpl implements ProductService {
         for (ProductCoupon productCoupon : couponMapList) {
             Long skuId = productCoupon.getProductId();
             skuList.add(skuId);
-            discountMap.put(skuId,productCoupon.getDiscount());
-            quotaMap.put(skuId,productCoupon.getQuota());
+            discountMap.put(skuId, productCoupon.getDiscount());
+            quotaMap.put(skuId, productCoupon.getQuota());
         }
 
         List<Product> list = jdSdkManager.getMediaProducts(Joiner.on(",").join(skuList));
@@ -122,7 +123,7 @@ public class ProductServiceImpl implements ProductService {
 
             if (null == productCouponDao.findById(productCoupon)) {
                 productCouponDao.insert(productCoupon);
-            }else{
+            } else {
                 productCouponDao.update(productCoupon);
             }
 
@@ -136,14 +137,14 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public PaginatedArrayList<ProductVo> findProductList(ProductQuery productQuery, String openId) {
+    public PaginatedArrayList<ProductVo> findProductList(ProductQuery productQuery) {
         PaginatedArrayList<ProductVo> products = new PaginatedArrayList<ProductVo>(productQuery.getIndex(), productQuery.getPageSize());
         try {
             int totalItem = productDao.findProductsCount(productQuery);
             if (totalItem > 0) {
                 products.setTotalItem(totalItem);
                 productQuery.setStartRow(products.getStartRow());
-                if(productQuery.getIndex()<=products.getTotalPage()){
+                if (productQuery.getIndex() <= products.getTotalPage()) {
                     List<Product> list = productDao.findProducts(productQuery);
                     for (Product product : list) {
                         try {
@@ -161,7 +162,7 @@ public class ProductServiceImpl implements ProductService {
                             vo.setCommissionPc(qsCommissionPc);
 
                             //查询优惠券信息
-                            ProductCoupon productCouponQuery =new ProductCoupon();
+                            ProductCoupon productCouponQuery = new ProductCoupon();
                             productCouponQuery.setProductId(vo.getProductId());
                             ProductCoupon coupon = productCouponDao.findById(productCouponQuery);
                             vo.setProductCoupon(coupon);
@@ -188,18 +189,21 @@ public class ProductServiceImpl implements ProductService {
             Product productQuery = new Product();
             productQuery.setProductId(skuId);
             Product product = productDao.findById(productQuery);
-            vo = new ProductVo(product);
+            if (null != product) {
 
-            //获取商品链接
-            vo.setImgUrl(product.getImgUrl().replace(DEFAULT_IMG_SIZE, IMG_SIZE));
+                vo = new ProductVo(product);
 
-            //轻松返平台获取佣金
-            Double qsCommissionWl = getCommissionWl(vo.getCommissionRatioWl(), vo.getOriginalPrice());//移动端
-            Double qsCommissionPc = getCommissionPc(vo.getCommissionRatioPc(), vo.getOriginalPrice());//PC端
+                //获取商品链接
+                vo.setImgUrl(product.getImgUrl().replace(DEFAULT_IMG_SIZE, IMG_SIZE));
 
-            //按比例给用户返佣金
-            vo.setCommissionWl(getUserCommission(qsCommissionWl));
-            vo.setCommissionPc(qsCommissionPc);
+                //轻松返平台获取佣金
+                Double qsCommissionWl = getCommissionWl(vo.getCommissionRatioWl(), vo.getOriginalPrice());//移动端
+                Double qsCommissionPc = getCommissionPc(vo.getCommissionRatioPc(), vo.getOriginalPrice());//PC端
+
+                //按比例给用户返佣金
+                vo.setCommissionWl(getUserCommission(qsCommissionWl));
+                vo.setCommissionPc(qsCommissionPc);
+            }
 
 
         } catch (Exception e) {
@@ -237,12 +241,14 @@ public class ProductServiceImpl implements ProductService {
     }
 
 //------------------------------------------------------------------------------
+
     /**
      * 商品信息转优惠券信息
+     *
      * @param product
      * @return
      */
-    private ProductCoupon productToCoupon(Product product){
+    private ProductCoupon productToCoupon(Product product) {
         ProductCoupon coupon = new ProductCoupon();
         coupon.setProductId(product.getProductId());
         coupon.setStartDate(product.getStartDate());
