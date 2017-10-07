@@ -132,7 +132,7 @@ public class InputMessage implements Serializable {
     @JsonProperty("event")
     @Getter
     @Setter
-    private String event;
+    private String Event;
 
     @XStreamAlias("EventKey")
     @JsonProperty("eventKey")
@@ -145,5 +145,13 @@ public class InputMessage implements Serializable {
     @Getter
     @Setter
     private String Ticket;
+
+    @XStreamAlias("MenuId")
+    @JsonProperty("menuId")
+    @Getter
+    @Setter
+    private String MenuId;
+
+
 
 }

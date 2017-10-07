@@ -18,7 +18,7 @@ public class RebateRuleUtil {
     /**
      * 平台抽成比例
      */
-    public static final double PLATFORM_USER_COMMISSION_RATIO = 0.5;
+    public static final double PLATFORM_USER_COMMISSION_RATIO = 0.3;
 
     /**
      * 是否给商品进行返佣

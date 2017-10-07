@@ -29,9 +29,9 @@
       "name": "返钱教程",
       "sub_button": [
         {
-          "type": "view",
+          "type": "click",
           "name": "怎么返？",
-          "url": "http://m.qingsongfan.com/product/couponProducts"
+          "key": "QS_WX_CLICK001"
         },
         {
           "type": "view",

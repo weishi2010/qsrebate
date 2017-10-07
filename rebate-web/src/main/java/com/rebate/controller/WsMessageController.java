@@ -11,6 +11,8 @@ import com.rebate.dao.ProductDao;
 import com.rebate.domain.Product;
 import com.rebate.domain.ProductCoupon;
 import com.rebate.domain.UserInfo;
+import com.rebate.domain.en.EWxEventCode;
+import com.rebate.domain.en.EWxEventType;
 import com.rebate.domain.en.EWxMsgType;
 import com.rebate.domain.query.ProductQuery;
 import com.rebate.domain.vo.ProductVo;
@@ -129,7 +131,7 @@ public class WsMessageController extends BaseController {
             // 处理接收消息
             InputMessage inputMsg = getInputMessage(request);
 
-            LOG.error("accept[" + inputMsg.getFromUserName() + "],msgType:"+inputMsg.getMsgType());
+            LOG.error("accept[" + inputMsg.getFromUserName() + "],msgType:" + inputMsg.getMsgType());
             if (null != inputMsg) {
                 //查询用户信息获取子联盟ID
                 UserInfo userInfo = userInfoService.getUserInfo(inputMsg.getFromUserName());
@@ -143,15 +145,27 @@ public class WsMessageController extends BaseController {
                 if (msgType.equals(EWxMsgType.TEXT.getValue())) {
 
                     //获取文本推送xml
-                    String textXml = textPushXml(inputMsg.getFromUserName(),inputMsg.getToUserName(),inputMsg.getMsgType(),inputMsg.getContent(),subUnionId);
-                    LOG.error("output wx message:" + textXml);
+                    String textXml = textPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
+                    LOG.error("output wx textXml:" + textXml);
 
                     response.getWriter().write(textXml.toString());
 
-                }else  if (msgType.equals(EWxMsgType.EVENT.getValue())) {
-                    String eventXml = subscribeTextPushXml(inputMsg.getFromUserName(),inputMsg.getToUserName(),inputMsg.getMsgType(),inputMsg.getContent(),subUnionId);
-                    response.getWriter().write(eventXml.toString());
-
+                } else if (msgType.equals(EWxMsgType.EVENT.getValue())) {
+                    LOG.error("accept[" + inputMsg.getFromUserName() + "],msgType:" + inputMsg.getMsgType() + ",event:" + inputMsg.getEvent());
+                    if (EWxEventType.SUBSCRIBE.getValue().equalsIgnoreCase(inputMsg.getEvent())) {
+                        //关注
+                        String eventXml = subscribeTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
+                        LOG.error("output wx eventXml:" + eventXml);
+                        response.getWriter().write(eventXml.toString());
+                    } else if (EWxEventType.CLICK.getValue().equalsIgnoreCase(inputMsg.getEvent())) {
+                        //点击
+                        String eventXml = "";
+                        if (EWxEventCode.QS_WX_CLICK001.getValue().equalsIgnoreCase(inputMsg.getEventKey())) {
+                            eventXml = articlePushXml(inputMsg.getFromUserName(), inputMsg.getToUserName());
+                        }
+                        LOG.error("output wx eventXml:" + eventXml);
+                        response.getWriter().write(eventXml.toString());
+                    }
                 }
             }
 
@@ -163,6 +177,7 @@ public class WsMessageController extends BaseController {
 
     /**
      * 关注事件
+     *
      * @param toUserName
      * @param fromUserName
      * @param msgType
@@ -170,7 +185,7 @@ public class WsMessageController extends BaseController {
      * @param subUnionId
      * @return
      */
-    private String subscribeEventPushXml(String toUserName,String fromUserName,String msgType,String content,String subUnionId){
+    private String subscribeEventPushXml(String toUserName, String fromUserName, String msgType, String content, String subUnionId) {
 
         //构造消息回复XML
         StringBuffer str = new StringBuffer();
@@ -188,6 +203,7 @@ public class WsMessageController extends BaseController {
 
     /**
      * 关注后回复消息
+     *
      * @param toUserName
      * @param fromUserName
      * @param msgType
@@ -195,7 +211,7 @@ public class WsMessageController extends BaseController {
      * @param subUnionId
      * @return
      */
-    private String subscribeTextPushXml(String toUserName,String fromUserName,String msgType,String content,String subUnionId){
+    private String subscribeTextPushXml(String toUserName, String fromUserName, String msgType, String content, String subUnionId) {
 
         //构造消息回复XML
         StringBuffer str = new StringBuffer();
@@ -203,16 +219,40 @@ public class WsMessageController extends BaseController {
         str.append("<ToUserName><![CDATA[" + toUserName + "]]></ToUserName>");
         str.append("<FromUserName><![CDATA[" + fromUserName + "]]></FromUserName>");
         str.append("<CreateTime>" + new Date().getTime() + "</CreateTime>");
-        str.append("<MsgType><![CDATA[" + msgType + "]]></MsgType>");
-        str.append("<Content><![CDATA[欢迎加入我们！购物返钱，还有独家优惠券哦！ \n\n" +
-                "1、输入京东商品编号 或 商品链接，立刻获取返钱链接！\n" +
+        str.append("<MsgType><![CDATA[text]]></MsgType>");
+        str.append("<Content><![CDATA[欢迎加入我们！购物返钱，还有独家优惠券哦！ " +
+                "1、输入京东商品编号 或 商品链接，立刻获取返钱链接！" +
                 "2、打开【京东返钱-内购券】，每日更新独家的！超值的！内购优惠券！]]></Content>");
+        str.append("</xml>");
+        return str.toString();
+    }
+
+    private String articlePushXml(String toUserName, String fromUserName) {
+
+        //构造消息回复XML
+        StringBuffer str = new StringBuffer();
+        str.append("<xml>");
+        str.append("<ToUserName><![CDATA[" + toUserName + "]]></ToUserName>");
+        str.append("<FromUserName><![CDATA[" + fromUserName + "]]></FromUserName>");
+        str.append("<CreateTime>" + new Date().getTime() + "</CreateTime>");
+        str.append("<MsgType><![CDATA[news]]></MsgType>");
+        str.append("<ArticleCount>1</ArticleCount>");
+        str.append("<Articles>" +
+                "<item>" +
+                "<Title><![CDATA[轻松返钱网，怎么能返钱（返利）？]]></Title> " +
+                "<Description><![CDATA[加入“轻松返钱网”，怎么轻松拿返钱？请往下看...]]></Description>" +
+                "<PicUrl><![CDATA[http://m.qingsongfan.com/static/img/article_1.jpg]]></PicUrl>" +
+                "<Url><![CDATA[http://mp.weixin.qq.com/s/O-wT3xd1nC80osQg1SQQuw]]></Url>" +
+                "</item>" +
+                "</Articles>");
+
         str.append("</xml>");
         return str.toString();
     }
 
     /**
      * 消息回复
+     *
      * @param toUserName
      * @param fromUserName
      * @param msgType
@@ -220,7 +260,7 @@ public class WsMessageController extends BaseController {
      * @param subUnionId
      * @return
      */
-    private String textPushXml(String toUserName,String fromUserName,String msgType,String content,String subUnionId){
+    private String textPushXml(String toUserName, String fromUserName, String msgType, String content, String subUnionId) {
 
         //构造消息回复XML
         StringBuffer str = new StringBuffer();
@@ -248,17 +288,17 @@ public class WsMessageController extends BaseController {
         if (skus.size() > 0) {
             //消息中有SKU信息则按SKU进行搜索
             Long skuId = skus.get(0);
-            List<Product> products =  jdSdkManager.getMediaProducts(skuId.toString());
+            List<Product> products = jdSdkManager.getMediaProducts(skuId.toString());
 
-            if (null != products && products.size()>0) {
+            if (null != products && products.size() > 0) {
                 Product product = products.get(0);
                 String shortUrl = rebateUrlUtil.jdPromotionUrlToQsrebateShortUrl(jdSdkManager.getShortPromotinUrl(product.getProductId(), subUnionId));
                 //商品名
-                recommendContent.append("已成功转成把钱链接，从返利链接下单，才可以返钱哦！\n\n");
+                recommendContent.append("已成功转成把钱链接，从返利链接下单，才可以返钱哦！");
                 //可返钱
-                recommendContent.append("[Packet]可返钱：").append(product.getUserCommission()).append("元\n\n");
+                recommendContent.append("[Packet]可返钱：").append(product.getUserCommission()).append("元");
                 //推广地址
-                recommendContent.append("/:gift返钱链接：").append(shortUrl).append("\n");
+                recommendContent.append("/:gift返钱链接：").append(shortUrl).append("");
             }
         }
 
@@ -290,7 +330,7 @@ public class WsMessageController extends BaseController {
             for (int n; (n = in.read(b)) != -1; ) {
                 xmlMsg.append(new String(b, 0, n, "UTF-8"));
             }
-            LOG.error("xmlMsg:"+xmlMsg);
+            LOG.error("xmlMsg:" + xmlMsg);
             inputMessage = (InputMessage) xs.fromXML(xmlMsg.toString());
 
 //            inputMessage = JsonUtil.fromJson(xmlMsg.toString(), InputMessage.class);
