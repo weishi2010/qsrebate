@@ -51,47 +51,54 @@ public class WxAccessTokenServiceImpl implements WxAccessTokenService {
         AuthorizationCodeInfo authorizationCodeInfo = null;
         try {
             //获取accessToken
-             authorizationCodeInfo  = getWxLoginAccessToken(loginCode);
+            authorizationCodeInfo = getWxLoginAccessToken(loginCode);
         } catch (Exception e) {
-            LOG.error("[getLoginAccessToken]获取redis微信token异常!loginCode:"+loginCode,e);
+            LOG.error("[getLoginAccessToken]获取redis微信token异常!loginCode:" + loginCode, e);
         }
         return authorizationCodeInfo;
     }
 
     /**
      * 获取微信accesstoken
+     *
      * @return
      */
     private AuthorizationCodeInfo getWxLoginAccessToken(String code) {
         Map<String, String> params = new HashMap<String, String>();
         params.put("appid", wxConfig.getAppId());
         params.put("secret", wxConfig.getAppSecret());
-        params.put("code",code);
+        params.put("code", code);
         params.put("grant_type", "authorization_code");
 
-        String json = HttpClientUtil.get(wxConfig.getLoginAccessTokenUrl()+"?appid="+wxConfig.getAppId()+"&secret="+wxConfig.getAppSecret()+"&code="+code+"&grant_type=authorization_code");
-        LOG.error("[getWxLoginAccessToken]===================>json:"+json);
+        String json = HttpClientUtil.get(wxConfig.getLoginAccessTokenUrl() + "?appid=" + wxConfig.getAppId() + "&secret=" + wxConfig.getAppSecret() + "&code=" + code + "&grant_type=authorization_code");
+        LOG.error("[getWxLoginAccessToken]===================>json:" + json);
         AuthorizationCodeInfo authorizationCodeInfo = null;
         if (json.contains("access_token")) {
-             authorizationCodeInfo = JsonUtil.fromJson(json,AuthorizationCodeInfo.class);
+            authorizationCodeInfo = JsonUtil.fromJson(json, AuthorizationCodeInfo.class);
         } else {
-            LOG.error("get access_token error!json:{},code:{}" ,json,code);
+            LOG.error("get access_token error!json:{},code:{}", json, code);
         }
         return authorizationCodeInfo;
     }
 
 
-
     @Override
-    public WxUserInfo getWxUserInfo(String accessToken,String openId) {
+    public WxUserInfo getWxUserInfo(String accessToken, String openId) {
         WxUserInfo wxUserInfo = null;
-        Map<String, String> params = new HashMap<String, String>();
-        params.put("access_token", accessToken);
-        params.put("openid",openId);
+        try {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("access_token", accessToken);
+            params.put("openid", openId);
 
-        String json = HttpClientUtil.get(wxConfig.getUserInfoUrl(), params);
-        if (json.contains("openid")) {
-            wxUserInfo = JsonUtil.fromJson(json,WxUserInfo.class);
+            String json = HttpClientUtil.get(wxConfig.getUserInfoUrl(), params);
+
+            json = new String(json.getBytes("ISO-8859-1"), "UTF-8");
+
+            if (json.contains("openid")) {
+                wxUserInfo = JsonUtil.fromJson(json, WxUserInfo.class);
+            }
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
         }
         return wxUserInfo;
     }
@@ -101,13 +108,13 @@ public class WxAccessTokenServiceImpl implements WxAccessTokenService {
         ApiAccessToken apiAccessToken = null;
         Map<String, String> params = new HashMap<String, String>();
         params.put("grant_type", "client_credential");
-        params.put("appid",wxConfig.getAppId());
-        params.put("secret",wxConfig.getAppSecret());
+        params.put("appid", wxConfig.getAppId());
+        params.put("secret", wxConfig.getAppSecret());
 
         String json = HttpClientUtil.get(wxConfig.getApiAccessTokenUrl(), params);
 
         if (json.contains("access_token")) {
-            apiAccessToken = JsonUtil.fromJson(json,ApiAccessToken.class);
+            apiAccessToken = JsonUtil.fromJson(json, ApiAccessToken.class);
         }
         return apiAccessToken;
     }
@@ -128,11 +135,11 @@ public class WxAccessTokenServiceImpl implements WxAccessTokenService {
         ApiAccessToken apiAccessToken = getApiAccessToken();
         if (null != apiAccessToken) {
             accessToken = apiAccessToken.getAccessToken();
-            int timeOut = Integer.parseInt( apiAccessToken.getExpiresIn());
-            redisUtil.set(RedisKey.WX_API_ACCESSTOKEN.getKey(),accessToken,timeOut);
+            int timeOut = Integer.parseInt(apiAccessToken.getExpiresIn());
+            redisUtil.set(RedisKey.WX_API_ACCESSTOKEN.getKey(), accessToken, timeOut);
         }
 
-        if(StringUtils.isNotBlank(accessToken)){
+        if (StringUtils.isNotBlank(accessToken)) {
             Map<String, String> params = new HashMap<String, String>();
             params.put("access_token", accessToken);
             params.put("type", "jsapi");

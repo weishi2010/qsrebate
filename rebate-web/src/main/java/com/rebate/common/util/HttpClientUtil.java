@@ -59,7 +59,6 @@ public class HttpClientUtil {
             httpCilent.executeMethod(getMethod);
             if (getMethod.getStatusCode() == org.apache.commons.httpclient.HttpStatus.SC_OK) {
                 responseBody = getMethod.getResponseBodyAsString();
-                responseBody = new String(responseBody.getBytes("ISO-8859-1"), "UTF-8");
             }
         } catch (Exception e) {
             LOG.error("get请求提交失败:" + url, e);
@@ -179,13 +178,14 @@ public class HttpClientUtil {
         return result;
     }
 
-    public static String post(String url, String paramJson) {
+    public static String post(String url, String paramJson,String charset) {
         CloseableHttpClient httpclient = HttpClients.createDefault();
         HttpPost post = new HttpPost(url);
+        post.setHeader("Content-Type", "application/json; charset="+charset);
         String result = null;
         try {
             StringEntity s = new StringEntity(paramJson);
-            s.setContentEncoding("UTF-8");
+            s.setContentEncoding(charset);
             s.setContentType("application/json");
             post.setEntity(s);
             CloseableHttpResponse res = httpclient.execute(post);

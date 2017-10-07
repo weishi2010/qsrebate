@@ -25,6 +25,7 @@ import com.rebate.service.order.RebateDetailService;
 import com.rebate.service.product.ProductService;
 import com.rebate.service.userinfo.UserInfoService;
 import com.rebate.service.wx.WxAccessTokenService;
+import com.rebate.service.wx.WxMenuService;
 import org.codehaus.jackson.type.TypeReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,6 +67,10 @@ public class AdminController extends BaseController {
     @Qualifier("activityService")
     @Autowired(required = true)
     private ActivityService activityService;
+
+    @Qualifier("wxMenuService")
+    @Autowired(required = true)
+    private WxMenuService wxMenuService;
 
     @RequestMapping({"", "/", "/importProducts.json"})
     public ResponseEntity<?> importProducts(HttpServletRequest request, String productIds) {
@@ -117,6 +122,16 @@ public class AdminController extends BaseController {
         //导入活动
         activityService.importActivity(activityListList);
         map.put("success", success);
+        return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
+    }
+
+    @RequestMapping({"", "/", "/initWxMenu.json"})
+    public ResponseEntity<?> initWxMenu() {
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("delete", wxMenuService.deleteMenu());
+        map.put("create", wxMenuService.createMenu());
+        map.put("get", wxMenuService.getMenu());
         return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
     }
 }

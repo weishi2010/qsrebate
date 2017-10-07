@@ -54,6 +54,8 @@ public class WxConfig {
 
     private String menuGetUrl;
 
+    private String menuDeleteUrl;
+
     public String getAppId() {
         return appId;
     }
@@ -140,5 +142,13 @@ public class WxConfig {
 
     public void setMenuGetUrl(String menuGetUrl) {
         this.menuGetUrl = menuGetUrl;
+    }
+
+    public String getMenuDeleteUrl() {
+        return menuDeleteUrl;
+    }
+
+    public void setMenuDeleteUrl(String menuDeleteUrl) {
+        this.menuDeleteUrl = menuDeleteUrl;
     }
 }

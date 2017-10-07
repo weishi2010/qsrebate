@@ -89,6 +89,10 @@
 		<property name="loginAccessTokenUrl" value="${wx.accessTokenUrl}"/>
 		<property name="userInfoUrl" value="${wx.userInfoUrl}"/>
 		<property name="messageCheckToken" value="${wx.messageCheckToken}"/>
+		<property name="menuCreateUrl" value="${wx.menuCreateUrl}"/>
+		<property name="menuGetUrl" value="${wx.menuGetUrl}"/>
+		<property name="menuDeleteUrl" value="${wx.menuDeleteUrl}"/>
+
 	</bean>
 
 	<bean id="cookieUtils" class="com.rebate.common.util.CookieUtils">

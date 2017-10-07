@@ -14,14 +14,14 @@
           "url": "http://m.qingsongfan.com/product/seckill"
         },
         {
-          "type": "click",
+          "type": "view",
           "name": "大型促销",
-          "key": "http://m.qingsongfan.com/activity/activityIndex"
+          "url": "http://m.qingsongfan.com/activity/activityIndex"
         },
         {
-          "type": "click",
+          "type": "view",
           "name": "京东首页",
-          "key": "https://union-click.jd.com/jdc?d=P9VC3G"
+          "url": "https://union-click.jd.com/jdc?d=P9VC3G"
         }
       ]
     },
