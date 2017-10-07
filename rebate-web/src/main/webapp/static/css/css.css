@@ -1259,7 +1259,7 @@ img {
     margin: .25rem 0;
 }
 .g-list .item .cnt .meta .old-price{
-    float: left;
+    float: right;
     font-size: .26rem;
     color: #959186;
     width: 50%;
@@ -1269,19 +1269,19 @@ img {
     text-decoration: line-through;
 }
 .g-list .item .cnt .meta .new-price{
-    float: right;
+    float: left;
     font-size: .26rem;
     color: #f3b91b;
-    padding-left: .3rem;
+    /*padding-left: .3rem;*/
     width: 50%;
 }
 .g-list .item .cnt .easy{}
 .g-list .item .cnt .easy .buy{
     width: 50%;
     float: left;
-    font-size: .24rem;
+    font-size: .26rem;
     color: #ff6300;
-    border-right: 1px solid #efefef;
+    /*border-right: 1px solid #efefef;*/
     padding-right: .3rem;
     display: -webkit-flex;
     display: flex;

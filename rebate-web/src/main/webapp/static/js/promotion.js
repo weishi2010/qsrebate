@@ -192,16 +192,14 @@ function searchProducts() {
 function getTemplate(product, tab) {
     var htmlTemp = "<div class=\"item mui-flex\">" +
         "        <div class=\"g-img cell fixed\">" +
-        "             <a href=\"javascript:void(0);\" onclick=\"redirectJdPromotionUrl(" + product.productId + ")\" ><img class=\"g-img\" src=\"" + product.imgUrl + "\" alt=\"" + product.name + "\" width='80' height='90'></a>" +
+        "             <a href=\"javascript:void(0);\" onclick=\"redirectJdPromotionUrl(" + product.productId + ")\" ><img class=\"g-img\" src=\"" + product.imgUrl + "\" alt=\"" + product.name + "\" width='90' height='90'></a>" +
         "        </div>" +
         "        <div class=\"cnt cell align-center\">" +
         "            <a href=\"javascript:void(0);\" onclick=\"redirectJdPromotionUrl(" + product.productId + ")\" class=\"tl\">" + product.name + "</a>" +
         "            <div class=\"meta\">" +
         "                <span class=\"old-price\">原价：" + product.originalPrice + "</span>";
-        if(null!=product.productCoupon&&(product.originalPrice>product.productCoupon.quota)){
-            htmlTemp += " <span class=\"new-price\">券后价："+(product.originalPrice-product.productCoupon.quota)+"</span>";
-        }
-        htmlTemp +="            </div>";
+            htmlTemp += " <span class=\"new-price\">优惠券："+product.productCoupon.quota+"</span>";
+            htmlTemp +="            </div>";
 
     if (product.rebate) {
         htmlTemp += "            <div class=\"easy\">" +
@@ -217,8 +215,11 @@ function getTemplate(product, tab) {
     } else {
         htmlTemp += "            <div class=\"easy\">" +
             "                <a href=\"javascript:void(0);\" onclick=\"redirectJdPromotionUrl(" + product.productId + ")\" class=\"buy\">" +
-            "                    <img class=\"cart\" src=\"/static/img/ico-cart-01.png\" alt=\"\">" +
-            "                    去购买" +
+            "                    <!--<img class=\"cart\" src=\"/static/img/ico-cart-01.png\" alt=\"\">-->";
+            if((product.originalPrice-product.productCoupon.quota)>0){
+                htmlTemp +="                    券后￥" +(product.originalPrice-product.productCoupon.quota);
+            }
+        htmlTemp +=
             "                </a>" +
             "                <!--<a href=\"/share/shareIndex?skuId=" + product.productId + "\" class=\"share\">" +
             "                    <img class=\"zhuanfa\" src=\"/static/img/ico-zhuanfa-01.png\" alt=\"\">" +
