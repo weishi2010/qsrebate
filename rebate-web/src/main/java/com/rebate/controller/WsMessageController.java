@@ -185,24 +185,20 @@ public class WsMessageController extends BaseController {
             //消息中有SKU信息则按SKU进行搜索
             Long skuId = skus.get(0);
             query.setProductId(skuId);
-        } else {
-            //如果没有SKU则按名称做模糊查询进行推荐
-            query.setName(content);
+            List<Product> products =  jdSdkManager.getMediaProducts(skuId.toString());
+
+            if (null != products && products.size()>0) {
+                Product product = products.get(0);
+                String shortUrl = rebateUrlUtil.jdPromotionUrlToQsrebateShortUrl(jdSdkManager.getShortPromotinUrl(product.getProductId(), subUnionId));
+                //商品名
+                recommendContent.append("已成功转成把钱链接，从返利链接下单，才可以返钱哦！\n");
+                //可返钱
+                recommendContent.append("[Packet]可返钱：").append(product.getUserCommission()).append("元\n");
+                //推广地址
+                recommendContent.append("/:gift返钱链接：").append(shortUrl).append("\n");
+            }
         }
 
-        PaginatedArrayList<ProductVo> productVos =  productService.findProductList(query);
-
-
-        if (null != productVos && productVos.size()>0) {
-            ProductVo producVo = productVos.get(0);
-            String shortUrl = rebateUrlUtil.jdPromotionUrlToQsrebateShortUrl(jdSdkManager.getShortPromotinUrl(producVo.getProductId(), subUnionId));
-            //商品名
-            recommendContent.append("已成功转成把钱链接，从返利链接下单，才可以返钱哦！\n");
-            //可返钱
-            recommendContent.append("[Packet]可返钱：").append(producVo.getUserCommission()).append("元\n");
-            //推广地址
-            recommendContent.append("/:gift返钱链接：").append(shortUrl).append("\n");
-        }
 
         if (StringUtils.isBlank(recommendContent.toString())) {
             recommendContent.append("很抱歉，暂时没有可返钱的商品!");
