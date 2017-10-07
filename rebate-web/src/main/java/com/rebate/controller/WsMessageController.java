@@ -176,15 +176,11 @@ public class WsMessageController extends BaseController {
      */
     private String getRecommendContent(String content, String subUnionId) {
         StringBuffer recommendContent = new StringBuffer();
-        ProductQuery query = new ProductQuery();
-        query.setIndex(1);
-        query.setPageSize(5);
 
         List<Long> skus = getSkuListFromMessage(content);
         if (skus.size() > 0) {
             //消息中有SKU信息则按SKU进行搜索
             Long skuId = skus.get(0);
-            query.setProductId(skuId);
             List<Product> products =  jdSdkManager.getMediaProducts(skuId.toString());
 
             if (null != products && products.size()>0) {
