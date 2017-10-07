@@ -77,8 +77,8 @@ public class RebateJobImpl implements RebateJob {
                 Product productQuery = new Product();
                 productQuery.setProductId(rebateDetail.getProductId());
                 Product product = productDao.findById(productQuery);
-                if (null == product || 0 == product.getIsRebate()) {
-                    rebateDetail.setCommission(0.0);
+                if (null != product && EProudctRebateType.NOT_REBATE.getCode() == product.getIsRebate()) {
+                    rebateDetail.setUserCommission(0.0);
                 }
 
                 //插入明细
