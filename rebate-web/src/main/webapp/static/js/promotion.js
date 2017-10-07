@@ -198,7 +198,9 @@ function getTemplate(product, tab) {
         "            <a href=\"javascript:void(0);\" onclick=\"redirectJdPromotionUrl(" + product.productId + ")\" class=\"tl\">" + product.name + "</a>" +
         "            <div class=\"meta\">" +
         "                <span class=\"old-price\">原价：" + product.originalPrice + "</span>";
+        if(product.productCoupon){
             htmlTemp += " <span class=\"new-price\">优惠券："+product.productCoupon.quota+"</span>";
+        }
             htmlTemp +="            </div>";
 
     if (product.rebate) {
@@ -216,7 +218,7 @@ function getTemplate(product, tab) {
         htmlTemp += "            <div class=\"easy\">" +
             "                <a href=\"javascript:void(0);\" onclick=\"redirectJdPromotionUrl(" + product.productId + ")\" class=\"buy\">" +
             "                    <!--<img class=\"cart\" src=\"/static/img/ico-cart-01.png\" alt=\"\">-->";
-            if((product.originalPrice-product.productCoupon.quota)>0){
+            if(product.productCoupon && (product.originalPrice-product.productCoupon.quota)>0){
                 htmlTemp +="                    券后￥" +(product.originalPrice-product.productCoupon.quota);
             }
         htmlTemp +=
