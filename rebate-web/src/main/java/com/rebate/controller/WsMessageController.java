@@ -129,34 +129,28 @@ public class WsMessageController extends BaseController {
             // 处理接收消息
             InputMessage inputMsg = getInputMessage(request);
 
-            LOG.error("accept[" + inputMsg.getFromUserName() + "] content:" + inputMsg.getContent());
+            LOG.error("accept[" + inputMsg.getFromUserName() + "],msgType:"+inputMsg.getMsgType());
             if (null != inputMsg) {
+                //查询用户信息获取子联盟ID
+                UserInfo userInfo = userInfoService.getUserInfo(inputMsg.getFromUserName());
+                String subUnionId = "";
+                if (null != userInfo) {
+                    subUnionId = userInfo.getSubUnionId();
+                }
                 // 取得消息类型
                 String msgType = inputMsg.getMsgType();
                 // 根据消息类型获取对应的消息内容
                 if (msgType.equals(EWxMsgType.TEXT.getValue())) {
-                    //查询用户信息获取子联盟ID
-                    UserInfo userInfo = userInfoService.getUserInfo(inputMsg.getToUserName());
-                    String subUnionId = "";
-                    if (null != userInfo) {
-                        subUnionId = userInfo.getSubUnionId();
-                    }
 
-                    //构造消息回复XML
-                    StringBuffer str = new StringBuffer();
-                    str.append("<xml>");
-                    str.append("<ToUserName><![CDATA[" + inputMsg.getFromUserName() + "]]></ToUserName>");
-                    str.append("<FromUserName><![CDATA[" + inputMsg.getToUserName() + "]]></FromUserName>");
-                    str.append("<CreateTime>" + new Date().getTime() + "</CreateTime>");
-                    str.append("<MsgType><![CDATA[" + msgType + "]]></MsgType>");
+                    //获取文本推送xml
+                    String textXml = textPushXml(inputMsg.getFromUserName(),inputMsg.getToUserName(),inputMsg.getMsgType(),inputMsg.getContent(),subUnionId);
+                    LOG.error("output wx message:" + textXml);
 
-                    str.append("<Content><![CDATA[" + getRecommendContent(inputMsg.getContent(), subUnionId) + "]]></Content>");
-                    str.append("</xml>");
+                    response.getWriter().write(textXml.toString());
 
-                    LOG.error("output wx message:" + str);
-
-
-                    response.getWriter().write(str.toString());
+                }else  if (msgType.equals(EWxMsgType.EVENT.getValue())) {
+                    String eventXml = subscribeTextPushXml(inputMsg.getFromUserName(),inputMsg.getToUserName(),inputMsg.getMsgType(),inputMsg.getContent(),subUnionId);
+                    response.getWriter().write(eventXml.toString());
 
                 }
             }
@@ -165,6 +159,79 @@ public class WsMessageController extends BaseController {
             LOG.error("accept wx message error!", e);
         }
 
+    }
+
+    /**
+     * 关注事件
+     * @param toUserName
+     * @param fromUserName
+     * @param msgType
+     * @param content
+     * @param subUnionId
+     * @return
+     */
+    private String subscribeEventPushXml(String toUserName,String fromUserName,String msgType,String content,String subUnionId){
+
+        //构造消息回复XML
+        StringBuffer str = new StringBuffer();
+        str.append("<xml>");
+        str.append("<ToUserName><![CDATA[" + toUserName + "]]></ToUserName>");
+        str.append("<FromUserName><![CDATA[" + fromUserName + "]]></FromUserName>");
+        str.append("<CreateTime>" + new Date().getTime() + "</CreateTime>");
+        str.append("<MsgType><![CDATA[" + msgType + "]]></MsgType>");
+        str.append("<Event><![CDATA[subscribe]]></Event>");
+        str.append("<EventKey><![CDATA[qrscene_123]]></EventKey>");
+        str.append("<Ticket><![CDATA[Ticket]]></Ticket>");
+        str.append("</xml>");
+        return str.toString();
+    }
+
+    /**
+     * 关注后回复消息
+     * @param toUserName
+     * @param fromUserName
+     * @param msgType
+     * @param content
+     * @param subUnionId
+     * @return
+     */
+    private String subscribeTextPushXml(String toUserName,String fromUserName,String msgType,String content,String subUnionId){
+
+        //构造消息回复XML
+        StringBuffer str = new StringBuffer();
+        str.append("<xml>");
+        str.append("<ToUserName><![CDATA[" + toUserName + "]]></ToUserName>");
+        str.append("<FromUserName><![CDATA[" + fromUserName + "]]></FromUserName>");
+        str.append("<CreateTime>" + new Date().getTime() + "</CreateTime>");
+        str.append("<MsgType><![CDATA[" + msgType + "]]></MsgType>");
+        str.append("<Content><![CDATA[欢迎加入我们！购物返钱，还有独家优惠券哦！ \n\n" +
+                "1、输入京东商品编号 或 商品链接，立刻获取返钱链接！\n" +
+                "2、打开【京东返钱-内购券】，每日更新独家的！超值的！内购优惠券！]]></Content>");
+        str.append("</xml>");
+        return str.toString();
+    }
+
+    /**
+     * 消息回复
+     * @param toUserName
+     * @param fromUserName
+     * @param msgType
+     * @param content
+     * @param subUnionId
+     * @return
+     */
+    private String textPushXml(String toUserName,String fromUserName,String msgType,String content,String subUnionId){
+
+        //构造消息回复XML
+        StringBuffer str = new StringBuffer();
+        str.append("<xml>");
+        str.append("<ToUserName><![CDATA[" + toUserName + "]]></ToUserName>");
+        str.append("<FromUserName><![CDATA[" + fromUserName + "]]></FromUserName>");
+        str.append("<CreateTime>" + new Date().getTime() + "</CreateTime>");
+        str.append("<MsgType><![CDATA[" + msgType + "]]></MsgType>");
+        str.append("<Content><![CDATA[" + getRecommendContent(content, subUnionId) + "]]></Content>");
+        str.append("</xml>");
+        return str.toString();
     }
 
     /**
@@ -223,6 +290,7 @@ public class WsMessageController extends BaseController {
             for (int n; (n = in.read(b)) != -1; ) {
                 xmlMsg.append(new String(b, 0, n, "UTF-8"));
             }
+            LOG.error("xmlMsg:"+xmlMsg);
             inputMessage = (InputMessage) xs.fromXML(xmlMsg.toString());
 
 //            inputMessage = JsonUtil.fromJson(xmlMsg.toString(), InputMessage.class);

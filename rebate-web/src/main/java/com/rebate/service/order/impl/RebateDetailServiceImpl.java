@@ -41,13 +41,6 @@ public class RebateDetailServiceImpl implements RebateDetailService {
                     List<RebateDetail> list = rebateDetailDao.findListBySubUnionId(rebateDetailQuery);
                     for (RebateDetail rebateDetail : list) {
                         RebateDetailVo vo = new RebateDetailVo(rebateDetail);
-                        Product query = new Product();
-                        query.setProductId(rebateDetail.getProductId());
-                        Product product = productDao.findById(query);
-                        if (null != product) {
-                            vo.setProductName(product.getName());
-                            vo.setProductImg(product.getImgUrl());
-                        }
                         rebateDetails.add(vo);
                     }
                 }

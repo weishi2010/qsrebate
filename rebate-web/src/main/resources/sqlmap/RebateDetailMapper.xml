@@ -23,6 +23,7 @@
         <result property="price" column="price"/>
         <result property="productId" column="product_id"/>
         <result property="productName" column="product_name"/>
+        <result property="imgUrl" column="img_url"/>
         <result property="unionId" column="union_id"/>
         <result property="subUnionId" column="sub_union_id"/>
         <result property="platformRatio" column="platform_ratio"/>
@@ -47,6 +48,7 @@
         price,
         product_id,
         product_name,
+        img_url,
         union_id,
         sub_union_id,
         platform_ratio,
@@ -62,6 +64,7 @@
         order_id,
         product_id,
         product_name,
+        img_url,
         price,
         product_count,
         commission,
@@ -84,6 +87,7 @@
         #orderId#,
         #productId#,
         #productName#,
+        #imgUrl#,
         #price#,
         #productCount#,
         #commission#,
@@ -131,6 +135,12 @@
             </isNotNull>
             <isNotNull property="finishDate" prepend=",">
                 finish_date = #finishDate#
+            </isNotNull>
+            <isNotNull property="imgUrl" prepend=",">
+                img_url = #imgUrl#
+            </isNotNull>
+            <isNotNull property="productName" prepend=",">
+                product_name = #productName#
             </isNotNull>
         </dynamic>
         where order_id=#orderId#

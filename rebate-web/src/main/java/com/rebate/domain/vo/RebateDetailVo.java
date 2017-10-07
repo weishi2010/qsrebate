@@ -50,9 +50,12 @@ public class RebateDetailVo extends BaseQuery{
     @Setter
     private String productName;
 
+    /**
+     * 商品图片
+     */
     @Getter
     @Setter
-    private String productImg;
+    private String imgUrl;
 
     /**
      * 购买金额

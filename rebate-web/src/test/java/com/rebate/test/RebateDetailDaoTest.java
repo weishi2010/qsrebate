@@ -30,7 +30,7 @@ public class RebateDetailDaoTest extends AbstractJUnit4SpringContextTests {
 
     @Test
     public void batchInsert() {
-        String queryTime = "20170922";//yyyyMMddHHmm,yyyyMMddHHmmss或者yyyyMMddHH格式之一
+        String queryTime = "20171007";//yyyyMMddHHmm,yyyyMMddHHmmss或者yyyyMMddHH格式之一
         int page = 1;
         int pageSize = 10;
         List<RebateDetail> list = jdSdkManager.getRebateDetails(queryTime, page, pageSize);
@@ -52,7 +52,7 @@ public class RebateDetailDaoTest extends AbstractJUnit4SpringContextTests {
     @Test
     public void query() {
         RebateDetailQuery query = new RebateDetailQuery();
-        query.setSubUnionId("oIAUmv8x60aC5B7FrxVy8Z9-imyY");
+        query.setSubUnionId("JD100001251");
         int count = rebateDetailDao.findCountBySubUnionId(query);
 
         query.setStartRow(0);

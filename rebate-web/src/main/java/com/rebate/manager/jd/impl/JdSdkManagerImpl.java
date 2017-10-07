@@ -286,6 +286,12 @@ public class JdSdkManagerImpl implements JdSdkManager {
                     detail.setCommissionRatio(skuObj.getDouble("commissionRate"));
                     detail.setProductCount(skuObj.getInt("skuNum"));
                     detail.setProductName(skuObj.getString("skuName"));
+
+                    List<Product> mediaProducts = getMediaProducts(detail.getProductId().toString());
+                    if (null != mediaProducts && mediaProducts.size() > 0) {
+                        detail.setImgUrl(mediaProducts.get(0).getImgUrl());
+                    }
+
                     detail.setPrice(skuObj.getDouble("cosPrice"));
                     detail.setUnionId("");
                     if (skuObj.containsKey("subUnionId")) {

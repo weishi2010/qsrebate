@@ -44,6 +44,13 @@ public class RebateDetail extends BaseQuery {
     @Getter
     @Setter
     private String productName;
+
+    /**
+     * 商品图片
+     */
+    @Getter
+    @Setter
+    private String imgUrl;
     /**
      * 购买金额
      */

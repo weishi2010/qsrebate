@@ -10,7 +10,11 @@ public enum EWxMsgType {
     /**
      * 图片
      */
-    IMAGE("image");
+    IMAGE("image"),
+    /**
+     * 事件
+     */
+    EVENT("event");
 
     private String value;
 

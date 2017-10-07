@@ -67,7 +67,7 @@ public class RebateJobImpl implements RebateJob {
         calendar.setTime(new Date());
         String queryTime = format.format(calendar.getTime());
         List<RebateDetail> rebateDetails = jdSdkManager.getRebateDetails(queryTime, page, pageSize);
-
+        LOG.error("[联盟订单导入任务]加载{}条订单明细记录！",rebateDetails.size());
         for (RebateDetail rebateDetail : rebateDetails) {
             RebateDetailQuery rebateDetailQuery = new RebateDetailQuery();
             rebateDetailQuery.setOrderId(rebateDetail.getOrderId());
@@ -133,10 +133,10 @@ public class RebateJobImpl implements RebateJob {
 
                         }
                     }
-                    //更新明细状态
-                    rebateDetailDao.update(rebateDetail);
 
                 }
+                //更新明细状态
+                rebateDetailDao.update(rebateDetail);
 
 
             }

@@ -67,7 +67,7 @@ function loadOrderData(page,days) {
             "        </div>" +
             "        <div class=\"o-item mui-flex\">" +
             "            <div class=\"g-img cell fixed\">" +
-            "                <img src=\""+detail.productImg+"\" alt=\"\">" +
+            "                <img src=\""+detail.imgUrl+"\" alt=\"\">" +
             "            </div>" +
             "            <div class=\"cnt cell\">" +
             "                <div class=\"tl\">" +
