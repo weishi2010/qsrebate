@@ -6,6 +6,8 @@ import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.dao.ProductDao;
 import com.rebate.domain.Product;
 import com.rebate.domain.ProductCoupon;
+import com.rebate.domain.en.EProudctCouponType;
+import com.rebate.domain.en.EProudctRebateType;
 import com.rebate.domain.query.ProductQuery;
 import com.rebate.domain.vo.ProductVo;
 import com.rebate.manager.jd.JdSdkManager;
@@ -30,8 +32,9 @@ public class ProductDaoTest extends AbstractJUnit4SpringContextTests {
         List<Product> list = jdSdkManager.getMediaProducts("1615786");
 
         for (Product product : list) {
+            product.setCouponType(EProudctCouponType.GENERAL.getCode());
+            product.setIsRebate(EProudctRebateType.REBATE.getCode());
             if (null == productDao.findById(product)) {
-                product.setIsRebate(1);
                 productDao.insert(product);
             } else {
                 productDao.update(product);

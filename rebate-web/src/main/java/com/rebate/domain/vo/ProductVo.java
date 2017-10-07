@@ -129,6 +129,12 @@ public class ProductVo extends BaseQuery {
     @Setter
     private Double commissionWl;
 
+    /**
+     * 用户佣金，平台返还给用户的商品佣金
+     */
+    @Getter
+    @Setter
+    private Double userCommission;
 
     /**
      * 商品类型

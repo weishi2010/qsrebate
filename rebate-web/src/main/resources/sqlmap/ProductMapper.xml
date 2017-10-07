@@ -21,6 +21,9 @@
         <result property="stock" column="stock"/>
         <result property="commissionRatioPc" column="commission_ratio_wl"/>
         <result property="commissionRatioWl" column="commission_ratio_pc"/>
+        <result property="commissionPc" column="commission_pc"/>
+        <result property="commissionWl" column="commission_wl"/>
+        <result property="userCommission" column="user_commission"/>
         <result property="productType" column="product_type"/>
         <result property="distribution" column="distribution"/>
         <result property="status" column="status"/>
@@ -51,6 +54,9 @@
         stock,
         commission_ratio_pc,
         commission_ratio_wl,
+        commission_pc,
+        commission_wl,
+        user_commission,
         product_type,
         distribution,
         status,
@@ -119,6 +125,9 @@
         stock,
         commission_ratio_pc,
         commission_ratio_wl,
+        commission_pc,
+        commission_wl,
+        user_commission,
         product_type,
         distribution,
         status,
@@ -149,6 +158,9 @@
         #stock#,
         #commissionRatioPc#,
         #commissionRatioWl#,
+        #commissionPc#,
+        #commissionWl#,
+        #userCommission#,
         #productType#,
         #distribution#,
         #status#,

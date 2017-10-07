@@ -199,7 +199,7 @@ public class WsMessageController extends BaseController {
             //商品名
             recommendContent.append("已成功转成把钱链接，从返利链接下单，才可以返钱哦！\n");
             //可返钱
-            recommendContent.append("[Packet]可返钱：").append(producVo.getCommissionRatioWl()).append("元\n");
+            recommendContent.append("[Packet]可返钱：").append(producVo.getUserCommission()).append("元\n");
             //推广地址
             recommendContent.append("/:gift返钱链接：").append(shortUrl).append("\n");
         }

@@ -205,7 +205,7 @@ function getTemplate(product, tab) {
         htmlTemp += "            <div class=\"easy\">" +
             "                <a href=\"javascript:void(0);\" onclick=\"redirectJdPromotionUrl(" + product.productId + ")\" class=\"buy\">" +
             "                    <img class=\"cart\" src=\"/static/img/ico-cart-01.png\" alt=\"\">" +
-            "                    购买返：¥" + product.commissionWl +
+            "                    购买返：¥" + product.userCommission +
             "                </a>" +
             "                <a href=\"/share/shareIndex?skuId=\"" + product.productId + " class=\"share\">" +
             "                    <img class=\"zhuanfa\" src=\"/static/img/ico-zhuanfa-01.png\" alt=\"\">" +

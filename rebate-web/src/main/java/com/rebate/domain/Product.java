@@ -113,6 +113,13 @@ public class Product extends BaseQuery {
     private Double commissionRatioPc;
 
     /**
+     * 用户佣金，平台返还给用户的商品佣金
+     */
+    @Getter
+    @Setter
+    private Double userCommission;
+
+    /**
      * PC佣金
      */
     @Getter

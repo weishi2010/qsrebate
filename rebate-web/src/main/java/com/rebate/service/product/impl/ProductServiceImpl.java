@@ -60,6 +60,7 @@ public class ProductServiceImpl implements ProductService {
         }
 
         List<Product> list = jdSdkManager.getMediaProducts(products);
+        LOG.error("list:"+JsonUtil.toJson(list));
 
         for (Product product : list) {
             product.setCouponType(EProudctCouponType.GENERAL.getCode());
@@ -92,7 +93,7 @@ public class ProductServiceImpl implements ProductService {
         }
 
         List<Product> list = jdSdkManager.getMediaProducts(Joiner.on(",").join(skuList));
-
+        LOG.error("list:"+JsonUtil.toJson(list));
         for (Product product : list) {
             product.setCouponType(EProudctCouponType.COUPON.getCode());
             //计算优惠券商品返利规则
@@ -153,14 +154,6 @@ public class ProductServiceImpl implements ProductService {
                             //获取商品链接
                             vo.setImgUrl(product.getImgUrl().replace(DEFAULT_IMG_SIZE, IMG_SIZE));
 
-                            //轻松返平台获取佣金
-                            Double qsCommissionWl = getCommissionWl(vo.getCommissionRatioWl(), vo.getOriginalPrice());//移动端
-                            Double qsCommissionPc = getCommissionPc(vo.getCommissionRatioPc(), vo.getOriginalPrice());//PC端
-
-                            //按比例给用户返佣金
-                            vo.setCommissionWl(getUserCommission(qsCommissionWl));
-                            vo.setCommissionPc(qsCommissionPc);
-
                             //查询优惠券信息
                             ProductCoupon productCouponQuery = new ProductCoupon();
                             productCouponQuery.setProductId(vo.getProductId());
@@ -195,14 +188,6 @@ public class ProductServiceImpl implements ProductService {
 
                 //获取商品链接
                 vo.setImgUrl(product.getImgUrl().replace(DEFAULT_IMG_SIZE, IMG_SIZE));
-
-                //轻松返平台获取佣金
-                Double qsCommissionWl = getCommissionWl(vo.getCommissionRatioWl(), vo.getOriginalPrice());//移动端
-                Double qsCommissionPc = getCommissionPc(vo.getCommissionRatioPc(), vo.getOriginalPrice());//PC端
-
-                //按比例给用户返佣金
-                vo.setCommissionWl(getUserCommission(qsCommissionWl));
-                vo.setCommissionPc(qsCommissionPc);
             }
 
 
@@ -210,34 +195,6 @@ public class ProductServiceImpl implements ProductService {
             LOG.error("findProduct error!skuId:" + skuId, e);
         }
         return vo;
-    }
-
-    /**
-     * 获取返利佣金
-     */
-    public Double getUserCommission(Double commission) {
-        Double rateForUser = 0.5;//TODO 广告佣金计算后再按此比例给用户返利
-        return new BigDecimal(commission * rateForUser).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue();
-    }
-
-    /**
-     * 获取移动返利佣金
-     */
-    public Double getCommissionWl(Double commissionRatioWl, Double originalPrice) {
-        if (null != commissionRatioWl && null != originalPrice) {
-            return new BigDecimal(commissionRatioWl * originalPrice).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-        }
-        return 0.0;
-    }
-
-    /**
-     * 获取PC返利佣金
-     */
-    public Double getCommissionPc(Double commissionRatioPc, Double originalPrice) {
-        if (null != commissionRatioPc && null != originalPrice) {
-            return new BigDecimal(commissionRatioPc * originalPrice).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-        }
-        return 0.0;
     }
 
 //------------------------------------------------------------------------------

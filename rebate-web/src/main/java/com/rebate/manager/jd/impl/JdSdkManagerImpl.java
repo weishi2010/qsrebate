@@ -68,8 +68,13 @@ public class JdSdkManagerImpl implements JdSdkManager {
                     product.setWlUnitPrice(Double.parseDouble(map.get("wlUnitPrice").toString()));
                     product.setStartDate(new Date(Long.parseLong(map.get("startDate").toString())));
                     product.setEndDate(new Date(Long.parseLong(map.get("endDate").toString())));
-                    product.setCommissionPc(product.getOriginalPrice() * product.getCommissionRatioPc());
-                    product.setCommissionWl(product.getOriginalPrice() * product.getCommissionRatioWl());
+                    //轻松返平台获取佣金
+                    Double qsCommissionWl = getCommissionWl(product.getCommissionRatioWl(), product.getOriginalPrice());//移动端
+                    Double qsCommissionPc = getCommissionPc(product.getCommissionRatioPc(), product.getOriginalPrice());//PC端
+
+                    product.setCommissionPc(qsCommissionPc);//联盟给平台的移动返还佣金
+                    product.setCommissionWl(qsCommissionWl);//联盟给平台的PC返还佣金
+                    product.setUserCommission(RebateRuleUtil.getJDUserCommission(product.getCommissionWl()));//平台返还用户佣金
                     product.setShopId(Long.parseLong(map.get("shopId").toString()));
                     product.setDistribution(1);
                     product.setProductType(1);
@@ -154,8 +159,14 @@ public class JdSdkManagerImpl implements JdSdkManager {
                     product.setName(map.get("skuName").toString());
                     product.setImgUrl(map.get("imgUrl").toString());
                     product.setOriginalPrice(Double.parseDouble(map.get("unitPrice").toString()));
-                    product.setCommissionPc(product.getOriginalPrice() * product.getCommissionRatioPc());
-                    product.setCommissionWl(product.getOriginalPrice() * product.getCommissionRatioWl());
+                    //轻松返平台获取佣金
+                    Double qsCommissionWl = getCommissionWl(product.getCommissionRatioWl(), product.getOriginalPrice());//移动端
+                    Double qsCommissionPc = getCommissionPc(product.getCommissionRatioPc(), product.getOriginalPrice());//PC端
+
+                    product.setCommissionPc(qsCommissionPc);//联盟给平台的移动返还佣金
+                    product.setCommissionWl(qsCommissionWl);//联盟给平台的PC返还佣金
+                    product.setUserCommission(RebateRuleUtil.getJDUserCommission(product.getCommissionWl()));//平台返还用户佣金
+
                     product.setDistribution(1);
                     product.setProductType(1);
                     product.setStock(0);
@@ -200,10 +211,13 @@ public class JdSdkManagerImpl implements JdSdkManager {
                     product.setName(map.get("skuName").toString());
                     product.setImgUrl(map.get("imgUrl").toString());
                     product.setOriginalPrice(Double.parseDouble(map.get("wlPrice").toString()));//获取移动端价格
-                    product.setCommissionPc(product.getOriginalPrice() * product.getCommissionRatioPc());
-                    product.setCommissionWl(product.getOriginalPrice() * product.getCommissionRatioWl());
-                    product.setCommissionPc(new BigDecimal(product.getCommissionPc()).setScale(0, BigDecimal.ROUND_HALF_UP).doubleValue());
-                    product.setCommissionWl(new BigDecimal(product.getCommissionWl()).setScale(0, BigDecimal.ROUND_HALF_UP).doubleValue());
+                    //轻松返平台获取佣金
+                    Double qsCommissionWl = getCommissionWl(product.getCommissionRatioWl(), product.getOriginalPrice());//移动端
+                    Double qsCommissionPc = getCommissionPc(product.getCommissionRatioPc(), product.getOriginalPrice());//PC端
+
+                    product.setCommissionPc(qsCommissionPc);//联盟给平台的移动返还佣金
+                    product.setCommissionWl(qsCommissionWl);//联盟给平台的PC返还佣金
+                    product.setUserCommission(RebateRuleUtil.getJDUserCommission(product.getCommissionWl()));//平台返还用户佣金
 
                     if (RebateRuleUtil.isRebate(product.getCommissionWl(), false)) {
                         product.setIsRebate(1);
@@ -459,4 +473,24 @@ public class JdSdkManagerImpl implements JdSdkManager {
         return json;
     }
 
+
+    /**
+     * 获取移动返利佣金
+     */
+    private Double getCommissionWl(Double commissionRatioWl, Double originalPrice) {
+        if (null != commissionRatioWl && null != originalPrice) {
+            return new BigDecimal(commissionRatioWl * originalPrice).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+        }
+        return 0.0;
+    }
+
+    /**
+     * 获取PC返利佣金
+     */
+    private Double getCommissionPc(Double commissionRatioPc, Double originalPrice) {
+        if (null != commissionRatioPc && null != originalPrice) {
+            return new BigDecimal(commissionRatioPc * originalPrice).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+        }
+        return 0.0;
+    }
 }
