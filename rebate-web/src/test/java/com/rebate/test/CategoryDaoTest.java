@@ -6,6 +6,7 @@ import com.rebate.dao.CategoryDao;
 import com.rebate.dao.CommentDao;
 import com.rebate.domain.Category;
 import com.rebate.domain.CategoryQuery;
+import com.rebate.domain.RecommendCategory;
 import net.sf.json.JSON;
 import org.codehaus.jackson.type.TypeReference;
 import org.junit.Test;
@@ -45,9 +46,9 @@ public class CategoryDaoTest extends AbstractJUnit4SpringContextTests {
 
     @Test
     public void findByActiveCategories() {
-        CategoryQuery query = new CategoryQuery();
-        query.setPageSize(100);
-        List list = categoryDao.findByActiveCategories(query);
+        RecommendCategory recommendCategory = new RecommendCategory();
+        recommendCategory.setPageSize(10);
+        List list = categoryDao.findByRecommendCategories(recommendCategory);
         System.out.println("list:" + JsonUtil.toJson(list));
     }
 
