@@ -2,13 +2,14 @@ package com.rebate.service.product.impl;
 
 import com.google.common.base.Joiner;
 import com.rebate.common.util.JsonUtil;
-import com.rebate.common.util.rebate.CouponUtil;
 import com.rebate.common.util.rebate.RebateRuleUtil;
 import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.dao.CategoryDao;
 import com.rebate.dao.ProductCouponDao;
 import com.rebate.dao.ProductDao;
-import com.rebate.domain.*;
+import com.rebate.domain.Product;
+import com.rebate.domain.ProductCoupon;
+import com.rebate.domain.RecommendCategory;
 import com.rebate.domain.en.EProductSource;
 import com.rebate.domain.en.EProudctCouponType;
 import com.rebate.domain.en.EProudctRebateType;
@@ -23,8 +24,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service("productService")
 public class ProductServiceImpl implements ProductService {

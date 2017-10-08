@@ -56,9 +56,9 @@ public class JdSdkManagerImpl implements JdSdkManager {
                     Product product = new Product();
                     product.setProductId(Long.parseLong(map.get("skuId").toString()));
                     product.setCommissionRatioWl(Double.parseDouble(map.get("commisionRatioWl").toString()) / 100);
-                    product.setCommissionRatioWl(new BigDecimal(product.getCommissionRatioWl()).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
+                    product.setCommissionRatioWl(new BigDecimal(product.getCommissionRatioWl()).setScale(4, BigDecimal.ROUND_FLOOR).doubleValue());
                     product.setCommissionRatioPc(Double.parseDouble(map.get("commisionRatioPc").toString()) / 100);
-                    product.setCommissionRatioPc(new BigDecimal(product.getCommissionRatioPc()).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
+                    product.setCommissionRatioPc(new BigDecimal(product.getCommissionRatioPc()).setScale(4, BigDecimal.ROUND_FLOOR).doubleValue());
                     product.setName(map.get("goodsName").toString());
                     product.setImgUrl(map.get("imgUrl").toString());
                     product.setMaterialUrl(map.get("materialUrl").toString());
@@ -153,9 +153,9 @@ public class JdSdkManagerImpl implements JdSdkManager {
                     Product product = new Product();
                     product.setProductId(Long.parseLong(map.get("skuId").toString()));
                     product.setCommissionRatioWl(Double.parseDouble(map.get("commisionRatioWl").toString()) / 100);
-                    product.setCommissionRatioWl(new BigDecimal(product.getCommissionRatioWl()).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
+                    product.setCommissionRatioWl(new BigDecimal(product.getCommissionRatioWl()).setScale(4, BigDecimal.ROUND_FLOOR).doubleValue());
                     product.setCommissionRatioPc(Double.parseDouble(map.get("commisionRatioPc").toString()) / 100);
-                    product.setCommissionRatioPc(new BigDecimal(product.getCommissionRatioPc()).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
+                    product.setCommissionRatioPc(new BigDecimal(product.getCommissionRatioPc()).setScale(4, BigDecimal.ROUND_FLOOR).doubleValue());
                     product.setName(map.get("skuName").toString());
                     product.setImgUrl(map.get("imgUrl").toString());
                     product.setOriginalPrice(Double.parseDouble(map.get("unitPrice").toString()));
@@ -205,9 +205,9 @@ public class JdSdkManagerImpl implements JdSdkManager {
                     Product product = new Product();
                     product.setProductId(Long.parseLong(map.get("skuId").toString()));
                     product.setCommissionRatioWl(Double.parseDouble(map.get("pcCommissionShare").toString()) / 100);
-                    product.setCommissionRatioWl(new BigDecimal(product.getCommissionRatioWl()).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
+                    product.setCommissionRatioWl(new BigDecimal(product.getCommissionRatioWl()).setScale(4, BigDecimal.ROUND_FLOOR).doubleValue());
                     product.setCommissionRatioPc(Double.parseDouble(map.get("wlCommissionShare").toString()) / 100);
-                    product.setCommissionRatioPc(new BigDecimal(product.getCommissionRatioPc()).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
+                    product.setCommissionRatioPc(new BigDecimal(product.getCommissionRatioPc()).setScale(4, BigDecimal.ROUND_FLOOR).doubleValue());
                     product.setName(map.get("skuName").toString());
                     product.setImgUrl(map.get("imgUrl").toString());
                     product.setOriginalPrice(Double.parseDouble(map.get("wlPrice").toString()));//获取移动端价格
