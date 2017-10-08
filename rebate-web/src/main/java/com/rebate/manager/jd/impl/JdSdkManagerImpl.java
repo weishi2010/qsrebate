@@ -45,7 +45,6 @@ public class JdSdkManagerImpl implements JdSdkManager {
     @Override
     public List<Product> getMediaProducts(String skuIds) {
         List<Product> list = new ArrayList<>();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String json = getGetpromotioninfoResult(skuIds);
         JSONObject resultObj = JsonUtil.fromJson(json, JSONObject.class);
         if (null != resultObj && resultObj.getBoolean("sucessed")) {
@@ -290,6 +289,8 @@ public class JdSdkManagerImpl implements JdSdkManager {
                     List<Product> mediaProducts = getMediaProducts(detail.getProductId().toString());
                     if (null != mediaProducts && mediaProducts.size() > 0) {
                         detail.setImgUrl(mediaProducts.get(0).getImgUrl());
+                    }else{
+                        detail.setImgUrl("");
                     }
 
                     detail.setPrice(skuObj.getDouble("cosPrice"));
@@ -301,7 +302,9 @@ public class JdSdkManagerImpl implements JdSdkManager {
                     }
                     detail.setCommission(skuObj.getDouble("commission"));
                     detail.setPositionId(orderObj.getString("positionId"));
-                    detail.setPlatformRatio(RebateRuleUtil.PLATFORM_USER_COMMISSION_RATIO);//平台抽成比例
+                    detail.setPlatformRatio(RebateRuleUtil.PLATFORM_USER_COMMISSION_RATIO*detail.getCommissionRatio());//平台抽成比例
+                    detail.setPlatformRatio(new BigDecimal(detail.getPlatformRatio()).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());//精确2位小数
+
                     detail.setUserCommission(RebateRuleUtil.getJDUserCommission(detail.getCommission()));//用户返佣金额
                     list.add(detail);
                 }

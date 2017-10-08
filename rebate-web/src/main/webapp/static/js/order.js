@@ -67,13 +67,13 @@ function loadOrderData(page,days) {
             "        </div>" +
             "        <div class=\"o-item mui-flex\">" +
             "            <div class=\"g-img cell fixed\">" +
-            "                <img src=\""+detail.imgUrl+"\" alt=\"\">" +
+            "               <a href='javascript:void(0);' onclick='redirectJdPromotionUrl(" + detail.productId + ")' ><img src='" + detail.imgUrl + "' alt='" + detail.productName + "' /></a>" +
             "            </div>" +
             "            <div class=\"cnt cell\">" +
             "                <div class=\"tl\">" +
-            "                    <span class=\"tag\">同店</span>" +detail.productName+
+            "                   <a href=\"javascript:void(0);\" onclick=\"redirectJdPromotionUrl(" + detail.productId + ")\" class=\"tl\">" + detail.productName + "</a>" +
             "                </div>" +
-            "                <div class=\"money-scale\">返钱比例："+detail.commissionRatio+"</div>" +
+            "                <div class=\"money-scale\">返钱比例："+detail.platformRatio+"%</div>" +
             "            </div>" +
             "        </div>" +
             "        <div class=\"info mui-flex \">" +
@@ -87,13 +87,13 @@ function loadOrderData(page,days) {
             "            </div>" +
             "            <div class=\"item cell\">" +
             "                <p>可返钱</p>" +
-            "                <span>¥"+detail.commission+"</span>" +
+            "                <span>¥"+detail.userCommission+"</span>" +
             "            </div>" +
             "        </div>" +
             "        <div class=\"ft\">"+
         "            <div class=\"return-m\" style='float: left'>下单时间："+detail.submitDateShow+"</div>" +
         "            <div class=\"return-m\">" +
-            "                预估返钱：¥<b>"+detail.commission+"</b>" +
+            "                预估返钱：¥<b>"+detail.userCommission+"</b>" +
             "            </div>" +
             "        </div>" +
             "    </div>";

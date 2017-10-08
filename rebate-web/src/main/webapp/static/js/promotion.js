@@ -233,18 +233,3 @@ function getTemplate(product, tab) {
         "    </div>";
     return htmlTemp;
 }
-
-function redirectJdPromotionUrl(skuId) {
-    $.ajax({
-        type: 'GET',
-        url: '/product/jdShortUrl.json?skuId=' + skuId + "&r=" + Math.random(),
-        dataType: 'json',
-        success: function (reponse) {
-            var url = reponse.url;
-            location.href = url;
-        },
-        error: function (xhr, type) {
-            console.log('加载更多数据错误！');
-        }
-    });
-}

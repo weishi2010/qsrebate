@@ -60,87 +60,93 @@ public class RebateJobImpl implements RebateJob {
     @Override
     public void importMediaOrder() {
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
-        int page = 1;
-        int pageSize = 100;
-        //获取前一天的订单
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date());
-        String queryTime = format.format(calendar.getTime());
-        List<RebateDetail> rebateDetails = jdSdkManager.getRebateDetails(queryTime, page, pageSize);
-        LOG.error("[联盟订单导入任务]加载{}条订单明细记录！",rebateDetails.size());
-        for (RebateDetail rebateDetail : rebateDetails) {
-            RebateDetailQuery rebateDetailQuery = new RebateDetailQuery();
-            rebateDetailQuery.setOrderId(rebateDetail.getOrderId());
-            RebateDetail existsRebateDetail = rebateDetailDao.queryRebateDetailByOrderId(rebateDetailQuery);
-            if (null == existsRebateDetail) {
-                //查询商品，如果为不可返佣商品则返佣金额设置为0
-                Product productQuery = new Product();
-                productQuery.setProductId(rebateDetail.getProductId());
-                Product product = productDao.findById(productQuery);
-                if (null != product && EProudctRebateType.NOT_REBATE.getCode() == product.getIsRebate()) {
-                    rebateDetail.setUserCommission(0.0);
-                }
 
-                //插入明细
-                rebateDetailDao.insert(rebateDetail);
+        int pageSize = 10;
+        //获取近30天订单进行更新
+        for (int days = 0; days < 30; days++) {
+            int page = 1;
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(new Date());
+            calendar.add(Calendar.DAY_OF_WEEK, -days);
+            String queryTime = format.format(calendar.getTime());
 
-            } else {
+            List<RebateDetail> rebateDetails = jdSdkManager.getRebateDetails(queryTime, page, pageSize);
+            while (rebateDetails.size() > 0) {
+                LOG.error("[联盟订单导入任务]加载["+queryTime+"]第"+page+"页{}条订单明细记录！", rebateDetails.size());
+                for (RebateDetail rebateDetail : rebateDetails) {
+                    RebateDetailQuery rebateDetailQuery = new RebateDetailQuery();
+                    rebateDetailQuery.setOrderId(rebateDetail.getOrderId());
+                    RebateDetail existsRebateDetail = rebateDetailDao.queryRebateDetailByOrderId(rebateDetailQuery);
+                    if (null == existsRebateDetail) {
+                        //查询商品，如果为不可返佣商品则返佣金额设置为0
+                        Product productQuery = new Product();
+                        productQuery.setProductId(rebateDetail.getProductId());
+                        Product product = productDao.findById(productQuery);
+                        if (null != product && EProudctRebateType.NOT_REBATE.getCode() == product.getIsRebate()) {
+                            rebateDetail.setUserCommission(0.0);
+                        }
 
-                //有子联盟ID，且未结算过的订单返佣明细再进行用户提现余额更新
-                if (StringUtils.isNotBlank(rebateDetail.getSubUnionId()) && ERebateDetailStatus.NEVER_SETTLEMENT.getCode() == existsRebateDetail.getStatus()
-                        && ERebateDetailStatus.SETTLEMENT.getCode() == rebateDetail.getStatus()) {
+                        //插入明细
+                        rebateDetailDao.insert(rebateDetail);
+
+                    } else {
+
+                        //有子联盟ID，且未结算过的订单返佣明细再进行用户提现余额更新
+                        if (StringUtils.isNotBlank(rebateDetail.getSubUnionId()) && ERebateDetailStatus.NEVER_SETTLEMENT.getCode() == existsRebateDetail.getStatus()
+                                && ERebateDetailStatus.SETTLEMENT.getCode() == rebateDetail.getStatus()) {
 
 
-                    UserInfo userInfoQuery = new UserInfo();
-                    userInfoQuery.setSubUnionId(rebateDetail.getSubUnionId());
-                    UserInfo userInfo = userInfoDao.findUserInfoBySubUnionId(userInfoQuery);
-                    if (null != userInfo) {
+                            UserInfo userInfoQuery = new UserInfo();
+                            userInfoQuery.setSubUnionId(rebateDetail.getSubUnionId());
+                            UserInfo userInfo = userInfoDao.findUserInfoBySubUnionId(userInfoQuery);
+                            if (null != userInfo) {
 
-                        //重新获取用户可用余额
-                        RebateDetailQuery userTotalCommissionQuery = new RebateDetailQuery();
-                        userTotalCommissionQuery.setSubUnionId(rebateDetail.getSubUnionId());
-                        userTotalCommissionQuery.setStatus(ERebateDetailStatus.SETTLEMENT.getCode());//查询已经结算总的用户返佣金额
-                        Double totalUserCommission = rebateDetailDao.findUserTotalCommission(userTotalCommissionQuery);
+                                //重新获取用户可用余额
+                                RebateDetailQuery userTotalCommissionQuery = new RebateDetailQuery();
+                                userTotalCommissionQuery.setSubUnionId(rebateDetail.getSubUnionId());
+                                userTotalCommissionQuery.setStatus(ERebateDetailStatus.SETTLEMENT.getCode());//查询已经结算总的用户返佣金额
+                                Double totalUserCommission = rebateDetailDao.findUserTotalCommission(userTotalCommissionQuery);
 
-                        //查询已提现金额
-                        ExtractDetailQuery extractDetailQuery = new ExtractDetailQuery();
-                        extractDetailQuery.setOpenId(userInfo.getOpenId());
-                        extractDetailQuery.setStatus(EExtractStatus.PAYMENT.getCode());//已经付款状
-                        Double extractPrice = extractDetailDao.findUserTotalExtract(extractDetailQuery);
+                                //查询已提现金额
+                                ExtractDetailQuery extractDetailQuery = new ExtractDetailQuery();
+                                extractDetailQuery.setOpenId(userInfo.getOpenId());
+                                extractDetailQuery.setStatus(EExtractStatus.PAYMENT.getCode());//已经付款状
+                                Double extractPrice = extractDetailDao.findUserTotalExtract(extractDetailQuery);
 
-                        //计算用户可提现余额
-                        if (null != totalUserCommission) {
-                            //用户余额=用户总返佣金额-已提现金额
-                            Double totalCommission = totalUserCommission;
-                            if (null != extractPrice) {
-                                totalCommission = totalUserCommission - extractPrice;
-                            }
+                                //计算用户可提现余额
+                                if (null != totalUserCommission) {
+                                    //用户余额=用户总返佣金额-已提现金额
+                                    Double totalCommission = totalUserCommission;
+                                    if (null != extractPrice) {
+                                        totalCommission = totalUserCommission - extractPrice;
+                                    }
 
-                            //查询用户可提现余额，已存在则更新，否则进行插入
-                            Commission commission = new Commission();
-                            commission.setOpenId(rebateDetail.getOpenId());
-                            commission.setTotalCommission(totalCommission);
-                            Commission userCommission = commissionDao.findCommissionByOpenId(commission);
+                                    //查询用户可提现余额，已存在则更新，否则进行插入
+                                    Commission commission = new Commission();
+                                    commission.setOpenId(rebateDetail.getOpenId());
+                                    commission.setTotalCommission(totalCommission);
+                                    Commission userCommission = commissionDao.findCommissionByOpenId(commission);
 
-                            if (null == userCommission) {
-                                commission.setStatus(0);
-                                commissionDao.insert(commission);
-                            } else {
-                                userCommission.setTotalCommission(totalCommission);
-                                commissionDao.updateTotalCommission(commission);
+                                    if (null == userCommission) {
+                                        commission.setStatus(0);
+                                        commissionDao.insert(commission);
+                                    } else {
+                                        userCommission.setTotalCommission(totalCommission);
+                                        commissionDao.updateTotalCommission(commission);
 
+                                    }
+
+                                }
                             }
 
                         }
+                        //更新明细状态
+                        rebateDetailDao.update(rebateDetail);
                     }
-
                 }
-                //更新明细状态
-                rebateDetailDao.update(rebateDetail);
-
-
+                page++;
+                rebateDetails = jdSdkManager.getRebateDetails(queryTime, page, pageSize);
             }
-
         }
     }
 
@@ -165,18 +171,19 @@ public class RebateJobImpl implements RebateJob {
 //        }
 
     }
+
     @Override
-    public void importCouponProducts(){
-        int page=1;
-        int pageSize=20;
+    public void importCouponProducts() {
+        int page = 1;
+        int pageSize = 20;
         List<ProductCoupon> list = jdSdkManager.getMediaCoupons(page, pageSize);
-        while(list.size()>0){
-           LOG.error("[importCouponProducts]page:"+page+",list:" + list.size());
+        while (list.size() > 0) {
+            LOG.error("[importCouponProducts]page:" + page + ",list:" + list.size());
             List<Long> skuList = new ArrayList<>();
             for (ProductCoupon productCoupon : list) {
                 if (null == productCouponDao.findById(productCoupon)) {
                     productCouponDao.insert(productCoupon);
-                }else{
+                } else {
                     productCouponDao.update(productCoupon);
                 }
                 skuList.add(productCoupon.getProductId());

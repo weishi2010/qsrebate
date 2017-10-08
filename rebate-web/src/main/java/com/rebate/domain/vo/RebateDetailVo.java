@@ -111,6 +111,38 @@ public class RebateDetailVo extends BaseQuery{
     @Getter
     @Setter
     private Integer status;
+
+    /**
+     * 联盟ID
+     */
+    @Getter
+    @Setter
+    private String unionId;
+    /**
+     *  子联盟ID
+     */
+    @Getter
+    @Setter
+    private String subUnionId;
+    /**
+     * 平台返利比例
+     */
+    @Getter
+    @Setter
+    private Double platformRatio;
+    /**
+     * 用户返佣金额
+     */
+    @Getter
+    @Setter
+    private Double userCommission;
+    /**
+     * 推广位
+     */
+    @Getter
+    @Setter
+    private String positionId;
+
     /**
      * 创建时间
      */
@@ -129,7 +161,7 @@ public class RebateDetailVo extends BaseQuery{
     }
 
     public String getSubmitDateShow(){
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         String show = "";
         if (null != submitDate) {
             show = format.format(submitDate);

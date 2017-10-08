@@ -25,6 +25,6 @@
 </div>
 
     #parse("/common/footer.vm")
-<script type="text/javascript" src="/static/js/order.js?v=5"></script>
+<script type="text/javascript" src="/static/js/order.js?v=15"></script>
 
 </body></html>
