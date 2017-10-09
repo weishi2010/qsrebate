@@ -115,10 +115,15 @@ public class ProductController extends BaseController {
         Map<String, Object> map = new HashMap<String, Object>();
         Double queryPrice = null;
         Integer couponType = null;
-        if (null == tab) {
+        if (null != tab && EPromotionTab.SECKILL.getTab() == tab) {
+            couponType = EProudctCouponType.GENERAL.getCode();
+        } else {
             tab = EPromotionTab.COUPON_PROMOTION.getTab();
             couponType = EProudctCouponType.COUPON.getCode();
         }
+
+
+
         if (EPromotionTab.SECKILL.getTab() == tab) {
             queryPrice = 9.9;
         }
