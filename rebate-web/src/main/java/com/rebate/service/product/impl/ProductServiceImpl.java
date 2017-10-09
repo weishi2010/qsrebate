@@ -86,13 +86,11 @@ public class ProductServiceImpl implements ProductService {
         }
 
         List<Long> skuList = new ArrayList<>();
-        Map discountMap = new HashMap();
-        Map quotaMap = new HashMap();
+        Map couponInfoMap = new HashMap();
         for (ProductCoupon productCoupon : couponMapList) {
             Long skuId = productCoupon.getProductId();
             skuList.add(skuId);
-            discountMap.put(skuId, productCoupon.getDiscount());
-            quotaMap.put(skuId, productCoupon.getQuota());
+            couponInfoMap.put(skuId, productCoupon);
         }
 
         List<Product> list = jdSdkManager.getMediaProducts(Joiner.on(",").join(skuList));
@@ -111,18 +109,13 @@ public class ProductServiceImpl implements ProductService {
 
             //商品优惠券信息解析入库
             ProductCoupon productCoupon = productToCoupon(product);
-            Double discount = (Double) discountMap.get(product.getProductId());
-            Double quota = (Double) quotaMap.get(product.getProductId());
-            if (null != discount) {
-                productCoupon.setDiscount(discount);
-            } else {
-                productCoupon.setDiscount(0.0);
-            }
-
-            if (null != quota) {
-                productCoupon.setQuota(quota);
-            } else {
-                productCoupon.setQuota(0.0);
+            //获取导入的优惠券信息
+            ProductCoupon couponInfo = (ProductCoupon) couponInfoMap.get(product.getProductId());
+            if (null != couponInfo) {
+                productCoupon.setDiscount(couponInfo.getDiscount());
+                productCoupon.setQuota(couponInfo.getQuota());
+                productCoupon.setStartDate(couponInfo.getStartDate());
+                productCoupon.setEndDate(couponInfo.getEndDate());
             }
 
             if (null == productCouponDao.findById(productCoupon)) {

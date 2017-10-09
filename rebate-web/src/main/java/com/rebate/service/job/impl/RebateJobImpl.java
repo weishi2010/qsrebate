@@ -152,23 +152,23 @@ public class RebateJobImpl implements RebateJob {
 
     @Override
     public void importMediaThemeProducts() {
-//        int page = 1;
-//        int pageSize = 1000;
-//        List<Product> products = jdSdkManager.getMediaThemeProducts(page, pageSize);
-//        while (products.size() > 0) {
-//            LOG.error("[importMediaThemeProducts]商品导入任务!size:" + products.size());
-//            for (Product product : products) {
-//                if (null == productDao.findById(product)) {
-//                    productDao.insert(product);
-//                } else {
-//
-//                    //存在则更新
-//                    productDao.update(product);
-//                }
-//            }
-//            page++;
-//            products = jdSdkManager.getMediaThemeProducts(page, pageSize);
-//        }
+        int page = 1;
+        int pageSize = 1000;
+        List<Product> products = jdSdkManager.getMediaThemeProducts(page, pageSize);
+        while (products.size() > 0) {
+            LOG.error("[importMediaThemeProducts]商品导入任务!size:" + products.size());
+            for (Product product : products) {
+                if (null == productDao.findById(product)) {
+                    productDao.insert(product);
+                } else {
+
+                    //存在则更新
+                    productDao.update(product);
+                }
+            }
+            page++;
+            products = jdSdkManager.getMediaThemeProducts(page, pageSize);
+        }
 
     }
 
