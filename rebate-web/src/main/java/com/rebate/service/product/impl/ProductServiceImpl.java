@@ -116,6 +116,7 @@ public class ProductServiceImpl implements ProductService {
                 productCoupon.setQuota(couponInfo.getQuota());
                 productCoupon.setStartDate(couponInfo.getStartDate());
                 productCoupon.setEndDate(couponInfo.getEndDate());
+                productCoupon.setCouponLink(couponInfo.getCouponLink());
             }
 
             if (null == productCouponDao.findById(productCoupon)) {

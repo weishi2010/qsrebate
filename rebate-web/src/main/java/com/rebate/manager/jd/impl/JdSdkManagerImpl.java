@@ -13,6 +13,8 @@ import com.rebate.domain.Product;
 import com.rebate.domain.ProductCoupon;
 import com.rebate.domain.RebateDetail;
 import com.rebate.domain.en.EProductSource;
+import com.rebate.domain.en.EProudctCouponType;
+import com.rebate.domain.en.EProudctRebateType;
 import com.rebate.domain.jd.JDConfig;
 import com.rebate.manager.jd.JdSdkManager;
 import net.sf.json.JSONArray;
@@ -219,9 +221,24 @@ public class JdSdkManagerImpl implements JdSdkManager {
                     product.setUserCommission(RebateRuleUtil.getJDUserCommission(product.getCommissionWl()));//平台返还用户佣金
 
                     if (RebateRuleUtil.isRebate(product.getCommissionWl(), false)) {
-                        product.setIsRebate(1);
+                        product.setIsRebate(EProudctRebateType.REBATE.getCode());
+                    }else{
+                        product.setIsRebate(EProudctRebateType.NOT_REBATE.getCode());
                     }
+                    product.setStartDate(new Date(Long.parseLong(map.get("startTime").toString())));
+                    product.setEndDate(new Date(Long.parseLong(map.get("endTime").toString())));
+                    product.setWlUnitPrice(Double.parseDouble(map.get("wlPrice").toString()));//获取移动端价格
+                    product.setUnitPrice(Double.parseDouble(map.get("pcPrice").toString()));
+                    product.setCouponType(EProudctCouponType.GENERAL.getCode());
+                    product.setSourcePlatform(EProductSource.JD.getCode());
+                    product.setMaterialUrl(map.get("skuUrl").toString());
+                    if(map.containsKey("shopId")){
+                        product.setShopId(Long.parseLong(map.get("shopId").toString()));
 
+                    }else{
+                        product.setShopId(0l);
+                    }
+                    product.setSortWeight(0);
                     product.setDistribution(1);
                     product.setProductType(1);
                     product.setStock(0);

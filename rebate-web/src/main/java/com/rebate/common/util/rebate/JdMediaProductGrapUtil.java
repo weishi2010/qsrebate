@@ -3,6 +3,7 @@ package com.rebate.common.util.rebate;
 import com.rebate.common.util.GrabUtils;
 import com.rebate.common.util.HttpClientUtil;
 import com.rebate.domain.Product;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Attribute;
@@ -77,7 +78,6 @@ public class JdMediaProductGrapUtil {
 
     public static Product grapCategory(Product product) {
         HtmlCleaner cleaner = new HtmlCleaner();
-        List<Product> list = new ArrayList<Product>();
         try {
             String url = "http://item.jd.com/" + product.getProductId() + ".html#";
             TagNode rootNode = cleaner.clean(HttpClientUtil.httpGet(url));
@@ -85,23 +85,25 @@ public class JdMediaProductGrapUtil {
             org.w3c.dom.Document doc = new DomSerializer(props)
                     .createDOM(rootNode);
             Document dom4j = new DOMReader().read(doc);
-            Element rootElement = dom4j.getRootElement();
             //商品名称
             TagNode tagNode = GrabUtils.evaluateXPath(rootNode, "body");
 
             String classStr = tagNode.getAttributeByName("class");
-            String[] array = classStr.split(" ");
-            for(String str : array){
-                if(str.contains("cat-1")){
-                    product.setFirstCategory(Integer.parseInt(str.replace("cat-1-","")));
-                }else if(str.contains("cat-2")){
-                    product.setSecondCategory(Integer.parseInt(str.replace("cat-2-","")));
-                }else if(str.contains("cat-3")){
-                    product.setThirdCategory(Integer.parseInt(str.replace("cat-3-","")));
+            if(StringUtils.isNotBlank(classStr)){
+
+                String[] array = classStr.split(" ");
+                for(String str : array){
+                    if(str.contains("cat-1")){
+                        product.setFirstCategory(Integer.parseInt(str.replace("cat-1-","")));
+                    }else if(str.contains("cat-2")){
+                        product.setSecondCategory(Integer.parseInt(str.replace("cat-2-","")));
+                    }else if(str.contains("cat-3")){
+                        product.setThirdCategory(Integer.parseInt(str.replace("cat-3-","")));
+                    }
                 }
             }
         } catch (Exception e) {
-            LOG.error("grabProducts error");
+            LOG.error("grapCategory error!productId:"+product.getProductId(),e);
         }
         return product;
     }

@@ -160,7 +160,7 @@ public class Product extends BaseQuery {
     private Integer sortWeight;
 
     /**
-     * 单价
+     * PC单价
      */
     @Getter
     @Setter
