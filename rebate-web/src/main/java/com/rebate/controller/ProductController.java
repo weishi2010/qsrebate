@@ -135,7 +135,7 @@ public class ProductController extends BaseController {
         query.setSecondCategoryList(secondCategoryList);
         query.setCouponType(couponType);
         PaginatedArrayList<ProductVo> products = productService.findProductList(query);
-        LOG.error("page:{},size:{}", page, products.size());
+        LOG.error("tab:"+tab+",page:{},size:{}", page, products.size());
         map.put("products", products);
         map.put("page", page);
         map.put("secondCategoryList", secondCategoryList);
