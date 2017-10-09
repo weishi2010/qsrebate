@@ -18,7 +18,7 @@ $(function () {
         var totalheight = parseFloat($(window).height()) + parseFloat($(window).scrollTop());
         if ($(document).height() <= totalheight) {
             counter++;
-            loadProductData(counter, -1, promotionTab);
+            loadProductData(counter, '', promotionTab);
         }
     });
 

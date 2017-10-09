@@ -1,6 +1,7 @@
 package com.rebate.controller;
 
 import com.rebate.common.util.EncodeUtils;
+import com.rebate.common.util.JsonUtil;
 import com.rebate.common.util.rebate.RebateUrlUtil;
 import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.controller.base.BaseController;
@@ -12,6 +13,7 @@ import com.rebate.domain.query.ProductQuery;
 import com.rebate.domain.vo.ProductVo;
 import com.rebate.manager.jd.JdSdkManager;
 import com.rebate.service.product.ProductService;
+import net.sf.json.JSON;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
