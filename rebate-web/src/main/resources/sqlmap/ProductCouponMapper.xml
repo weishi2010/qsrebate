@@ -10,6 +10,7 @@
         <result property="id" column="id"/>
         <result property="productId" column="product_id"/>
         <result property="couponPrice" column="coupon_price"/>
+        <result property="originalPrice" column="original_price"/>
         <result property="couponLink" column="coupon_link"/>
         <result property="couponTab" column="coupon_tab"/>
         <result property="status" column="status"/>
@@ -31,6 +32,7 @@
          id,
         product_id,
         coupon_price,
+        original_price,
         coupon_link,
         coupon_tab,
         status,
@@ -63,6 +65,7 @@
         (
             product_id,
             coupon_price,
+            original_price,
             coupon_link,
             coupon_tab,
             status,
@@ -83,6 +86,7 @@
         (
             #productId#,
             #couponPrice#,
+            #originalPrice#,
             #couponLink#,
             #couponTab#,
             #status#,
@@ -107,6 +111,15 @@
         <dynamic>
             <isNotNull property="couponNote" prepend=",">
                 coupon_note = #couponNote#
+            </isNotNull>
+            <isNotNull property="couponPrice" prepend=",">
+                coupon_price = #couponPrice#
+            </isNotNull>
+            <isNotNull property="quota" prepend=",">
+                quota = #quota#
+            </isNotNull>
+            <isNotNull property="couponLink" prepend=",">
+                coupon_link = #couponLink#
             </isNotNull>
         </dynamic>
         where product_id=#productId#

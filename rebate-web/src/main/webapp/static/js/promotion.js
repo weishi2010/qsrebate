@@ -219,7 +219,7 @@ function getTemplate(product, tab) {
             "                <a href=\"javascript:void(0);\" onclick=\"redirectJdPromotionUrl(" + product.productId + ")\" class=\"buy\">" +
             "                    <!--<img class=\"cart\" src=\"/static/img/ico-cart-01.png\" alt=\"\">-->";
             if(product.productCoupon && (product.originalPrice-product.productCoupon.quota)>0){
-                htmlTemp +="                    券后￥" +(product.originalPrice-product.productCoupon.quota);
+                htmlTemp +="                    券后￥" +product.productCoupon.couponPrice;
             }
         htmlTemp +=
             "                </a>" +

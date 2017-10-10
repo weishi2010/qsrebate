@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -112,11 +113,16 @@ public class ProductServiceImpl implements ProductService {
             //获取导入的优惠券信息
             ProductCoupon couponInfo = (ProductCoupon) couponInfoMap.get(product.getProductId());
             if (null != couponInfo) {
-                productCoupon.setDiscount(couponInfo.getDiscount());
-                productCoupon.setQuota(couponInfo.getQuota());
+                productCoupon.setDiscount(0.0);//没有面额值，填0
+
+                productCoupon.setQuota(couponInfo.getOriginalPrice()-couponInfo.getCouponPrice());//原价减券后价来计算面额
+                productCoupon.setQuota(new BigDecimal(productCoupon.getQuota()).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
+
                 productCoupon.setStartDate(couponInfo.getStartDate());
                 productCoupon.setEndDate(couponInfo.getEndDate());
                 productCoupon.setCouponLink(couponInfo.getCouponLink());
+                productCoupon.setOriginalPrice(couponInfo.getOriginalPrice());
+                productCoupon.setCouponPrice(couponInfo.getCouponPrice());
             }
 
             if (null == productCouponDao.findById(productCoupon)) {

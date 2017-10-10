@@ -22,6 +22,13 @@ public class ProductCoupon extends BaseQuery {
     private Long productId;
 
     /**
+     * 原价
+     */
+    @Getter
+    @Setter
+    private Double originalPrice;
+
+    /**
      * 券后价
      */
     @Getter
