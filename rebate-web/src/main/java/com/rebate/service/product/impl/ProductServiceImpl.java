@@ -122,7 +122,12 @@ public class ProductServiceImpl implements ProductService {
                 productCoupon.setEndDate(couponInfo.getEndDate());
                 productCoupon.setCouponLink(couponInfo.getCouponLink());
                 productCoupon.setOriginalPrice(couponInfo.getOriginalPrice());
+                productCoupon.setOriginalPrice(new BigDecimal(productCoupon.getOriginalPrice()).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
+
                 productCoupon.setCouponPrice(couponInfo.getCouponPrice());
+                productCoupon.setCouponPrice(new BigDecimal(productCoupon.getCouponPrice()).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
+
+
             }
 
             if (null == productCouponDao.findById(productCoupon)) {
