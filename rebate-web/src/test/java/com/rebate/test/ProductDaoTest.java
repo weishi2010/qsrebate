@@ -69,6 +69,15 @@ public class ProductDaoTest extends AbstractJUnit4SpringContextTests {
     }
 
     @Test
+    public void testGetPromotionCouponCode() {
+        Long skuId = 13728109671l;
+        String couponUrl ="//coupon.jd.com/ilink/couponSendFront/send_index.action?key=ab27f9b1ca664c32b272ba46e3cea6f1&roleId=8126072&to=mall.jd.com/index-601435.html";
+        String subUnionId ="weishi2010";
+        String promotionCouponCode = jdSdkManager.getPromotionCouponCode(skuId,couponUrl,subUnionId);
+        System.out.println("promotionCouponCode:" + promotionCouponCode);
+    }
+
+    @Test
     public void testGetMediaCouponProducts() {
         List<ProductCoupon> list = jdSdkManager.getMediaCoupons(1, 10);
         System.out.println("list:" + JsonUtil.toJson(list));

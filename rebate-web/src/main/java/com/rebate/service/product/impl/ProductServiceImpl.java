@@ -113,10 +113,17 @@ public class ProductServiceImpl implements ProductService {
             //获取导入的优惠券信息
             ProductCoupon couponInfo = (ProductCoupon) couponInfoMap.get(product.getProductId());
             if (null != couponInfo) {
-                productCoupon.setDiscount(0.0);//没有面额值，填0
 
-                productCoupon.setQuota(couponInfo.getOriginalPrice()-couponInfo.getCouponPrice());//原价减券后价来计算面额
-                productCoupon.setQuota(new BigDecimal(productCoupon.getQuota()).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
+
+                //如果传入的优惠券限额和面额不为空
+                if (null != couponInfo.getDiscount() && null != couponInfo.getQuota()) {
+                    productCoupon.setDiscount(couponInfo.getDiscount());
+                    productCoupon.setQuota(couponInfo.getQuota());
+                } else if (null != couponInfo.getOriginalPrice() && null != couponInfo.getCouponPrice()) {
+                    productCoupon.setDiscount(0.0);//没有面额值，填0
+                    productCoupon.setQuota(couponInfo.getOriginalPrice() - couponInfo.getCouponPrice());//原价减券后价来计算面额
+                    productCoupon.setQuota(new BigDecimal(productCoupon.getQuota()).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
+                }
 
                 productCoupon.setStartDate(couponInfo.getStartDate());
                 productCoupon.setEndDate(couponInfo.getEndDate());

@@ -169,6 +169,24 @@ public class ProductController extends BaseController {
         return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
     }
 
+    @RequestMapping({"", "/", "/getPromotionCouponCode.json"})
+    @ResponseBody
+    public ResponseEntity<?> getPromotionCouponCode(HttpServletRequest request, Long skuId,String couponLink) {
+        Map<String, Object> map = new HashMap<String, Object>();
+
+        UserInfo userInfo = getUserInfo(request);
+        String subUnionId = "";
+        if (null != userInfo) {
+            subUnionId = userInfo.getSubUnionId();
+        }
+
+        String url = jdSdkManager.getPromotionCouponCode(skuId,couponLink, subUnionId);
+        map.put("url", url);
+        LOG.error("jdPromotionShortUrl===============>url:" + url + ",subUnionId:" + subUnionId);
+        return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
+    }
+
+
     @RequestMapping({"", "/", "/searchProducts.json"})
     public ResponseEntity<?> searchProducts(HttpServletRequest request, Integer page, String params) {
         Map<String, Object> map = new HashMap<String, Object>();

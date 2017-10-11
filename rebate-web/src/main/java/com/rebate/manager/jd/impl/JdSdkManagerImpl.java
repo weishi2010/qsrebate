@@ -222,7 +222,7 @@ public class JdSdkManagerImpl implements JdSdkManager {
 
                     if (RebateRuleUtil.isRebate(product.getCommissionWl(), false)) {
                         product.setIsRebate(EProudctRebateType.REBATE.getCode());
-                    }else{
+                    } else {
                         product.setIsRebate(EProudctRebateType.NOT_REBATE.getCode());
                     }
                     product.setStartDate(new Date(Long.parseLong(map.get("startTime").toString())));
@@ -232,10 +232,10 @@ public class JdSdkManagerImpl implements JdSdkManager {
                     product.setCouponType(EProudctCouponType.GENERAL.getCode());
                     product.setSourcePlatform(EProductSource.JD.getCode());
                     product.setMaterialUrl(map.get("skuUrl").toString());
-                    if(map.containsKey("shopId")){
+                    if (map.containsKey("shopId")) {
                         product.setShopId(Long.parseLong(map.get("shopId").toString()));
 
-                    }else{
+                    } else {
                         product.setShopId(0l);
                     }
                     product.setSortWeight(0);
@@ -306,7 +306,7 @@ public class JdSdkManagerImpl implements JdSdkManager {
                     List<Product> mediaProducts = getMediaProducts(detail.getProductId().toString());
                     if (null != mediaProducts && mediaProducts.size() > 0) {
                         detail.setImgUrl(mediaProducts.get(0).getImgUrl());
-                    }else{
+                    } else {
                         detail.setImgUrl("");
                     }
 
@@ -319,7 +319,7 @@ public class JdSdkManagerImpl implements JdSdkManager {
                     }
                     detail.setCommission(skuObj.getDouble("commission"));
                     detail.setPositionId(orderObj.getString("positionId"));
-                    detail.setPlatformRatio(RebateRuleUtil.PLATFORM_USER_COMMISSION_RATIO*detail.getCommissionRatio());//平台抽成比例
+                    detail.setPlatformRatio(RebateRuleUtil.PLATFORM_USER_COMMISSION_RATIO * detail.getCommissionRatio());//平台抽成比例
                     detail.setPlatformRatio(new BigDecimal(detail.getPlatformRatio()).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());//精确2位小数
 
                     detail.setUserCommission(RebateRuleUtil.getJDUserCommission(detail.getCommission()));//用户返佣金额
@@ -351,6 +351,19 @@ public class JdSdkManagerImpl implements JdSdkManager {
         if (null != resultObj && 0 == Integer.parseInt(resultObj.getString("resultCode"))) {
             JSONObject urlListObj = (JSONObject) resultObj.get("urlList");
             url = urlListObj.getString(skuId.toString());
+        }
+        return url;
+    }
+
+
+    @Override
+    public String getPromotionCouponCode(Long skuId, String couponUrl, String subUnionId) {
+        String url = "";
+        String json = getServicePromotionCouponCode(skuId.toString(),couponUrl, subUnionId);
+        JSONObject resultObj = JsonUtil.fromJson(json, JSONObject.class);
+        if (null != resultObj && 0 == Integer.parseInt(resultObj.getString("resultCode"))) {
+            JSONObject urlListObj = (JSONObject) resultObj.get("urlList");
+            url = urlListObj.getString(couponUrl+","+skuId);
         }
         return url;
     }
@@ -413,6 +426,28 @@ public class JdSdkManagerImpl implements JdSdkManager {
         return json;
     }
 
+
+    private String getServicePromotionCouponCode(String skuIds, String couponUrl, String subUnionId) {
+        String json = "";
+
+        try {
+            JdClient client = new DefaultJdClient(jdConfig.getApiUrl(), jdConfig.getAccessToken(), jdConfig.getAppKey(), jdConfig.getAppSecret());
+
+            ServicePromotionCouponGetCodeBySubUnionIdRequest request = new ServicePromotionCouponGetCodeBySubUnionIdRequest();
+
+            request.setCouponUrl(couponUrl);
+            request.setMaterialIds(skuIds);
+            request.setSubUnionId(subUnionId);
+
+            ServicePromotionCouponGetCodeBySubUnionIdResponse response = client.execute(request);
+
+            json = response.getGetcodebysubunionidResult();
+
+        } catch (Exception e) {
+            LOG.error("[获取推广链接]调用异常!skuIds:{},subUnionId:{},couponUrl:"+couponUrl, skuIds, subUnionId);
+        }
+        return json;
+    }
 
     /**
      * 获取自定义推广短链接

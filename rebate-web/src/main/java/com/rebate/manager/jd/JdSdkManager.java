@@ -49,6 +49,15 @@ public interface JdSdkManager {
     String getLongPromotinUrl(String itemUrl, String subUnionId);
 
     /**
+     * 获取优惠券二转一链接
+     * @param skuId
+     * @param couponUrl
+     * @param subUnionId
+     * @return
+     */
+    String getPromotionCouponCode(Long skuId, String couponUrl, String subUnionId);
+
+    /**
      * 获取推广短链接
      *
      * @param skuId
