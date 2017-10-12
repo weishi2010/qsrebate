@@ -128,10 +128,10 @@ public class ProductServiceImpl implements ProductService {
                 productCoupon.setStartDate(couponInfo.getStartDate());
                 productCoupon.setEndDate(couponInfo.getEndDate());
                 productCoupon.setCouponLink(couponInfo.getCouponLink());
-                productCoupon.setOriginalPrice(couponInfo.getOriginalPrice());
-                productCoupon.setOriginalPrice(new BigDecimal(productCoupon.getOriginalPrice()).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
+                productCoupon.setOriginalPrice(product.getOriginalPrice());
+                productCoupon.setOriginalPrice(new BigDecimal(product.getOriginalPrice()).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
 
-                productCoupon.setCouponPrice(couponInfo.getCouponPrice());
+                productCoupon.setCouponPrice(product.getOriginalPrice()-couponInfo.getQuota());
                 productCoupon.setCouponPrice(new BigDecimal(productCoupon.getCouponPrice()).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
 
 

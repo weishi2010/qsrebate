@@ -98,8 +98,13 @@ public class AdminController extends BaseController {
 
 
         //导入优惠券商品
-        productService.importCouponProducts(couponMapList);
-        map.put("success", success);
+        try{
+            productService.importCouponProducts(couponMapList);
+            map.put("success", success);
+        }catch (Exception e){
+            map.put("success", false);
+            LOG.error("json analysis error!json:"+paramJson,e);
+        }
         return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
     }
 
