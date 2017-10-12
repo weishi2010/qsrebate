@@ -99,3 +99,22 @@ function redirectJdPromotionUrl(skuId) {
         }
     });
 }
+
+function redirectJdPromotionCouponUrl(skuId,couponLink) {
+    $.ajax({
+        type: 'GET',
+        url: '/product/getPromotionCouponCode.json?skuId=' + skuId + "&couponLink="+couponLink+"&r=" + Math.random(),
+        dataType: 'json',
+        success: function (reponse) {
+            if(reponse.success){
+                var url = reponse.url;
+                location.href = url;
+            }else{
+                alert("很抱歉，优惠券活动已经结束！")
+            }
+        },
+        error: function (xhr, type) {
+            console.log('加载更多数据错误！');
+        }
+    });
+}

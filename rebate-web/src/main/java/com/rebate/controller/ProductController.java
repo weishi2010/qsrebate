@@ -181,7 +181,12 @@ public class ProductController extends BaseController {
         }
 
         String url = jdSdkManager.getPromotionCouponCode(skuId,couponLink, subUnionId);
-        map.put("url", url);
+        if(StringUtils.isNotBlank(url)){
+            map.put("success", true);
+            map.put("url", url);
+        }else{
+            map.put("success", false);
+        }
         LOG.error("jdPromotionShortUrl===============>url:" + url + ",subUnionId:" + subUnionId);
         return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
     }

@@ -16,6 +16,6 @@
     <script type="text/javascript" src="/static/lib/zpeto/zepto-1.2.0.min.js"></script>
     <script type="text/javascript" src="/static/lib/zpeto/zepto.fx.js"></script>
     <script type="text/javascript" src="/static/lib/angular/angular.min.js"></script>
-    <script type="text/javascript" src="/static/js/comm.js?v1"></script>
+    <script type="text/javascript" src="/static/js/comm.js?v2"></script>
 
 </head>

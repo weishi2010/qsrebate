@@ -191,22 +191,36 @@ function searchProducts() {
 
 function getTemplate(product, tab) {
     var htmlTemp = "<div class=\"item mui-flex\">" +
-        "        <div class=\"g-img cell fixed\">" +
-        "             <a href=\"javascript:void(0);\" onclick=\"redirectJdPromotionUrl(" + product.productId + ")\" ><img class=\"g-img\" src=\"" + product.imgUrl + "\" alt=\"" + product.name + "\" width='90' height='90'></a>" +
-        "        </div>" +
-        "        <div class=\"cnt cell align-center\">" +
-        "            <a href=\"javascript:void(0);\" onclick=\"redirectJdPromotionUrl(" + product.productId + ")\" class=\"tl\">" + product.name + "</a>" +
-        "            <div class=\"meta\">" +
+        "        <div class=\"g-img cell fixed\">";
+    if(product.couponType==2 && product.productCoupon){
+        htmlTemp += "  <a href=\"javascript:void(0);\" onclick=\"redirectJdPromotionCouponUrl(" + product.productId + ",'"+product.productCoupon.couponLink+"')\" ><img class=\"g-img\" src=\"" + product.imgUrl + "\" alt=\"" + product.name + "\" width='90' height='90'></a>" ;
+    }else{
+       htmlTemp += "  <a href=\"javascript:void(0);\" onclick=\"redirectJdPromotionUrl(" + product.productId + ")\" ><img class=\"g-img\" src=\"" + product.imgUrl + "\" alt=\"" + product.name + "\" width='90' height='90'></a>" ;
+    }
+    htmlTemp += " </div> " +
+        "<div class=\"cnt cell align-center\">";
+    if(product.couponType==2 && product.productCoupon){
+        htmlTemp += "<a href=\"javascript:void(0);\" onclick=\"redirectJdPromotionCouponUrl(" + product.productId + ",'"+product.productCoupon.couponLink+"')\" class=\"tl\">" + product.name + "</a>";
+    }else{
+        htmlTemp += "<a href=\"javascript:void(0);\" onclick=\"redirectJdPromotionUrl(" + product.productId + ")\" class=\"tl\">" + product.name + "</a>";
+    }
+
+        htmlTemp +=   " <div class=\"meta\">" +
         "                <span class=\"old-price\">原价：" + product.originalPrice + "</span>";
         if(product.productCoupon){
             htmlTemp += " <span class=\"new-price\">优惠券："+product.productCoupon.quota+"</span>";
         }
-            htmlTemp +="            </div>";
+            htmlTemp +="  </div>";
 
     if (product.rebate) {
-        htmlTemp += "            <div class=\"easy\">" +
-            "                <a href=\"javascript:void(0);\" onclick=\"redirectJdPromotionUrl(" + product.productId + ")\" class=\"buy\">" +
-            "                    <img class=\"cart\" src=\"/static/img/ico-cart-01.png\" alt=\"\">" +
+        htmlTemp += "            <div class=\"easy\">";
+        if(product.couponType==2 && product.productCoupon){
+            htmlTemp += "                <a href=\"javascript:void(0);\" onclick=\"redirectJdPromotionCouponUrl(" + product.productId + ",'"+product.productCoupon.couponLink+"')\" class=\"buy\">";
+        }else{
+            htmlTemp +=  "                <a href=\"javascript:void(0);\" onclick=\"redirectJdPromotionUrl(" + product.productId + ")\" class=\"buy\">" ;
+        }
+
+        htmlTemp +=  "                    <img class=\"cart\" src=\"/static/img/ico-cart-01.png\" alt=\"\">" +
             "                    购买返：¥" + product.userCommission +
             "                </a>" +
             "                <a href=\"/share/shareIndex?skuId=\"" + product.productId + " class=\"share\">" +
@@ -215,10 +229,14 @@ function getTemplate(product, tab) {
             "                </a>" +
             "            </div>";
     } else {
-        htmlTemp += "            <div class=\"easy\">" +
-            "                <a href=\"javascript:void(0);\" onclick=\"redirectJdPromotionUrl(" + product.productId + ")\" class=\"buy\">" +
-            "                    <!--<img class=\"cart\" src=\"/static/img/ico-cart-01.png\" alt=\"\">-->";
-            if(product.productCoupon && (product.originalPrice-product.productCoupon.quota)>0){
+        htmlTemp += "            <div class=\"easy\">";
+        if(product.couponType==2 && product.productCoupon){
+            "               htmlTemp +=   <a href=\"javascript:void(0);\" onclick=\"redirectJdPromotionCouponUrl(" + product.productId + ",'"+product.productCoupon.couponLink+"')\" class=\"buy\">";
+        }else{
+            "            htmlTemp +=      <a href=\"javascript:void(0);\" onclick=\"redirectJdPromotionUrl(" + product.productId + ")\" class=\"buy\">";
+        }
+
+        if(product.productCoupon && (product.originalPrice-product.productCoupon.quota)>0){
                 htmlTemp +="                    券后￥" +product.productCoupon.couponPrice;
             }
         htmlTemp +=

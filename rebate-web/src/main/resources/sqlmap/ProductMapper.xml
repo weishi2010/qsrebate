@@ -32,6 +32,7 @@
         <result property="wlUnitPrice" column="wl_unit_price"/>
         <result property="sourcePlatform" column="source_platform"/>
         <result property="materialUrl" column="material_url"/>
+        <result property="couponType" column="coupon_type"/>
         <result property="shopId" column="shop_id"/>
         <result property="startDate" column="start_date"/>
         <result property="endDate" column="end_date"/>
