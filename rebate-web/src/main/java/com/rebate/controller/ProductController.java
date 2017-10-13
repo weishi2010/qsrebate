@@ -5,6 +5,8 @@ import com.rebate.common.util.JsonUtil;
 import com.rebate.common.util.rebate.RebateUrlUtil;
 import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.controller.base.BaseController;
+import com.rebate.dao.ProductCouponDao;
+import com.rebate.domain.ProductCoupon;
 import com.rebate.domain.RecommendCategory;
 import com.rebate.domain.UserInfo;
 import com.rebate.domain.en.EPromotionTab;
@@ -49,6 +51,10 @@ public class ProductController extends BaseController {
     @Qualifier("rebateUrlUtil")
     @Autowired(required = true)
     private RebateUrlUtil rebateUrlUtil;
+
+    @Qualifier("productCouponDao")
+    @Autowired(required = true)
+    private ProductCouponDao productCouponDao;
 
     /**
      * 京东首页
@@ -125,7 +131,6 @@ public class ProductController extends BaseController {
         }
 
 
-
         if (EPromotionTab.SECKILL.getTab() == tab) {
             queryPrice = 9.9;
         }
@@ -137,7 +142,7 @@ public class ProductController extends BaseController {
         query.setSecondCategoryList(secondCategoryList);
         query.setCouponType(couponType);
         PaginatedArrayList<ProductVo> products = productService.findProductList(query);
-        LOG.error("tab:"+tab+",page:{},size:{}", page, products.size());
+        LOG.error("tab:" + tab + ",page:{},size:{}", page, products.size());
         map.put("products", products);
         map.put("page", page);
         map.put("secondCategoryList", secondCategoryList);
@@ -171,7 +176,7 @@ public class ProductController extends BaseController {
 
     @RequestMapping({"", "/", "/getPromotionCouponCode.json"})
     @ResponseBody
-    public ResponseEntity<?> getPromotionCouponCode(HttpServletRequest request, Long skuId,String couponLink) {
+    public ResponseEntity<?> getPromotionCouponCode(HttpServletRequest request, Long skuId) {
         Map<String, Object> map = new HashMap<String, Object>();
 
         UserInfo userInfo = getUserInfo(request);
@@ -180,14 +185,22 @@ public class ProductController extends BaseController {
             subUnionId = userInfo.getSubUnionId();
         }
 
-        String url = jdSdkManager.getPromotionCouponCode(skuId,couponLink, subUnionId);
-        if(StringUtils.isNotBlank(url)){
+        String couponLink = "";
+        //查询优惠券信息
+        ProductCoupon productCouponQuery = new ProductCoupon();
+        productCouponQuery.setProductId(skuId);
+        ProductCoupon coupon = productCouponDao.findById(productCouponQuery);
+        if (null != coupon) {
+            couponLink = coupon.getCouponLink();
+        }
+        String url = jdSdkManager.getPromotionCouponCode(skuId, couponLink, subUnionId);
+        if (StringUtils.isNotBlank(url)) {
             map.put("success", true);
             map.put("url", url);
-        }else{
+        } else {
             map.put("success", false);
         }
-        LOG.error("jdPromotionShortUrl===============>url:" + url + ",subUnionId:" + subUnionId);
+        LOG.error("getPromotionCouponCode===============>skuId:" + skuId + ",couponLink:" + couponLink + ",url:" + url + ",subUnionId:" + subUnionId);
         return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
     }
 
