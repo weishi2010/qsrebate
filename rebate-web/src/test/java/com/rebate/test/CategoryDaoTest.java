@@ -60,13 +60,13 @@ public class CategoryDaoTest extends AbstractJUnit4SpringContextTests {
 
         String json = null;
         try {
-            json = HttpClientUtil.httpGet(firstUrl);
+            json = HttpClientUtil.getJdUrl(firstUrl);
             List<Map> firstMapList = getCategoryList(json);
             for (Map firstMap : firstMapList) {
-                String secondJson = HttpClientUtil.httpGet(secondUrl + firstMap.get("productSortId").toString());
+                String secondJson = HttpClientUtil.getJdUrl(secondUrl + firstMap.get("productSortId").toString());
                 List<Map> secondMapList = getCategoryList(secondJson);
                 for (Map secondMap : secondMapList) {
-                    String thirdJson = HttpClientUtil.httpGet(thirdUrl + secondMap.get("productSortId").toString());
+                    String thirdJson = HttpClientUtil.getJdUrl(thirdUrl + secondMap.get("productSortId").toString());
                     List<Map> thirdMapList = getCategoryList(thirdJson);
                     for (Map thirdMap : thirdMapList) {
                         String firstCategory = firstMap.get("productSortId").toString();

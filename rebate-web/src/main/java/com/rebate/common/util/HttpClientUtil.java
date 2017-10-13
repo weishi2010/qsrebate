@@ -133,15 +133,47 @@ public class HttpClientUtil {
         return result;
     }
 
-    public static String httpGet(String uri) throws IOException {
+    public static String getJdUrl(String uri,String loginCookie) throws IOException {
         URL url = new URL(uri);
         URLConnection connection = url.openConnection();
         connection.setDoOutput(true);
+        connection.setRequestProperty("referer", "http://media.jd.com");
         connection
                 .setRequestProperty(
                         "Cookie",
-                        "thor=3714D9560E7F32525C81BF1A4F8D6759BCE08EAC79692F8D813E3243C465F4D15487314AC5EBD64C65F07BBEFA498FFBDF5B3F33A353186C1DBB96F2E20D79A51F6FE170D56DAF0C3F177F7B057772684D3E6AE1CE2ACD354CB57FAFCC329F459384B3BC80676D2F7404211F37415EE7BB610F9B6A3AD08D034612879747964FF062967D62120DE71386711F24520003; path=/; domain=.jd.com; HttpOnly");
+                        "thor="+loginCookie+"; path=/; domain=.jd.com; HttpOnly");
+        connection.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; Maxthon;)");
         OutputStreamWriter out = new OutputStreamWriter(connection.getOutputStream(), "gb2312");
+        out.write("DF4A0ED346195BD2A969439ABFA0D1016F257513A205B84A54868E573B84CAC859B77494C24DED7996FD9CABBAE1978EA58E16F2954481B746556E453BE16A2AF9CD3E5E3FCB46EC7BD5D3B9C9A6DB4B01F694EA08FD50BD757CC5FECF70C2903699A5E6D3BAC4D05A8B05601954A720F7ED32DDD0BA2051BD90514C7B233F4C8CEB95238D9C2084BD20FB929C7BEBEF");
+        out.flush();
+        out.close();
+        String sCurrentLine;
+        String sTotalString;
+        sCurrentLine = "";
+        sTotalString = "";
+        InputStream l_urlStream;
+        l_urlStream = connection.getInputStream();
+        BufferedReader l_reader = new BufferedReader(new InputStreamReader(l_urlStream));
+        while ((sCurrentLine = l_reader.readLine()) != null) {
+            sTotalString += sCurrentLine;
+
+        }
+
+        return sTotalString;
+    }
+
+    public static String getJdUrl(String uri) throws IOException {
+        URL url = new URL(uri);
+        URLConnection connection = url.openConnection();
+        connection.setDoOutput(true);
+        connection.setRequestProperty("referer", "http://media.jd.com");
+        connection
+                .setRequestProperty(
+                        "Cookie",
+                        "thor=DF4A0ED346195BD2A969439ABFA0D1016F257513A205B84A54868E573B84CAC859B77494C24DED7996FD9CABBAE1978EA58E16F2954481B746556E453BE16A2AF9CD3E5E3FCB46EC7BD5D3B9C9A6DB4B01F694EA08FD50BD757CC5FECF70C2903699A5E6D3BAC4D05A8B05601954A720F7ED32DDD0BA2051BD90514C7B233F4C8CEB95238D9C2084BD20FB929C7BEBEF; path=/; domain=.jd.com; HttpOnly");
+        connection.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; Maxthon;)");
+        OutputStreamWriter out = new OutputStreamWriter(connection.getOutputStream(), "gb2312");
+        out.write("DF4A0ED346195BD2A969439ABFA0D1016F257513A205B84A54868E573B84CAC859B77494C24DED7996FD9CABBAE1978EA58E16F2954481B746556E453BE16A2AF9CD3E5E3FCB46EC7BD5D3B9C9A6DB4B01F694EA08FD50BD757CC5FECF70C2903699A5E6D3BAC4D05A8B05601954A720F7ED32DDD0BA2051BD90514C7B233F4C8CEB95238D9C2084BD20FB929C7BEBEF");
         out.flush();
         out.close();
         String sCurrentLine;

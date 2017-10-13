@@ -40,14 +40,15 @@ public class GrapTest {
         String url = "https://media.jd.com/gotoadv/goods?pageSize=50&pageIndex=1";
         String content = null;
         try {
-            content = HttpClientUtil.httpGet(url);
+            content = HttpClientUtil.getJdUrl(url);
         } catch (IOException e) {
             e.printStackTrace();
         }
         System.out.println("content:"+content);
     }
     public static void main(String[] args) throws Exception {
-        List<Product> list = JdMediaProductGrapUtil.grabProducts(1, 10);
+//        grabProduct();
+        List<Long> list = JdMediaProductGrapUtil.grabProducts(1, 10);
         System.out.println("list:"+ JsonUtil.toJson(list));
     }
 }

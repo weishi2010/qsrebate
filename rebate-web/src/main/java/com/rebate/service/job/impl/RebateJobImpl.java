@@ -1,6 +1,8 @@
 package com.rebate.service.job.impl;
 
 import com.google.common.base.Joiner;
+import com.rebate.common.util.rebate.JdMediaProductGrapUtil;
+import com.rebate.common.util.rebate.RebateRuleUtil;
 import com.rebate.dao.*;
 import com.rebate.domain.*;
 import com.rebate.domain.en.EExtractStatus;
@@ -148,6 +150,39 @@ public class RebateJobImpl implements RebateJob {
                 rebateDetails = jdSdkManager.getRebateDetails(queryTime, page, pageSize);
             }
         }
+    }
+
+    @Override
+    public void importAllJdMediaProducts() {
+        int page = 1;
+        int pageSize = 50;
+        List<Long> skuList = JdMediaProductGrapUtil.grabProducts(page, pageSize);
+        List<Product> products = jdSdkManager.getMediaProducts(Joiner.on(",").join(skuList));
+        while (products.size() > 0) {
+            LOG.error("[JD联盟全量导入任务]商品导入任务!page:"+page+",size:" + products.size());
+            for (Product product : products) {
+                product.setCouponType(EProudctCouponType.GENERAL.getCode());
+
+                //计算返佣规则确定商品是否返佣
+                if (RebateRuleUtil.isRebate(product.getCommissionWl(), false)) {
+                    product.setIsRebate(EProudctRebateType.REBATE.getCode());
+                } else {
+                    product.setIsRebate(EProudctRebateType.NOT_REBATE.getCode());
+                }
+
+                if (null == productDao.findById(product)) {
+                    productDao.insert(product);
+                } else {
+
+                    //存在则更新
+                    productDao.update(product);
+                }
+            }
+            page++;
+            skuList = JdMediaProductGrapUtil.grabProducts(page, pageSize);
+            products = jdSdkManager.getMediaProducts(Joiner.on(",").join(skuList));
+        }
+
     }
 
     @Override

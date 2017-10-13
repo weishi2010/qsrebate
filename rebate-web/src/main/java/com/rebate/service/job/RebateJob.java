@@ -7,6 +7,11 @@ public interface RebateJob {
     void importMediaOrder();
 
     /**
+     * 导入所有联盟商品
+     */
+    void importAllJdMediaProducts();
+
+    /**
      * 导入爆款商品
      */
     void importMediaThemeProducts();

@@ -30,13 +30,13 @@ public class JdMediaProductGrapUtil {
     private final static String ORIGINAL_PRICE_XPATH = "div[1]/div[2]/div[1]/span[1]/span";
 
 
-    public static List<Product> grabProducts(int page, int pageSize) {
+    public static List<Long> grabProducts(int page, int pageSize) {
         String url = JD_MEDIA_URL + "?pageSize=" + pageSize + "&pageIndex=" + page;
         HtmlCleaner cleaner = new HtmlCleaner();
-        List<Product> list = new ArrayList<Product>();
+        List<Long> list = new ArrayList<Long>();
         try {
 
-            TagNode rootNode = cleaner.clean(HttpClientUtil.httpGet(url));
+            TagNode rootNode = cleaner.clean(HttpClientUtil.getJdUrl(url));
             CleanerProperties props = new CleanerProperties();
             org.w3c.dom.Document doc = new DomSerializer(props)
                     .createDOM(rootNode);
@@ -44,34 +44,34 @@ public class JdMediaProductGrapUtil {
             Element rootElement = dom4j.getRootElement();
             List<Element> elements = GrabUtils.evaluatesXPath2(rootElement, PRODUCT_ROOT_XPATH);
             for (Element element : elements) {
-                Product product = new Product();
+//                Product product = new Product();
                 //商品编号
                 Attribute attr = element.attribute("skuid");
                 Long skuId = Long.parseLong(attr.getValue());
-                product.setProductId(skuId);
-                //商品名称
-                String productName = GrabUtils.getValueByEvaluateXPath2(element, PRDUCT_NAME_XPATH);
-                product.setName(productName);
-
-                //商品图片
-                List<Element> imgElements = GrabUtils.evaluatesXPath2(element, PRDUCT_IMG_XPATH);
-                product.setImgUrl(imgElements.get(0).attribute("src").getValue());
+//                product.setProductId(skuId);
+//                //商品名称
+//                String productName = GrabUtils.getValueByEvaluateXPath2(element, PRDUCT_NAME_XPATH);
+//                product.setName(productName);
+//
+//                //商品图片
+//                List<Element> imgElements = GrabUtils.evaluatesXPath2(element, PRDUCT_IMG_XPATH);
+//                product.setImgUrl(imgElements.get(0).attribute("src").getValue());
 
 //                //佣金比例
 //                String commissionRate = GrabUtils.getValueByEvaluateXPath2(element, COMMISSION_RATE_XPATH);
 //                product.setCommissionRatio(Double.parseDouble(commissionRate.replace("%", "")) / 100);
 //                product.setCommissionRatio(new BigDecimal(product.getCommissionRatio()).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
 //                //原价
-//                String originalPrice = GrabUtils.getValueByEvaluateXPath2(element, ORIGINAL_PRICE_XPATH);
+                String originalPrice = GrabUtils.getValueByEvaluateXPath2(element, ORIGINAL_PRICE_XPATH);
 //                product.setOriginalPrice(Double.parseDouble(originalPrice.replace("￥", "").replace(",", "")));
 //                //佣金
 //                product.setCommission(product.getOriginalPrice() * product.getCommissionRatio());
 //                product.setCommission(new BigDecimal(product.getCommission()).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
 
-                list.add(product);
+                list.add(skuId);
             }
         } catch (Exception e) {
-            LOG.error("grabProducts error");
+            LOG.error("grabProducts error",e);
         }
         return list;
     }
@@ -80,7 +80,7 @@ public class JdMediaProductGrapUtil {
         HtmlCleaner cleaner = new HtmlCleaner();
         try {
             String url = "http://item.jd.com/" + product.getProductId() + ".html#";
-            TagNode rootNode = cleaner.clean(HttpClientUtil.httpGet(url));
+            TagNode rootNode = cleaner.clean(HttpClientUtil.getJdUrl(url));
             CleanerProperties props = new CleanerProperties();
             org.w3c.dom.Document doc = new DomSerializer(props)
                     .createDOM(rootNode);

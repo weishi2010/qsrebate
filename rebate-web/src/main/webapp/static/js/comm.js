@@ -19,7 +19,6 @@ function reset_font() {
 
 $(function () {
 
-
     $('.radio').on('click', function () {
         if ($(this).hasClass('radio-single')) {
             $('.radio-single').removeClass('chk');
@@ -82,6 +81,9 @@ $(function () {
         $(this).addClass('active').siblings().removeClass('active');
     });
 
+    $('.item').on('click', function () {
+        console.log(2);
+    });
 });
 
 

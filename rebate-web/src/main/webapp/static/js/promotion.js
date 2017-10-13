@@ -3,6 +3,10 @@ $(function () {
     navScroll();
 
 
+    $('.item').on('click', function () {
+        console.log(3);
+    });
+
     //初始化
     var counter = 1;
 
@@ -190,11 +194,14 @@ function searchProducts() {
 }
 
 function getTemplate(product, tab) {
-    var htmlTemp = "<div class=\"item mui-flex\">" +
-        "        <div class=\"g-img cell fixed\">";
+    var htmlTemp = "";
     if(product.couponType==2 && product.productCoupon){
+        htmlTemp += "<div class=\"item mui-flex\" productId='"+product.productId+"' couponLink='"+product.productCoupon.couponLink+"'>" +
+            "        <div class=\"g-img cell fixed\">";
         htmlTemp += "  <a href=\"javascript:void(0);\" onclick=\"redirectJdPromotionCouponUrl(" + product.productId + ",'"+product.productCoupon.couponLink+"')\" ><img class=\"g-img\" src=\"" + product.imgUrl + "\" alt=\"" + product.name + "\" width='90' height='90'></a>" ;
     }else{
+        htmlTemp += "<div class=\"item mui-flex\" productId='"+product.productId+"'>" +
+            "        <div class=\"g-img cell fixed\">";
        htmlTemp += "  <a href=\"javascript:void(0);\" onclick=\"redirectJdPromotionUrl(" + product.productId + ")\" ><img class=\"g-img\" src=\"" + product.imgUrl + "\" alt=\"" + product.name + "\" width='90' height='90'></a>" ;
     }
     htmlTemp += " </div> " +
