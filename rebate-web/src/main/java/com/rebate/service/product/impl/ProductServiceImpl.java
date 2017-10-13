@@ -131,7 +131,7 @@ public class ProductServiceImpl implements ProductService {
                 productCoupon.setOriginalPrice(product.getOriginalPrice());
                 productCoupon.setOriginalPrice(new BigDecimal(product.getOriginalPrice()).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
 
-                productCoupon.setCouponPrice(product.getOriginalPrice()-couponInfo.getQuota());
+                productCoupon.setCouponPrice(product.getOriginalPrice()-productCoupon.getQuota());
                 productCoupon.setCouponPrice(new BigDecimal(productCoupon.getCouponPrice()).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
 
 
