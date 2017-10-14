@@ -22,6 +22,11 @@ public class ProductDaoImpl extends BaseDao implements ProductDao {
     }
 
     @Override
+    public void deleteByProductId(Long skuId) {
+        delete("Product.deleteByProductId",skuId);
+    }
+
+    @Override
     public Product findById(Product product) {
         return (Product)queryForObject("Product.findById",product);
     }

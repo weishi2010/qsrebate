@@ -10,6 +10,7 @@ import com.rebate.domain.en.EProudctCouponType;
 import com.rebate.domain.en.EProudctRebateType;
 import com.rebate.domain.en.ERebateDetailStatus;
 import com.rebate.domain.query.ExtractDetailQuery;
+import com.rebate.domain.query.ProductQuery;
 import com.rebate.domain.query.RebateDetailQuery;
 import com.rebate.manager.jd.JdSdkManager;
 import com.rebate.service.job.RebateJob;
@@ -60,6 +61,48 @@ public class RebateJobImpl implements RebateJob {
     private ProductCouponDao productCouponDao;
 
     @Override
+    public void cleanExpireProduct() {
+        int page = 1;
+        int pageSize = 100;
+        ProductQuery productQuery = new ProductQuery();
+        productQuery.setIndex(page);
+        productQuery.setPageSize(pageSize);
+
+        List<Product> products = productDao.findProducts(productQuery);
+
+        while (products.size() > 0) {
+            LOG.error("[过期商品清理]加载第" + page + "页{}条记录！", products.size());
+
+            for (Product product : products) {
+                //查询优惠券信息
+                ProductCoupon productCouponQuery = new ProductCoupon();
+                productCouponQuery.setProductId(product.getProductId());
+                ProductCoupon productCoupon = productCouponDao.findById(productCouponQuery);
+
+                if (null != productCoupon) {
+                    //清理掉没有优惠券转链接的信息
+                    String coupontPromotionLink = jdSdkManager.getPromotionCouponCode(productCoupon.getProductId(), productCoupon.getCouponLink(), "");
+                    if (StringUtils.isBlank(coupontPromotionLink)) {
+                        LOG.error("[过期商品清理]删除没有优惠券活动链接的商品,productId;{}", productCoupon.getProductId());
+                        productDao.deleteByProductId(productCoupon.getProductId());
+                        productCouponDao.deleteByProductId(productCoupon.getProductId());
+                    }
+                }
+
+                Date now = new Date();
+                if (product.getEndDate().before(now)) {
+                    //清理掉活动过期的商品信息
+                    productDao.deleteByProductId(product.getProductId());
+                    productCouponDao.deleteByProductId(product.getProductId());
+                }
+            }
+
+            page++;
+            products = productDao.findProducts(productQuery);
+        }
+    }
+
+    @Override
     public void importMediaOrder() {
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
 
@@ -74,7 +117,7 @@ public class RebateJobImpl implements RebateJob {
 
             List<RebateDetail> rebateDetails = jdSdkManager.getRebateDetails(queryTime, page, pageSize);
             while (rebateDetails.size() > 0) {
-                LOG.error("[联盟订单导入任务]加载["+queryTime+"]第"+page+"页{}条订单明细记录！", rebateDetails.size());
+                LOG.error("[联盟订单导入任务]加载[" + queryTime + "]第" + page + "页{}条订单明细记录！", rebateDetails.size());
                 for (RebateDetail rebateDetail : rebateDetails) {
                     RebateDetailQuery rebateDetailQuery = new RebateDetailQuery();
                     rebateDetailQuery.setOrderId(rebateDetail.getOrderId());
@@ -159,7 +202,7 @@ public class RebateJobImpl implements RebateJob {
         List<Long> skuList = JdMediaProductGrapUtil.grabProducts(page, pageSize);
         List<Product> products = jdSdkManager.getMediaProducts(Joiner.on(",").join(skuList));
         while (products.size() > 0) {
-            LOG.error("[JD联盟全量导入任务]商品导入任务!page:"+page+",size:" + products.size());
+            LOG.error("[JD联盟全量导入任务]商品导入任务!page:" + page + ",size:" + products.size());
             for (Product product : products) {
                 product.setCouponType(EProudctCouponType.GENERAL.getCode());
 
@@ -191,7 +234,7 @@ public class RebateJobImpl implements RebateJob {
         int pageSize = 1000;
         List<Product> products = jdSdkManager.getMediaThemeProducts(page, pageSize);
         while (products.size() > 0) {
-            LOG.error("[importMediaThemeProducts]商品导入任务!page:"+page+",size:" + products.size());
+            LOG.error("[importMediaThemeProducts]商品导入任务!page:" + page + ",size:" + products.size());
             for (Product product : products) {
                 if (null == productDao.findById(product)) {
                     productDao.insert(product);

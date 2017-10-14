@@ -15,8 +15,15 @@ public interface RebateJob {
      * 导入爆款商品
      */
     void importMediaThemeProducts();
+
     /**
      * 导入优惠券商品
      */
     void importCouponProducts();
+
+
+    /**
+     * 清理过期商品及优惠券信息
+     */
+    void cleanExpireProduct();
 }

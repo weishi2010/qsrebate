@@ -445,6 +445,7 @@ public class JdSdkManagerImpl implements JdSdkManager {
 
         } catch (Exception e) {
             LOG.error("[获取推广链接]调用异常!skuIds:{},subUnionId:{},couponUrl:"+couponUrl, skuIds, subUnionId);
+            throw new RuntimeException("[获取推广链接]调用异常!");
         }
         return json;
     }

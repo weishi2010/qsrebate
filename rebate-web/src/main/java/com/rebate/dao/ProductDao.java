@@ -21,6 +21,13 @@ public interface ProductDao {
      */
     void update(Product product);
 
+
+    /**
+     * 删除
+     * @param skuId
+     */
+    void deleteByProductId(Long skuId);
+
     /**
      * 根据id查询商品
      * @param product

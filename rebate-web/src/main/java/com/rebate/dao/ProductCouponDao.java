@@ -16,6 +16,12 @@ public interface ProductCouponDao {
     void update(ProductCoupon productCoupon);
 
     /**
+     * 删除
+     * @param skuId
+     */
+    void deleteByProductId(Long skuId);
+
+    /**
      * 根据id查询商品优惠券信息
      * @param productCoupon
      * @return

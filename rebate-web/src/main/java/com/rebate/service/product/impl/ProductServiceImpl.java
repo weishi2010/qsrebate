@@ -97,6 +97,13 @@ public class ProductServiceImpl implements ProductService {
         List<Product> list = jdSdkManager.getMediaProducts(Joiner.on(",").join(skuList));
         LOG.error("list:"+JsonUtil.toJson(list));
         for (Product product : list) {
+            //获取导入的优惠券信息
+            ProductCoupon couponInfo = (ProductCoupon) couponInfoMap.get(product.getProductId());
+
+            if (null != couponInfo.getSortWeight()) {
+                //获取传入的权重
+                product.setSortWeight(couponInfo.getSortWeight());
+            }
             product.setCouponType(EProudctCouponType.COUPON.getCode());
             //计算优惠券商品返利规则
             product.setIsRebate(RebateRuleUtil.couponProductRebateRule(product.getCommissionWl()));
@@ -110,8 +117,7 @@ public class ProductServiceImpl implements ProductService {
 
             //商品优惠券信息解析入库
             ProductCoupon productCoupon = productToCoupon(product);
-            //获取导入的优惠券信息
-            ProductCoupon couponInfo = (ProductCoupon) couponInfoMap.get(product.getProductId());
+
             if (null != couponInfo) {
 
 

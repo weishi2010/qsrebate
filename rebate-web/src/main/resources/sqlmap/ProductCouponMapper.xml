@@ -133,4 +133,8 @@
         limit 1
     </select>
 
+    <delete id="deleteByProductId" parameterClass="long">
+        delete from product_coupon where product_id=#product_id#
+    </delete>
+
 </sqlMap>

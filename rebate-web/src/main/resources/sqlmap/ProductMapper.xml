@@ -201,6 +201,11 @@
         </dynamic>
         where product_id=#productId#
     </update>
+
+    <delete id="deleteByProductId" parameterClass="long">
+        delete from product where product_id=#product_id#
+    </delete>
+
     <select id="findById" parameterClass="Product" resultMap="ProductResultMap">
         select
         <include refid="fields"/>

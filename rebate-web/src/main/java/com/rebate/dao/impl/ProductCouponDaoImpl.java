@@ -16,6 +16,11 @@ public class ProductCouponDaoImpl extends BaseDao implements ProductCouponDao {
     }
 
     @Override
+    public void deleteByProductId(Long skuId) {
+        delete("ProductCoupon.deleteByProductId",skuId);
+    }
+
+    @Override
     public ProductCoupon findById(ProductCoupon productCoupon) {
         return (ProductCoupon)queryForObject("ProductCoupon.findById",productCoupon);
     }
