@@ -120,9 +120,9 @@ public class ProductServiceImpl implements ProductService {
                     productCoupon.setDiscount(couponInfo.getDiscount());
                     productCoupon.setQuota(couponInfo.getQuota());
                 } else if (null != couponInfo.getOriginalPrice() && null != couponInfo.getCouponPrice()) {
-                    productCoupon.setDiscount(0.0);//没有面额值，填0
-                    productCoupon.setQuota(couponInfo.getOriginalPrice() - couponInfo.getCouponPrice());//原价减券后价来计算面额
-                    productCoupon.setQuota(new BigDecimal(productCoupon.getQuota()).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
+                    productCoupon.setQuota(0.0);//没有面额值，填0
+                    productCoupon.setDiscount(couponInfo.getOriginalPrice() - couponInfo.getCouponPrice());//原价减券后价来计算面额
+                    productCoupon.setDiscount(new BigDecimal(productCoupon.getDiscount()).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
                 }
 
                 productCoupon.setStartDate(couponInfo.getStartDate());
@@ -131,7 +131,7 @@ public class ProductServiceImpl implements ProductService {
                 productCoupon.setOriginalPrice(product.getOriginalPrice());
                 productCoupon.setOriginalPrice(new BigDecimal(product.getOriginalPrice()).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
 
-                productCoupon.setCouponPrice(product.getOriginalPrice()-productCoupon.getQuota());
+                productCoupon.setCouponPrice(product.getOriginalPrice()-productCoupon.getDiscount());
                 productCoupon.setCouponPrice(new BigDecimal(productCoupon.getCouponPrice()).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
 
 
