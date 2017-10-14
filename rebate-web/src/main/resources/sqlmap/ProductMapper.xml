@@ -227,7 +227,7 @@
         <include refid="fields"/>
         from product
         <include refid="condition"></include>
-        order by sort_weight desc
+        order by sort_weight desc,created desc
         limit #startRow#,#pageSize#
     </select>
 </sqlMap>
