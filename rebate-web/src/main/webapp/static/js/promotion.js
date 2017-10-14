@@ -215,7 +215,7 @@ function getTemplate(product, tab) {
         htmlTemp +=   " <div class=\"meta\">" +
         "                <span class=\"old-price\">原价：" + product.originalPrice + "</span>";
         if(product.productCoupon){
-            htmlTemp += " <span class=\"new-price\">优惠券："+product.productCoupon.quota+"</span>";
+            htmlTemp += " <span class=\"new-price\">优惠券："+product.productCoupon.discount+"</span>";
         }
             htmlTemp +="  </div>";
 
@@ -243,7 +243,7 @@ function getTemplate(product, tab) {
             "            htmlTemp +=      <a href=\"javascript:void(0);\" onclick=\"redirectJdPromotionUrl(" + product.productId + ")\" class=\"buy\">";
         }
 
-        if(product.productCoupon && (product.originalPrice-product.productCoupon.quota)>0){
+        if(product.productCoupon && (product.originalPrice-product.productCoupon.discount)>0){
                 htmlTemp +="                    券后￥" +product.productCoupon.couponPrice;
             }
         htmlTemp +=
