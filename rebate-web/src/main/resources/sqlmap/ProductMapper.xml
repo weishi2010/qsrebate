@@ -202,6 +202,15 @@
             <isNotNull property="commissionRatioWl" prepend=",">
                 commission_ratio_wl=#commissionRatioWl#
             </isNotNull>
+            <isNotNull property="firstCategory" prepend=",">
+                first_category=#firstCategory#
+            </isNotNull>
+            <isNotNull property="secondCategory" prepend=",">
+                second_category=#secondCategory#
+            </isNotNull>
+            <isNotNull property="thirdCategory" prepend=",">
+                third_category=#thirdCategory#
+            </isNotNull>
         </dynamic>
         where product_id=#productId#
     </update>
