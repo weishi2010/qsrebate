@@ -17,9 +17,9 @@
             </div>
             <div class="box-bd">
                 <div class="form-item mui-flex align-center">
-                    <label class="labell cell fixed">微信号：</label>
+                    <label class="labell cell fixed">微信(昵称)：</label>
                     <div class="cnt cell">
-                        <input class="ipt" type="text" value="$!{userInfo.openId}" style="background-color: #ffffff;"
+                        <input class="ipt" type="text" value="$!{userInfo.nickName}" style="background-color: #ffffff;"
                                disabled/>
                     </div>
                 </div>

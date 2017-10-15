@@ -1,5 +1,6 @@
 package com.rebate.manager.jd;
 
+import com.jd.open.api.sdk.domain.mall.ProductWrapService.ProductBase;
 import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.domain.Product;
 import com.rebate.domain.ProductCoupon;
@@ -26,6 +27,22 @@ public interface JdSdkManager {
      * @return
      */
     Product getMediaProduct(Long skuId);
+
+    /**
+     * 获取商品信息
+     *
+     * @param skuIds
+     * @return
+     */
+    List<ProductBase> getProductBaseInfos(String skuIds);
+
+    /**
+     * 获取商品信息
+     *
+     * @param skuId
+     * @return
+     */
+    ProductBase getProductBaseInfo(Long skuId);
 
     PaginatedArrayList<ProductCoupon> getMediaCoupons(int page, int pageSize);
 
@@ -58,6 +75,7 @@ public interface JdSdkManager {
 
     /**
      * 获取优惠券二转一链接
+     *
      * @param skuId
      * @param couponUrl
      * @param subUnionId
@@ -76,6 +94,7 @@ public interface JdSdkManager {
 
     /**
      * 查询返佣明细
+     *
      * @param queryTime
      * @param page
      * @param pageSize

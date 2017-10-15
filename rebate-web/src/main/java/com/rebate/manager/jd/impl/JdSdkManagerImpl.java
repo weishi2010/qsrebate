@@ -2,8 +2,11 @@ package com.rebate.manager.jd.impl;
 
 import com.jd.open.api.sdk.DefaultJdClient;
 import com.jd.open.api.sdk.JdClient;
+import com.jd.open.api.sdk.domain.mall.ProductWrapService.ProductBase;
 import com.jd.open.api.sdk.request.cps.*;
+import com.jd.open.api.sdk.request.mall.NewWareBaseproductGetRequest;
 import com.jd.open.api.sdk.response.cps.*;
+import com.jd.open.api.sdk.response.mall.NewWareBaseproductGetResponse;
 import com.rebate.common.util.JsonUtil;
 import com.rebate.common.util.rebate.CouponUtil;
 import com.rebate.common.util.rebate.JdMediaProductGrapUtil;
@@ -48,7 +51,7 @@ public class JdSdkManagerImpl implements JdSdkManager {
     public Product getMediaProduct(Long skuId) {
         Product product = null;
         List<Product> list = getMediaProducts(skuId.toString());
-        if(null!= list && list.size()>0){
+        if (null != list && list.size() > 0) {
             product = list.get(0);
         }
         return product;
@@ -101,7 +104,14 @@ public class JdSdkManagerImpl implements JdSdkManager {
                     product.setThirdCategory(3);
 
                     //抓取商品分类
-                    product = JdMediaProductGrapUtil.grapCategory(product);
+//                    product = JdMediaProductGrapUtil.grapCategory(product);
+                    ProductBase productBase = getProductBaseInfo(product.getProductId());
+                    if(null!=productBase){
+                        String [] categoryArray = productBase.getCategory().split(";");
+                        product.setFirstCategory(Integer.parseInt(categoryArray[0]));
+                        product.setSecondCategory(Integer.parseInt(categoryArray[1]));
+                        product.setThirdCategory(Integer.parseInt(categoryArray[2]));
+                    }
                     list.add(product);
                 }
             }
@@ -192,7 +202,14 @@ public class JdSdkManagerImpl implements JdSdkManager {
                     product.setThirdCategory(3);
 
                     //抓取商品分类
-                    product = JdMediaProductGrapUtil.grapCategory(product);
+//                    product = JdMediaProductGrapUtil.grapCategory(product);
+                    ProductBase productBase = getProductBaseInfo(product.getProductId());
+                    if(null!=productBase){
+                        String [] categoryArray = productBase.getCategory().split(";");
+                        product.setFirstCategory(Integer.parseInt(categoryArray[0]));
+                        product.setSecondCategory(Integer.parseInt(categoryArray[1]));
+                        product.setThirdCategory(Integer.parseInt(categoryArray[2]));
+                    }
                     list.add(product);
                 }
             }
@@ -263,7 +280,15 @@ public class JdSdkManagerImpl implements JdSdkManager {
                     product.setThirdCategory(3);
 
                     //抓取商品分类
-                    product = JdMediaProductGrapUtil.grapCategory(product);
+//                    product = JdMediaProductGrapUtil.grapCategory(product);
+                    ProductBase productBase = getProductBaseInfo(product.getProductId());
+                    if(null!=productBase){
+                        String [] categoryArray = productBase.getCategory().split(";");
+                        product.setFirstCategory(Integer.parseInt(categoryArray[0]));
+                        product.setSecondCategory(Integer.parseInt(categoryArray[1]));
+                        product.setThirdCategory(Integer.parseInt(categoryArray[2]));
+                    }
+
                     list.add(product);
                 }
             }
@@ -371,13 +396,43 @@ public class JdSdkManagerImpl implements JdSdkManager {
     @Override
     public String getPromotionCouponCode(Long skuId, String couponUrl, String subUnionId) {
         String url = "";
-        String json = getServicePromotionCouponCode(skuId.toString(),couponUrl, subUnionId);
+        String json = getServicePromotionCouponCode(skuId.toString(), couponUrl, subUnionId);
         JSONObject resultObj = JsonUtil.fromJson(json, JSONObject.class);
         if (null != resultObj && 0 == Integer.parseInt(resultObj.getString("resultCode"))) {
             JSONObject urlListObj = (JSONObject) resultObj.get("urlList");
-            url = urlListObj.getString(couponUrl.trim()+","+skuId);
+            url = urlListObj.getString(couponUrl.trim() + "," + skuId);
         }
         return url;
+    }
+
+    @Override
+    public ProductBase getProductBaseInfo(Long skuId) {
+        ProductBase productBase = null;
+        List<ProductBase> list = getProductBaseInfos(skuId.toString());
+        if (null != list && list.size() > 0) {
+            productBase = list.get(0);
+        }
+        return productBase;
+    }
+
+    @Override
+    public List<ProductBase> getProductBaseInfos(String skuIds) {
+        List<ProductBase> list = new ArrayList<>();
+        try {
+            JdClient client = new DefaultJdClient(jdConfig.getApiUrl(), jdConfig.getAccessToken(), jdConfig.getAppKey(), jdConfig.getAppSecret());
+
+            NewWareBaseproductGetRequest request = new NewWareBaseproductGetRequest();
+
+            request.setIds(skuIds);
+            request.setBasefields("category");
+
+            NewWareBaseproductGetResponse response = client.execute(request);
+            list = response.getListproductbaseResult();
+
+        } catch (Exception e) {
+            LOG.error("[获取商品信息]调用异常!skuIds:{}", skuIds);
+        }
+        return list;
     }
 
     /**
@@ -456,7 +511,7 @@ public class JdSdkManagerImpl implements JdSdkManager {
             json = response.getGetcodebysubunionidResult();
 
         } catch (Exception e) {
-            LOG.error("[获取推广链接]调用异常!skuIds:{},subUnionId:{},couponUrl:"+couponUrl, skuIds, subUnionId);
+            LOG.error("[获取推广链接]调用异常!skuIds:{},subUnionId:{},couponUrl:" + couponUrl, skuIds, subUnionId);
             throw new RuntimeException("[获取推广链接]调用异常!");
         }
         return json;
