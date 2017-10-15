@@ -1,5 +1,6 @@
 package com.rebate.manager.jd.impl;
 
+import com.google.common.base.Joiner;
 import com.jd.open.api.sdk.DefaultJdClient;
 import com.jd.open.api.sdk.JdClient;
 import com.jd.open.api.sdk.domain.mall.ProductWrapService.ProductBase;
@@ -103,17 +104,26 @@ public class JdSdkManagerImpl implements JdSdkManager {
                     product.setSecondCategory(2);
                     product.setThirdCategory(3);
 
-                    //抓取商品分类
-//                    product = JdMediaProductGrapUtil.grapCategory(product);
-                    ProductBase productBase = getProductBaseInfo(product.getProductId());
-                    if(null!=productBase){
-                        String [] categoryArray = productBase.getCategory().split(";");
+                    list.add(product);
+                }
+
+                //获取商品基础信息
+                List<ProductBase> mediaProductBaseInfos = getProductBaseInfos(skuIds);
+                Map productMap = new HashMap();
+                for (ProductBase productBase : mediaProductBaseInfos) {
+                    productMap.put(productBase.getSkuId(), productBase);
+                }
+                //设置分类信息
+                for (Product product : list) {
+                    ProductBase productBase = (ProductBase) productMap.get(product.getProductId());
+                    if (null != productBase) {
+                        String[] categoryArray = productBase.getCategory().split(";");
                         product.setFirstCategory(Integer.parseInt(categoryArray[0]));
                         product.setSecondCategory(Integer.parseInt(categoryArray[1]));
                         product.setThirdCategory(Integer.parseInt(categoryArray[2]));
                     }
-                    list.add(product);
                 }
+
             }
         }
         return list;
@@ -201,16 +211,29 @@ public class JdSdkManagerImpl implements JdSdkManager {
                     product.setSecondCategory(2);
                     product.setThirdCategory(3);
 
-                    //抓取商品分类
-//                    product = JdMediaProductGrapUtil.grapCategory(product);
-                    ProductBase productBase = getProductBaseInfo(product.getProductId());
-                    if(null!=productBase){
-                        String [] categoryArray = productBase.getCategory().split(";");
+                    list.add(product);
+                }
+                //获取sku列表
+                List<Long> skuIdList = new ArrayList<>();
+                for (Product product:list){
+                    skuIdList.add(product.getProductId());
+                }
+
+                //获取商品基础信息
+                List<ProductBase> mediaProductBaseInfos = getProductBaseInfos(Joiner.on(",").join(skuIdList));
+                Map productMap = new HashMap();
+                for (ProductBase productBase : mediaProductBaseInfos) {
+                    productMap.put(productBase.getSkuId(), productBase);
+                }
+                //设置分类信息
+                for (Product product : list) {
+                    ProductBase productBase = (ProductBase) productMap.get(product.getProductId());
+                    if (null != productBase) {
+                        String[] categoryArray = productBase.getCategory().split(";");
                         product.setFirstCategory(Integer.parseInt(categoryArray[0]));
                         product.setSecondCategory(Integer.parseInt(categoryArray[1]));
                         product.setThirdCategory(Integer.parseInt(categoryArray[2]));
                     }
-                    list.add(product);
                 }
             }
         }
@@ -279,17 +302,30 @@ public class JdSdkManagerImpl implements JdSdkManager {
                     product.setSecondCategory(2);
                     product.setThirdCategory(3);
 
-                    //抓取商品分类
-//                    product = JdMediaProductGrapUtil.grapCategory(product);
-                    ProductBase productBase = getProductBaseInfo(product.getProductId());
-                    if(null!=productBase){
-                        String [] categoryArray = productBase.getCategory().split(";");
+                    list.add(product);
+                }
+
+                //获取sku列表
+                List<Long> skuIdList = new ArrayList<>();
+                for (Product product:list){
+                    skuIdList.add(product.getProductId());
+                }
+
+                //获取商品基础信息
+                List<ProductBase> mediaProductBaseInfos = getProductBaseInfos(Joiner.on(",").join(skuIdList));
+                Map productMap = new HashMap();
+                for (ProductBase productBase : mediaProductBaseInfos) {
+                    productMap.put(productBase.getSkuId(), productBase);
+                }
+                //设置分类信息
+                for (Product product : list) {
+                    ProductBase productBase = (ProductBase) productMap.get(product.getProductId());
+                    if (null != productBase) {
+                        String[] categoryArray = productBase.getCategory().split(";");
                         product.setFirstCategory(Integer.parseInt(categoryArray[0]));
                         product.setSecondCategory(Integer.parseInt(categoryArray[1]));
                         product.setThirdCategory(Integer.parseInt(categoryArray[2]));
                     }
-
-                    list.add(product);
                 }
             }
         }

@@ -10,10 +10,7 @@ import com.rebate.dao.ProductDao;
 import com.rebate.domain.Product;
 import com.rebate.domain.ProductCoupon;
 import com.rebate.domain.RecommendCategory;
-import com.rebate.domain.en.EProductFreePost;
-import com.rebate.domain.en.EProductSource;
-import com.rebate.domain.en.EProudctCouponType;
-import com.rebate.domain.en.EProudctRebateType;
+import com.rebate.domain.en.*;
 import com.rebate.domain.query.ProductQuery;
 import com.rebate.domain.vo.ProductVo;
 import com.rebate.manager.jd.JdSdkManager;
@@ -114,6 +111,7 @@ public class ProductServiceImpl implements ProductService {
             }
 
 
+            product.setStatus(EProductStatus.PASS.getCode());
             product.setCouponType(EProudctCouponType.COUPON.getCode());
             //计算优惠券商品返利规则
             product.setIsRebate(RebateRuleUtil.couponProductRebateRule(product.getCommissionWl()));

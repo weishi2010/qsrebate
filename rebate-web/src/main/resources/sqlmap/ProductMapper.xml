@@ -100,6 +100,9 @@
             <isNotNull property="couponType" prepend="and">
                 coupon_type=#couponType#
             </isNotNull>
+            <isNotNull property="status" prepend="and">
+                status=#status#
+            </isNotNull>
             <isNotNull property="name" prepend="and">
                 name like '%$name$%'
             </isNotNull>
@@ -187,6 +190,9 @@
         update product
         set  modified=now()
         <dynamic>
+            <isNotNull property="status" prepend=",">
+                status = #status#
+            </isNotNull>
             <isNotNull property="originalPrice" prepend=",">
                 original_price = #originalPrice#
             </isNotNull>

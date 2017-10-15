@@ -64,6 +64,7 @@ public class RebateJobImpl implements RebateJob {
         ProductQuery productQuery = new ProductQuery();
         productQuery.setStartRow((page-1)*pageSize);
         productQuery.setPageSize(pageSize);
+        productQuery.setStatus(EProductStatus.PASS.getCode());
 
         List<Product> products = productDao.findProducts(productQuery);
 
