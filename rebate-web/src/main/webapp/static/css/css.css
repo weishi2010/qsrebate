@@ -1256,10 +1256,10 @@ img {
 }
 .g-list .item .cnt .meta{
     overflow: hidden;
-    margin: .25rem 0;
+    margin: 15px 0px 15px 0px;
 }
 .g-list .item .cnt .meta .old-price{
-    float: right;
+    float: left;
     font-size: .26rem;
     color: #959186;
     width: 50%;
@@ -1276,6 +1276,15 @@ img {
     width: 50%;
 }
 .g-list .item .cnt .easy{}
+.g-list .item .cnt .coupon_price{
+    font-size:18px;
+    color: #ff4444;
+}
+.g-list .item .cnt .old_price{
+    color:#959186;
+    font-size:15px;
+    margin-left:8px
+}
 .g-list .item .cnt .easy .buy{
     width: 50%;
     float: left;
@@ -1309,6 +1318,28 @@ img {
     height: .48rem;
     margin-right: .1rem;
 }
+
+.g-list .item .cnt .meta .baoyou {
+    float: left;
+    font-size: .20rem;
+    color: #f4873f;
+    /* width: 50%; */
+    padding: 0px 3px 0px 3px;
+    border: 1px solid #f4873f;
+    margin: 0px 3px 0px 3px;
+}
+
+
+.g-list .item .cnt .meta .quan {
+    float: left;
+    font-size: .20rem;
+    color: #f4873f;
+    /* width: 50%; */
+    padding: 0px 3px 0px 3px;
+    border: 1px solid #f4873f;
+    margin: 0px 3px 0px 3px;
+}
+
 /*list page e*/
 /*index page s*/
 .index-alert {

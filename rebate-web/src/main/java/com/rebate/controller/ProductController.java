@@ -81,7 +81,7 @@ public class ProductController extends BaseController {
      */
     @RequestMapping({"", "/", "/seckill"})
     public ModelAndView promotion(HttpServletRequest request, Integer tab) {
-        String vm = "/product/couponProductList";
+        String vm = "/product/secSkillProductList";
 
         ModelAndView view = new ModelAndView(VIEW_PREFIX + vm);
 
