@@ -121,6 +121,9 @@
             <isNotNull property="couponLink" prepend=",">
                 coupon_link = #couponLink#
             </isNotNull>
+            <isNotNull property="status" prepend=",">
+                status=#status#
+            </isNotNull>
         </dynamic>
         where product_id=#productId#
     </update>

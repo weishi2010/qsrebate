@@ -5,10 +5,7 @@ import com.rebate.common.util.rebate.JdMediaProductGrapUtil;
 import com.rebate.common.util.rebate.RebateRuleUtil;
 import com.rebate.dao.*;
 import com.rebate.domain.*;
-import com.rebate.domain.en.EExtractStatus;
-import com.rebate.domain.en.EProudctCouponType;
-import com.rebate.domain.en.EProudctRebateType;
-import com.rebate.domain.en.ERebateDetailStatus;
+import com.rebate.domain.en.*;
 import com.rebate.domain.query.ExtractDetailQuery;
 import com.rebate.domain.query.ProductQuery;
 import com.rebate.domain.query.RebateDetailQuery;
@@ -84,16 +81,30 @@ public class RebateJobImpl implements RebateJob {
                     String coupontPromotionLink = jdSdkManager.getPromotionCouponCode(productCoupon.getProductId(), productCoupon.getCouponLink(), "");
                     if (StringUtils.isBlank(coupontPromotionLink)) {
                         LOG.error("[商品更新任务]删除没有优惠券活动链接的商品,productId;{}", productCoupon.getProductId());
-                        productDao.deleteByProductId(productCoupon.getProductId());
-                        productCouponDao.deleteByProductId(productCoupon.getProductId());
+                        Product productUpdate = new Product();
+                        productUpdate.setProductId(productCoupon.getProductId());
+                        productUpdate.setStatus(EProductStatus.DELETE.getCode());
+                        productDao.update(productUpdate);
+
+                        ProductCoupon productCouponUpdate = new ProductCoupon();
+                        productCouponUpdate.setProductId(productCoupon.getProductId());
+                        productCouponUpdate.setStatus(EProductStatus.DELETE.getCode());
+                        productCouponDao.update(productCouponUpdate);
                     }
                 }
 
                 Date now = new Date();
                 if (product.getEndDate().before(now)) {
                     //清理掉活动过期的商品信息
-                    productDao.deleteByProductId(product.getProductId());
-                    productCouponDao.deleteByProductId(product.getProductId());
+                    Product productUpdate = new Product();
+                    productUpdate.setProductId(productCoupon.getProductId());
+                    productUpdate.setStatus(EProductStatus.DELETE.getCode());
+                    productDao.update(productUpdate);
+
+                    ProductCoupon productCouponUpdate = new ProductCoupon();
+                    productCouponUpdate.setProductId(productCoupon.getProductId());
+                    productCouponUpdate.setStatus(EProductStatus.DELETE.getCode());
+                    productCouponDao.update(productCouponUpdate);
                 }
 
                 //重新更新商品信息
