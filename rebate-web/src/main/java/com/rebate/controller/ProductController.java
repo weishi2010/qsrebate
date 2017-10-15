@@ -6,9 +6,12 @@ import com.rebate.common.util.rebate.RebateUrlUtil;
 import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.controller.base.BaseController;
 import com.rebate.dao.ProductCouponDao;
+import com.rebate.dao.ProductDao;
+import com.rebate.domain.Product;
 import com.rebate.domain.ProductCoupon;
 import com.rebate.domain.RecommendCategory;
 import com.rebate.domain.UserInfo;
+import com.rebate.domain.en.EProductStatus;
 import com.rebate.domain.en.EPromotionTab;
 import com.rebate.domain.en.EProudctCouponType;
 import com.rebate.domain.query.ProductQuery;
@@ -55,6 +58,10 @@ public class ProductController extends BaseController {
     @Qualifier("productCouponDao")
     @Autowired(required = true)
     private ProductCouponDao productCouponDao;
+
+    @Qualifier("productDao")
+    @Autowired(required = true)
+    private ProductDao productDao;
 
     /**
      * 京东首页
@@ -198,6 +205,17 @@ public class ProductController extends BaseController {
             map.put("success", true);
             map.put("url", url);
         } else {
+            //清理掉活动过期的商品信息
+            Product productUpdate = new Product();
+            productUpdate.setProductId(skuId);
+            productUpdate.setStatus(EProductStatus.DELETE.getCode());
+            productDao.update(productUpdate);
+
+            ProductCoupon productCouponUpdate = new ProductCoupon();
+            productCouponUpdate.setProductId(skuId);
+            productCouponUpdate.setStatus(EProductStatus.DELETE.getCode());
+            productCouponDao.update(productCouponUpdate);
+
             map.put("success", false);
         }
         LOG.error("getPromotionCouponCode===============>skuId:" + skuId + ",couponLink:" + couponLink + ",url:" + url + ",subUnionId:" + subUnionId);
