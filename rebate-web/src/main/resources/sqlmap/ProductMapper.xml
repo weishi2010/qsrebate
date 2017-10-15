@@ -31,6 +31,7 @@
         <result property="unitPrice" column="unit_price"/>
         <result property="wlUnitPrice" column="wl_unit_price"/>
         <result property="sourcePlatform" column="source_platform"/>
+        <result property="freePost" column="free_post"/>
         <result property="materialUrl" column="material_url"/>
         <result property="couponType" column="coupon_type"/>
         <result property="shopId" column="shop_id"/>
@@ -66,6 +67,7 @@
         unit_price,
         wl_unit_price,
         source_platform,
+        free_post,
         material_url,
         shop_id,
         start_date,
@@ -138,6 +140,7 @@
         unit_price,
         wl_unit_price,
         source_platform,
+        free_post,
         material_url,
         shop_id,
         start_date,
@@ -171,6 +174,7 @@
         #unitPrice#,
         #wlUnitPrice#,
         #sourcePlatform#,
+        #freePost#,
         #materialUrl#,
         #shopId#,
         #startDate#,

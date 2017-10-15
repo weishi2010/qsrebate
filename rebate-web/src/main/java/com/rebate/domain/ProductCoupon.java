@@ -111,6 +111,13 @@ public class ProductCoupon extends BaseQuery {
     private Integer sourcePlatform;
 
     /**
+     * 包邮
+     */
+    @Getter
+    @Setter
+    private Integer freePost;
+
+    /**
      * 开始推广日期
      */
     @Getter

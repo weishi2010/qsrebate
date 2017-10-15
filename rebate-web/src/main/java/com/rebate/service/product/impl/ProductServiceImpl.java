@@ -10,6 +10,7 @@ import com.rebate.dao.ProductDao;
 import com.rebate.domain.Product;
 import com.rebate.domain.ProductCoupon;
 import com.rebate.domain.RecommendCategory;
+import com.rebate.domain.en.EProductFreePost;
 import com.rebate.domain.en.EProductSource;
 import com.rebate.domain.en.EProudctCouponType;
 import com.rebate.domain.en.EProudctRebateType;
@@ -100,10 +101,19 @@ public class ProductServiceImpl implements ProductService {
             //获取导入的优惠券信息
             ProductCoupon couponInfo = (ProductCoupon) couponInfoMap.get(product.getProductId());
 
+
             if (null != couponInfo.getSortWeight()) {
-                //获取传入的权重
                 product.setSortWeight(couponInfo.getSortWeight());
             }
+
+            //是否包邮
+            if(null!=couponInfo.getFreePost()){
+                product.setFreePost(couponInfo.getFreePost());
+            }else {
+                product.setFreePost(EProductFreePost.NOT_FREE_POST.getCode());
+            }
+
+
             product.setCouponType(EProudctCouponType.COUPON.getCode());
             //计算优惠券商品返利规则
             product.setIsRebate(RebateRuleUtil.couponProductRebateRule(product.getCommissionWl()));
@@ -134,12 +144,13 @@ public class ProductServiceImpl implements ProductService {
                 productCoupon.setStartDate(couponInfo.getStartDate());
                 productCoupon.setEndDate(couponInfo.getEndDate());
                 productCoupon.setCouponLink(couponInfo.getCouponLink());
+                //原价
                 productCoupon.setOriginalPrice(product.getOriginalPrice());
                 productCoupon.setOriginalPrice(new BigDecimal(product.getOriginalPrice()).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
 
+                //券后价
                 productCoupon.setCouponPrice(product.getOriginalPrice()-productCoupon.getDiscount());
                 productCoupon.setCouponPrice(new BigDecimal(productCoupon.getCouponPrice()).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
-
 
             }
 

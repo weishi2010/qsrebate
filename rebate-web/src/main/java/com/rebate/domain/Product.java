@@ -179,6 +179,13 @@ public class Product extends BaseQuery {
     private Integer sourcePlatform;
 
     /**
+     * 包邮
+     */
+    @Getter
+    @Setter
+    private Integer freePost;
+
+    /**
      * 落地页
      */
     @Getter

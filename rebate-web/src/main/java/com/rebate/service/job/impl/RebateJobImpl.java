@@ -65,7 +65,7 @@ public class RebateJobImpl implements RebateJob {
         int page = 1;
         int pageSize = 100;
         ProductQuery productQuery = new ProductQuery();
-        productQuery.setIndex(page);
+        productQuery.setStartRow((page-1)*pageSize);
         productQuery.setPageSize(pageSize);
 
         List<Product> products = productDao.findProducts(productQuery);
@@ -105,7 +105,7 @@ public class RebateJobImpl implements RebateJob {
             }
 
             page++;
-            productQuery.setIndex(page);
+            productQuery.setStartRow((page-1)*pageSize);
             products = productDao.findProducts(productQuery);
         }
     }
