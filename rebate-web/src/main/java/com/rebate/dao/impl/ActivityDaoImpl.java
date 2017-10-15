@@ -12,6 +12,10 @@ public class ActivityDaoImpl extends BaseDao implements ActivityDao {
     public void insert(Activity activity) {
         insert("Activity.insert",activity);
     }
+    @Override
+    public void update(Activity activity) {
+        update("Activity.update",activity);
+    }
 
     @Override
     public Activity findActivity(ActivityQuery activityQuery) {

@@ -23,7 +23,7 @@ public interface RebateJob {
 
 
     /**
-     * 清理过期商品及优惠券信息
+     * 更新商品信息
      */
-    void cleanExpireProduct();
+    void freshProducts();
 }

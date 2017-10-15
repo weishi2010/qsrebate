@@ -11,9 +11,9 @@ app.controller('extractCtrl', function ($scope,$http) {
             return;
         }
 
-        if(extractPrice=='' || extractPrice<=0){
+        if(extractPrice=='' || extractPrice<20){
             $scope.extractCode = 0;
-            $scope.extractMsg = "余额不足!";
+            $scope.extractMsg = "很抱歉，账户余额大于20元才能进行提现!";
             return;
         }
 

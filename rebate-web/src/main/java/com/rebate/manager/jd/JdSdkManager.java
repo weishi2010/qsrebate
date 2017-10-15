@@ -12,12 +12,20 @@ import java.util.List;
  */
 public interface JdSdkManager {
     /**
-     * 根据sku获取商品
+     * 根据sku列表获取商品列表
      *
      * @param skuIds
      * @return
      */
     List<Product> getMediaProducts(String skuIds);
+
+    /**
+     * 根据sku获取商品
+     *
+     * @param skuId
+     * @return
+     */
+    Product getMediaProduct(Long skuId);
 
     PaginatedArrayList<ProductCoupon> getMediaCoupons(int page, int pageSize);
 

@@ -243,7 +243,7 @@ function getTemplate(product, tab) {
             "            htmlTemp +=      <a href=\"javascript:void(0);\" onclick=\"redirectJdPromotionUrl(" + product.productId + ")\" class=\"buy\">";
         }
 
-        if(product.productCoupon && (product.originalPrice-product.productCoupon.discount)>0){
+        if(product.productCoupon){
                 htmlTemp +="                    券后￥" +product.productCoupon.couponPrice;
             }
         htmlTemp +=

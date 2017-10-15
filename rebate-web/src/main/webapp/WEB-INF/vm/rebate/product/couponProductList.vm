@@ -16,6 +16,6 @@
 
 </div>
     #parse("/common/footer.vm")
-<script type="text/javascript" src="/static/js/promotion.js?v16"></script>
+<script type="text/javascript" src="/static/js/promotion.js?v17"></script>
 
 </body></html>

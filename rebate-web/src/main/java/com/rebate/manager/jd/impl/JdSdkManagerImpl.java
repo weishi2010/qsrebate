@@ -45,6 +45,17 @@ public class JdSdkManagerImpl implements JdSdkManager {
     };
 
     @Override
+    public Product getMediaProduct(Long skuId) {
+        Product product = null;
+        List<Product> list = getMediaProducts(skuId.toString());
+        if(null!= list && list.size()>0){
+            product = list.get(0);
+        }
+        return product;
+    }
+
+
+    @Override
     public List<Product> getMediaProducts(String skuIds) {
         List<Product> list = new ArrayList<>();
         String json = getGetpromotioninfoResult(skuIds);
@@ -97,6 +108,7 @@ public class JdSdkManagerImpl implements JdSdkManager {
         }
         return list;
     }
+
 
     @Override
     public PaginatedArrayList<ProductCoupon> getMediaCoupons(int page, int pageSize) {
@@ -363,7 +375,7 @@ public class JdSdkManagerImpl implements JdSdkManager {
         JSONObject resultObj = JsonUtil.fromJson(json, JSONObject.class);
         if (null != resultObj && 0 == Integer.parseInt(resultObj.getString("resultCode"))) {
             JSONObject urlListObj = (JSONObject) resultObj.get("urlList");
-            url = urlListObj.getString(couponUrl+","+skuId);
+            url = urlListObj.getString(couponUrl.trim()+","+skuId);
         }
         return url;
     }

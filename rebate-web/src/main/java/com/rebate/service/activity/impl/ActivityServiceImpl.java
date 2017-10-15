@@ -33,10 +33,11 @@ public class ActivityServiceImpl implements ActivityService {
                     activity.setStatus(0);
                 }
                 ActivityQuery activityQuery = new ActivityQuery();
-                activityQuery.setTitle(activity.getTitle());
                 activityQuery.setActivityLink(activity.getActivityLink());
                 if (null == activityDao.findActivity(activityQuery)) {
                     activityDao.insert(activity);
+                }else{
+                    activityDao.update(activity);
                 }
             }catch (Exception e){
                 LOG.error("importActivity error!activity:"+ JsonUtil.toJson(activity),e);

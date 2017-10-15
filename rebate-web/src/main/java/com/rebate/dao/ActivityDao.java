@@ -13,6 +13,12 @@ public interface ActivityDao {
     void insert(Activity activity);
 
     /**
+     * 更新
+     * @param activity
+     */
+    void update(Activity activity);
+
+    /**
      * 根据标题和链接查询活动
      * @param activityQuery
      * @return

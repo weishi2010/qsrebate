@@ -61,7 +61,7 @@ public class RebateJobImpl implements RebateJob {
     private ProductCouponDao productCouponDao;
 
     @Override
-    public void cleanExpireProduct() {
+    public void freshProducts() {
         int page = 1;
         int pageSize = 100;
         ProductQuery productQuery = new ProductQuery();
@@ -71,7 +71,7 @@ public class RebateJobImpl implements RebateJob {
         List<Product> products = productDao.findProducts(productQuery);
 
         while (products.size() > 0) {
-            LOG.error("[过期商品清理]加载第" + page + "页{}条记录！", products.size());
+            LOG.error("[商品更新任务]加载第" + page + "页{}条记录！", products.size());
 
             for (Product product : products) {
                 //查询优惠券信息
@@ -83,7 +83,7 @@ public class RebateJobImpl implements RebateJob {
                     //清理掉没有优惠券转链接的信息
                     String coupontPromotionLink = jdSdkManager.getPromotionCouponCode(productCoupon.getProductId(), productCoupon.getCouponLink(), "");
                     if (StringUtils.isBlank(coupontPromotionLink)) {
-                        LOG.error("[过期商品清理]删除没有优惠券活动链接的商品,productId;{}", productCoupon.getProductId());
+                        LOG.error("[商品更新任务]删除没有优惠券活动链接的商品,productId;{}", productCoupon.getProductId());
                         productDao.deleteByProductId(productCoupon.getProductId());
                         productCouponDao.deleteByProductId(productCoupon.getProductId());
                     }
@@ -95,9 +95,17 @@ public class RebateJobImpl implements RebateJob {
                     productDao.deleteByProductId(product.getProductId());
                     productCouponDao.deleteByProductId(product.getProductId());
                 }
+
+                //重新更新商品信息
+                Product mediaProduct = jdSdkManager.getMediaProduct(product.getProductId());
+                if (null != mediaProduct) {
+                    productDao.update(mediaProduct);
+                }
+
             }
 
             page++;
+            productQuery.setIndex(page);
             products = productDao.findProducts(productQuery);
         }
     }

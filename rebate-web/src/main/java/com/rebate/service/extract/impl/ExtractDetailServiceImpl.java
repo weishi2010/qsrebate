@@ -39,7 +39,9 @@ public class ExtractDetailServiceImpl implements ExtractDetailService {
             Commission commissionQuery = new Commission();
             commissionQuery.setOpenId(extractDetail.getOpenId());
             Commission commission = commissionDao.findCommissionByOpenId(commissionQuery);
-            if (null != commission && commission.getTotalCommission() >= extractDetail.getExtractPrice()) {
+
+            //提现金额小于等于账户余额且余额要大于20元
+            if (null != commission && commission.getTotalCommission() >= extractDetail.getExtractPrice() && commission.getTotalCommission()>20) {
                 //有可提现余额时插入提现明细
                 extractDetailDao.insert(extractDetail);
 

@@ -62,11 +62,38 @@
         )
     </insert>
 
+    <update id="update">
+        update activity
+        set  modified=now()
+        <dynamic>
+            <isNotNull property="imgUrl" prepend=",">
+                img_url = #imgUrl#
+            </isNotNull>
+            <isNotNull property="remark" prepend=",">
+                remark = #remark#
+            </isNotNull>
+            <isNotNull property="benefit" prepend=",">
+                benefit = #benefit#
+            </isNotNull>
+            <isNotNull property="title" prepend=",">
+                title=#title#
+            </isNotNull>
+            <isNotNull property="beginTime" prepend=",">
+                begin_time=#beginTime#
+            </isNotNull>
+            <isNotNull property="endTime" prepend=",">
+                end_time=#endTime#
+            </isNotNull>
+        </dynamic>
+        where activity_link=#activityLink#
+    </update>
+
+
     <select id="findActivity" parameterClass="ActivityQuery" resultMap="ActivityResultMap">
         select
         <include refid="fields"/>
         from activity
-        where title =#title# and activity_link=#activityLink#
+        where activity_link=#activityLink#
         limit 1
     </select>
 

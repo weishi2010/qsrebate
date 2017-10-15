@@ -55,7 +55,7 @@
 			<value>0 0/2 * * * ?</value>
 		</property>
 	</bean>
-	<bean id="cleanExpireProductJobTimer" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	<bean id="freshProductsJobTimer" class="org.springframework.scheduling.quartz.CronTriggerBean">
 		<property name="jobDetail">
 			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 				<property name="concurrent" value="false"></property>
@@ -63,7 +63,7 @@
 					<ref bean="rebateJob" />
 				</property>
 				<property name="targetMethod">
-					<value>cleanExpireProduct</value>
+					<value>freshProducts</value>
 				</property>
 			</bean>
 		</property>
