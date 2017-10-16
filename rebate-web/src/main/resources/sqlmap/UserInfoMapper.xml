@@ -12,6 +12,7 @@
         <result property="nickName" column="nick_name"/>
         <result property="email" column="email"/>
         <result property="status" column="status"/>
+        <result property="agent" column="agent"/>
         <result property="subUnionId" column="sub_union_id"/>
         <result property="recommendAccount" column="recommend_account"/>
         <result property="created" column="created"/>
@@ -26,6 +27,7 @@
         nick_name,
         email,
         status,
+        agent,
         sub_union_id,
         recommend_account,
         created,
@@ -41,6 +43,7 @@
         nick_name,
         email,
         status,
+        agent,
         sub_union_id,
         recommend_account,
         created,
@@ -54,6 +57,7 @@
         #nickName#,
         #email#,
         #status#,
+        #agent#,
         #subUnionId#,
         #recommendAccount#,
         now(),

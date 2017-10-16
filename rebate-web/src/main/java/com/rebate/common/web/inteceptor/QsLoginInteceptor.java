@@ -6,6 +6,7 @@ import com.rebate.common.util.CookieUtils;
 import com.rebate.common.util.JsonUtil;
 import com.rebate.common.util.RequestUtils;
 import com.rebate.domain.UserInfo;
+import com.rebate.domain.en.EAgent;
 import com.rebate.domain.en.ESequence;
 import com.rebate.domain.en.ESubUnionIdPrefix;
 import com.rebate.domain.wx.AuthorizationCodeInfo;
@@ -68,11 +69,6 @@ public class QsLoginInteceptor extends LoginInteceptor {
     @Autowired(required = false)
     private UserInfoService userInfoService;
 
-
-    @Qualifier("sequenceUtil")
-    @Autowired(required = true)
-    private SequenceUtil sequenceUtil;
-
     private String loginUrl;
 
     private String charsetName = "gbk";
@@ -131,24 +127,9 @@ public class QsLoginInteceptor extends LoginInteceptor {
                     cookieUtils.setCookie(response, WX_ACCESSTOKEN_COOKIE, JsonUtil.toJson(authorizationCodeInfo),300);
                 }
             }
-            //查询是否已存在此用户
-            userInfo = userInfoService.getUserInfo(authorizationCodeInfo.getOpenId());
-            if (null == userInfo) {
-                WxUserInfo wxUserInfo = wxAccessTokenService.getWxUserInfo(authorizationCodeInfo.getAccessToken(), authorizationCodeInfo.getOpenId());
-                if (null != wxUserInfo) {
-                    userInfo = new UserInfo();
-                    userInfo.setPhone("");
-                    userInfo.setNickName(wxUserInfo.getNickname());
-                    userInfo.setOpenId(wxUserInfo.getOpenid());
-                    userInfo.setStatus(0);
-                    userInfo.setEmail("");
-                    userInfo.setWxImage(wxUserInfo.getHeadimgurl());
-                    String subUnionId = ESubUnionIdPrefix.getSubUnionId(ESubUnionIdPrefix.JD.getCode(),sequenceUtil.get(ESequence.SUB_UNION_ID.getSequenceName()));
-                    userInfo.setSubUnionId(subUnionId);
-                    userInfo.setRecommendAccount("");
-                    userInfoService.registUserInfo(userInfo);
-                }
-            }
+
+            //注册用户
+           userInfo =  userInfoService.registUserInfo(authorizationCodeInfo.getAccessToken(), authorizationCodeInfo.getOpenId());
 
             //设置cookie
             if (null != userInfo) {

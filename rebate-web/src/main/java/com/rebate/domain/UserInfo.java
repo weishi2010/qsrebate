@@ -62,6 +62,13 @@ public class UserInfo implements Serializable{
     private String subUnionId;
 
     /**
+     * 代理标识
+     */
+    @Getter
+    @Setter
+    private Integer agent;
+
+    /**
      * 推荐账号
      */
     @Getter

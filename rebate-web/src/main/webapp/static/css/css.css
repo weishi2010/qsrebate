@@ -1304,7 +1304,7 @@ img {
 }
 .g-list .item .cnt .easy .share{
     width: 50%;
-    float: left;
+    float: right;
     font-size: .24rem;
     color: #ff3725;
     padding-left: .3rem;
@@ -1312,6 +1312,11 @@ img {
     display: flex;
     -webkit-align-items: center;
     align-items: center;
+}
+
+.g-list .item .cnt .easy .share a{
+    font-size: .26rem;
+    color: #ff3725;
 }
 .g-list .item .cnt .easy .share .zhuanfa{
     width: .48rem;

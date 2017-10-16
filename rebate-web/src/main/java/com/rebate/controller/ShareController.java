@@ -10,6 +10,7 @@ import com.rebate.domain.wx.WxConfig;
 import com.rebate.manager.jd.JdSdkManager;
 import com.rebate.service.product.ProductService;
 import com.rebate.service.wx.WxAccessTokenService;
+import com.rebate.service.wx.WxService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,11 @@ public class ShareController extends BaseController {
     @Autowired(required = true)
     private RebateUrlUtil rebateUrlUtil;
 
+    @Qualifier("wxService")
+    @Autowired(required = true)
+    private WxService wxService;
+
+
     @RequestMapping({"", "/", "/shareIndex"})
     public ModelAndView shareIndex(HttpServletRequest request, Long skuId) {
         String vm = "/share";
@@ -63,8 +69,10 @@ public class ShareController extends BaseController {
         //查询商品
         ProductVo product = productService.findProduct(skuId, subUnionId);
 
-        product.setPromotionShortUrl(rebateUrlUtil.jdPromotionUrlToQsrebateShortUrl(jdSdkManager.getShortPromotinUrl(skuId, subUnionId)));
+        String promotionShortUrl = rebateUrlUtil.jdPromotionUrlToQsrebateShortUrl(jdSdkManager.getShortPromotinUrl(skuId, subUnionId));
 
+        //转为微信短链接
+        product.setPromotionShortUrl(wxService.getShortUrl(promotionShortUrl));
 
         //获取临时票据
         String jsapiTicket = wxAccessTokenService.getTicket();

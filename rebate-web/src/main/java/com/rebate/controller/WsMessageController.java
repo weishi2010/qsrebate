@@ -150,6 +150,10 @@ public class WsMessageController extends BaseController {
                 } else if (msgType.equals(EWxMsgType.EVENT.getValue())) {
                     LOG.error("accept[" + inputMsg.getFromUserName() + "],msgType:" + inputMsg.getMsgType() + ",event:" + inputMsg.getEvent());
                     if (EWxEventType.SUBSCRIBE.getValue().equalsIgnoreCase(inputMsg.getEvent())) {
+
+                        //注册用户
+                        userInfoService.registUserInfo(null, inputMsg.getFromUserName());
+
                         //关注
                         String eventXml = subscribeTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
                         LOG.error("output wx eventXml:" + eventXml);

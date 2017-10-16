@@ -11,6 +11,7 @@ import com.rebate.domain.Product;
 import com.rebate.domain.ProductCoupon;
 import com.rebate.domain.RecommendCategory;
 import com.rebate.domain.UserInfo;
+import com.rebate.domain.en.EAgent;
 import com.rebate.domain.en.EProductStatus;
 import com.rebate.domain.en.EPromotionTab;
 import com.rebate.domain.en.EProudctCouponType;
@@ -115,6 +116,13 @@ public class ProductController extends BaseController {
 
         ModelAndView view = new ModelAndView(VIEW_PREFIX + vm);
 
+        UserInfo userInfo = getUserInfo(request);
+
+        Integer agent = EAgent.NOT_AGENT.getCode();
+        if (null != userInfo) {
+            agent = userInfo.getAgent();
+        }
+
         //独家优惠券、9.9秒杀时查询分类列表
         RecommendCategory recommendCategory = new RecommendCategory();
         recommendCategory.setPageSize(10);
@@ -122,6 +130,8 @@ public class ProductController extends BaseController {
         recommendCategory.setPageSize(50);
         view.addObject("allCategories", productService.findByRecommendCategories(recommendCategory));
         view.addObject("promotionTab", EPromotionTab.COUPON_PROMOTION.getTab());
+        view.addObject("agent",agent);
+
         return view;
     }
 

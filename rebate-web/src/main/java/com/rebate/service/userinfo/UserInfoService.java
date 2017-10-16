@@ -5,7 +5,7 @@ import com.rebate.domain.UserInfo;
 
 public interface UserInfoService {
 
-    void registUserInfo(UserInfo userInfo);
+    UserInfo registUserInfo(String accessToken,String openId);
     /**
      * 查询用户信息
      * @param openId
