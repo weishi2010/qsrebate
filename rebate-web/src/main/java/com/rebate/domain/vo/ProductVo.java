@@ -186,7 +186,7 @@ public class ProductVo extends BaseQuery {
     private int isRebate;
 
     /**
-     * 是排序权重
+     * 排序权重
      */
     @Getter
     @Setter

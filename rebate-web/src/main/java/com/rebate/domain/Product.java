@@ -153,7 +153,7 @@ public class Product extends BaseQuery {
     @Setter
     private Integer isRebate;
     /**
-     * 是排序权重
+     * 排序权重
      */
     @Getter
     @Setter
