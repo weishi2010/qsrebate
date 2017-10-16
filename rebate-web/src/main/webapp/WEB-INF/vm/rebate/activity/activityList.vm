@@ -15,14 +15,14 @@
 <div class="voucher-page"  ng-controller="activityCtrl">
     <div class="panel">
         <div class="top-line">
-            <a href="javascript:;">
-                <img src="https://img1.360buyimg.com/da/jfs/t8818/117/1093371673/98803/a8871eb8/59bb87d6N7acde771.jpg" alt="">
-                <div class="tl">宝宝湿疹反复怎么破？看中国最权威湿疹专家，首都儿研究所刘小燕主任怎么说</div>
+            <a href="{{adPosition.link}}">
+                <img src="{{adPosition.imgUrl}}" alt="{{adPosition.title}}">
+                <div class="tl">{{adPosition.title}}</div>
             </a>
         </div>
         <ul class="list">
             <li ng-repeat="activity in activityList">
-                <a href="javascript:;"><em class="green">男装</em>-【<span class="ftx-red">{{activity.benefit}}</span>】{{activity.title}}</a>
+                <a href="javascript:;"><em class="green">{{activity.category}}</em>-【<span class="ftx-red">{{activity.benefit}}</span>】{{activity.title}}</a>
             </li>
         </ul>
     </div>

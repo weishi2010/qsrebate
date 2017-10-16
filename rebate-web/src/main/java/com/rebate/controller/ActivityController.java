@@ -1,6 +1,7 @@
 package com.rebate.controller;
 
 import com.rebate.controller.base.BaseController;
+import com.rebate.domain.AdvertismentPosition;
 import com.rebate.domain.en.EActivityStatus;
 import com.rebate.domain.en.EPromotionTab;
 import com.rebate.domain.query.ActivityQuery;
@@ -15,8 +16,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,7 +52,7 @@ public class ActivityController extends BaseController {
         activityQuery.setStatusList(EActivityStatus.DEFAULT.getCode()+","+EActivityStatus.PASS.getCode());
         activityQuery.setPageSize(20);
         map.put("activityList",activityService.getActivityTopList(activityQuery));
-        map.put("activityList",activityService.getActivityTopList(activityQuery));
+        map.put("adPosition",new AdvertismentPosition());
 
         return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
     }

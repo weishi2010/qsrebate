@@ -13,6 +13,7 @@ app.controller('activityCtrl', function ($scope,$http) {
         }).then(function successCallback(response) {
             if(response.data){
                 $scope.activityList = response.data.activityList
+                $scope.adPosition = response.data.adPosition
             }
         }, function errorCallback(response) {
             // 请求失败执行代码

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="AdvertismentPosition">
+
+    <typeAlias alias="AdvertismentPosition" type="com.rebate.domain.AdvertismentPosition"/>
+
+    <resultMap class="AdvertismentPosition" id="AdvertismentPositionResultMap">
+        <result property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="link" column="link"/>
+        <result property="imgUrl" column="img_url"/>
+        <result property="status" column="status"/>
+        <result property="sortWeight" column="sort_weight"/>
+        <result property="position" column="position"/>
+        <result property="created" column="created"/>
+        <result property="modified" column="modified"/>
+    </resultMap>
+
+    <sql id="fields">
+          id,
+          title,
+          link,
+          img_url,
+          status,
+          sort_weight,
+          position,
+          created,
+          modified
+    </sql>
+
+    <insert id="insert" parameterClass="Activity">
+        INSERT INTO advertisment_position
+        (
+          title,
+          link,
+          img_url,
+          status,
+          sort_weight,
+          position,
+          created,
+          modified
+        )
+        VALUES
+        (
+        #title#,
+        #link#,
+        #imgUrl#,
+        #status#,
+        #sortWeight#,
+        #position#,
+        now(),
+        now()
+        )
+    </insert>
+
+    <update id="update">
+        update advertisment_position
+        set modified=now()
+        <dynamic>
+            <isNotNull property="imgUrl" prepend=",">
+                img_url = #imgUrl#
+            </isNotNull>
+            <isNotNull property="link" prepend=",">
+                link = #link#
+            </isNotNull>
+            <isNotNull property="title" prepend=",">
+                title=#title#
+            </isNotNull>
+            <isNotNull property="sortWeight" prepend=",">
+                sort_weight=#sortWeight#
+            </isNotNull>
+        </dynamic>
+        where position_id=#positionId#
+    </update>
+
+    <select id="findAdPositionByPositionId" parameterClass="AdvertismentPosition"
+            resultMap="AdvertismentPositionResultMap">
+        select
+        <include refid="fields"/>
+        from advertisment_position
+        where position_id=#positionId#
+        limit 1
+    </select>
+
+</sqlMap>
