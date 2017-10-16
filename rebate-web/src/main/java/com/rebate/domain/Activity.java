@@ -64,6 +64,20 @@ public class Activity extends BaseQuery {
     @Getter
     @Setter
     private Integer status;
+
+    /**
+     * 活动分类，非商品分类
+     */
+    @Getter
+    @Setter
+    private String category;
+
+    /**
+     * 排序权重
+     */
+    @Getter
+    @Setter
+    private Integer sortWeight;
     /**
      * 创建时间
      */
