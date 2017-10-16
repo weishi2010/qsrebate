@@ -92,6 +92,7 @@
 		<property name="menuCreateUrl" value="${wx.menuCreateUrl}"/>
 		<property name="menuGetUrl" value="${wx.menuGetUrl}"/>
 		<property name="menuDeleteUrl" value="${wx.menuDeleteUrl}"/>
+		<property name="shortApiUrl" value="${wx.shortApiUrl}"/>
 
 	</bean>
 
