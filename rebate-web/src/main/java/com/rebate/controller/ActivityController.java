@@ -6,6 +6,7 @@ import com.rebate.domain.en.EActivityStatus;
 import com.rebate.domain.en.EPromotionTab;
 import com.rebate.domain.query.ActivityQuery;
 import com.rebate.service.activity.ActivityService;
+import com.rebate.service.activity.AdvertismentPositionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,10 @@ public class ActivityController extends BaseController {
     @Autowired(required = true)
     private ActivityService activityService;
 
+    @Qualifier("advertismentPositionService")
+    @Autowired(required = true)
+    private AdvertismentPositionService advertismentPositionService;
+
     @RequestMapping({"", "/", "/activityIndex"})
     public ModelAndView activityIndex() {
         ModelAndView view = new ModelAndView(VIEW_PREFIX + "/activity/activityList");
@@ -52,7 +57,7 @@ public class ActivityController extends BaseController {
         activityQuery.setStatusList(EActivityStatus.DEFAULT.getCode()+","+EActivityStatus.PASS.getCode());
         activityQuery.setPageSize(20);
         map.put("activityList",activityService.getActivityTopList(activityQuery));
-        map.put("adPosition",new AdvertismentPosition());
+        map.put("adPosition",advertismentPositionService.findMainAdvertismentPosition());
 
         return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
     }

@@ -6,11 +6,9 @@ import com.rebate.common.util.Sha1Util;
 import com.rebate.common.util.rebate.RebateUrlUtil;
 import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.controller.base.BaseController;
+import com.rebate.dao.AdvertismentPositionDao;
 import com.rebate.domain.*;
-import com.rebate.domain.en.EExtractCode;
-import com.rebate.domain.en.EExtractStatus;
-import com.rebate.domain.en.EPromotionTab;
-import com.rebate.domain.en.EProudctCouponType;
+import com.rebate.domain.en.*;
 import com.rebate.domain.query.ExtractDetailQuery;
 import com.rebate.domain.query.ProductQuery;
 import com.rebate.domain.query.RebateDetailQuery;
@@ -20,12 +18,14 @@ import com.rebate.domain.vo.RebateDetailVo;
 import com.rebate.domain.wx.WxConfig;
 import com.rebate.manager.jd.JdSdkManager;
 import com.rebate.service.activity.ActivityService;
+import com.rebate.service.activity.AdvertismentPositionService;
 import com.rebate.service.extract.ExtractDetailService;
 import com.rebate.service.order.RebateDetailService;
 import com.rebate.service.product.ProductService;
 import com.rebate.service.userinfo.UserInfoService;
 import com.rebate.service.wx.WxAccessTokenService;
 import com.rebate.service.wx.WxMenuService;
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.type.TypeReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,6 +72,10 @@ public class AdminController extends BaseController {
     @Autowired(required = true)
     private WxMenuService wxMenuService;
 
+    @Qualifier("advertismentPositionService")
+    @Autowired(required = true)
+    private AdvertismentPositionService advertismentPositionService;
+
     @RequestMapping({"", "/", "/importProducts.json"})
     public ResponseEntity<?> importProducts(HttpServletRequest request, String productIds) {
         //导入普通返利商品
@@ -88,22 +92,22 @@ public class AdminController extends BaseController {
         Map<String, Object> map = new HashMap<String, Object>();
         boolean success = true;
 
-        try{
-            couponMapList = JsonUtil.fromJson(paramJson,productCouponTypeReference);
-        }catch (Exception e){
-            LOG.error("paramJson error!",e);
+        try {
+            couponMapList = JsonUtil.fromJson(paramJson, productCouponTypeReference);
+        } catch (Exception e) {
+            LOG.error("paramJson error!", e);
             success = false;
             map.put("msg", "param error!");
         }
 
 
         //导入优惠券商品
-        try{
+        try {
             productService.importCouponProducts(couponMapList);
             map.put("success", success);
-        }catch (Exception e){
+        } catch (Exception e) {
             map.put("success", false);
-            LOG.error("json analysis error!json:"+paramJson,e);
+            LOG.error("json analysis error!json:" + paramJson, e);
         }
         return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
     }
@@ -115,10 +119,10 @@ public class AdminController extends BaseController {
         Map<String, Object> map = new HashMap<String, Object>();
         boolean success = true;
 
-        try{
-            activityListList = JsonUtil.fromJson(paramJson,activityTypeReference);
-        }catch (Exception e){
-            LOG.error("paramJson error!",e);
+        try {
+            activityListList = JsonUtil.fromJson(paramJson, activityTypeReference);
+        } catch (Exception e) {
+            LOG.error("paramJson error!", e);
             success = false;
             map.put("msg", "param error!");
         }
@@ -126,6 +130,29 @@ public class AdminController extends BaseController {
 
         //导入活动
         activityService.importActivity(activityListList);
+        map.put("success", success);
+        return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
+    }
+
+    @RequestMapping({"", "/", "/importMainAdPosition.json"})
+    public ResponseEntity<?> importMainAdPosition(String link, String imgUrl, String title) {
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        boolean success = true;
+
+        if (StringUtils.isNotBlank(link) && StringUtils.isNotBlank(imgUrl) && StringUtils.isNotBlank(title)) {
+            AdvertismentPosition advertismentPosition = new AdvertismentPosition();
+            advertismentPosition.setLink(link);
+            advertismentPosition.setImgUrl(imgUrl);
+            advertismentPosition.setTitle(title);
+            advertismentPosition.setStatus(0);
+            advertismentPosition.setSortWeight(0);
+            advertismentPosition.setPosition(EAdPosition.MAIN.getCode());
+            advertismentPositionService.addAdvertismentPosition(advertismentPosition);
+        } else {
+            success = false;
+        }
+
         map.put("success", success);
         return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
     }

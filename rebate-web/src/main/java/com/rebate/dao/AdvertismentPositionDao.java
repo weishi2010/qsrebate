@@ -23,6 +23,6 @@ public interface AdvertismentPositionDao {
      * @param advertismentPosition
      * @return
      */
-    AdvertismentPosition findAdPositionByPositionId(AdvertismentPosition advertismentPosition);
+    AdvertismentPosition findAdPositionByPosition(AdvertismentPosition advertismentPosition);
 
 }

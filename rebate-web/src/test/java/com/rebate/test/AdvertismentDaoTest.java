@@ -1,7 +1,9 @@
 package com.rebate.test;
 
+import com.rebate.common.util.JsonUtil;
 import com.rebate.dao.AdvertismentPositionDao;
 import com.rebate.domain.AdvertismentPosition;
+import com.rebate.domain.en.EAdPosition;
 import org.codehaus.jackson.type.TypeReference;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +31,11 @@ public class AdvertismentDaoTest extends AbstractJUnit4SpringContextTests {
         advertismentPosition.setLink("http://m.qingsongfan.com");
         advertismentPosition.setImgUrl("http://img.qingsongfan.com");
         advertismentPosition.setTitle("活动测试");
-        advertismentPosition.setStatus(1);
+        advertismentPosition.setStatus(0);
         advertismentPosition.setSortWeight(100);
-        advertismentPosition.setPosition(1);
-        if (null == advertismentPositionDao.findAdPositionByPositionId(advertismentPosition)) {
+        advertismentPosition.setPosition(EAdPosition.MAIN.getCode());
+        System.out.println(JsonUtil.toJson(advertismentPosition));
+        if (null == advertismentPositionDao.findAdPositionByPosition(advertismentPosition)) {
             advertismentPositionDao.insert(advertismentPosition);
         }
 

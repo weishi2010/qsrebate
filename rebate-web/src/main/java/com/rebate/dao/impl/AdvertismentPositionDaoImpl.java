@@ -16,7 +16,7 @@ public class AdvertismentPositionDaoImpl  extends BaseDao implements Advertismen
     }
 
     @Override
-    public AdvertismentPosition findAdPositionByPositionId(AdvertismentPosition advertismentPosition) {
-        return (AdvertismentPosition)queryForObject("AdvertismentPosition.findAdPositionByPositionId",advertismentPosition);
+    public AdvertismentPosition findAdPositionByPosition(AdvertismentPosition advertismentPosition) {
+        return (AdvertismentPosition)queryForObject("AdvertismentPosition.findAdPositionByPosition",advertismentPosition);
     }
 }

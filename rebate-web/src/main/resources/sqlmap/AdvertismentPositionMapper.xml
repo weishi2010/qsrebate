@@ -28,7 +28,7 @@
           modified
     </sql>
 
-    <insert id="insert" parameterClass="Activity">
+    <insert id="insert" parameterClass="AdvertismentPosition">
         INSERT INTO advertisment_position
         (
           title,
@@ -70,15 +70,15 @@
                 sort_weight=#sortWeight#
             </isNotNull>
         </dynamic>
-        where position_id=#positionId#
+        where position=#position#
     </update>
 
-    <select id="findAdPositionByPositionId" parameterClass="AdvertismentPosition"
+    <select id="findAdPositionByPosition" parameterClass="AdvertismentPosition"
             resultMap="AdvertismentPositionResultMap">
         select
         <include refid="fields"/>
         from advertisment_position
-        where position_id=#positionId#
+        where position=#position#
         limit 1
     </select>
 
