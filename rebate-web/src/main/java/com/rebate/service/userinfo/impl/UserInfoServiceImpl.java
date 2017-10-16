@@ -48,7 +48,7 @@ public class UserInfoServiceImpl implements UserInfoService {
     private SequenceUtil sequenceUtil;
 
     @Override
-    public UserInfo registUserInfo(String accessToken,String openId) {
+    public UserInfo registUserInfo(String accessToken,String openId,Integer angent) {
         UserInfo userInfo = null;
         //查询是否已存在此用户
         UserInfo userInfoQuery = new UserInfo();
@@ -67,7 +67,7 @@ public class UserInfoServiceImpl implements UserInfoService {
                 userInfo.setOpenId(wxUserInfo.getOpenid());
                 userInfo.setStatus(0);
                 userInfo.setEmail("");
-                userInfo.setAgent(EAgent.NOT_AGENT.getCode());
+                userInfo.setAgent(angent);
                 userInfo.setWxImage(wxUserInfo.getHeadimgurl());
                 String subUnionId = ESubUnionIdPrefix.getSubUnionId(ESubUnionIdPrefix.JD.getCode(),sequenceUtil.get(ESequence.SUB_UNION_ID.getSequenceName()));
                 userInfo.setSubUnionId(subUnionId);

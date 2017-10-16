@@ -129,7 +129,7 @@ public class QsLoginInteceptor extends LoginInteceptor {
             }
 
             //注册用户
-           userInfo =  userInfoService.registUserInfo(authorizationCodeInfo.getAccessToken(), authorizationCodeInfo.getOpenId());
+           userInfo =  userInfoService.registUserInfo(authorizationCodeInfo.getAccessToken(), authorizationCodeInfo.getOpenId(),EAgent.NOT_AGENT.getCode());
 
             //设置cookie
             if (null != userInfo) {

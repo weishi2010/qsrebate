@@ -10,6 +10,7 @@ import com.rebate.dao.ProductCouponDao;
 import com.rebate.dao.ProductDao;
 import com.rebate.domain.Product;
 import com.rebate.domain.UserInfo;
+import com.rebate.domain.en.EAgent;
 import com.rebate.domain.en.EWxEventCode;
 import com.rebate.domain.en.EWxEventType;
 import com.rebate.domain.en.EWxMsgType;
@@ -152,7 +153,7 @@ public class WsMessageController extends BaseController {
                     if (EWxEventType.SUBSCRIBE.getValue().equalsIgnoreCase(inputMsg.getEvent())) {
 
                         //注册用户
-                        userInfoService.registUserInfo(null, inputMsg.getFromUserName());
+                        userInfoService.registUserInfo(null, inputMsg.getFromUserName(), EAgent.FIRST_AGENT.getCode());
 
                         //关注
                         String eventXml = subscribeTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
@@ -293,7 +294,7 @@ public class WsMessageController extends BaseController {
 
             if (null != products && products.size() > 0) {
                 Product product = products.get(0);
-                LOG.error("getRecommendContent product:"+ JsonUtil.toJson(product));
+                LOG.error("getRecommendContent product:" + JsonUtil.toJson(product));
                 String shortUrl = rebateUrlUtil.jdPromotionUrlToQsrebateShortUrl(jdSdkManager.getShortPromotinUrl(product.getProductId(), subUnionId));
                 //商品名
                 recommendContent.append("已成功转成把钱链接，从返利链接下单，才可以返钱哦！\n\n");
