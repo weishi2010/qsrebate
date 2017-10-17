@@ -137,7 +137,7 @@
     </div>
     <div class="share-item">
         <div class="sec-01">
-            <span class="radio radio-single chk"></span>分享二维码
+            <!--<span class="radio radio-single chk"></span>分享二维码-->
         </div>
         <div class="cnt">
             <div class="share-good-info">
@@ -175,7 +175,7 @@
                         <div class="cell fixed">
                         </div>
                         <div class="cell">
-                            <input value="【券后价】：$!{product.productCoupon.couponPrice}元" id="couponPrice" type="text">
+                            <input value="【券后价】$!{product.productCoupon.couponPrice}元" id="couponPrice" type="text">
                         </div>
                     </div>
                     <div class="sec mui-flex align-center">
