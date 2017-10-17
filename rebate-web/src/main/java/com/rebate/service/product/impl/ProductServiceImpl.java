@@ -215,7 +215,11 @@ public class ProductServiceImpl implements ProductService {
             if (null != product) {
 
                 vo = new ProductVo(product);
-
+                //查询优惠券信息
+                ProductCoupon productCouponQuery = new ProductCoupon();
+                productCouponQuery.setProductId(vo.getProductId());
+                ProductCoupon coupon = productCouponDao.findById(productCouponQuery);
+                vo.setProductCoupon(coupon);
                 //获取商品链接
                 vo.setImgUrl(product.getImgUrl().replace(DEFAULT_IMG_SIZE, IMG_SIZE));
             }

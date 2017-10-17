@@ -14,6 +14,7 @@ import com.rebate.domain.en.ESubUnionIdPrefix;
 import com.rebate.domain.wx.WxUserInfo;
 import com.rebate.service.userinfo.UserInfoService;
 import com.rebate.service.wx.WxAccessTokenService;
+import com.rebate.service.wx.WxService;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +39,10 @@ public class UserInfoServiceImpl implements UserInfoService {
     @Autowired(required = false)
     private RedisUtil redisUtil;
 
+    @Qualifier("wxService")
+    @Autowired(required = false)
+    private WxService wxService;
+
     @Qualifier("wxAccessTokenService")
     @Autowired(required = false)
     private WxAccessTokenService wxAccessTokenService;
@@ -48,35 +53,6 @@ public class UserInfoServiceImpl implements UserInfoService {
     private SequenceUtil sequenceUtil;
 
     @Override
-    public UserInfo registUserInfoByLoginAccessToken(String accessToken, String openId, Integer angent) {
-        UserInfo userInfo = null;
-        //查询是否已存在此用户
-        UserInfo userInfoQuery = new UserInfo();
-        userInfoQuery.setOpenId(openId);
-        userInfo = userInfoDao.findLoginUserInfo(userInfoQuery);
-        if (null == userInfo) {
-            WxUserInfo wxUserInfo = wxAccessTokenService.getWxUserInfo(accessToken, openId);
-            LOG.error("[registUserInfo]wxUserInfo:" + JsonUtil.toJson(wxUserInfo) + ",accessToken:" + accessToken);
-            if (null != wxUserInfo) {
-
-                userInfo = new UserInfo();
-                userInfo.setPhone("");
-                userInfo.setNickName(wxUserInfo.getNickname());
-                userInfo.setOpenId(wxUserInfo.getOpenid());
-                userInfo.setStatus(0);
-                userInfo.setEmail("");
-                userInfo.setAgent(angent);
-                userInfo.setWxImage(wxUserInfo.getHeadimgurl());
-                String subUnionId = ESubUnionIdPrefix.getSubUnionId(ESubUnionIdPrefix.JD.getCode(), sequenceUtil.get(ESequence.SUB_UNION_ID.getSequenceName()));
-                userInfo.setSubUnionId(subUnionId);
-                userInfo.setRecommendAccount("");
-                userInfoDao.insert(userInfo);
-            }
-        }
-        return userInfo;
-    }
-
-    @Override
     public UserInfo registUserInfo(String openId, Integer angent) {
         UserInfo userInfo = null;
         //查询是否已存在此用户
@@ -84,8 +60,7 @@ public class UserInfoServiceImpl implements UserInfoService {
         userInfoQuery.setOpenId(openId);
         userInfo = userInfoDao.findLoginUserInfo(userInfoQuery);
         if (null == userInfo) {
-            WxUserInfo wxUserInfo = wxAccessTokenService.getWxApiUserInfo(wxAccessTokenService.getApiAccessToken().getAccessToken(), openId);
-            LOG.error("[registUserInfo]wxUserInfo:" + JsonUtil.toJson(wxUserInfo));
+            WxUserInfo wxUserInfo = wxService.getWxApiUserInfo(wxAccessTokenService.getApiAccessToken().getAccessToken(), openId);
             if (null != wxUserInfo) {
 
                 userInfo = new UserInfo();

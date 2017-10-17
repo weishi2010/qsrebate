@@ -145,18 +145,15 @@
                 <input value="$!{product.imgUrl}" id="imgUrl" type="hidden">
 
             </div>
-            <div class="recomm-words">
+            <!--<div class="recomm-words">
                 <div class="tl">推荐语（<span>用于微信朋友圈、群引导</span>）</div>
                 <div class="ipt-box">
                     <input class="ipt" placeholder="走了个特殊通道，直降100元…" type="text">
                 </div>
-            </div>
+            </div>-->
         </div>
     </div>
     <div class="share-item">
-        <div class="sec-01">
-            <span class="radio radio-single"></span>推荐语+链接
-        </div>
         <div class="cnt">
             <div class="recomm-edit">
                 <div class="tl">您可以编辑发送朋友的推广内容</div>
@@ -178,7 +175,7 @@
                         <div class="cell fixed">
                         </div>
                         <div class="cell">
-                            <input value="【我推荐给你后】：$!{product.couponPrice}元" id="couponPrice" type="text">
+                            <input value="【券后价】：$!{product.productCoupon.couponPrice}元" id="couponPrice" type="text">
                         </div>
                     </div>
                     <div class="sec mui-flex align-center">
