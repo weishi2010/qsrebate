@@ -67,7 +67,7 @@ public class ProductServiceImpl implements ProductService {
         for (Product product : list) {
             product.setCouponType(EProudctCouponType.GENERAL.getCode());
             product.setIsRebate(EProudctRebateType.REBATE.getCode());
-
+            product.setFreePost(EProductFreePost.NOT_FREE_POST.getCode());
             //插入或更新商品
             if (null == productDao.findById(product)) {
                 productDao.insert(product);
