@@ -48,17 +48,15 @@ public class UserInfoServiceImpl implements UserInfoService {
     private SequenceUtil sequenceUtil;
 
     @Override
-    public UserInfo registUserInfo(String accessToken,String openId,Integer angent) {
+    public UserInfo registUserInfoByLoginAccessToken(String accessToken, String openId, Integer angent) {
         UserInfo userInfo = null;
         //查询是否已存在此用户
         UserInfo userInfoQuery = new UserInfo();
         userInfoQuery.setOpenId(openId);
         userInfo = userInfoDao.findLoginUserInfo(userInfoQuery);
         if (null == userInfo) {
-            if(StringUtils.isBlank(accessToken)){
-                accessToken = wxAccessTokenService.getApiAccessToken().getAccessToken();
-            }
             WxUserInfo wxUserInfo = wxAccessTokenService.getWxUserInfo(accessToken, openId);
+            LOG.error("[registUserInfo]wxUserInfo:" + JsonUtil.toJson(wxUserInfo) + ",accessToken:" + accessToken);
             if (null != wxUserInfo) {
 
                 userInfo = new UserInfo();
@@ -69,12 +67,42 @@ public class UserInfoServiceImpl implements UserInfoService {
                 userInfo.setEmail("");
                 userInfo.setAgent(angent);
                 userInfo.setWxImage(wxUserInfo.getHeadimgurl());
-                String subUnionId = ESubUnionIdPrefix.getSubUnionId(ESubUnionIdPrefix.JD.getCode(),sequenceUtil.get(ESequence.SUB_UNION_ID.getSequenceName()));
+                String subUnionId = ESubUnionIdPrefix.getSubUnionId(ESubUnionIdPrefix.JD.getCode(), sequenceUtil.get(ESequence.SUB_UNION_ID.getSequenceName()));
                 userInfo.setSubUnionId(subUnionId);
                 userInfo.setRecommendAccount("");
                 userInfoDao.insert(userInfo);
             }
         }
+        return userInfo;
+    }
+
+    @Override
+    public UserInfo registUserInfo(String openId, Integer angent) {
+        UserInfo userInfo = null;
+        //查询是否已存在此用户
+        UserInfo userInfoQuery = new UserInfo();
+        userInfoQuery.setOpenId(openId);
+        userInfo = userInfoDao.findLoginUserInfo(userInfoQuery);
+        if (null == userInfo) {
+            WxUserInfo wxUserInfo = wxAccessTokenService.getWxApiUserInfo(wxAccessTokenService.getApiAccessToken().getAccessToken(), openId);
+            LOG.error("[registUserInfo]wxUserInfo:" + JsonUtil.toJson(wxUserInfo));
+            if (null != wxUserInfo) {
+
+                userInfo = new UserInfo();
+                userInfo.setPhone("");
+                userInfo.setNickName(wxUserInfo.getNickname());
+                userInfo.setOpenId(wxUserInfo.getOpenid());
+                userInfo.setStatus(0);
+                userInfo.setEmail("");
+                userInfo.setAgent(angent);
+                userInfo.setWxImage(wxUserInfo.getHeadimgurl());
+                String subUnionId = ESubUnionIdPrefix.getSubUnionId(ESubUnionIdPrefix.JD.getCode(), sequenceUtil.get(ESequence.SUB_UNION_ID.getSequenceName()));
+                userInfo.setSubUnionId(subUnionId);
+                userInfo.setRecommendAccount("");
+                userInfoDao.insert(userInfo);
+            }
+        }
+
         return userInfo;
     }
 

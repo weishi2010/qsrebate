@@ -51,4 +51,6 @@ public interface WxAccessTokenService {
      */
     WxUserInfo getWxUserInfo(String accessToken,String openId) ;
 
+    WxUserInfo getWxApiUserInfo(String accessToken, String openId);
+
 } 

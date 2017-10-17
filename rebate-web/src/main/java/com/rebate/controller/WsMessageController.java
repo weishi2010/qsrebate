@@ -153,7 +153,7 @@ public class WsMessageController extends BaseController {
                     if (EWxEventType.SUBSCRIBE.getValue().equalsIgnoreCase(inputMsg.getEvent())) {
 
                         //注册用户
-                        userInfoService.registUserInfo(null, inputMsg.getFromUserName(), EAgent.FIRST_AGENT.getCode());
+                        userInfoService.registUserInfo(inputMsg.getFromUserName(), EAgent.FIRST_AGENT.getCode());
 
                         //关注
                         String eventXml = subscribeTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);

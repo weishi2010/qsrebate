@@ -93,6 +93,29 @@ public class WxAccessTokenServiceImpl implements WxAccessTokenService {
             String json = HttpClientUtil.get(wxConfig.getUserInfoUrl(), params);
 
             json = new String(json.getBytes("ISO-8859-1"), "UTF-8");
+            LOG.error("[getWxUserInfo]json:"+json);
+
+            if (json.contains("openid")) {
+                wxUserInfo = JsonUtil.fromJson(json, WxUserInfo.class);
+            }
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return wxUserInfo;
+    }
+
+    @Override
+    public WxUserInfo getWxApiUserInfo(String accessToken, String openId) {
+        WxUserInfo wxUserInfo = null;
+        try {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("access_token", accessToken);
+            params.put("openid", openId);
+            params.put("lang", "zh_CN");
+            String json = HttpClientUtil.get(wxConfig.getUserInfoApiUrl(), params);
+
+            json = new String(json.getBytes("ISO-8859-1"), "UTF-8");
+            LOG.error("[getWxApiUserInfo]json:"+json);
 
             if (json.contains("openid")) {
                 wxUserInfo = JsonUtil.fromJson(json, WxUserInfo.class);

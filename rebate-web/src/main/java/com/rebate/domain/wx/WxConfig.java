@@ -56,7 +56,12 @@ public class WxConfig {
 
     private String menuDeleteUrl;
 
+    /**
+     * 获取微信短链接API接口
+     */
     private String shortApiUrl;
+
+    private String userInfoApiUrl;
 
     public String getAppId() {
         return appId;
@@ -160,5 +165,13 @@ public class WxConfig {
 
     public void setShortApiUrl(String shortApiUrl) {
         this.shortApiUrl = shortApiUrl;
+    }
+
+    public String getUserInfoApiUrl() {
+        return userInfoApiUrl;
+    }
+
+    public void setUserInfoApiUrl(String userInfoApiUrl) {
+        this.userInfoApiUrl = userInfoApiUrl;
     }
 }

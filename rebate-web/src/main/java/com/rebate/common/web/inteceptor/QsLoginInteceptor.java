@@ -128,14 +128,14 @@ public class QsLoginInteceptor extends LoginInteceptor {
                 }
             }
 
-            //注册用户
-           userInfo =  userInfoService.registUserInfo(authorizationCodeInfo.getAccessToken(), authorizationCodeInfo.getOpenId(),EAgent.NOT_AGENT.getCode());
+            //注册用户，如果已存在的用户直接返回用户信息
+            userInfo = userInfoService.registUserInfo(authorizationCodeInfo.getOpenId(), EAgent.NOT_AGENT.getCode());
 
             //设置cookie
             if (null != userInfo) {
                 LOG.error("[set cookie]===================>userInfo:" + JsonUtil.toJson(userInfo));
 
-                cookieUtils.setCookie(response, USERINFO_COOKIE, JsonUtil.toJson(userInfo),120);
+                cookieUtils.setCookie(response, USERINFO_COOKIE, JsonUtil.toJson(userInfo), 120);
 
             }
         }
