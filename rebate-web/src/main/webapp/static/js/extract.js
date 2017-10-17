@@ -22,7 +22,8 @@ app.controller('extractCtrl', function ($scope,$http) {
             method: 'GET',
             params:{
                 extractPhone:extractPhone,
-                extractPrice:extractPrice
+                extractPrice:extractPrice,
+                rd:Math.random()
             },
             url: '/personal/extractPrice.json?callback=1'
         }).then(function successCallback(response) {

@@ -47,5 +47,5 @@
     </div>
 </div>
 </form>
-    <script type="text/javascript" src="/static/js/extract.js"></script>
+    <script type="text/javascript" src="/static/js/extract.js?v1"></script>
 </body></html>
