@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="IncomeDetail">
+
+    <typeAlias alias="IncomeDetail" type="com.rebate.domain.IncomeDetail"/>
+    <typeAlias alias="IncomeDetailQuery" type="com.rebate.domain.query.IncomeDetailQuery"/>
+
+    <resultMap class="IncomeDetail" id="IncomeDetailResultMap">
+        <result property="id" column="id"/>
+        <result property="openId" column="open_id"/>
+        <result property="referenceId" column="reference_id"/>
+        <result property="income" column="income"/>
+        <result property="type" column="type"/>
+        <result property="dealt" column="dealt"/>
+        <result property="status" column="status"/>
+        <result property="created" column="created"/>
+        <result property="modified" column="modified"/>
+    </resultMap>
+
+    <sql id="fields">
+      id,
+      open_id,
+      reference_id,
+      income,
+      type,
+      dealt,
+      status,
+      created,
+      modified
+    </sql>
+
+    <insert id="insert" parameterClass="IncomeDetail">
+        insert into income_detail
+        (
+        open_id,
+        reference_id,
+        income,
+        type,
+        dealt,
+        status,
+        created,
+        modified
+        )
+        values
+        (
+        #openId#,
+        #referenceId#,
+        #income#,
+        #type#,
+        #dealt#,
+        #status#,
+        now(),
+        now()
+        )
+        <selectKey resultClass="long" keyProperty="id">
+            SELECT @@IDENTITY as id
+        </selectKey>
+    </insert>
+
+    <update id="updateIncomeDetail" parameterClass="IncomeDetail" >
+        update income_detail
+        set status=#status#
+        where open_id=#openId# and reference_id=#referenceId#
+    </update>
+
+    <select id="findIncomeDetail" parameterClass="IncomeDetailQuery" resultMap="IncomeDetailResultMap">
+        select
+        <include refid="fields"/>
+        from income_detail
+        where open_id=#openId# and reference_id=#referenceId#
+        limit 1
+    </select>
+
+    <select id="findIncomeStatistisByType" parameterClass="IncomeDetailQuery" resultClass="double">
+        select sum(income) as income
+        from income_detail
+        where open_id=#openId# and type in ($typeList$)
+        limit 1
+    </select>
+</sqlMap>

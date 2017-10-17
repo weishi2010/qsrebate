@@ -5,12 +5,15 @@ import com.rebate.common.data.seq.SequenceUtil;
 import com.rebate.common.util.JsonUtil;
 import com.rebate.common.util.RedisUtil;
 import com.rebate.dao.CommissionDao;
+import com.rebate.dao.IncomeDetailDao;
 import com.rebate.dao.UserInfoDao;
 import com.rebate.domain.Commission;
 import com.rebate.domain.UserInfo;
 import com.rebate.domain.en.EAgent;
+import com.rebate.domain.en.EIncomeType;
 import com.rebate.domain.en.ESequence;
 import com.rebate.domain.en.ESubUnionIdPrefix;
+import com.rebate.domain.query.IncomeDetailQuery;
 import com.rebate.domain.wx.WxUserInfo;
 import com.rebate.service.userinfo.UserInfoService;
 import com.rebate.service.wx.WxAccessTokenService;
@@ -30,6 +33,10 @@ public class UserInfoServiceImpl implements UserInfoService {
     @Qualifier("commissionDao")
     @Autowired(required = true)
     private CommissionDao commissionDao;
+
+    @Qualifier("incomeDetailDao")
+    @Autowired(required = true)
+    private IncomeDetailDao incomeDetailDao;
 
     @Qualifier("userInfoDao")
     @Autowired(required = true)
@@ -114,6 +121,43 @@ public class UserInfoServiceImpl implements UserInfoService {
         return commission;
     }
 
+    /**
+     * 更新用户提现余额
+     * @param openId
+     */
+    @Override
+    public void updateUserCommission(String openId){
+        //计算收入、支出
+        IncomeDetailQuery incomeDetailQuery = new IncomeDetailQuery();
+        incomeDetailQuery.setOpenId(openId);
+        incomeDetailQuery.setTypeList(EIncomeType.REGIST.getCode()+","+EIncomeType.ORDER_REBATE.getCode());
+        Double income = incomeDetailDao.findIncomeStatistisByType(incomeDetailQuery);
+        if(null==income){
+            income = 0.0;
+        }
+
+        incomeDetailQuery.setTypeList(EIncomeType.EXTRACT.getCode()+"");
+        Double payment = incomeDetailDao.findIncomeStatistisByType(incomeDetailQuery);
+        if(null==payment){
+            payment = 0.0;
+        }
+
+        Double totalCommission = income-payment;//收入减少余额
+        //更新用户提现余额
+        Commission commission = new Commission();
+        commission.setOpenId(openId);
+        commission.setTotalCommission(totalCommission);
+        Commission userCommission = commissionDao.findCommissionByOpenId(commission);
+
+        if (null == userCommission) {
+            commission.setStatus(0);
+            commissionDao.insert(commission);
+        } else {
+            userCommission.setTotalCommission(totalCommission);
+            commissionDao.updateTotalCommission(commission);
+
+        }
+    }
     //------------------------------private methods----------------------------------------
 
     /**
