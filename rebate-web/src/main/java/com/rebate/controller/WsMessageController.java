@@ -6,14 +6,13 @@ import com.rebate.common.util.SerializeXmlUtil;
 import com.rebate.common.util.Sha1Util;
 import com.rebate.common.util.rebate.RebateUrlUtil;
 import com.rebate.controller.base.BaseController;
+import com.rebate.dao.IncomeDetailDao;
 import com.rebate.dao.ProductCouponDao;
 import com.rebate.dao.ProductDao;
+import com.rebate.domain.IncomeDetail;
 import com.rebate.domain.Product;
 import com.rebate.domain.UserInfo;
-import com.rebate.domain.en.EAgent;
-import com.rebate.domain.en.EWxEventCode;
-import com.rebate.domain.en.EWxEventType;
-import com.rebate.domain.en.EWxMsgType;
+import com.rebate.domain.en.*;
 import com.rebate.domain.wx.ImageMessage;
 import com.rebate.domain.wx.InputMessage;
 import com.rebate.domain.wx.OutputMessage;
@@ -67,6 +66,10 @@ public class WsMessageController extends BaseController {
     @Qualifier("userInfoService")
     @Autowired(required = true)
     private UserInfoService userInfoService;
+
+    @Qualifier("incomeDetailDao")
+    @Autowired(required = true)
+    private IncomeDetailDao incomeDetailDao;
 
     /**
      * 微信公众号接口配置
@@ -149,12 +152,25 @@ public class WsMessageController extends BaseController {
                     response.getWriter().write(textXml.toString());
 
                 } else if (msgType.equals(EWxMsgType.EVENT.getValue())) {
-                    LOG.error("accept[" + inputMsg.getFromUserName() + "],msgType:" + inputMsg.getMsgType() + ",event:" + inputMsg.getEvent());
+                    String openId = inputMsg.getFromUserName();
+                    LOG.error("accept[" + openId + "],msgType:" + inputMsg.getMsgType() + ",event:" + inputMsg.getEvent());
                     if (EWxEventType.SUBSCRIBE.getValue().equalsIgnoreCase(inputMsg.getEvent())) {
 
                         //注册用户
-                        userInfoService.registUserInfo(inputMsg.getFromUserName(), EAgent.FIRST_AGENT.getCode());
+                        UserInfo registUserInfo = userInfoService.registUserInfo(openId, EAgent.FIRST_AGENT.getCode());
 
+                        //注册成功用户给用户发放10元提现金额插入支出记录
+                        IncomeDetail incomeDetail = new IncomeDetail();
+                        incomeDetail.setOpenId(openId);
+                        incomeDetail.setReferenceId(registUserInfo.getId());
+                        incomeDetail.setIncome(10.0);
+                        incomeDetail.setStatus(0);
+                        incomeDetail.setDealt(0);
+                        incomeDetail.setType(EIncomeType.REGIST.getCode());
+                        incomeDetailDao.insert(incomeDetail);
+
+                        //更新用户提现金额
+                        userInfoService.updateUserCommission(openId);
                         //关注
                         String eventXml = subscribeTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
                         LOG.error("output wx eventXml:" + eventXml);
