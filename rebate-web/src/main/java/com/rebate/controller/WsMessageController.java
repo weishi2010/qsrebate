@@ -157,17 +157,7 @@ public class WsMessageController extends BaseController {
                     if (EWxEventType.SUBSCRIBE.getValue().equalsIgnoreCase(inputMsg.getEvent())) {
 
                         //注册用户
-                        UserInfo registUserInfo = userInfoService.registUserInfo(openId, EAgent.FIRST_AGENT.getCode());
-
-                        //注册成功用户给用户发放10元提现金额插入支出记录
-                        IncomeDetail incomeDetail = new IncomeDetail();
-                        incomeDetail.setOpenId(openId);
-                        incomeDetail.setReferenceId(registUserInfo.getId());
-                        incomeDetail.setIncome(10.0);
-                        incomeDetail.setStatus(0);
-                        incomeDetail.setDealt(0);
-                        incomeDetail.setType(EIncomeType.REGIST.getCode());
-                        incomeDetailDao.insert(incomeDetail);
+                        userInfoService.registUserInfo(openId, EAgent.FIRST_AGENT.getCode(),true);
 
                         //更新用户提现金额
                         userInfoService.updateUserCommission(openId);

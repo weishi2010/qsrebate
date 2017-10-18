@@ -8,6 +8,7 @@ import com.rebate.dao.CommissionDao;
 import com.rebate.dao.IncomeDetailDao;
 import com.rebate.dao.UserInfoDao;
 import com.rebate.domain.Commission;
+import com.rebate.domain.IncomeDetail;
 import com.rebate.domain.UserInfo;
 import com.rebate.domain.en.EAgent;
 import com.rebate.domain.en.EIncomeType;
@@ -60,7 +61,7 @@ public class UserInfoServiceImpl implements UserInfoService {
     private SequenceUtil sequenceUtil;
 
     @Override
-    public UserInfo registUserInfo(String openId, Integer angent) {
+    public UserInfo registUserInfo(String openId, Integer angent,boolean isAward) {
         UserInfo userInfo = null;
         //查询是否已存在此用户
         UserInfo userInfoQuery = new UserInfo();
@@ -81,7 +82,23 @@ public class UserInfoServiceImpl implements UserInfoService {
                 String subUnionId = ESubUnionIdPrefix.getSubUnionId(ESubUnionIdPrefix.JD.getCode(), sequenceUtil.get(ESequence.SUB_UNION_ID.getSequenceName()));
                 userInfo.setSubUnionId(subUnionId);
                 userInfo.setRecommendAccount("");
-                userInfoDao.insert(userInfo);
+
+                IncomeDetailQuery incomeDetailQuery = new IncomeDetailQuery();
+                incomeDetailQuery.setOpenId(wxUserInfo.getOpenid());
+                incomeDetailQuery.setType(EIncomeType.REGIST.getCode());
+                //未获得奖励的则给予用户奖励10元
+                if (isAward && null == incomeDetailDao.findIncomeDetail(incomeDetailQuery)) {
+                    //注册成功用户给用户发放10元提现金额插入支出记录
+                    IncomeDetail incomeDetail = new IncomeDetail();
+                    incomeDetail.setOpenId(openId);
+                    incomeDetail.setReferenceId(userInfo.getId());
+                    incomeDetail.setIncome(10.0);
+                    incomeDetail.setStatus(0);
+                    incomeDetail.setDealt(0);
+                    incomeDetail.setType(EIncomeType.REGIST.getCode());
+                    incomeDetailDao.insert(incomeDetail);
+                }
+
             }
         }
 

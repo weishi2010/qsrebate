@@ -67,7 +67,18 @@
         select
         <include refid="fields"/>
         from income_detail
-        where open_id=#openId# and reference_id=#referenceId#
+        <dynamic prepend="where">
+            <isNotNull property="openId" prepend="and">
+                open_id=#openId#
+            </isNotNull>
+            <isNotNull property="referenceId" prepend="and">
+                reference_id=#referenceId#
+            </isNotNull>
+            <isNotNull property="type" prepend="and">
+                type=#type#
+            </isNotNull>
+
+        </dynamic>
         limit 1
     </select>
 
