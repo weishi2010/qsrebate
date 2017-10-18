@@ -138,15 +138,12 @@ public class ProductController extends BaseController {
     @RequestMapping({"", "/", "/products.json"})
     public ResponseEntity<?> products(HttpServletRequest request, Integer tab, Integer page, String secondCategoryList) {
         Map<String, Object> map = new HashMap<String, Object>();
-        Double queryPrice = null;
         Integer couponType = null;
-        if (null != tab && EPromotionTab.SECKILL.getTab() == tab) {
-            couponType = EProudctCouponType.GENERAL.getCode();
-        } else {
+        if (null == tab ) {
             tab = EPromotionTab.COUPON_PROMOTION.getTab();
-            couponType = EProudctCouponType.COUPON.getCode();
         }
 
+        couponType = EProudctCouponType.COUPON.getCode();
         ProductQuery query = new ProductQuery();
 
         if (EPromotionTab.SECKILL.getTab() == tab) {
