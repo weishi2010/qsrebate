@@ -16,6 +16,9 @@
 
 </div>
     #parse("/common/footer.vm")
-<script type="text/javascript" src="/static/js/secskill.js?v1"></script>
-
+    #if($agent==1)
+    <script type="text/javascript" src="/static/js/agentCouponList.js?v1"></script>
+    #else
+    <script type="text/javascript" src="/static/js/couponList.js?v1"></script>
+    #end
 </body></html>

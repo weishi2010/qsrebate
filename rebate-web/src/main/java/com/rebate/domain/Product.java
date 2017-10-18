@@ -92,6 +92,13 @@ public class Product extends BaseQuery {
     private Double originalPrice;
 
     /**
+     * 券后价
+     */
+    @Getter
+    @Setter
+    private Double couponPrice;
+
+    /**
      * 库存
      */
     @Getter

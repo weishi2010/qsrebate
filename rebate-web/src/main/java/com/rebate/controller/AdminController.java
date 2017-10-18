@@ -7,9 +7,12 @@ import com.rebate.common.util.rebate.RebateUrlUtil;
 import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.controller.base.BaseController;
 import com.rebate.dao.AdvertismentPositionDao;
+import com.rebate.dao.ProductCouponDao;
+import com.rebate.dao.ProductDao;
 import com.rebate.domain.*;
 import com.rebate.domain.en.*;
 import com.rebate.domain.query.ExtractDetailQuery;
+import com.rebate.domain.query.ProductCouponQuery;
 import com.rebate.domain.query.ProductQuery;
 import com.rebate.domain.query.RebateDetailQuery;
 import com.rebate.domain.vo.ExtractDetailVo;
@@ -59,6 +62,12 @@ public class AdminController extends BaseController {
     };
     private static final TypeReference<List<Activity>> activityTypeReference = new TypeReference<List<Activity>>() {
     };
+
+    @Autowired
+    private ProductCouponDao productCouponDao;
+
+    @Autowired
+    private ProductDao productDao;
 
     @Qualifier("productService")
     @Autowired(required = true)
@@ -164,6 +173,31 @@ public class AdminController extends BaseController {
         map.put("delete", wxMenuService.deleteMenu());
         map.put("create", wxMenuService.createMenu());
         map.put("get", wxMenuService.getMenu());
+        return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
+    }
+    @RequestMapping({"", "/", "/updateCouponPrice.json"})
+    public ResponseEntity<?> updateCouponPrice() {
+        int page=1;
+        int pageSize=20;
+        ProductCouponQuery productCouponQuery = new ProductCouponQuery();
+        productCouponQuery.setPageSize(pageSize);
+        productCouponQuery.setStartRow((page-1)*pageSize);
+        List<ProductCoupon> list = productCouponDao.findProductCoupons(productCouponQuery);
+        while(list.size()>0){
+            for(ProductCoupon coupon:list){
+                Product product = new Product();
+                product.setProductId(coupon.getProductId());
+                product.setCouponPrice(coupon.getCouponPrice());
+                productDao.update(product);
+            }
+            LOG.error("[updateCouponPrice]page:"+page+",list:" + list.size());
+            page++;
+            productCouponQuery.setStartRow((page-1)*pageSize);
+            list = productCouponDao.findProductCoupons(productCouponQuery);
+        }
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("success", true);
         return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
     }
 }

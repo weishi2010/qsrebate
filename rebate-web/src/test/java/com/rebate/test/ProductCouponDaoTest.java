@@ -9,6 +9,7 @@ import com.rebate.domain.Product;
 import com.rebate.domain.ProductCoupon;
 import com.rebate.domain.en.EProudctCouponType;
 import com.rebate.domain.en.EProudctRebateType;
+import com.rebate.domain.query.ProductCouponQuery;
 import com.rebate.manager.jd.JdSdkManager;
 import com.rebate.service.job.impl.RebateJobImpl;
 import org.junit.Test;
@@ -29,27 +30,27 @@ public class ProductCouponDaoTest extends AbstractJUnit4SpringContextTests {
     private ProductCouponDao productCouponDao;
 
     @Autowired
-    private JdSdkManager jdSdkManager;
-
-    @Autowired
     private ProductDao productDao;
 
     @Test
-    public void testGetMediaCouponProducts() {
+    public void updateCouponPrice() {
         int page=1;
         int pageSize=20;
-        List<ProductCoupon> list = jdSdkManager.getMediaCoupons(page, pageSize);
+        ProductCouponQuery productCouponQuery = new ProductCouponQuery();
+        productCouponQuery.setPageSize(pageSize);
+        productCouponQuery.setStartRow((page-1)*pageSize);
+        List<ProductCoupon> list = productCouponDao.findProductCoupons(productCouponQuery);
         while(list.size()>0){
-            List<Long> skus = new ArrayList<>();
             for(ProductCoupon coupon:list){
-                skus.add(coupon.getProductId());
+                Product product = new Product();
+                product.setProductId(coupon.getProductId());
+                product.setCouponPrice(coupon.getCouponPrice());
+                productDao.update(product);
             }
-            LOG.error("[importCouponProducts]page:"+page+",list:" + skus);
+            LOG.error("[updateCouponPrice]page:"+page+",list:" + list.size());
             page++;
-            list = jdSdkManager.getMediaCoupons(page, pageSize);
+            productCouponQuery.setStartRow((page-1)*pageSize);
+            list = productCouponDao.findProductCoupons(productCouponQuery);
         }
-
-
-
     }
 }

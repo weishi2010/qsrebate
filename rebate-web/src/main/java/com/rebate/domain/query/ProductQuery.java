@@ -10,7 +10,13 @@ import java.util.Date;
  * 商品信息查询
  */
 public class ProductQuery extends Product{
+    @Getter
+    @Setter
+    private Double gtPrice;
 
+    @Getter
+    @Setter
+    private Double letPrice;
     @Getter
     @Setter
     private Double queryPrice;

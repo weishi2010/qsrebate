@@ -54,8 +54,8 @@
             <isNotNull property="sourcePlatform" prepend="and">
                 source_platform=#sourcePlatform#
             </isNotNull>
-            <isNotNull property="product_id" prepend="and">
-                productPd=#product_id#
+            <isNotNull property="productId" prepend="and">
+                product_id=#productId#
             </isNotNull>
         </dynamic>
     </sql>
@@ -139,5 +139,22 @@
     <delete id="deleteByProductId" parameterClass="long">
         delete from product_coupon where product_id=#product_id#
     </delete>
+
+    <select id="findProductCouponsCount" parameterClass="ProductCouponQuery" resultClass="int">
+        select
+        count(1)
+        from product_coupon
+        <include refid="condition"></include>
+
+    </select>
+
+    <select id="findProductCoupons" parameterClass="ProductCouponQuery" resultMap="ProductCouponMap">
+        select
+        <include refid="fields"/>
+        from product_coupon
+        <include refid="condition"></include>
+        order by created desc
+        limit #startRow#,#pageSize#
+    </select>
 
 </sqlMap>

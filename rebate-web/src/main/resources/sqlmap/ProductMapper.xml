@@ -18,6 +18,7 @@
         <result property="secondCategoryName" column="second_category_name"/>
         <result property="thirdCategoryName" column="third_category_name"/>
         <result property="originalPrice" column="original_price"/>
+        <result property="couponPrice" column="coupon_price"/>
         <result property="stock" column="stock"/>
         <result property="commissionRatioPc" column="commission_ratio_wl"/>
         <result property="commissionRatioWl" column="commission_ratio_pc"/>
@@ -53,6 +54,7 @@
         third_category,
         third_category_name,
         original_price,
+        coupon_price,
         stock,
         commission_ratio_pc,
         commission_ratio_wl,
@@ -100,6 +102,12 @@
             <isNotNull property="couponType" prepend="and">
                 coupon_type=#couponType#
             </isNotNull>
+            <isNotNull property="letPrice" prepend="and">
+                <![CDATA[coupon_price>0 and coupon_price <= #letPrice# ]]>
+            </isNotNull>
+            <isNotNull property="gtPrice" prepend="and">
+                <![CDATA[coupon_price > #gtPrice# ]]>
+            </isNotNull>
             <isNotNull property="status" prepend="and">
                 status=#status#
             </isNotNull>
@@ -128,6 +136,7 @@
         third_category,
         third_category_name,
         original_price,
+        coupon_price,
         stock,
         commission_ratio_pc,
         commission_ratio_wl,
@@ -162,6 +171,7 @@
         #thirdCategory#,
         #thirdCategoryName#,
         #originalPrice#,
+        #couponPrice#,
         #stock#,
         #commissionRatioPc#,
         #commissionRatioWl#,
@@ -195,6 +205,9 @@
             </isNotNull>
             <isNotNull property="originalPrice" prepend=",">
                 original_price = #originalPrice#
+            </isNotNull>
+            <isNotNull property="couponPrice" prepend=",">
+                coupon_price = #couponPrice#
             </isNotNull>
             <isNotNull property="wlUnitPrice" prepend=",">
                 wl_unit_price = #wlUnitPrice#

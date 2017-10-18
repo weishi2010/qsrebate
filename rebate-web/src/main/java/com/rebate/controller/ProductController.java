@@ -147,15 +147,16 @@ public class ProductController extends BaseController {
             couponType = EProudctCouponType.COUPON.getCode();
         }
 
+        ProductQuery query = new ProductQuery();
 
         if (EPromotionTab.SECKILL.getTab() == tab) {
-            queryPrice = 9.9;
+            query.setLetPrice(10.0);
+        }else{
+            query.setGtPrice(10.0);
         }
 
-        ProductQuery query = new ProductQuery();
         query.setIndex(page);
         query.setPageSize(10);
-        query.setQueryPrice(queryPrice);
         query.setSecondCategoryList(secondCategoryList);
         query.setCouponType(couponType);
         PaginatedArrayList<ProductVo> products = productService.findProductList(query);

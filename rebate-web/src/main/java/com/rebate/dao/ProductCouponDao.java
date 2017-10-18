@@ -1,6 +1,11 @@
 package com.rebate.dao;
 
+import com.rebate.domain.Product;
 import com.rebate.domain.ProductCoupon;
+import com.rebate.domain.query.ProductCouponQuery;
+import com.rebate.domain.query.ProductQuery;
+
+import java.util.List;
 
 public interface ProductCouponDao {
     /**
@@ -27,4 +32,19 @@ public interface ProductCouponDao {
      * @return
      */
     ProductCoupon findById(ProductCoupon productCoupon);
+
+
+    /**
+     * 查询列表
+     * @param productCouponQuery
+     * @return
+     */
+    List<ProductCoupon> findProductCoupons(ProductCouponQuery productCouponQuery);
+
+    /**
+     * 查询总数
+     * @param productCouponQuery
+     * @return
+     */
+    int findProductCouponsCount(ProductCouponQuery productCouponQuery);
 }
