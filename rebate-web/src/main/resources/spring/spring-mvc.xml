@@ -94,6 +94,7 @@
 		<property name="menuDeleteUrl" value="${wx.menuDeleteUrl}"/>
 		<property name="shortApiUrl" value="${wx.shortApiUrl}"/>
 		<property name="userInfoApiUrl" value="${wx.userInfoApiUrl}"/>
+		<property name="qrcodeUrl" value="${wx.qrcodeUrl}"/>
 
 	</bean>
 

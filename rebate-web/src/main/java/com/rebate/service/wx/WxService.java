@@ -19,4 +19,10 @@ public interface WxService {
      */
     String getShortUrl(String longUrl);
 
+    /**
+     * 获取二维码链接
+     * @param paramJson
+     * @return
+     */
+    String getQrcodeUrl(String paramJson);
 }

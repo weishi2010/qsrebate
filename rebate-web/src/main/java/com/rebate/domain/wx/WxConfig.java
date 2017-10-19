@@ -40,7 +40,7 @@ public class WxConfig {
     private String loginAccessTokenUrl = "https://api.weixin.qq.com/sns/oauth2/access_token";
 
     /**
-     * 用户信息API地址
+     * 用户授权信息API地址
      */
     private String userInfoUrl = "https://api.weixin.qq.com/sns/userinfo";
     /**
@@ -61,7 +61,15 @@ public class WxConfig {
      */
     private String shortApiUrl;
 
+    /**
+     * 用户信息API接口
+     */
     private String userInfoApiUrl;
+
+    /**
+     * 二维码接口
+     */
+    private String qrcodeUrl;
 
     public String getAppId() {
         return appId;
@@ -173,5 +181,13 @@ public class WxConfig {
 
     public void setUserInfoApiUrl(String userInfoApiUrl) {
         this.userInfoApiUrl = userInfoApiUrl;
+    }
+
+    public String getQrcodeUrl() {
+        return qrcodeUrl;
+    }
+
+    public void setQrcodeUrl(String qrcodeUrl) {
+        this.qrcodeUrl = qrcodeUrl;
     }
 }

@@ -13,6 +13,7 @@ import com.rebate.domain.vo.RebateDetailVo;
 import com.rebate.service.extract.ExtractDetailService;
 import com.rebate.service.order.RebateDetailService;
 import com.rebate.service.userinfo.UserInfoService;
+import com.rebate.service.wx.WxService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +52,10 @@ public class PersonalController extends BaseController {
     @Qualifier("extractDetailService")
     @Autowired(required = true)
     private ExtractDetailService extractDetailService;
+
+    @Qualifier("wxService")
+    @Autowired(required = true)
+    private WxService wxService;
 
     @RequestMapping({"", "/", "/extract"})
     public ModelAndView extract(HttpServletRequest request) {
@@ -187,6 +192,15 @@ public class PersonalController extends BaseController {
         return view;
     }
 
+
+    @RequestMapping({"", "/", "/qrcode"})
+    public ModelAndView qrcode(HttpServletRequest request) {
+        ModelAndView view = new ModelAndView(VIEW_PREFIX+ "/agent/qrcode");
+        UserInfo userInfo = getUserInfo(request);
+
+        view.addObject("qrcodeUrl", wxService.getQrcodeUrl(userInfo.getOpenId()));
+        return view;
+    }
     //---------------------------------------------------------------
 
     /**

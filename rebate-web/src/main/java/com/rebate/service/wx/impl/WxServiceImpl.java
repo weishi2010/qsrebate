@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,7 +46,7 @@ public class WxServiceImpl implements WxService {
             String json = HttpClientUtil.get(wxConfig.getUserInfoApiUrl(), params);
 
             json = new String(json.getBytes("ISO-8859-1"), "UTF-8");
-            LOG.error("[getWxApiUserInfo]json:"+json);
+            LOG.error("[getWxApiUserInfo]json:" + json);
 
             if (json.contains("openid")) {
                 wxUserInfo = JsonUtil.fromJson(json, WxUserInfo.class);
@@ -65,16 +66,42 @@ public class WxServiceImpl implements WxService {
             params.put("long_url", longUrl);
             params.put("action", "long2short");
 
-            String json = HttpClientUtil.post(wxConfig.getShortApiUrl()+"?access_token="+wxAccessTokenService.getApiAccessToken().getAccessToken(), params);
-            LOG.error("getShortUrl json:{},params:{}",json,JsonUtil.toJson(params));
+            String json = HttpClientUtil.post(wxConfig.getShortApiUrl() + "?access_token=" + wxAccessTokenService.getApiAccessToken().getAccessToken(), params);
+            LOG.error("getShortUrl json:{},params:{}", json, JsonUtil.toJson(params));
             Map map = JsonUtil.fromJson(json, Map.class);
             if (map.containsKey("errcode") && "0".equalsIgnoreCase(map.get("errcode").toString())) {
                 shortUrl = map.get("short_url").toString();
             }
         } catch (Exception e) {
-            LOG.error("getShortUrl error!longUrl:"+longUrl, e);
+            LOG.error("getShortUrl error!longUrl:" + longUrl, e);
 
         }
         return shortUrl;
+    }
+
+    @Override
+    public String getQrcodeUrl(String paramJson) {
+        String qrcodeUrl = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=";
+        String ticket = "";
+        long expireSeconds = 0l;
+        try {
+            Map<String, Object> params = new HashMap<String, Object>();
+            params.put("expire_seconds", 2592000);
+            params.put("action_name", "QR_STR_SCENE");
+            params.put("action_info", " {\"scene\": {\"scene_str\": \"" + paramJson + "\"}}");
+
+            String json = HttpClientUtil.post(wxConfig.getQrcodeUrl() + "?access_token=" + wxAccessTokenService.getApiAccessToken().getAccessToken(), params);
+            LOG.error("getQrcodeUrl json:{},params:{}", json, JsonUtil.toJson(params));
+            Map map = JsonUtil.fromJson(json, Map.class);
+            if (map.containsKey("url") && map.containsKey("ticket")) {
+                String url = map.get("url").toString();
+                ticket = map.get("ticket").toString();
+                expireSeconds = Long.parseLong(map.get("expire_seconds").toString());
+                qrcodeUrl = qrcodeUrl + URLEncoder.encode(ticket, "UTF-8");
+            }
+        } catch (Exception e) {
+            LOG.error("getQrcodeUrl error!paramJson:" + paramJson, e);
+        }
+        return qrcodeUrl;
     }
 }
