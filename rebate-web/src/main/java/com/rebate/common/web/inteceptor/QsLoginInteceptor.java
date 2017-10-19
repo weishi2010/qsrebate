@@ -111,6 +111,7 @@ public class QsLoginInteceptor extends LoginInteceptor {
             //获取accessToken
             AuthorizationCodeInfo authorizationCodeInfo = null;
             String cookieValue = cookieUtils.getQsCookieValue(request, WX_ACCESSTOKEN_COOKIE);
+            String openId = null;
             if (StringUtils.isNotBlank(cookieValue)) {
                 authorizationCodeInfo = JsonUtil.fromJson(cookieValue, AuthorizationCodeInfo.class);
             } else {
@@ -119,25 +120,35 @@ public class QsLoginInteceptor extends LoginInteceptor {
                 if (StringUtils.isNotBlank(loginCode)) {
                     authorizationCodeInfo = wxAccessTokenService.getLoginAccessToken(loginCode);
                 }
-                if (null == authorizationCodeInfo) {
-                    //转跳到WX授权页，用户授权后回跳到当前应用链接并附带code参数
-                    redirect2WxAuthorizePage(request, response);
-                    return false;
-                } else {
+
+                if (null != authorizationCodeInfo) {
+                    openId = authorizationCodeInfo.getOpenId();
                     cookieUtils.setCookie(response, WX_ACCESSTOKEN_COOKIE, JsonUtil.toJson(authorizationCodeInfo),300);
                 }
-            }
-
-            //注册用户，如果已存在的用户直接返回用户信息
-            userInfo = userInfoService.registUserInfo(authorizationCodeInfo.getOpenId(), EAgent.NOT_AGENT.getCode(),false);
-
-            //设置cookie
-            if (null != userInfo) {
-                LOG.error("[set cookie]===================>userInfo:" + JsonUtil.toJson(userInfo));
-
-                cookieUtils.setCookie(response, USERINFO_COOKIE, JsonUtil.toJson(userInfo), 120);
 
             }
+
+            if (StringUtils.isBlank(openId)) {
+                //转跳到WX授权页，用户授权后回跳到当前应用链接并附带code参数
+                redirect2WxAuthorizePage(request, response);
+                return false;
+            }else{
+                //查询用户信息
+                userInfo = userInfoService.getUserInfo(authorizationCodeInfo.getOpenId());
+
+                if (null != userInfo) {
+                    //设置cookie
+                    LOG.error("[set cookie]===================>userInfo:" + JsonUtil.toJson(userInfo));
+                    cookieUtils.setCookie(response, USERINFO_COOKIE, JsonUtil.toJson(userInfo), 120);
+                }else{
+                    //用户未注册的，则跳转到公众号关注页，通过关注进行注册
+                    redirect2WxSubscribePage(request, response);
+                    return false;
+                }
+
+            }
+
+
         }
 
         LOG.error("===================>userInfo:" + JsonUtil.toJson(userInfo));
@@ -187,6 +198,18 @@ public class QsLoginInteceptor extends LoginInteceptor {
         LOG.error("[redirect2WxAuthorizePage]####################>returnUrl:" + log);
 
         response.sendRedirect(log);
+    }
+
+    /**
+     * 跳转到公众号关注页
+     *
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    public void redirect2WxSubscribePage(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String wxSubscribeUrl = "https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzIwNjkzOTkzNg==&scene=110#wechat_redirect";
+        response.sendRedirect(wxSubscribeUrl);
     }
 
     /**

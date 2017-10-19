@@ -28,6 +28,7 @@ import com.rebate.service.product.ProductService;
 import com.rebate.service.userinfo.UserInfoService;
 import com.rebate.service.wx.WxAccessTokenService;
 import com.rebate.service.wx.WxMenuService;
+import com.rebate.service.wx.WxService;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.type.TypeReference;
 import org.slf4j.Logger;
@@ -55,6 +56,8 @@ import java.util.Map;
 @RequestMapping(AdminController.PREFIX)
 public class AdminController extends BaseController {
     public static final String PREFIX = "/admin";
+    public static final String VIEW_PREFIX = "/rebate";
+
     private static final Logger LOG = LoggerFactory.getLogger(AdminController.class);
 
 
@@ -84,6 +87,10 @@ public class AdminController extends BaseController {
     @Qualifier("advertismentPositionService")
     @Autowired(required = true)
     private AdvertismentPositionService advertismentPositionService;
+
+    @Qualifier("wxService")
+    @Autowired(required = true)
+    private WxService wxService;
 
     @RequestMapping({"", "/", "/importProducts.json"})
     public ResponseEntity<?> importProducts(HttpServletRequest request, String productIds) {
@@ -199,5 +206,13 @@ public class AdminController extends BaseController {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("success", true);
         return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
+    }
+
+    @RequestMapping({"", "/", "/qrcode"})
+    public ModelAndView qrcode(HttpServletRequest request) {
+        ModelAndView view = new ModelAndView(VIEW_PREFIX+ "/agent/qrcode");
+
+        view.addObject("qrcodeUrl", wxService.getQrcodeUrl("agent"));
+        return view;
     }
 }

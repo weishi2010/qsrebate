@@ -1,0 +1,6 @@
+#set( $title = "轻松返二维码")
+#parse("/common/head.vm")
+<body class="bd">
+<img id="qrcode" src="$!{qrcodeUrl}" width="150" height="150"/>
+</body>
+</html>

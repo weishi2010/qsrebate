@@ -53,10 +53,6 @@ public class PersonalController extends BaseController {
     @Autowired(required = true)
     private ExtractDetailService extractDetailService;
 
-    @Qualifier("wxService")
-    @Autowired(required = true)
-    private WxService wxService;
-
     @RequestMapping({"", "/", "/extract"})
     public ModelAndView extract(HttpServletRequest request) {
         ModelAndView view = new ModelAndView(VIEW_PREFIX+ "/extract");
@@ -192,15 +188,6 @@ public class PersonalController extends BaseController {
         return view;
     }
 
-
-    @RequestMapping({"", "/", "/qrcode"})
-    public ModelAndView qrcode(HttpServletRequest request) {
-        ModelAndView view = new ModelAndView(VIEW_PREFIX+ "/agent/qrcode");
-        UserInfo userInfo = getUserInfo(request);
-
-        view.addObject("qrcodeUrl", wxService.getQrcodeUrl(userInfo.getOpenId()));
-        return view;
-    }
     //---------------------------------------------------------------
 
     /**

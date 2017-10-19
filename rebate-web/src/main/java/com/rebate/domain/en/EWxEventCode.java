@@ -5,6 +5,10 @@ package com.rebate.domain.en;
  */
 public enum EWxEventCode {
 
+    /**
+     * 扫码关注公众号
+     */
+    QRCODE_SUBSCRIBE("qrscene_"),
 
     /**
      * 怎么返？菜单

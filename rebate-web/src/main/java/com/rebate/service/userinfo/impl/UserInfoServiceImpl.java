@@ -61,45 +61,40 @@ public class UserInfoServiceImpl implements UserInfoService {
     private SequenceUtil sequenceUtil;
 
     @Override
-    public UserInfo registUserInfo(String openId, Integer angent,boolean isAward) {
+    public UserInfo registUserInfo(String openId, Integer angent, boolean isAward) {
         UserInfo userInfo = null;
-        //查询是否已存在此用户
-        UserInfo userInfoQuery = new UserInfo();
-        userInfoQuery.setOpenId(openId);
-        userInfo = userInfoDao.findLoginUserInfo(userInfoQuery);
-        if (null == userInfo) {
-            WxUserInfo wxUserInfo = wxService.getWxApiUserInfo(wxAccessTokenService.getApiAccessToken().getAccessToken(), openId);
-            if (null != wxUserInfo) {
+        WxUserInfo wxUserInfo = wxService.getWxApiUserInfo(wxAccessTokenService.getApiAccessToken().getAccessToken(), openId);
+        if (null != wxUserInfo) {
 
-                userInfo = new UserInfo();
-                userInfo.setPhone("");
-                userInfo.setNickName(wxUserInfo.getNickname());
-                userInfo.setOpenId(wxUserInfo.getOpenid());
-                userInfo.setStatus(0);
-                userInfo.setEmail("");
-                userInfo.setAgent(angent);
-                userInfo.setWxImage(wxUserInfo.getHeadimgurl());
-                String subUnionId = ESubUnionIdPrefix.getSubUnionId(ESubUnionIdPrefix.JD.getCode(), sequenceUtil.get(ESequence.SUB_UNION_ID.getSequenceName()));
-                userInfo.setSubUnionId(subUnionId);
-                userInfo.setRecommendAccount("");
+            userInfo = new UserInfo();
+            userInfo.setPhone("");
+            userInfo.setNickName(wxUserInfo.getNickname());
+            userInfo.setOpenId(wxUserInfo.getOpenid());
+            userInfo.setStatus(0);
+            userInfo.setEmail("");
+            userInfo.setAgent(angent);
+            userInfo.setWxImage(wxUserInfo.getHeadimgurl());
+            String subUnionId = ESubUnionIdPrefix.getSubUnionId(ESubUnionIdPrefix.JD.getCode(), sequenceUtil.get(ESequence.SUB_UNION_ID.getSequenceName()));
+            userInfo.setSubUnionId(subUnionId);
+            userInfo.setRecommendAccount("");
+            userInfoDao.insert(userInfo);
 
-                IncomeDetailQuery incomeDetailQuery = new IncomeDetailQuery();
-                incomeDetailQuery.setOpenId(wxUserInfo.getOpenid());
-                incomeDetailQuery.setType(EIncomeType.REGIST.getCode());
-                //未获得奖励的则给予用户奖励10元
-                if (isAward && null == incomeDetailDao.findIncomeDetail(incomeDetailQuery)) {
-                    //注册成功用户给用户发放10元提现金额插入支出记录
-                    IncomeDetail incomeDetail = new IncomeDetail();
-                    incomeDetail.setOpenId(openId);
-                    incomeDetail.setReferenceId(userInfo.getId());
-                    incomeDetail.setIncome(10.0);
-                    incomeDetail.setStatus(0);
-                    incomeDetail.setDealt(0);
-                    incomeDetail.setType(EIncomeType.REGIST.getCode());
-                    incomeDetailDao.insert(incomeDetail);
-                }
-
+            IncomeDetailQuery incomeDetailQuery = new IncomeDetailQuery();
+            incomeDetailQuery.setOpenId(wxUserInfo.getOpenid());
+            incomeDetailQuery.setType(EIncomeType.REGIST.getCode());
+            //未获得奖励的则给予用户奖励10元
+            if (isAward && null == incomeDetailDao.findIncomeDetail(incomeDetailQuery)) {
+                //注册成功用户给用户发放10元提现金额插入支出记录
+                IncomeDetail incomeDetail = new IncomeDetail();
+                incomeDetail.setOpenId(openId);
+                incomeDetail.setReferenceId(userInfo.getId());
+                incomeDetail.setIncome(10.0);
+                incomeDetail.setStatus(0);
+                incomeDetail.setDealt(0);
+                incomeDetail.setType(EIncomeType.REGIST.getCode());
+                incomeDetailDao.insert(incomeDetail);
             }
+
         }
 
         return userInfo;
@@ -140,26 +135,27 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     /**
      * 更新用户提现余额
+     *
      * @param openId
      */
     @Override
-    public void updateUserCommission(String openId){
+    public void updateUserCommission(String openId) {
         //计算收入、支出
         IncomeDetailQuery incomeDetailQuery = new IncomeDetailQuery();
         incomeDetailQuery.setOpenId(openId);
-        incomeDetailQuery.setTypeList(EIncomeType.REGIST.getCode()+","+EIncomeType.ORDER_REBATE.getCode());
+        incomeDetailQuery.setTypeList(EIncomeType.REGIST.getCode() + "," + EIncomeType.ORDER_REBATE.getCode());
         Double income = incomeDetailDao.findIncomeStatistisByType(incomeDetailQuery);
-        if(null==income){
+        if (null == income) {
             income = 0.0;
         }
 
-        incomeDetailQuery.setTypeList(EIncomeType.EXTRACT.getCode()+"");
+        incomeDetailQuery.setTypeList(EIncomeType.EXTRACT.getCode() + "");
         Double payment = incomeDetailDao.findIncomeStatistisByType(incomeDetailQuery);
-        if(null==payment){
+        if (null == payment) {
             payment = 0.0;
         }
 
-        Double totalCommission = income-payment;//收入减少余额
+        Double totalCommission = income - payment;//收入减少余额
         //更新用户提现余额
         Commission commission = new Commission();
         commission.setOpenId(openId);

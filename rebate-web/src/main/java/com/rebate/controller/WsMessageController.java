@@ -9,6 +9,7 @@ import com.rebate.controller.base.BaseController;
 import com.rebate.dao.IncomeDetailDao;
 import com.rebate.dao.ProductCouponDao;
 import com.rebate.dao.ProductDao;
+import com.rebate.dao.UserInfoDao;
 import com.rebate.domain.IncomeDetail;
 import com.rebate.domain.Product;
 import com.rebate.domain.UserInfo;
@@ -67,9 +68,9 @@ public class WsMessageController extends BaseController {
     @Autowired(required = true)
     private UserInfoService userInfoService;
 
-    @Qualifier("incomeDetailDao")
+    @Qualifier("userInfoDao")
     @Autowired(required = true)
-    private IncomeDetailDao incomeDetailDao;
+    private UserInfoDao userInfoDao;
 
     /**
      * 微信公众号接口配置
@@ -155,14 +156,39 @@ public class WsMessageController extends BaseController {
                     String openId = inputMsg.getFromUserName();
                     LOG.error("accept[" + openId + "],msgType:" + inputMsg.getMsgType() + ",event:" + inputMsg.getEvent());
                     if (EWxEventType.SUBSCRIBE.getValue().equalsIgnoreCase(inputMsg.getEvent())) {
+                        //查询是否已存在此用户
+                        UserInfo userInfoQuery = new UserInfo();
+                        userInfoQuery.setOpenId(openId);
+                        userInfo = userInfoDao.findLoginUserInfo(userInfoQuery);
+                        String eventXml = "";
+                        if (null == userInfo) {
+                            //关注公众号
+                            if (EWxEventCode.QRCODE_SUBSCRIBE.getValue().equalsIgnoreCase(inputMsg.getEventKey())) {
+                                //通过关注公众号来的用户注册代理用户
+                                userInfo = userInfoService.registUserInfo(openId, EAgent.FIRST_AGENT.getCode(), true);
+                                //代理用户关注消息
+                                eventXml = agentTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), userInfo.getSubUnionId());
 
-                        //注册用户
-                        userInfoService.registUserInfo(openId, EAgent.FIRST_AGENT.getCode(),true);
+                            } else {
 
-                        //更新用户提现金额
-                        userInfoService.updateUserCommission(openId);
-                        //关注
-                        String eventXml = subscribeTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
+                                //注册普通用户
+                                userInfoService.registUserInfo(openId, EAgent.NOT_AGENT.getCode(), true);
+
+                                //普通用户首次关注消息
+                                eventXml = firstSubscribeTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
+
+                            }
+
+                            //更新用户提现金额
+                            userInfoService.updateUserCommission(openId);
+                        } else if (EAgent.FIRST_AGENT.getCode() == userInfo.getAgent()) {
+                            //代理用户关注消息
+                            eventXml = agentTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
+                        }else if (EAgent.NOT_AGENT.getCode() == userInfo.getAgent()) {
+                            //普通用户关注消息
+                            eventXml = subscribeTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
+                        }
+
                         LOG.error("output wx eventXml:" + eventXml);
                         response.getWriter().write(eventXml.toString());
                     } else if (EWxEventType.CLICK.getValue().equalsIgnoreCase(inputMsg.getEvent())) {
@@ -184,7 +210,7 @@ public class WsMessageController extends BaseController {
     }
 
     /**
-     * 关注事件
+     * 关注后回复消息
      *
      * @param toUserName
      * @param fromUserName
@@ -193,7 +219,7 @@ public class WsMessageController extends BaseController {
      * @param subUnionId
      * @return
      */
-    private String subscribeEventPushXml(String toUserName, String fromUserName, String msgType, String content, String subUnionId) {
+    private String firstSubscribeTextPushXml(String toUserName, String fromUserName, String msgType, String content, String subUnionId) {
 
         //构造消息回复XML
         StringBuffer str = new StringBuffer();
@@ -201,10 +227,10 @@ public class WsMessageController extends BaseController {
         str.append("<ToUserName><![CDATA[" + toUserName + "]]></ToUserName>");
         str.append("<FromUserName><![CDATA[" + fromUserName + "]]></FromUserName>");
         str.append("<CreateTime>" + new Date().getTime() + "</CreateTime>");
-        str.append("<MsgType><![CDATA[" + msgType + "]]></MsgType>");
-        str.append("<Event><![CDATA[subscribe]]></Event>");
-        str.append("<EventKey><![CDATA[qrscene_123]]></EventKey>");
-        str.append("<Ticket><![CDATA[Ticket]]></Ticket>");
+        str.append("<MsgType><![CDATA[text]]></MsgType>");
+        str.append("<Content><![CDATA[欢迎加入我们,10元提现奖励稍候会发放到您的账户，满20元可提现！购物返钱，还有更多独家优惠券哦！ \n\n" +
+                "1、输入京东商品编号 或 商品链接，立刻获取返钱链接！\n" +
+                "2、打开【京东返钱-内购券】，每日更新独家的！超值的！内购优惠券！]]></Content>");
         str.append("</xml>");
         return str.toString();
     }
@@ -228,9 +254,23 @@ public class WsMessageController extends BaseController {
         str.append("<FromUserName><![CDATA[" + fromUserName + "]]></FromUserName>");
         str.append("<CreateTime>" + new Date().getTime() + "</CreateTime>");
         str.append("<MsgType><![CDATA[text]]></MsgType>");
-        str.append("<Content><![CDATA[欢迎加入我们！购物返钱，还有独家优惠券哦！ \n\n" +
+        str.append("<Content><![CDATA[欢迎加入我们！购物返钱，还有更多独家优惠券哦！ \n\n" +
                 "1、输入京东商品编号 或 商品链接，立刻获取返钱链接！\n" +
                 "2、打开【京东返钱-内购券】，每日更新独家的！超值的！内购优惠券！]]></Content>");
+        str.append("</xml>");
+        return str.toString();
+    }
+
+    private String agentTextPushXml(String toUserName, String fromUserName, String msgType, String content, String subUnionId) {
+
+        //构造消息回复XML
+        StringBuffer str = new StringBuffer();
+        str.append("<xml>");
+        str.append("<ToUserName><![CDATA[" + toUserName + "]]></ToUserName>");
+        str.append("<FromUserName><![CDATA[" + fromUserName + "]]></FromUserName>");
+        str.append("<CreateTime>" + new Date().getTime() + "</CreateTime>");
+        str.append("<MsgType><![CDATA[text]]></MsgType>");
+        str.append("<Content><![CDATA[欢迎加入我们，您发送给我们的优惠券信息可获取推广链接，用户下单还有更多佣金返利哦！]]></Content>");
         str.append("</xml>");
         return str.toString();
     }
