@@ -113,10 +113,10 @@ public class WxServiceImpl implements WxService {
         String result = "";
         try {
             Map<String, Object> params = new HashMap<String, Object>();
-            params.put("touser", JsonUtil.toJson(opendIdList));
+            params.put("touser", opendIdList);
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("media_id",content);
-            params.put("mpnews", JsonUtil.toJson(jsonObject));
+            params.put("mpnews", jsonObject);
             params.put("msgtype", "mpnews");
 
             String json = HttpClientUtil.post(wxConfig.getSendMessageUrl() + "?access_token=" + wxAccessTokenService.getApiAccessToken().getAccessToken(), params);
