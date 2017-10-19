@@ -13,7 +13,7 @@
     <import resource="spring/spring-job.xml"/>
     <import resource="spring/spring-manager.xml"/>
     <import resource="spring/spring-mvc.xml"/>
-    <!--<import resource="spring/spring-redis.xml"/>-->
+    <import resource="spring/spring-redis.xml"/>
     <import resource="spring/spring-configuration-job.xml"/>
 
 </beans>

@@ -116,6 +116,8 @@ public class WxAccessTokenServiceImpl implements WxAccessTokenService {
 
         if (json.contains("access_token")) {
             apiAccessToken = JsonUtil.fromJson(json, ApiAccessToken.class);
+        }else{
+            LOG.error("[getApiAccessToken]json:"+json);
         }
         return apiAccessToken;
     }

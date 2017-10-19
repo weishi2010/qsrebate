@@ -39,7 +39,7 @@
 	<!--URL处理工具类-->
 	<bean id="rebateUrlUtil" class="com.rebate.common.util.rebate.RebateUrlUtil">
 		<property name="jdUnionUrlPrefix" value="https://union-click.jd.com/jdc?"></property>
-		<property name="rebateUrlPrefix" value="http://m.qingsongfan.com/qsc/jumpJdUnionUrl?"></property>
+		<property name="rebateUrlPrefix" value="http://m.qingsongfan.com.cn/qsc/jumpJdUnionUrl?"></property>
 	</bean>
 	<!--json数据读取工具类-->
 	<bean id="jsonDataReader" class="com.rebate.common.data.json.JsonDataReader">
