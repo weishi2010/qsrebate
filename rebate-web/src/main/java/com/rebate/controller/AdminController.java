@@ -47,10 +47,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping(AdminController.PREFIX)
@@ -214,5 +211,20 @@ public class AdminController extends BaseController {
 
         view.addObject("qrcodeUrl", wxService.getQrcodeUrl("agent"));
         return view;
+    }
+
+    @RequestMapping({"", "/", "/sendMessage.json"})
+    public ResponseEntity<?> sendMessage(String openIds,String content) {
+
+        Map<String, Object> map = new HashMap<String, Object>();
+
+        String[] array = openIds.split(",");
+        List<String> openIdList = new ArrayList<>();
+        for(String openId:array){
+            openIdList.add(openId);
+        }
+
+        map.put("result", wxService.sendMessage(openIdList,content));
+        return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
     }
 }

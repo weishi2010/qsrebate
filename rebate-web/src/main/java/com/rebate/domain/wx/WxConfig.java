@@ -1,5 +1,8 @@
 package com.rebate.domain.wx;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  *  微信公众号接口配置
  * @author weishi
@@ -70,6 +73,13 @@ public class WxConfig {
      * 二维码接口
      */
     private String qrcodeUrl;
+
+    /**
+     * 消息发送接口
+     */
+    @Getter
+    @Setter
+    private String sendMessageUrl;
 
     public String getAppId() {
         return appId;

@@ -6,6 +6,8 @@ import com.rebate.domain.wx.WxConfig;
 import com.rebate.domain.wx.WxUserInfo;
 import com.rebate.service.wx.WxAccessTokenService;
 import com.rebate.service.wx.WxService;
+import net.sf.json.JSON;
+import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service("wxService")
@@ -103,5 +106,26 @@ public class WxServiceImpl implements WxService {
             LOG.error("getQrcodeUrl error!paramJson:" + paramJson, e);
         }
         return qrcodeUrl;
+    }
+
+    @Override
+    public String sendMessage(List<String> opendIdList,String content) {
+        String result = "";
+        try {
+            Map<String, Object> params = new HashMap<String, Object>();
+            params.put("touser", JsonUtil.toJson(opendIdList));
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("media_id",content);
+            params.put("mpnews", JsonUtil.toJson(jsonObject));
+            params.put("msgtype", "mpnews");
+
+            String json = HttpClientUtil.post(wxConfig.getSendMessageUrl() + "?access_token=" + wxAccessTokenService.getApiAccessToken().getAccessToken(), params);
+            LOG.error("sendMessage json:{},params:{}", json, JsonUtil.toJson(params));
+            Map map = JsonUtil.fromJson(json, Map.class);
+            result = json;
+        } catch (Exception e) {
+            LOG.error("sendMessage error!opendIdList:" + opendIdList, e);
+        }
+        return result;
     }
 }

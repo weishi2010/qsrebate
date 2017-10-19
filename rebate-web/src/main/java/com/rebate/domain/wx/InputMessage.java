@@ -29,6 +29,12 @@ public class InputMessage implements Serializable {
     private String ToUserName;
 
 
+    @XStreamAlias("URL")
+    @JsonProperty("url")
+    @Getter
+    @Setter
+    private String URL;
+
     @XStreamAlias("FromUserName")
     @JsonProperty("fromUserName")
     @Getter

@@ -2,6 +2,8 @@ package com.rebate.service.wx;
 
 import com.rebate.domain.wx.WxUserInfo;
 
+import java.util.List;
+
 public interface WxService {
 
     /**
@@ -25,4 +27,12 @@ public interface WxService {
      * @return
      */
     String getQrcodeUrl(String paramJson);
+
+    /**
+     * 向订阅用户发送消息
+     * @param opendIdList
+     * @param content
+     * @return
+     */
+    String sendMessage(List<String> opendIdList, String content);
 }
