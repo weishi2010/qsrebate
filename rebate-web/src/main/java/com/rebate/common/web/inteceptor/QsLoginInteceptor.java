@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Iterator;
+import java.util.Random;
 import java.util.Set;
 
 public class QsLoginInteceptor extends LoginInteceptor {
@@ -114,25 +115,24 @@ public class QsLoginInteceptor extends LoginInteceptor {
             String openId = null;
             if (StringUtils.isNotBlank(cookieValue)) {
                 authorizationCodeInfo = JsonUtil.fromJson(cookieValue, AuthorizationCodeInfo.class);
+                openId = authorizationCodeInfo.getOpenId();
             } else {
                 //获取WX登录code
                 String loginCode = getWxLoginCode(request, response);
                 if (StringUtils.isNotBlank(loginCode)) {
                     authorizationCodeInfo = wxAccessTokenService.getLoginAccessToken(loginCode);
+                    if (null != authorizationCodeInfo) {
+                        openId = authorizationCodeInfo.getOpenId();
+                        cookieUtils.setCookie(response, WX_ACCESSTOKEN_COOKIE, JsonUtil.toJson(authorizationCodeInfo),300);
+                    }
+                }else{
+                    //转跳到WX授权页，用户授权后回跳到当前应用链接并附带code参数
+                    redirect2WxAuthorizePage(request, response);
+                    return false;
                 }
-
-                if (null != authorizationCodeInfo) {
-                    openId = authorizationCodeInfo.getOpenId();
-                    cookieUtils.setCookie(response, WX_ACCESSTOKEN_COOKIE, JsonUtil.toJson(authorizationCodeInfo),300);
-                }
-
             }
 
-            if (StringUtils.isBlank(openId)) {
-                //转跳到WX授权页，用户授权后回跳到当前应用链接并附带code参数
-                redirect2WxAuthorizePage(request, response);
-                return false;
-            }else{
+            if (StringUtils.isNotBlank(openId)) {
                 //查询用户信息
                 userInfo = userInfoService.getUserInfo(authorizationCodeInfo.getOpenId());
 
@@ -208,7 +208,9 @@ public class QsLoginInteceptor extends LoginInteceptor {
      * @throws IOException
      */
     public void redirect2WxSubscribePage(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String wxSubscribeUrl = "https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzIwNjkzOTkzNg==&scene=110#wechat_redirect";
+        Random random = new Random();
+        int scene = random.nextInt(100000);
+        String wxSubscribeUrl = "https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzIwNjkzOTkzNg==&scene="+scene+"#wechat_redirect";
         response.sendRedirect(wxSubscribeUrl);
     }
 
