@@ -181,14 +181,21 @@ public class WsMessageController extends BaseController {
 
                             //更新用户提现金额
                             userInfoService.updateUserCommission(openId);
-                        } else if (EAgent.FIRST_AGENT.getCode() == userInfo.getAgent()) {
-                            //代理用户关注消息
-                            eventXml = agentTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
-                        }else if (EAgent.NOT_AGENT.getCode() == userInfo.getAgent()) {
-                            //普通用户关注消息
-                            eventXml = subscribeTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
-                        }
+                        } else {
+                            if (EWxEventCode.QRCODE_SUBSCRIBE.getValue().equalsIgnoreCase(inputMsg.getEventKey())) {
+                                //通过扫码关注来的老用户，重新更新为代理
+                                userInfoService.updateUserInfoAgent(openId,EAgent.FIRST_AGENT.getCode());
 
+                                //代理用户关注消息
+                                eventXml = agentTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
+                            }else if (EAgent.FIRST_AGENT.getCode() == userInfo.getAgent()) {
+                                //代理用户关注消息
+                                eventXml = agentTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
+                            } else if (EAgent.NOT_AGENT.getCode() == userInfo.getAgent()) {
+                                //普通用户关注消息
+                                eventXml = subscribeTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
+                            }
+                        }
                         LOG.error("output wx eventXml:" + eventXml);
                         response.getWriter().write(eventXml.toString());
                     } else if (EWxEventType.CLICK.getValue().equalsIgnoreCase(inputMsg.getEvent())) {

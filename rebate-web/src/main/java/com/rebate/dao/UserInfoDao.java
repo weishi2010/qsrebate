@@ -14,6 +14,12 @@ public interface UserInfoDao {
     long insert(UserInfo userInfo);
 
     /**
+     * 更新
+     * @param userInfo
+     */
+    void update(UserInfo userInfo);
+
+    /**
      * 根据openId查询
      * @param userInfo
      * @return

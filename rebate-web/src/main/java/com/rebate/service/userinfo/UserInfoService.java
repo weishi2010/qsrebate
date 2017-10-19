@@ -4,6 +4,13 @@ import com.rebate.domain.Commission;
 import com.rebate.domain.UserInfo;
 
 public interface UserInfoService {
+    /**
+     * 更新代理状态
+     * @param openId
+     * @param agent
+     */
+    void updateUserInfoAgent(String openId,Integer agent);
+
 
     /**
      * 更新用户提现余额

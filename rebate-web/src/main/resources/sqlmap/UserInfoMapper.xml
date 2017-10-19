@@ -68,6 +68,17 @@
         </selectKey>
     </insert>
 
+    <update id="update">
+        update user_info
+        set  modified=now()
+        <dynamic>
+            <isNotNull property="agent" prepend=",">
+                agent = #agent#
+            </isNotNull>
+        </dynamic>
+        where open_id=#openId#
+    </update>
+
     <select id="findByPhone" parameterClass="UserInfo" resultMap="UserInfoResultMap">
         select
         <include refid="fields"/>

@@ -6,17 +6,17 @@
         {
           "type": "view",
           "name": "【内购券】",
-          "url": "http://m.qingsongfan.com/product/couponProducts"
+          "url": "http://m.qingsongfan.com.cn/product/couponProducts"
         },
         {
           "type": "view",
           "name": "超值9.9元",
-          "url": "http://m.qingsongfan.com/product/seckill"
+          "url": "http://m.qingsongfan.com.cn/product/seckill"
         },
         {
           "type": "view",
           "name": "大型促销",
-          "url": "http://m.qingsongfan.com/activity/activityIndex"
+          "url": "http://m.qingsongfan.com.cn/activity/activityIndex"
         },
         {
           "type": "view",
@@ -36,7 +36,7 @@
         {
           "type": "view",
           "name": "怎么赚？",
-          "url": "http://m.qingsongfan.com/product/couponProducts"
+          "url": "http://m.qingsongfan.com.cn/product/couponProducts"
         }
       ]
     },
@@ -46,12 +46,12 @@
         {
           "type": "view",
           "name": "我的收入",
-          "url": "http://m.qingsongfan.com/personal/index"
+          "url": "http://m.qingsongfan.com.cn/personal/index"
         },
         {
           "type": "view",
           "name": "订单明细",
-          "url": "http://m.qingsongfan.com/personal/orderDetail"
+          "url": "http://m.qingsongfan.com.cn/personal/orderDetail"
         }
       ]
     }

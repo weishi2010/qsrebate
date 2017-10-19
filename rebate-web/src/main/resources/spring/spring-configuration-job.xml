@@ -9,6 +9,7 @@
 		<property name="triggers">
 			<list>
 				<ref bean="importMediaOrderJobTimer"/>
+				<ref bean="freshProductsJobTimer"/>
 			</list>
 		</property>
 	</bean>

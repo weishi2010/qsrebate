@@ -99,6 +99,13 @@ public class UserInfoServiceImpl implements UserInfoService {
 
         return userInfo;
     }
+    @Override
+    public void updateUserInfoAgent(String openId,Integer agent){
+        UserInfo  userInfo = new UserInfo();
+        userInfo.setOpenId(openId);
+        userInfo.setAgent(agent);
+        userInfoDao.update(userInfo);
+    }
 
     @Override
     public UserInfo getUserInfo(String openId) {
