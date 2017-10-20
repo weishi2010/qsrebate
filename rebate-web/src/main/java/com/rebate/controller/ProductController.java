@@ -127,7 +127,7 @@ public class ProductController extends BaseController {
 
         UserInfo userInfo = getUserInfo(request);
 
-        Integer agent = EAgent.NOT_AGENT.getCode();
+        Integer agent =1; EAgent.NOT_AGENT.getCode();
         if (null != userInfo) {
             agent = userInfo.getAgent();
         }

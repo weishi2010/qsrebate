@@ -109,15 +109,19 @@
 
 
 
-    function shareProduct(tab){
-
-        if(1==tab){
-            shareToFriend(title,desc,link,imgUrl)
-        }else if(2==tab){
-            shareToTimeline(title,desc,link,imgUrl)
-        }else if(3==tab){
-            shareToQQ(title,desc,link,imgUrl)
-        }
+    function shareProduct(){
+        productId = $("#productId").val();
+        $.ajax({
+            type: 'GET',
+            url: '/share/sendMessage.json?productId='+productId+"&r="+Math.random(),
+            dataType: 'json',
+            success: function (reponse) {
+               alert("轻松返钱公众号已将商品推广信息发送给您，请返回公众号查看!")
+            },
+            error: function (xhr, type) {
+                console.log('数据请求错误！');
+            }
+        });
 
     }
 </script>
@@ -131,10 +135,6 @@
 </div>
 <!--/.header-->
 <div class="share-money-page">
-    <div class="tip-rules">
-        分享给朋友购买，预计可赚<span class="ftx-red">38元</span>。
-        <a href="#">规则&gt;</a>
-    </div>
     <div class="share-item">
         <div class="sec-01">
             <!--<span class="radio radio-single chk"></span>分享二维码-->
@@ -143,6 +143,7 @@
             <div class="share-good-info">
                 <img src="$!{product.imgUrl}" alt="">
                 <input value="$!{product.imgUrl}" id="imgUrl" type="hidden">
+                <input value="$!{product.productId}" id="productId" type="hidden">
 
             </div>
             <!--<div class="recomm-words">
@@ -156,7 +157,7 @@
     <div class="share-item">
         <div class="cnt">
             <div class="recomm-edit">
-                <div class="tl">您可以编辑发送朋友的推广内容</div>
+                <div class="tl"></div>
                 <div class="info">
                     <div class="sec mui-flex align-center">
                         <div class="cell fixed"></div>
@@ -194,15 +195,15 @@
         <div class="inner">
             <h4 class="tl">分享到</h4>
             <div class="share-way mui-flex align-center">
-                <a href="javascript:void(0);" class="cell" onclick="shareProduct(1)">
+                <a href="javascript:void(0);" class="cell" onclick="shareProduct()">
                     <img src="/static/img/ico-wechat-01.png" alt="">
                     <p>微信好友</p>
                 </a>
-                <a href="javascript:void(0);" class="cell" onclick="shareProduct(2)">
+                <a href="javascript:void(0);" class="cell" onclick="shareProduct()">
                     <img src="/static/img/ico-pyq-01.png" alt="">
                     <p>朋友圈</p>
                 </a>
-                <a href="javascript:void(0);" class="cell" onclick="shareProduct(3)">
+                <a href="javascript:void(0);" class="cell" onclick="shareProduct()">
                     <img src="/static/img/ico-qq-01.png" alt="">
                     <p>QQ</p>
                 </a>

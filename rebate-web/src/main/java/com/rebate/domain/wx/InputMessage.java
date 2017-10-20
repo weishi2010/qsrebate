@@ -28,7 +28,6 @@ public class InputMessage implements Serializable {
     @Setter
     private String ToUserName;
 
-
     @XStreamAlias("URL")
     @JsonProperty("url")
     @Getter
@@ -159,5 +158,47 @@ public class InputMessage implements Serializable {
     private String MenuId;
 
 
+    @XStreamAlias("MsgID")
+    @JsonProperty("msgID")
+    @Getter
+    @Setter
+    private String MsgID;
+
+    @XStreamAlias("Status")
+    @JsonProperty("status")
+    @Getter
+    @Setter
+    private String Status;
+
+    @XStreamAlias("TotalCount")
+    @JsonProperty("totalCount")
+    @Getter
+    @Setter
+    private String TotalCount;
+
+    @XStreamAlias("FilterCount")
+    @JsonProperty("filterCount")
+    @Getter
+    @Setter
+    private String FilterCount;
+
+    @XStreamAlias("SentCount")
+    @JsonProperty("sentCount")
+    @Getter
+    @Setter
+    private String SentCount;
+
+    @XStreamAlias("ErrorCount")
+    @JsonProperty("errorCount")
+    @Getter
+    @Setter
+    private String ErrorCount;
+
+
+    @XStreamAlias("CopyrightCheckResult")
+    @JsonProperty("copyrightCheckResult")
+    @Getter
+    @Setter
+    private InputMessageCount CopyrightCheckResult;
 
 }

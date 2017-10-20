@@ -213,18 +213,4 @@ public class AdminController extends BaseController {
         return view;
     }
 
-    @RequestMapping({"", "/", "/sendMessage.json"})
-    public ResponseEntity<?> sendMessage(String openIds,String content) {
-
-        Map<String, Object> map = new HashMap<String, Object>();
-
-        String[] array = openIds.split(",");
-        List<String> openIdList = new ArrayList<>();
-        for(String openId:array){
-            openIdList.add(openId);
-        }
-
-        map.put("result", wxService.sendMessage(openIdList,content));
-        return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
-    }
 }

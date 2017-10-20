@@ -167,6 +167,21 @@ function loadProductData(page, secondCategoryList, tab) {
 
 }
 
+function shareProduct(productId){
+    $.ajax({
+        type: 'GET',
+        url: '/share/sendMessage.json?productId='+productId+"&r="+Math.random(),
+        dataType: 'json',
+        success: function (reponse) {
+            alert("轻松返钱公众号已将商品推广信息发送给您，请返回公众号查看!")
+        },
+        error: function (xhr, type) {
+            console.log('数据请求错误！');
+        }
+    });
+
+}
+
 function searchProducts() {
     page = 1
     searchParam = $("#searchParam").val();
@@ -233,9 +248,9 @@ function getTemplate(product, tab) {
     }
     htmlTemp +=
         // "                </a>" +
-        "                <span class=\"share\"><a href=\"/share/shareIndex?skuId=" + product.productId + "\" >" +
+        "                <span class=\"share\"><a href =\"javascript:void(0);\" onclick=\"shareProduct(" + product.productId + ")\" >" +
         "                    <img class=\"zhuanfa\" src=\"/static/img/ico-zhuanfa-01.png\" alt=\"\">" +
-        "                    去分享" +
+        "                    去推广" +
         "                </a></span>" +
         "            </div>";
 

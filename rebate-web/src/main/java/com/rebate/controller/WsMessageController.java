@@ -138,8 +138,8 @@ public class WsMessageController extends BaseController {
             // 处理接收消息
             InputMessage inputMsg = getInputMessage(request);
 
-            LOG.error("accept[" + inputMsg.getFromUserName() + "],msgType:" + inputMsg.getMsgType());
             if (null != inputMsg) {
+                LOG.error("accept[" + inputMsg.getFromUserName() + "],msgType:" + inputMsg.getMsgType());
                 //查询用户信息获取子联盟ID
                 UserInfo userInfo = userInfoService.getUserInfo(inputMsg.getFromUserName());
                 String subUnionId = "";

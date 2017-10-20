@@ -30,9 +30,9 @@ public interface WxService {
 
     /**
      * 向订阅用户发送消息
-     * @param opendIdList
+     * @param openId
      * @param content
      * @return
      */
-    String sendMessage(List<String> opendIdList, String content);
+    String sendMessage(String openId, String content);
 }

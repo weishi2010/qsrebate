@@ -4,6 +4,9 @@ import com.rebate.common.util.RequestUtils;
 import com.rebate.common.util.Sha1Util;
 import com.rebate.common.util.rebate.RebateUrlUtil;
 import com.rebate.controller.base.BaseController;
+import com.rebate.dao.ProductCouponDao;
+import com.rebate.domain.Product;
+import com.rebate.domain.ProductCoupon;
 import com.rebate.domain.UserInfo;
 import com.rebate.domain.vo.ProductVo;
 import com.rebate.domain.wx.WxConfig;
@@ -11,15 +14,20 @@ import com.rebate.manager.jd.JdSdkManager;
 import com.rebate.service.product.ProductService;
 import com.rebate.service.wx.WxAccessTokenService;
 import com.rebate.service.wx.WxService;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
+import java.util.*;
 
 @Controller
 @RequestMapping(ShareController.PREFIX)
@@ -55,6 +63,9 @@ public class ShareController extends BaseController {
     @Autowired(required = true)
     private WxService wxService;
 
+    @Qualifier("productCouponDao")
+    @Autowired(required = true)
+    private ProductCouponDao productCouponDao;
 
     @RequestMapping({"", "/", "/shareIndex"})
     public ModelAndView shareIndex(HttpServletRequest request, Long skuId) {
@@ -95,5 +106,63 @@ public class ShareController extends BaseController {
 
 
         return view;
+    }
+
+    @RequestMapping({"", "/", "/sendMessage.json"})
+    public ResponseEntity<?> sendMessage(HttpServletRequest request, Long productId) {
+
+        Map<String, Object> map = new HashMap<String, Object>();
+
+        UserInfo userInfo = getUserInfo(request);
+        String openId = "";
+        String subUnionId = "";
+        if (null != userInfo) {
+            openId = userInfo.getOpenId();
+            subUnionId = userInfo.getSubUnionId();
+        }
+
+
+        ProductVo productVo = productService.findProduct(productId,openId);
+        String mediaUrl = "";
+        if (null != productVo.getProductCoupon()) {
+            String couponLink = productVo.getProductCoupon().getCouponLink();
+            mediaUrl = jdSdkManager.getPromotionCouponCode(productId, couponLink, subUnionId);
+        }else{
+            mediaUrl = jdSdkManager.getShortPromotinUrl(productId,subUnionId);
+        }
+        String content = "";
+        if(StringUtils.isNotBlank(mediaUrl)){
+            //推送消息
+             content = getPushMediaTemp(productVo,mediaUrl);
+        }else{
+            content ="推广商品已经失效，请更换其他商品!";
+        }
+
+       String result =  wxService.sendMessage(openId,content);
+        map.put("result", result);
+        map.put("success", true);
+        return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
+    }
+
+    /**
+     * 推广消息模板
+     * @param productVo
+     * @param mediaUrl
+     * @return
+     */
+    private String getPushMediaTemp(ProductVo productVo,String mediaUrl){
+        StringBuffer content = new StringBuffer();
+        content.append(productVo.getName()).append("\n");;
+        content.append("--------------------------\n");
+        content.append("京东价："+productVo.getOriginalPrice()+"元\n");
+        if(null!=productVo.getCouponPrice() && productVo.getCouponPrice()>0){
+            content.append("券后价："+productVo.getCouponPrice()+"元\n");
+        }
+        content.append("--------------------------\n");
+        content.append(mediaUrl).append("\n");
+        content.append("--------------------------\n");
+
+
+        return content.toString();
     }
 }

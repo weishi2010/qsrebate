@@ -109,22 +109,25 @@ public class WxServiceImpl implements WxService {
     }
 
     @Override
-    public String sendMessage(List<String> opendIdList,String content) {
+    public String sendMessage(String openId,String content) {
         String result = "";
         try {
             Map<String, Object> params = new HashMap<String, Object>();
-            params.put("touser", opendIdList);
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("media_id",content);
-            params.put("mpnews", jsonObject);
-            params.put("msgtype", "mpnews");
+            params.put("touser", openId);
 
-            String json = HttpClientUtil.post(wxConfig.getSendMessageUrl() + "?access_token=" + wxAccessTokenService.getApiAccessToken().getAccessToken(), params);
-            LOG.error("sendMessage json:{},params:{}", json, JsonUtil.toJson(params));
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("content",content);
+
+            params.put("text", jsonObject);
+            params.put("msgtype", "text");
+            String paramJson = JsonUtil.toJson(params);
+
+            paramJson = new String(paramJson.getBytes("UTF-8"), "ISO-8859-1");//参数转码
+            String json = HttpClientUtil.post(wxConfig.getSendMessageUrl() + "?access_token=" + wxAccessTokenService.getApiAccessToken().getAccessToken(), paramJson,"UTF-8");
             Map map = JsonUtil.fromJson(json, Map.class);
             result = json;
         } catch (Exception e) {
-            LOG.error("sendMessage error!opendIdList:" + opendIdList, e);
+            LOG.error("sendMessage error!openId:" + openId, e);
         }
         return result;
     }
