@@ -4,14 +4,19 @@ import net.sf.json.JSONObject;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.params.AllClientPNames;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 
@@ -228,5 +233,35 @@ public class HttpClientUtil {
             throw new RuntimeException(e);
         }
         return result;
+    }
+
+    /**
+     * 获得最终的地址（包括301或者302等跳转后的地址）
+     *
+     * @param from 原始地址
+     * @return 最终的地址
+     */
+
+    public static String getFinalURL(String from) {
+
+        String to = "";
+
+        DefaultHttpClient client = new DefaultHttpClient();
+        HttpGet httpget = new HttpGet(from);
+        HttpParams params = client.getParams();
+        params.setParameter(AllClientPNames.HANDLE_REDIRECTS, false);
+        try {
+            HttpResponse response = client.execute(httpget);
+            int statusCode = response.getStatusLine().getStatusCode();
+            if (statusCode == 301 || statusCode == 302) {
+                Header[] hs = response.getHeaders("Location");
+                for (Header h : hs) {
+                    to = h.getValue();
+                }
+            }
+        } catch (Exception e) {
+            to = "";
+        }
+        return to;
     }
 }
