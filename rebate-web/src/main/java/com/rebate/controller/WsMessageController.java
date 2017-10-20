@@ -392,7 +392,7 @@ public class WsMessageController extends BaseController {
                 LOG.error("getRecommendContent product:" + JsonUtil.toJson(product));
                 String shortUrl = rebateUrlUtil.jdPromotionUrlToQsrebateShortUrl(jdSdkManager.getShortPromotinUrl(product.getProductId(), subUnionId));
                 //商品名
-                recommendContent.append("已成功转成把钱链接，从返利链接下单，才可以返钱哦！\n\n");
+                recommendContent.append("已成功转成返钱链接，从返利链接下单，才可以返钱哦！\n\n");
                 //可返钱
                 recommendContent.append("[Packet]可返钱：").append(product.getUserCommission()).append("元\n\n");
                 //推广地址
