@@ -1,5 +1,9 @@
 package com.rebate.common.util;
 
+import org.apache.commons.lang.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -80,10 +84,10 @@ public class RegexUtils {
      * @return 验证成功返回true，验证失败返回false
      */ 
     public static boolean checkBlankSpace(String blankSpace) { 
-        String regex = "\\s+"; 
-        return Pattern.matches(regex,blankSpace); 
-    } 
-     
+        String regex = "\\s+";
+        return Pattern.matches(regex,blankSpace);
+    }
+
     /**
      * 验证中文
      * @param chinese 中文字符
@@ -148,6 +152,42 @@ public class RegexUtils {
     public static boolean checkIpAddress(String ipAddress) { 
         String regex = "[1-9](\\d{1,2})?\\.(0|([1-9](\\d{1,2})?))\\.(0|([1-9](\\d{1,2})?))\\.(0|([1-9](\\d{1,2})?))"; 
         return Pattern.matches(regex, ipAddress); 
-    } 
-     
+    }
+
+    /**
+     * 从文本中解析并获取URL列表
+     * @param content
+     * @return
+     */
+    public static List<String> getLinks(String content) {
+        List<String> urls = new ArrayList<>();
+        Pattern pattern = Pattern
+                .compile("(http://|ftp://|https://|www){1}[^\u4e00-\u9fa5\\s]*?\\.(com|net|cn|me|tw|fr)[^\u4e00-\u9fa5\\s]*");
+        Matcher matcher = pattern.matcher(content);
+        while(matcher.find()){
+            urls.add(matcher.group(0));
+        }
+
+        return urls;
+    }
+
+    /**
+     * 获取数字列表
+     * @param content
+     * @return
+     */
+    public static List<Long> getLongList(String content) {
+        List<Long> skus = new ArrayList<>();
+
+        String regEx = "[^0-9]";
+        Pattern p = Pattern.compile(regEx);
+        Matcher m = p.matcher(content);
+        String[] skuList = m.replaceAll(",").trim().split(",");
+        for (String value : skuList) {
+            if (StringUtils.isNotBlank(value) && StringUtils.isNumeric(value)) {
+                skus.add(Long.parseLong(value));
+            }
+        }
+        return skus;
+    }
 }

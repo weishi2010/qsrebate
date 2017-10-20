@@ -2,6 +2,7 @@ package com.rebate.controller;
 
 import com.google.common.base.Joiner;
 import com.rebate.common.util.JsonUtil;
+import com.rebate.common.util.RegexUtils;
 import com.rebate.common.util.SerializeXmlUtil;
 import com.rebate.common.util.Sha1Util;
 import com.rebate.common.util.rebate.RebateUrlUtil;
@@ -33,7 +34,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -138,16 +143,23 @@ public class WsMessageController extends BaseController {
                 //查询用户信息获取子联盟ID
                 UserInfo userInfo = userInfoService.getUserInfo(inputMsg.getFromUserName());
                 String subUnionId = "";
+                int agent = EAgent.NOT_AGENT.getCode();
                 if (null != userInfo) {
                     subUnionId = userInfo.getSubUnionId();
+                    agent = userInfo.getAgent();
                 }
                 // 取得消息类型
                 String msgType = inputMsg.getMsgType();
                 // 根据消息类型获取对应的消息内容
                 if (msgType.equals(EWxMsgType.TEXT.getValue())) {
 
-                    //获取文本推送xml
-                    String textXml = textPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
+                    //默认为普通用户获取文本推送商品推荐xml
+                    String textXml = recommendProductPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
+
+                    //如果为代理用户则解析消息进行优惠券转链，转为JD券二合一链接
+                    if(EAgent.FIRST_AGENT.getCode()==agent){
+                        textXml = agentConvertLinkPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
+                    }
                     LOG.error("output wx textXml:" + textXml);
 
                     response.getWriter().write(textXml.toString());
@@ -306,6 +318,36 @@ public class WsMessageController extends BaseController {
     }
 
     /**
+     * 推荐商品消息回复
+     *
+     * @param toUserName
+     * @param fromUserName
+     * @param msgType
+     * @param content
+     * @param subUnionId
+     * @return
+     */
+    private String recommendProductPushXml(String toUserName, String fromUserName, String msgType, String content, String subUnionId) {
+       String pushContent =  getRecommendContent(content, subUnionId);
+        return textPushXml(toUserName,  fromUserName,  msgType,  pushContent, subUnionId);
+    }
+
+    /**
+     * 代理转链消息回复
+     *
+     * @param toUserName
+     * @param fromUserName
+     * @param msgType
+     * @param content
+     * @param subUnionId
+     * @return
+     */
+    private String agentConvertLinkPushXml(String toUserName, String fromUserName, String msgType, String content, String subUnionId) {
+        String pushContent =  couponMessageConvertJDMediaUrl(content, subUnionId);
+        return textPushXml(toUserName,  fromUserName,  msgType,  pushContent, subUnionId);
+    }
+
+    /**
      * 消息回复
      *
      * @param toUserName
@@ -324,7 +366,7 @@ public class WsMessageController extends BaseController {
         str.append("<FromUserName><![CDATA[" + fromUserName + "]]></FromUserName>");
         str.append("<CreateTime>" + new Date().getTime() + "</CreateTime>");
         str.append("<MsgType><![CDATA[" + msgType + "]]></MsgType>");
-        str.append("<Content><![CDATA[" + getRecommendContent(content, subUnionId) + "]]></Content>");
+        str.append("<Content><![CDATA[" + content + "]]></Content>");
         str.append("</xml>");
         return str.toString();
     }
@@ -339,7 +381,7 @@ public class WsMessageController extends BaseController {
     private String getRecommendContent(String content, String subUnionId) {
         StringBuffer recommendContent = new StringBuffer();
 
-        List<Long> skus = getSkuListFromMessage(content);
+        List<Long> skus = RegexUtils.getLongList(content);
         if (skus.size() > 0) {
             //消息中有SKU信息则按SKU进行搜索
             Long skuId = skus.get(0);
@@ -365,6 +407,56 @@ public class WsMessageController extends BaseController {
         return recommendContent.toString();
     }
 
+    /**
+     * 转链
+     * @param content
+     * @return
+     */
+    private String couponMessageConvertJDMediaUrl(String content,String subUnionId){
+        String result = "很抱歉，优惠券链接转换失败，请联系公众号管理员!";
+        try{
+            BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(content.getBytes(Charset.forName("utf8"))), Charset.forName("utf8")));
+            String line = "";
+            StringBuffer sb =new StringBuffer();
+            String couponLink = "";
+            Long skuId = 0l;
+            String linkMark = "#couponLink#";
+            while ( (line = br.readLine()) != null ) {
+
+                List<String> list = RegexUtils.getLinks(line);
+                if(list.size()>0){
+                    String url = list.get(0);
+                    if(url.contains("coupon.m.jd.com")||url.contains("coupon.jd.com")){
+                        couponLink = url;
+                        line = linkMark;//链接占位符
+                    }else if(url.contains("item.jd.com")){
+                        List<Long> dataList =  RegexUtils.getLongList(url);
+                        if(null!=dataList&&dataList.size()>0){
+                            skuId = dataList.get(0);
+                            line = "";
+                        }
+                    }
+                }
+                sb.append(line).append("\n");
+            }
+
+            if(StringUtils.isNotBlank(couponLink) && skuId>0l){
+                String jdMediaUrl = jdSdkManager.getPromotionCouponCode(skuId, couponLink, subUnionId);
+                if(StringUtils.isNotBlank(jdMediaUrl)){
+                    result = sb.toString().replace(linkMark,jdMediaUrl);
+                }else{
+                    result = "优惠券链接已经失效!";
+                }
+                LOG.error("couponMessageConvertJDMediaUrl sb:{}jdMediaUrl:{}",sb.toString(),jdMediaUrl);
+
+            }
+            LOG.error("couponMessageConvertJDMediaUrl couponLink:{}skuId:{}",couponLink,skuId);
+
+        }catch (Exception e){
+           LOG.error("couponMessageConvertJDMediaUrl",e);
+        }
+        return result;
+    }
     /**
      * 获取微信消息推送对象
      *
@@ -394,27 +486,6 @@ public class WsMessageController extends BaseController {
             LOG.error("getInputMessage error!", e);
         }
         return inputMessage;
-    }
-
-    /**
-     * 从消息中解析出SKU
-     *
-     * @param content
-     * @return
-     */
-    private List<Long> getSkuListFromMessage(String content) {
-        List<Long> skus = new ArrayList<>();
-
-        String regEx = "[^0-9]";
-        Pattern p = Pattern.compile(regEx);
-        Matcher m = p.matcher(content);
-        String[] skuList = m.replaceAll(",").trim().split(",");
-        for (String value : skuList) {
-            if (StringUtils.isNotBlank(value) && StringUtils.isNumeric(value)) {
-                skus.add(Long.parseLong(value));
-            }
-        }
-        return skus;
     }
 
     @RequestMapping({"", "/", "/acceptMulMessage.json"})
