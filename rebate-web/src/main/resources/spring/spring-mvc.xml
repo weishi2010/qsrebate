@@ -65,7 +65,7 @@
 	<mvc:interceptors>
 		<!-- 登录/权限拦截器 begin -->
 		<mvc:interceptor>
-			<!--<mvc:mapping path="/product/**" />-->
+			<mvc:mapping path="/product/**" />
 			<mvc:mapping path="/personal/**" />
 
 			<bean class="com.rebate.common.web.inteceptor.QsLoginInteceptor">
