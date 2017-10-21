@@ -16,6 +16,7 @@ import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.domain.Product;
 import com.rebate.domain.ProductCoupon;
 import com.rebate.domain.RebateDetail;
+import com.rebate.domain.en.EJDProCont;
 import com.rebate.domain.en.EProductSource;
 import com.rebate.domain.en.EProudctCouponType;
 import com.rebate.domain.en.EProudctRebateType;
@@ -419,7 +420,8 @@ public class JdSdkManagerImpl implements JdSdkManager {
     @Override
     public String getShortPromotinUrl(Long skuId, String subUnionId) {
         String url = "";
-        String json = getServicePromotionWxsqCode(skuId, subUnionId);
+        int proCont = EJDProCont.PRODUCT_URL.getCode();
+        String json = getServicePromotionWxsqCode(skuId.toString(),proCont, subUnionId);
         JSONObject resultObj = JsonUtil.fromJson(json, JSONObject.class);
         if (null != resultObj && 0 == Integer.parseInt(resultObj.getString("resultCode"))) {
             JSONObject urlListObj = (JSONObject) resultObj.get("urlList");
@@ -428,6 +430,18 @@ public class JdSdkManagerImpl implements JdSdkManager {
         return url;
     }
 
+    @Override
+    public String getSalesActivityPromotinUrl(String salesUrl, String subUnionId) {
+        String url = "";
+        int proCont = EJDProCont.PRODUCT_URL.getCode();
+        String json = getServicePromotionWxsqCode(salesUrl,proCont, subUnionId);
+        JSONObject resultObj = JsonUtil.fromJson(json, JSONObject.class);
+        if (null != resultObj && 0 == Integer.parseInt(resultObj.getString("resultCode"))) {
+            JSONObject urlListObj = (JSONObject) resultObj.get("urlList");
+            url = urlListObj.getString(salesUrl);
+        }
+        return url;
+    }
 
     @Override
     public String getPromotionCouponCode(Long skuId, String couponUrl, String subUnionId) {
@@ -555,13 +569,13 @@ public class JdSdkManagerImpl implements JdSdkManager {
     }
 
     /**
-     * 获取自定义推广短链接
-     *
-     * @param skuId
-     * @param subUnionId
+     * 获取自定义推广链接
+     * 1.单品推广短链接 2.活动推广链接
+     * @param materialIds
+     * @param proCont
      * @return
      */
-    private String getServicePromotionWxsqCode(Long skuId, String subUnionId) {
+    private String getServicePromotionWxsqCode(String materialIds,int proCont, String subUnionId) {
         String json = "";
 
         try {
@@ -569,15 +583,15 @@ public class JdSdkManagerImpl implements JdSdkManager {
 
             ServicePromotionWxsqGetCodeBySubUnionIdRequest request = new ServicePromotionWxsqGetCodeBySubUnionIdRequest();
 
-            request.setProCont(1);
-            request.setMaterialIds(skuId.toString());
+            request.setProCont(proCont);
+            request.setMaterialIds(materialIds);
             request.setSubUnionId(subUnionId);
 
             ServicePromotionWxsqGetCodeBySubUnionIdResponse response = client.execute(request);
 
             json = response.getGetcodebysubunionidResult();
         } catch (Exception e) {
-            LOG.error("[获取推广短链接]调用异常!skuId:{},subUnionId:{}", skuId, subUnionId);
+            LOG.error("[获取推广短链接]调用异常!materialIds:{},subUnionId:{}", materialIds, subUnionId);
         }
         return json;
     }

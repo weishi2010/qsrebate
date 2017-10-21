@@ -84,13 +84,21 @@ public interface JdSdkManager {
     String getPromotionCouponCode(Long skuId, String couponUrl, String subUnionId);
 
     /**
-     * 获取推广短链接
+     * 获取单品推广短链接
      *
      * @param skuId
      * @param subUnionId
      * @return
      */
     String getShortPromotinUrl(Long skuId, String subUnionId);
+
+    /**
+     * 获取活动推广链接
+     * @param salesUrl
+     * @param subUnionId
+     * @return
+     */
+    String getSalesActivityPromotinUrl(String salesUrl, String subUnionId);
 
     /**
      * 查询返佣明细
