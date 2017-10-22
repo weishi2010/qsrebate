@@ -4,6 +4,7 @@ import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.controller.base.BaseController;
 import com.rebate.domain.ExtractDetail;
 import com.rebate.domain.UserInfo;
+import com.rebate.domain.en.EAgent;
 import com.rebate.domain.en.EExtractCode;
 import com.rebate.domain.en.EExtractStatus;
 import com.rebate.domain.en.EPromotionTab;
@@ -56,7 +57,7 @@ public class PersonalController extends BaseController {
 
     @RequestMapping({"", "/", "/extract"})
     public ModelAndView extract(HttpServletRequest request) {
-        ModelAndView view = new ModelAndView(VIEW_PREFIX+ "/extract");
+        ModelAndView view = new ModelAndView(VIEW_PREFIX + "/extract");
         UserInfo userInfo = getUserInfo(request);
         view.addObject("commission", userInfoService.getUserCommission(userInfo.getOpenId()));
 
@@ -65,7 +66,7 @@ public class PersonalController extends BaseController {
 
     @RequestMapping({"", "/", "/extractDetail"})
     public ModelAndView extractDetail(HttpServletRequest request) {
-        ModelAndView view = new ModelAndView(VIEW_PREFIX+ "/extractDetail");
+        ModelAndView view = new ModelAndView(VIEW_PREFIX + "/extractDetail");
         UserInfo userInfo = getUserInfo(request);
         view.addObject("commission", userInfoService.getUserCommission(userInfo.getOpenId()));
 
@@ -116,7 +117,7 @@ public class PersonalController extends BaseController {
 
     @RequestMapping({"", "/", "/index"})
     public ModelAndView personal(HttpServletRequest request) {
-        ModelAndView view = new ModelAndView(VIEW_PREFIX+ "/personal");
+        ModelAndView view = new ModelAndView(VIEW_PREFIX + "/personal");
 
         UserInfo userInfo = getUserInfo(request);
 
@@ -129,7 +130,7 @@ public class PersonalController extends BaseController {
 
     @RequestMapping({"", "/", "/orderDetail"})
     public ModelAndView orderDetail(HttpServletRequest request, Integer days) {
-        ModelAndView view = new ModelAndView(VIEW_PREFIX+ "/orderDetail");
+        ModelAndView view = new ModelAndView(VIEW_PREFIX + "/orderDetail");
         UserInfo userInfo = getUserInfo(request);
 
         if (null == days) {
@@ -183,7 +184,7 @@ public class PersonalController extends BaseController {
 
     @RequestMapping({"", "/", "/income"})
     public ModelAndView income(HttpServletRequest request) {
-        ModelAndView view = new ModelAndView(VIEW_PREFIX+ "/income");
+        ModelAndView view = new ModelAndView(VIEW_PREFIX + "/income");
         UserInfo userInfo = getUserInfo(request);
 
         view.addObject("userInfo", userInfo);
@@ -192,10 +193,14 @@ public class PersonalController extends BaseController {
 
     @RequestMapping({"", "/", "/agentStatistits"})
     public ModelAndView agentStatistits(HttpServletRequest request) {
-        ModelAndView view = new ModelAndView(VIEW_PREFIX+ "/agentStatistits");
+        String vm = VIEW_PREFIX + "/agentStatistits";
         UserInfo userInfo = getUserInfo(request);
 
-//        view.addObject("userInfo", userInfo);
+        if (null == userInfo || userInfo.getAgent() == EAgent.NOT_AGENT.getCode()) {
+            vm = VIEW_PREFIX + "permission";
+        }
+        ModelAndView view = new ModelAndView(vm);
+        view.addObject("userInfo", userInfo);
         return view;
     }
     //---------------------------------------------------------------
