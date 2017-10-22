@@ -17,7 +17,7 @@
 </div>
     #parse("/common/footer.vm")
     #if($agent==1)
-    <script type="text/javascript" src="/static/js/agentCouponList.js?v3"></script>
+    <script type="text/javascript" src="/static/js/agentCouponList.js?v5"></script>
     #else
     <script type="text/javascript" src="/static/js/couponList.js?v2"></script>
     #end

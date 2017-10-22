@@ -371,7 +371,10 @@ public class WsMessageController extends BaseController {
         if (isSaleConvert) {
             //解析活动消息进行活动链接转推广链接
             pushContent = salesMessageConvertJDMediaUrl(content, subUnionId);
-        } else {
+        } else if(RegexUtils.checkURL(content) || StringUtils.isNumeric(content)){
+            //如果只是商品url或sku则进行商品转链接返回
+            pushContent = getAgentRecommendContent(content, subUnionId);
+        }else {
             //解析优惠券消息进行券二合一推广链接转换
             pushContent = couponMessageConvertJDMediaUrl(content, subUnionId);
         }
@@ -431,6 +434,39 @@ public class WsMessageController extends BaseController {
 
         if (StringUtils.isBlank(recommendContent.toString())) {
             recommendContent.append("很抱歉，暂时没有可返钱的商品!");
+        }
+        return recommendContent.toString();
+    }
+
+    /**
+     * 获取商品推荐给代理用户
+     *
+     * @param content
+     * @param subUnionId
+     * @return
+     */
+    private String getAgentRecommendContent(String content, String subUnionId) {
+        StringBuffer recommendContent = new StringBuffer();
+
+        List<Long> skus = RegexUtils.getLongList(content);
+        if (skus.size() > 0) {
+            //消息中有SKU信息则按SKU进行搜索
+            Long skuId = skus.get(0);
+            List<Product> products = jdSdkManager.getMediaProducts(skuId.toString());
+
+            if (null != products && products.size() > 0) {
+
+                Product product =products.get(0);
+
+                LOG.error("getAgentRecommendContent product:" + JsonUtil.toJson(product));
+                String shortUrl = jdSdkManager.getShortPromotinUrl(product.getProductId(), subUnionId);
+                //获取代理户消息模板
+                recommendContent.append( messageTempManager.getAgentProductMessageTemp(product,shortUrl));
+            }
+        }
+
+        if (StringUtils.isBlank(recommendContent.toString())) {
+            recommendContent.append("很抱歉，暂时没有可推广的商品!");
         }
         return recommendContent.toString();
     }

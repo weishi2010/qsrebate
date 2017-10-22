@@ -21,9 +21,9 @@ public enum EPromotionTab {
      */
     ACTIVITY(3,"优惠券"),
     /**
-     * 分享
+     * 个人中心
      */
-    SHARE(4,"分享活动");
+    PERSONAL(4,"个人中心");
     private int tab;
     private String name;
 

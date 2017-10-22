@@ -52,6 +52,11 @@
           "type": "view",
           "name": "订单明细",
           "url": "http://m.qingsongfan.com.cn/personal/orderDetail"
+        },
+        {
+          "type": "view",
+          "name": "数据统计",
+          "url": "http://m.qingsongfan.com.cn/personal/agentStatistits"
         }
       ]
     }

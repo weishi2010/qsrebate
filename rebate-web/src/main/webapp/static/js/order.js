@@ -73,7 +73,7 @@ function loadOrderData(page,days) {
             "                <div class=\"tl\">" +
             "                   <a href=\"javascript:void(0);\" onclick=\"redirectJdPromotionUrl(" + detail.productId + ")\" class=\"tl\">" + detail.productName + "</a>" +
             "                </div>" +
-            "                <div class=\"money-scale\">返钱比例："+detail.platformRatio+"%</div>" +
+            "                <!--<div class=\"money-scale\">返钱比例："+detail.platformRatio+"%</div>-->" +
             "            </div>" +
             "        </div>" +
             "        <div class=\"info mui-flex \">" +

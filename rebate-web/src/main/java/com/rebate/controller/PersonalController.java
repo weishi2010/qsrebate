@@ -6,6 +6,7 @@ import com.rebate.domain.ExtractDetail;
 import com.rebate.domain.UserInfo;
 import com.rebate.domain.en.EExtractCode;
 import com.rebate.domain.en.EExtractStatus;
+import com.rebate.domain.en.EPromotionTab;
 import com.rebate.domain.query.ExtractDetailQuery;
 import com.rebate.domain.query.RebateDetailQuery;
 import com.rebate.domain.vo.ExtractDetailVo;
@@ -121,6 +122,7 @@ public class PersonalController extends BaseController {
 
         view.addObject("userInfo", userInfo);
         view.addObject("commission", userInfoService.getUserCommission(userInfo.getOpenId()));
+        view.addObject("promotionTab", EPromotionTab.COUPON_PROMOTION.getTab());
 
         return view;
     }
@@ -188,6 +190,14 @@ public class PersonalController extends BaseController {
         return view;
     }
 
+    @RequestMapping({"", "/", "/agentStatistits"})
+    public ModelAndView agentStatistits(HttpServletRequest request) {
+        ModelAndView view = new ModelAndView(VIEW_PREFIX+ "/agentStatistits");
+        UserInfo userInfo = getUserInfo(request);
+
+//        view.addObject("userInfo", userInfo);
+        return view;
+    }
     //---------------------------------------------------------------
 
     /**

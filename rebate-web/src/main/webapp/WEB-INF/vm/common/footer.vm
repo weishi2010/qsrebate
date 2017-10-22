@@ -4,14 +4,14 @@
     <footer class="footer">
         <a #if($promotionTab == 1) class="must-buy active" #else class="must-buy" #end href="/product/couponProducts">
             <span></span>
-            <p>独家优惠券</p>
+            <p>内购券</p>
         </a>
         <a  #if($promotionTab == 2) class="nine-block active" #else class="nine-block" #end href="/product/seckill">
             <span></span>
             <p>9块9</p>
         </a>
 
-        <a  #if($promotionTab == 0) class="jd active" #else class="jd" #end href="/product/jdIndex"">
+        <a  #if($promotionTab == 0) class="jd active" #else class="jd" #end href="https://www.jd.com"">
             <span></span>
             <p>去京东</p>
         </a>

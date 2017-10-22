@@ -1,0 +1,423 @@
+* {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-appearance: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+input,
+textarea {
+  -webkit-user-select: text;
+  user-select: text;
+}
+.switches {
+  overflow: hidden;
+  -webkit-border-radius: 0.125rem;
+  -moz-border-radius: 0.125rem;
+  border-radius: 0.125rem;
+  border: 1px solid #ededed;
+  font-size: 0;
+}
+.switches.notSelected > span:first-of-type {
+  position: relative;
+}
+.switches.notSelected > span:first-of-type:before {
+  content: " ";
+  position: absolute;
+  right: 0;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  transform: translateY(-50%);
+  height: 0.55rem;
+  width: 1px;
+  background: #f85b62;
+}
+.switches > span {
+  text-align: center;
+  display: inline-block;
+  vertical-align: bottom;
+  width: 50%;
+  height: 100%;
+  color: #000000;
+  background: #ffffff;
+  cursor: pointer;
+  border-bottom: 1px solid #f85b62;
+}
+.switches > span.active {
+  color: #ffffff;
+  background: #000000;
+}
+.switches.redStyle {
+  border-color: #f85b62;
+}
+.switches.redStyle > span {
+  color: #f85b62;
+  background: #ffffff;
+}
+.switches.redStyle > span.active {
+  color: #ffffff;
+  background: #f85b62;
+}
+.searchIcon {
+  position: absolute;
+  width: 0.575rem;
+  height: 0.6rem;
+  background: url("https://ystatic.qutu.com/report/image/icons/searchIcon.png") no-repeat 0 0;
+  background-size: cover;
+}
+html,
+body {
+  width: 100%;
+  height: 100%;
+}
+.searchLayer {
+  position: relative;
+  width: 100%;
+  padding: 0.45rem 0.75rem;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  border-bottom: 1px solid #ededed;
+}
+.searchLayer > .inputLayer {
+  overflow: hidden;
+  position: absolute;
+  right: 0.75rem;
+  top: 0.4rem;
+  height: 1.25rem;
+  line-height: 1.25rem;
+  width: 7.75rem;
+  -webkit-border-radius: 0.5rem;
+  -moz-border-radius: 0.5rem;
+  border-radius: 0.5rem;
+  background: #f5f5f5;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.searchLayer > .inputLayer:before {
+  content: " ";
+  left: 0.55rem;
+  top: 0.38rem;
+  position: absolute;
+  width: 0.575rem;
+  height: 0.6rem;
+  background: url("https://ystatic.qutu.com/report/image/icons/searchIcon.png") no-repeat 0 0;
+  background-size: cover;
+  z-index: 1;
+}
+.searchLayer > .inputLayer > div {
+  position: absolute;
+  left: 1.5rem;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  margin: 0;
+  height: 100%;
+  width: 5.75rem;
+  border: none;
+  background: #f5f5f5;
+  outline: 0;
+  font-size: 0.6rem;
+  color: #999999;
+  cursor: pointer;
+}
+.totalCommission{
+  position:relative;
+  width: 100%;
+  padding: 0 0.75rem;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  height: 5.65rem;
+  margin: 1.15rem 0 0.85rem;
+}
+.totalCommission.onLoading:before{
+  content:"";
+  position:absolute;
+  left: 50%;
+  top: 50%;
+  margin:-1rem 0 0 -1rem;
+  width: 2rem;
+  height: 2rem;
+  background:url("https://ystatic.qutu.com/report/image/loading.png") no-repeat 0 0;
+  background-size:contain;
+  -webkit-animation:rotate 2s infinite;
+  animation:rotate 2s infinite;
+}
+.totalCommission > .totalCommissionDetail {
+  font-size: 0;
+}
+.totalCommission > .totalCommissionDetail > span {
+  display: inline-block;
+  vertical-align: bottom;
+}
+.totalCommission > .totalCommissionDetail > span:first-of-type {
+  font-size: 0.65rem;
+  color: #452200;
+  padding-bottom: 0.4rem;
+  width: 3.35rem;
+}
+.totalCommission > .totalCommissionDetail > span:last-of-type {
+  position: relative;
+  font-size: 1.65rem;
+  color: #ec4e4d;
+  padding-left: 0.5rem;
+}
+.totalCommission > .totalCommissionDetail > span:last-of-type.money:before {
+  content: "¥";
+  position: absolute;
+  left: 0;
+  bottom: 1rem;
+  font-size: 0.8rem;
+}
+.totalCommissionInfo {
+  display: flex;
+  display: -webkit-flex;
+  display: -webkit-box;
+}
+.totalCommissionInfo > div {
+  position: relative;
+  flex: 1;
+  -webkit-flex: 1;
+  -webkit-box-flex: 1;
+  margin-top: 1.25rem;
+}
+.totalCommissionInfo > div:nth-of-type(n+2) {
+  padding-left: 1.5rem;
+}
+.totalCommissionInfo > div:nth-of-type(n+2):after {
+  content: " ";
+  position: absolute;
+  left: 0;
+  top: 0.25rem;
+  width: 1px;
+  height: 1.1rem;
+  background: #eeeeee;
+}
+.totalCommissionInfo > div > h4 {
+  margin: 0 0 0.3rem 0;
+  color: #666666;
+}
+.totalCommissionInfo > div > p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #452200;
+}
+.commissionByDay > .commissionType {
+  height: 1.75rem;
+  line-height: 1.75rem;
+  background: #eeeeee;
+}
+.commissionByDay > .commissionType > span {
+  position: relative;
+  padding: 0 0.5rem;
+  display: inline-block;
+  vertical-align: bottom;
+  color: #452200;
+  cursor: pointer;
+}
+.commissionByDay > .commissionType > span.active {
+  color: #ec4e4d;
+}
+.commissionByDay > .commissionType > span:after {
+  content: " ";
+  position: absolute;
+  right: 0;
+  top: 0.575rem;
+  height: 0.6rem;
+  width: 1px;
+  /*background: #cacaca;*/
+}
+.reportTable {
+  padding: 0 0.75rem;
+}
+.reportTable > .tBody,
+.reportTable .tHeader {
+  width: 100%;
+  font-size: 0;
+}
+.reportTable > .tBody{
+  position:relative;
+}
+.reportTable > .tBody.onLoading:before{
+  content:"";
+  position:absolute;
+  left: 50%;
+  margin:7rem 0 0 -1rem;
+  width: 2rem;
+  height: 2rem;
+  background:url("https://ystatic.qutu.com/report/image/loading.png") no-repeat 0 0;
+  background-size:contain;
+  -webkit-animation:rotate 2s infinite;
+  animation:rotate 2s infinite;
+}
+.reportTable > .tHeader {
+  position: relative;
+  height: 1.5rem;
+  line-height: 1.5rem;
+  background: #f9f9f9;
+}
+.reportTable > .tHeader:before {
+  content: " ";
+  position: absolute;
+  left: -0.75rem;
+  top: 0;
+  width: 0.75rem;
+  height: 1.5rem;
+  background: #f9f9f9;
+}
+.reportTable > .tHeader:after {
+  content: " ";
+  position: absolute;
+  right: -0.75rem;
+  top: 0;
+  width: 0.75rem;
+  height: 1.5rem;
+  background: #f9f9f9;
+}
+.reportTable > .tHeader > .th {
+  display: inline-block;
+  vertical-align: bottom;
+  font-size: 0.6rem;
+  color: #2d2d2d;
+}
+.reportTable > .tBody > .tr {
+  height: 1.6rem;
+  line-height: 1.6rem;
+  border-bottom: 1px solid #ededed;
+  cursor: pointer;
+}
+.reportTable > .tBody > .tr > .td {
+  display: inline-block;
+  vertical-align: bottom;
+  font-size: 0.65rem;
+  color: #999999;
+}
+.reportTable .td:first-of-type,
+.reportTable .th:first-of-type {
+  width: 3rem;
+}
+.reportTable .td:nth-of-type(2),
+.reportTable .th:nth-of-type(2) {
+  width: 3rem;
+}
+.reportTable .td:nth-of-type(3),
+.reportTable .th:nth-of-type(3) {
+  width: 3rem;
+}
+.reportTable .td:nth-of-type(4),
+.reportTable .th:nth-of-type(4) {
+  width: 3.9rem;
+}
+.reportTable .td:nth-of-type(4) .money {
+  position: relative;
+  color: #ec4e4d;
+  padding-left: 0.3rem;
+}
+.reportTable .td:nth-of-type(4) .money:before {
+  content: "¥";
+  position: absolute;
+  left: 0;
+  bottom: -0.4rem;
+  font-size: 0.45rem;
+}
+.mask {
+  position: fixed;
+  left: 0;
+  top: 0;
+  background: rgba(0, 0, 0, 0.6);
+  width: 100%;
+  height: 100%;
+  z-index: 999;
+  display: none;
+}
+.mask > .popUpLayer {
+  position: absolute;
+  width: 12rem;
+  height: 16rem;
+  background: #ffffff;
+  left: 50%;
+  top: 0;
+  -webkit-transform: translate(-50%, 0);
+  transform: translate(-50%, 0);
+  -webkit-border-radius: 0.25rem;
+  -moz-border-radius: 0.25rem;
+  border-radius: 0.25rem;
+}
+.mask > .popUpLayer > .popUpTitle {
+  height: 1.8rem;
+  line-height: 1.8rem;
+  width: 100%;
+  background: #f85b62;
+  text-align: center;
+  color: #ffffff;
+  font-size: 0.7rem;
+  border-radius: 0.25rem 0.25rem 0 0;
+}
+.mask > .popUpLayer > .popUpContentLayer {
+  font-size: 0;
+}
+.mask > .popUpLayer > .popUpContentLayer > label {
+  display: block;
+  margin-top: 1.2rem;
+  width: 100%;
+  padding: 0 10%;
+  font-size: 0.6rem;
+  text-align: center;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.mask > .popUpLayer > .popUpContentLayer .datePicker {
+  text-align: center;
+  margin: 0.6rem auto;
+  display: block;
+  width: 80%;
+  padding: 0 5%;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  height: 1.5rem;
+  border: 1px solid #ededed;
+  font-size: 0.6rem;
+}
+.mask > .popUpLayer > .popUpContentLayer .datePicker::-webkit-input-placeholder {
+  text-align: center;
+}
+.mask > .popUpLayer > .popUpSubmit {
+  position: absolute;
+  width: 60%;
+  height: 1.8rem;
+  line-height: 1.8rem;
+  text-align: center;
+  color: #ffffff;
+  background: #f85b62;
+  left: 50%;
+  bottom: 1.5rem;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%);
+  -webkit-border-radius: 0.25rem;
+  -moz-border-radius: 0.25rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+@keyframes rotate{
+  from{
+    tranform:rotate(0deg);
+    -webkit-transform: rotate(0deg);
+  }
+  to{
+    tranform:rotate(360deg);
+    -webkit-transform: rotate(360deg);
+  }
+}
+@-webkit-keyframes rotate{
+  from{
+    tranform:rotate(0deg);
+    -webkit-transform: rotate(0deg);
+  }
+  to{
+    tranform:rotate(360deg);
+    -webkit-transform: rotate(360deg);
+  }
+}

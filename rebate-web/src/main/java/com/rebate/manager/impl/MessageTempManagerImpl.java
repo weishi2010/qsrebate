@@ -48,9 +48,22 @@ public class MessageTempManagerImpl implements MessageTempManager {
         //商品名
         recommendContent.append("已成功转成返钱链接，从返利链接下单，才可以返钱哦！\n\n");
         //可返钱
-        recommendContent.append("[Packet]可返钱：").append(product.getUserCommission()).append("元\n\n");
+        recommendContent.append("[Packet]预估返钱：").append(product.getUserCommission()).append("元\n\n");
         //推广地址
         recommendContent.append("/:gift返钱链接：").append(mediaUrl).append("");
+        return recommendContent.toString();
+
+    }
+
+    @Override
+    public String getAgentProductMessageTemp(Product product, String mediaUrl) {
+        StringBuffer recommendContent = new StringBuffer();
+        //商品名
+        recommendContent.append("已成功转成推广链接！\n\n");
+        //可返钱
+        recommendContent.append("[Packet]预估佣金：").append(product.getUserCommission()).append("元\n\n");
+        //推广地址
+        recommendContent.append("/:gift推广链接：").append(mediaUrl).append("");
         return recommendContent.toString();
 
     }
