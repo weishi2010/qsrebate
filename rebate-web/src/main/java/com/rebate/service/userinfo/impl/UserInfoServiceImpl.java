@@ -14,6 +14,7 @@ import com.rebate.domain.en.EAgent;
 import com.rebate.domain.en.EIncomeType;
 import com.rebate.domain.en.ESequence;
 import com.rebate.domain.en.ESubUnionIdPrefix;
+import com.rebate.domain.property.JDProperty;
 import com.rebate.domain.query.IncomeDetailQuery;
 import com.rebate.domain.wx.WxUserInfo;
 import com.rebate.service.userinfo.UserInfoService;
@@ -60,6 +61,11 @@ public class UserInfoServiceImpl implements UserInfoService {
     @Autowired(required = true)
     private SequenceUtil sequenceUtil;
 
+
+    @Qualifier("jDProperty")
+    @Autowired(required = true)
+    private JDProperty jDProperty;
+
     @Override
     public UserInfo registUserInfo(String openId, Integer angent, boolean isAward) {
         UserInfo userInfo = null;
@@ -88,7 +94,7 @@ public class UserInfoServiceImpl implements UserInfoService {
                 IncomeDetail incomeDetail = new IncomeDetail();
                 incomeDetail.setOpenId(openId);
                 incomeDetail.setReferenceId(userInfo.getId());
-                incomeDetail.setIncome(10.0);
+                incomeDetail.setIncome(jDProperty.getNewRegisterAward());
                 incomeDetail.setStatus(0);
                 incomeDetail.setDealt(0);
                 incomeDetail.setType(EIncomeType.REGIST.getCode());

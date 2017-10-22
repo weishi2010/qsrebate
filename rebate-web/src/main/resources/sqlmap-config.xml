@@ -15,5 +15,5 @@ Config 2.0/" "http://ibatis.apache.org/dtd/sql-map-config-2.dtd">
 	<sqlMap resource="sqlmap/ActivityMapper.xml"/>
 	<sqlMap resource="sqlmap/AdvertismentPositionMapper.xml"/>
 	<sqlMap resource="sqlmap/IncomeDetailMapper.xml"/>
-
+	<sqlMap resource="sqlmap/AgentRelationMapper.xml"/>
 </sqlMapConfig>

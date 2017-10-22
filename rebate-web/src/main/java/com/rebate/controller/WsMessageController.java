@@ -272,7 +272,7 @@ public class WsMessageController extends BaseController {
         str.append("<FromUserName><![CDATA[" + fromUserName + "]]></FromUserName>");
         str.append("<CreateTime>" + new Date().getTime() + "</CreateTime>");
         str.append("<MsgType><![CDATA[text]]></MsgType>");
-        str.append("<Content><![CDATA[[表情]欢迎加入“轻松返钱”，购物能返钱！还有您的专属内购券哦！\n" +
+        str.append("<Content><![CDATA[\uD83C\uDF89欢迎加入“轻松返钱”，购物能返钱！还有您的专属内购券哦！\n" +
                 "\n" +
                 "【返钱步骤】\n" +
                 "   1、输入京东商品编号 或 商品链接，立刻获取返钱链接！ \n" +
@@ -281,7 +281,7 @@ public class WsMessageController extends BaseController {
                 "【 内购券 】\n" +
                 "打开菜单栏，《内购券》每日爆出更新！独家！专享！超值！     [阴险][阴险]直接访问官网没有的哦！\n" +
                 "\n" +
-                " 【提现】[表情] 20元，就可以提现啦！\n" +
+                " 【提现】\uD83C\uDE35 20元，就可以提现啦！\n" +
                 "\n]]></Content>");
         str.append("</xml>");
         return str.toString();
@@ -296,7 +296,7 @@ public class WsMessageController extends BaseController {
         str.append("<FromUserName><![CDATA[" + fromUserName + "]]></FromUserName>");
         str.append("<CreateTime>" + new Date().getTime() + "</CreateTime>");
         str.append("<MsgType><![CDATA[text]]></MsgType>");
-        str.append("<Content><![CDATA[[表情]欢迎加入“轻松返钱网”，一起轻松赚钱[红包]！\n" +
+        str.append("<Content><![CDATA[\uD83C\uDF89欢迎加入“轻松返钱网”，一起轻松赚钱[红包]！\n" +
                 "    尊敬的代理用户，您可以进行如下推广操作：\n" +
                 "\n" +
                 "  1、通过【内购券】和9.9元频道推广我们为您精选的优质优惠券商品！\n" +

@@ -63,4 +63,8 @@
     <bean id="incomeDetailDao" class="com.rebate.dao.impl.IncomeDetailDaoImpl">
         <property name="dataSource" ref="dataSource"/>
     </bean>
+
+    <bean id="agentRelationDao" class="com.rebate.dao.impl.AgentRelationDaoImpl">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
 </beans>

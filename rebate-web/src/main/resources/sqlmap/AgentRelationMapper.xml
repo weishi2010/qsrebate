@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="AgentRelation">
+
+    <typeAlias alias="AgentRelation" type="com.rebate.domain.agent.AgentRelation"/>
+    <typeAlias alias="AgentRelationQuery" type="com.rebate.domain.query.AgentRelationQuery"/>
+
+    <resultMap class="AgentRelation" id="AgentRelationResultMap">
+        <result property="id" column="id"/>
+        <result property="agentSubUnionId" column="agent_sub_union_id"/>
+        <result property="parentAgentSubUnionId" column="parent_agent_sub_union_id"/>
+        <result property="commissionRatio" column="commission_ratio"/>
+        <result property="status" column="status"/>
+        <result property="created" column="created"/>
+        <result property="modified" column="modified"/>
+    </resultMap>
+
+    <sql id="fields">
+        id,
+        agent_sub_union_id,
+        parent_agent_sub_union_id,
+        commission_ratio,
+        status,
+        created,
+        modified
+    </sql>
+
+    <insert id="insert" parameterClass="AgentRelation">
+        insert into agent_relation
+        (
+        agent_sub_union_id,
+        parent_agent_sub_union_id,
+        commission_ratio,
+        status,
+        created,
+        modified
+        )
+        values
+        (
+        #agentSubUnionId#,
+        #parentAgentSubUnionId#,
+        #commissionRatio#,
+        #status#,
+        now(),
+        now()
+        )
+        <selectKey resultClass="long" keyProperty="id">
+            SELECT @@IDENTITY as id
+        </selectKey>
+    </insert>
+
+    <update id="update" parameterClass="AgentRelation">
+        update agent_relation
+        set  modified=now()
+        <dynamic>
+            <isNotNull property="agentSubUnionId" prepend=",">
+                agent_sub_union_id = #agentSubUnionId#
+            </isNotNull>
+        </dynamic>
+        where id=#id#
+    </update>
+
+    <select id="findById" parameterClass="AgentRelationQuery" resultMap="AgentRelationResultMap">
+        select
+        <include refid="fields"/>
+        from agent_relation
+        where id=#id#
+        limit 1
+    </select>
+    <select id="findByAgentSubUnionId" parameterClass="AgentRelationQuery" resultMap="AgentRelationResultMap">
+        select
+        <include refid="fields"/>
+        from agent_relation
+        where agent_sub_union_id=#agentSubUnionId#
+        limit 1
+    </select>
+
+</sqlMap>

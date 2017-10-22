@@ -5,17 +5,21 @@ package com.rebate.domain.en;
  */
 public enum EIncomeType {
     /**
-     * 订单返利
-     */
-    ORDER_REBATE(1,"订单返利"),
-    /**
      * 注册奖励
      */
-    REGIST(2,"订单返利"),
+    REGIST(1,"注册返利"),
+    /**
+     * 订单返利
+     */
+    ORDER_REBATE(2,"订单返利"),
+    /**
+     * 代理订单返利
+     */
+    AGENT_REBATE(3,"订单返利"),
     /**
      * 提现支出
      */
-    EXTRACT(3,"提现支出");
+    EXTRACT(4,"提现支出");
 
     private int code;
     private String name;

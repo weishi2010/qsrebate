@@ -15,4 +15,11 @@ public class JDProperty {
     @Getter
     @Setter
     private String saleDomains;
+
+    /**
+     * 新注册用户奖励
+     */
+    @Getter
+    @Setter
+    private Double newRegisterAward;
 }

@@ -25,7 +25,7 @@ public class MessageTempManagerImpl implements MessageTempManager {
             promotionPre.append("】");
         }
 
-        content.append("[表情] " + promotionPre.toString() + productVo.getName() + "\n\n");
+        content.append("\uD83D\uDD25 " + promotionPre.toString() + productVo.getName() + "\n\n");
         content.append("-----------\n");
         //可返钱
         content.append("◆原价：").append(productVo.getOriginalPrice()).append("元\n");
@@ -35,7 +35,7 @@ public class MessageTempManagerImpl implements MessageTempManager {
         }
 
         //推广地址
-        content.append("[表情]购买链接：").append(mediaUrl).append("\n");
+        content.append("\uE231购买链接：").append(mediaUrl).append("\n");
         content.append("-----------\n");
         content.append("京东商城  正品保证\n\n");
 
