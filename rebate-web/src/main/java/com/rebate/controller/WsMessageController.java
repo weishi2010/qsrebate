@@ -15,6 +15,7 @@ import com.rebate.domain.IncomeDetail;
 import com.rebate.domain.Product;
 import com.rebate.domain.UserInfo;
 import com.rebate.domain.en.*;
+import com.rebate.domain.property.JDProperty;
 import com.rebate.domain.wx.ImageMessage;
 import com.rebate.domain.wx.InputMessage;
 import com.rebate.domain.wx.OutputMessage;
@@ -49,18 +50,6 @@ public class WsMessageController extends BaseController {
     private static final Logger LOG = LoggerFactory.getLogger(WsMessageController.class);
     public static final String PREFIX = "/wxmsg";
 
-    @Qualifier("productCouponDao")
-    @Autowired(required = true)
-    private ProductCouponDao productCouponDao;
-
-    @Qualifier("productService")
-    @Autowired(required = true)
-    private ProductService productService;
-
-    @Qualifier("productDao")
-    @Autowired(required = true)
-    private ProductDao productDao;
-
     @Qualifier("jdSdkManager")
     @Autowired(required = true)
     private JdSdkManager jdSdkManager;
@@ -76,6 +65,10 @@ public class WsMessageController extends BaseController {
     @Qualifier("userInfoDao")
     @Autowired(required = true)
     private UserInfoDao userInfoDao;
+
+    @Qualifier("jDProperty")
+    @Autowired(required = true)
+    private JDProperty jDProperty;
 
     /**
      * 微信公众号接口配置
@@ -156,7 +149,7 @@ public class WsMessageController extends BaseController {
                     //默认为普通用户获取文本推送商品推荐xml
                     String textXml = recommendProductPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
 
-                    //如果为代理用户则解析消息进行优惠券转链，转为JD券二合一链接
+                    //如果为代理用户则解析消息进行推广转链处理
                     if (EAgent.FIRST_AGENT.getCode() == agent) {
                         textXml = agentConvertLinkPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
                     }
@@ -344,7 +337,18 @@ public class WsMessageController extends BaseController {
      */
     private String agentConvertLinkPushXml(String toUserName, String fromUserName, String msgType, String content, String subUnionId) {
         String pushContent = "";
-        if (content.contains("[SALE_LINK]")) {
+        String jdSaleDomains = jDProperty.getSaleDomains();
+        //识别是否为活动推广转链接
+        boolean isSaleConvert = false;
+        if(StringUtils.isNotBlank(jdSaleDomains)){
+            String[] doaminsArray = jdSaleDomains.split(",");
+            for(String domain:doaminsArray){
+                if(content.toLowerCase().contains(domain.toLowerCase())){
+                    isSaleConvert = true;
+                }
+            }
+        }
+        if (isSaleConvert) {
             //解析活动消息进行活动链接转推广链接
             pushContent = salesMessageConvertJDMediaUrl(content, subUnionId);
         } else {

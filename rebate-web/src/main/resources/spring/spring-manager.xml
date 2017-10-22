@@ -36,6 +36,12 @@
 		<property name="channel" value="${jd.jos.channel}"/>
 
 	</bean>
+
+	<!--JD SDK config-->
+	<bean id="jDProperty" class="com.rebate.domain.property.JDProperty">
+		<property name="saleDomains" value="${jd.saleDomains}"/>
+	</bean>
+	
 	<!--URL处理工具类-->
 	<bean id="rebateUrlUtil" class="com.rebate.common.util.rebate.RebateUrlUtil">
 		<property name="jdUnionUrlPrefix" value="https://union-click.jd.com/jdc?"></property>
