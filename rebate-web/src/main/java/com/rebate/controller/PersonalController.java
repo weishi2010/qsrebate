@@ -122,7 +122,7 @@ public class PersonalController extends BaseController {
 
         view.addObject("userInfo", userInfo);
         view.addObject("commission", userInfoService.getUserCommission(userInfo.getOpenId()));
-        view.addObject("promotionTab", EPromotionTab.COUPON_PROMOTION.getTab());
+        view.addObject("promotionTab", EPromotionTab.PERSONAL.getTab());
 
         return view;
     }
