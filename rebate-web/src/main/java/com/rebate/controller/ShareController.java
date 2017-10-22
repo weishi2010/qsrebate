@@ -8,8 +8,10 @@ import com.rebate.dao.ProductCouponDao;
 import com.rebate.domain.Product;
 import com.rebate.domain.ProductCoupon;
 import com.rebate.domain.UserInfo;
+import com.rebate.domain.en.EProductFreePost;
 import com.rebate.domain.vo.ProductVo;
 import com.rebate.domain.wx.WxConfig;
+import com.rebate.manager.MessageTempManager;
 import com.rebate.manager.jd.JdSdkManager;
 import com.rebate.service.product.ProductService;
 import com.rebate.service.wx.WxAccessTokenService;
@@ -63,9 +65,9 @@ public class ShareController extends BaseController {
     @Autowired(required = true)
     private WxService wxService;
 
-    @Qualifier("productCouponDao")
+    @Qualifier("messageTempManager")
     @Autowired(required = true)
-    private ProductCouponDao productCouponDao;
+    private MessageTempManager messageTempManager;
 
     @RequestMapping({"", "/", "/shareIndex"})
     public ModelAndView shareIndex(HttpServletRequest request, Long skuId) {
@@ -78,7 +80,7 @@ public class ShareController extends BaseController {
 
         ModelAndView view = new ModelAndView(VIEW_PREFIX+ vm);
         //查询商品
-        ProductVo product = productService.findProduct(skuId, subUnionId);
+        ProductVo product = productService.findProduct(skuId);
 
         String promotionShortUrl = rebateUrlUtil.jdPromotionUrlToQsrebateShortUrl(jdSdkManager.getShortPromotinUrl(skuId, subUnionId));
 
@@ -122,7 +124,7 @@ public class ShareController extends BaseController {
         }
 
 
-        ProductVo productVo = productService.findProduct(productId,openId);
+        ProductVo productVo = productService.findProduct(productId);
         String mediaUrl = "";
         if (null != productVo.getProductCoupon()) {
             String couponLink = productVo.getProductCoupon().getCouponLink();
@@ -133,7 +135,7 @@ public class ShareController extends BaseController {
         String content = "";
         if(StringUtils.isNotBlank(mediaUrl)){
             //推送消息
-             content = getPushMediaTemp(productVo,mediaUrl);
+             content = messageTempManager.getAgentProductMessageTemp(productVo,mediaUrl);
         }else{
             content ="推广商品已经失效，请更换其他商品!";
         }
@@ -144,25 +146,4 @@ public class ShareController extends BaseController {
         return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
     }
 
-    /**
-     * 推广消息模板
-     * @param productVo
-     * @param mediaUrl
-     * @return
-     */
-    private String getPushMediaTemp(ProductVo productVo,String mediaUrl){
-        StringBuffer content = new StringBuffer();
-        content.append(productVo.getName()).append("\n");;
-        content.append("--------------------------\n");
-        content.append("京东价："+productVo.getOriginalPrice()+"元\n");
-        if(null!=productVo.getCouponPrice() && productVo.getCouponPrice()>0){
-            content.append("券后价："+productVo.getCouponPrice()+"元\n");
-        }
-        content.append("--------------------------\n");
-        content.append(mediaUrl).append("\n");
-        content.append("--------------------------\n");
-
-
-        return content.toString();
-    }
 }

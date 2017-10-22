@@ -38,9 +38,8 @@ public interface ProductService {
     /**
      * 根据skuId查询
      * @param skuId
-     * @param openId
      * @return
      */
-    ProductVo findProduct(Long skuId,String openId);
+    ProductVo findProduct(Long skuId);
 
 }

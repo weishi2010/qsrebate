@@ -173,7 +173,7 @@ function shareProduct(productId){
         url: '/share/sendMessage.json?productId='+productId+"&r="+Math.random(),
         dataType: 'json',
         success: function (reponse) {
-            alert("轻松返钱公众号已将商品推广信息发送给您，请返回公众号查看!")
+            alert("推广文案已生成，请返回对话框查看!")
         },
         error: function (xhr, type) {
             console.log('数据请求错误！');

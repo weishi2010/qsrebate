@@ -16,10 +16,12 @@ import com.rebate.domain.Product;
 import com.rebate.domain.UserInfo;
 import com.rebate.domain.en.*;
 import com.rebate.domain.property.JDProperty;
+import com.rebate.domain.vo.ProductVo;
 import com.rebate.domain.wx.ImageMessage;
 import com.rebate.domain.wx.InputMessage;
 import com.rebate.domain.wx.OutputMessage;
 import com.rebate.domain.wx.WxConfig;
+import com.rebate.manager.MessageTempManager;
 import com.rebate.manager.jd.JdSdkManager;
 import com.rebate.service.product.ProductService;
 import com.rebate.service.userinfo.UserInfoService;
@@ -50,13 +52,17 @@ public class WsMessageController extends BaseController {
     private static final Logger LOG = LoggerFactory.getLogger(WsMessageController.class);
     public static final String PREFIX = "/wxmsg";
 
+    @Qualifier("productService")
+    @Autowired(required = true)
+    private ProductService productService;
+
     @Qualifier("jdSdkManager")
     @Autowired(required = true)
     private JdSdkManager jdSdkManager;
 
-    @Qualifier("rebateUrlUtil")
+    @Qualifier("messageTempManager")
     @Autowired(required = true)
-    private RebateUrlUtil rebateUrlUtil;
+    private MessageTempManager messageTempManager;
 
     @Qualifier("userInfoService")
     @Autowired(required = true)
@@ -180,7 +186,7 @@ public class WsMessageController extends BaseController {
                                 userInfoService.registUserInfo(openId, EAgent.NOT_AGENT.getCode(), true);
 
                                 //普通用户首次关注消息
-                                eventXml = firstSubscribeTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
+                                eventXml = subscribeTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
 
                             }
 
@@ -266,9 +272,17 @@ public class WsMessageController extends BaseController {
         str.append("<FromUserName><![CDATA[" + fromUserName + "]]></FromUserName>");
         str.append("<CreateTime>" + new Date().getTime() + "</CreateTime>");
         str.append("<MsgType><![CDATA[text]]></MsgType>");
-        str.append("<Content><![CDATA[欢迎加入我们！购物返钱，还有更多独家优惠券哦！ \n\n" +
-                "1、输入京东商品编号 或 商品链接，立刻获取返钱链接！\n" +
-                "2、打开【京东返钱-内购券】，每日更新独家的！超值的！内购优惠券！]]></Content>");
+        str.append("<Content><![CDATA[[表情]欢迎加入“轻松返钱”，购物能返钱！还有您的专属内购券哦！\n" +
+                "\n" +
+                "【返钱步骤】\n" +
+                "   1、输入京东商品编号 或 商品链接，立刻获取返钱链接！ \n" +
+                "   2、通过返钱链接下单，获得返钱！\n" +
+                "\n" +
+                "【 内购券 】\n" +
+                "打开菜单栏，《内购券》每日爆出更新！独家！专享！超值！     [阴险][阴险]直接访问官网没有的哦！\n" +
+                "\n" +
+                " 【提现】[表情] 20元，就可以提现啦！\n" +
+                "\n]]></Content>");
         str.append("</xml>");
         return str.toString();
     }
@@ -282,7 +296,13 @@ public class WsMessageController extends BaseController {
         str.append("<FromUserName><![CDATA[" + fromUserName + "]]></FromUserName>");
         str.append("<CreateTime>" + new Date().getTime() + "</CreateTime>");
         str.append("<MsgType><![CDATA[text]]></MsgType>");
-        str.append("<Content><![CDATA[欢迎加入我们，您发送给我们的优惠券信息可获取推广链接，用户下单还有更多佣金返利哦！]]></Content>");
+        str.append("<Content><![CDATA[[表情]欢迎加入“轻松返钱网”，一起轻松赚钱[红包]！\n" +
+                "    尊敬的代理用户，您可以进行如下推广操作：\n" +
+                "\n" +
+                "  1、通过【内购券】和9.9元频道推广我们为您精选的优质优惠券商品！\n" +
+                "  2、通过对话框，输入“外部复制回来的发单信息”转链后转发推广出去！\n" +
+                "  3、通过输入框，输入“京东促销活动链接”进行转链，推广京东活动页面。\n" +
+                " 如：https://sale.jd.com/m/act/1Kr7yhjnkxi.html?jd_pop=3daac57c-7f96-44a2-9e0a-f2c1eb12aee1&abt=1 和 https://pro.m.jd.com/mall/active/3ccrpMyatkBAmk7C9TQQNpuL1Zwu/index.html 等链接。]]></Content>");
         str.append("</xml>");
         return str.toString();
     }
@@ -340,10 +360,10 @@ public class WsMessageController extends BaseController {
         String jdSaleDomains = jDProperty.getSaleDomains();
         //识别是否为活动推广转链接
         boolean isSaleConvert = false;
-        if(StringUtils.isNotBlank(jdSaleDomains)){
+        if (StringUtils.isNotBlank(jdSaleDomains)) {
             String[] doaminsArray = jdSaleDomains.split(",");
-            for(String domain:doaminsArray){
-                if(content.toLowerCase().contains(domain.toLowerCase())){
+            for (String domain : doaminsArray) {
+                if (content.toLowerCase().contains(domain.toLowerCase())) {
                     isSaleConvert = true;
                 }
             }
@@ -399,18 +419,15 @@ public class WsMessageController extends BaseController {
             List<Product> products = jdSdkManager.getMediaProducts(skuId.toString());
 
             if (null != products && products.size() > 0) {
-                Product product = products.get(0);
+
+                Product product =products.get(0);
+
                 LOG.error("getRecommendContent product:" + JsonUtil.toJson(product));
-                String shortUrl = rebateUrlUtil.jdPromotionUrlToQsrebateShortUrl(jdSdkManager.getShortPromotinUrl(product.getProductId(), subUnionId));
-                //商品名
-                recommendContent.append("已成功转成返钱链接，从返利链接下单，才可以返钱哦！\n\n");
-                //可返钱
-                recommendContent.append("[Packet]可返钱：").append(product.getUserCommission()).append("元\n\n");
-                //推广地址
-                recommendContent.append("/:gift返钱链接：").append(shortUrl).append("");
+                String shortUrl = jdSdkManager.getShortPromotinUrl(product.getProductId(), subUnionId);
+                //获取返利用户消息模板
+                recommendContent.append( messageTempManager.getRebateUserProductMessageTemp(product,shortUrl));
             }
         }
-
 
         if (StringUtils.isBlank(recommendContent.toString())) {
             recommendContent.append("很抱歉，暂时没有可返钱的商品!");
@@ -452,6 +469,7 @@ public class WsMessageController extends BaseController {
             String couponLink = "";
             Long skuId = 0l;
             String linkMark = "#couponLink#";
+            boolean stop = false;
             while ((line = br.readLine()) != null) {
 
                 List<String> list = RegexUtils.getLinks(line);
@@ -466,12 +484,24 @@ public class WsMessageController extends BaseController {
                             skuId = dataList.get(0);
                             line = "";
                         }
+                        //解析完商品链接后停止解析后边的内容
+                        stop = true;
                     }
                 }
-                sb.append(line).append("\n");
+
+                if(StringUtils.isNotBlank(line)){
+                    sb.append(line).append("\n");
+                }
+                //停止解析
+                if(stop){
+                    break;
+                }
             }
 
             if (StringUtils.isNotBlank(couponLink) && skuId > 0l) {
+                sb.append("-----------\n");
+                sb.append("京东商城  正品保证\n");
+
                 String jdMediaUrl = jdSdkManager.getPromotionCouponCode(skuId, couponLink, subUnionId);
                 if (StringUtils.isNotBlank(jdMediaUrl)) {
                     result = sb.toString().replace(linkMark, jdMediaUrl);

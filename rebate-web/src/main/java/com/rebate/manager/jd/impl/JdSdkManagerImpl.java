@@ -16,10 +16,7 @@ import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.domain.Product;
 import com.rebate.domain.ProductCoupon;
 import com.rebate.domain.RebateDetail;
-import com.rebate.domain.en.EJDProCont;
-import com.rebate.domain.en.EProductSource;
-import com.rebate.domain.en.EProudctCouponType;
-import com.rebate.domain.en.EProudctRebateType;
+import com.rebate.domain.en.*;
 import com.rebate.domain.jd.JDConfig;
 import com.rebate.manager.jd.JdSdkManager;
 import net.sf.json.JSONArray;
@@ -95,6 +92,8 @@ public class JdSdkManagerImpl implements JdSdkManager {
                     product.setShopId(Long.parseLong(map.get("shopId").toString()));
                     product.setDistribution(1);
                     product.setProductType(1);
+                    product.setCouponPrice(0.0);
+                    product.setFreePost(EProductFreePost.NOT_FREE_POST.getCode());//默认为不包邮
                     product.setStock(0);
                     product.setStatus(0);
                     product.setSortWeight(0);

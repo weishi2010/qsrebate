@@ -207,7 +207,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductVo findProduct(Long skuId, String openId) {
+    public ProductVo findProduct(Long skuId) {
         ProductVo vo = null;
         try {
             Product productQuery = new Product();
