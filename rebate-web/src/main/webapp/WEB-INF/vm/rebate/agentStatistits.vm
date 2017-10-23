@@ -27,7 +27,7 @@
         <span class="money">$!{todayOrderSummary.commission}</span>
     </div>
     <div class="totalCommissionInfo">
-        <div> <h4>点击数</h4> <p>$!{todayOrderSummary.clickCount}</p> </div>
+        <div> <h4>点击数</h4> <p>$!{todayClick}</p> </div>
         #if($adminFlag)
             <div> <h4>全站点击数</h4> <p>$!{allQsClick}</p> </div>
         #end

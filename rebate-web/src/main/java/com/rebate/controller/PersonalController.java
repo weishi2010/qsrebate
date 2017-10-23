@@ -252,6 +252,7 @@ public class PersonalController extends BaseController {
         LOG.error("[agentStatistits]dayTab:"+dayTab+",size:"+list.size());
         view.addObject("dayTab", dayTab);
         view.addObject("adminFlag", jDProperty.isAdmin(userInfo.getSubUnionId()));
+        view.addObject("todayClick",shortUrlManager.getJDUnionUrlClick(userInfo.getSubUnionId(),queryDate));
         view.addObject("allQsClick",shortUrlManager.getALLJDUnionUrlClick(queryDate));
         view.addObject("todayOrderSummary", todayOrderSummary);
         view.addObject("list", list);

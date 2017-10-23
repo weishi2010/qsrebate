@@ -53,7 +53,8 @@ public class ShortUrlManagerImpl implements ShortUrlManager {
 
             //统计全站的点击
             String qsAllClickKey = RedisKey.JD_UNION_URL_CLICK.getPrefix(day+"ALL");
-            redisUtil.incr(qsAllClickKey);
+            long count = redisUtil.incr(qsAllClickKey);
+            LOG.error("incrJDUnionUrlClick count:{}",count);
         } catch (Exception e) {
             LOG.error("incrJDUnionUrlClick error!", e);
         }
