@@ -1,5 +1,6 @@
 package com.rebate.dao;
 
+import com.rebate.domain.OrderSummary;
 import com.rebate.domain.RebateDetail;
 import com.rebate.domain.query.RebateDetailQuery;
 
@@ -54,4 +55,11 @@ public interface RebateDetailDao {
      * @return
      */
     List<RebateDetail> findListBySubUnionId(RebateDetailQuery rebateDetailQuery);
+
+    /**
+     * 订单统计
+     * @param orderSummary
+     * @return
+     */
+    List<OrderSummary> getOrderSummaryBySubUnionId(OrderSummary orderSummary);
 }

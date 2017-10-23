@@ -4,7 +4,14 @@
 
     <typeAlias alias="RebateDetail" type="com.rebate.domain.RebateDetail"/>
     <typeAlias alias="RebateDetailQuery" type="com.rebate.domain.query.RebateDetailQuery"/>
+    <typeAlias alias="OrderSummary" type="com.rebate.domain.OrderSummary"/>
 
+    <resultMap class="OrderSummary" id="OrderSummaryResultMap">
+        <result property="subUnionId" column="subUnionId"/>
+        <result property="submitDate" column="submitDate"/>
+        <result property="orderCount" column="orderCount"/>
+        <result property="commission" column="commission"/>
+    </resultMap>
     <resultMap class="RebateDetail" id="RebateDetailResultMap">
         <result property="id" column="id"/>
         <result property="orderId" column="order_id"/>
@@ -177,5 +184,15 @@
         from rebate_detail
         where sub_union_id=#subUnionId# and status=#status#
         limit 1
+    </select>
+    <select id="getOrderSummaryBySubUnionId" parameterClass="OrderSummary" resultMap="OrderSummaryResultMap">
+        SELECT COUNT(order_id) AS orderCount,SUM(commission) AS commission
+        ,DATE_FORMAT(submit_date,"%Y-%m-%d") AS submitDate,sub_union_id AS subUnionId
+        FROM rebate_detail
+        WHERE sub_union_id=#subUnionId#
+        <![CDATA[ AND DATE_SUB(CURDATE(), INTERVAL 30 DAY) <=submit_date ]]>
+        GROUP BY submitDate,sub_union_id
+        ORDER BY submitDate DESC
+        LIMIT #pageSize#
     </select>
 </sqlMap>

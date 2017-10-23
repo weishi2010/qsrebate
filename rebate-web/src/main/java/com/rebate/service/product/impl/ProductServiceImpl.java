@@ -190,6 +190,9 @@ public class ProductServiceImpl implements ProductService {
                             productCouponQuery.setProductId(vo.getProductId());
                             ProductCoupon coupon = productCouponDao.findById(productCouponQuery);
                             vo.setProductCoupon(coupon);
+
+                            product.setUserCommission(RebateRuleUtil.getJDUserCommission(product.getCommissionWl()));//平台返还用户佣金
+
                             products.add(vo);
                         } catch (Exception e) {
                             LOG.error("findProductList error!product:{}", JsonUtil.toJson(product), e);

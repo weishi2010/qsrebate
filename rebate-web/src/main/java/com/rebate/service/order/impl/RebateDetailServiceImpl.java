@@ -4,6 +4,7 @@ import com.rebate.common.util.JsonUtil;
 import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.dao.ProductDao;
 import com.rebate.dao.RebateDetailDao;
+import com.rebate.domain.OrderSummary;
 import com.rebate.domain.Product;
 import com.rebate.domain.RebateDetail;
 import com.rebate.domain.query.RebateDetailQuery;
@@ -50,5 +51,17 @@ public class RebateDetailServiceImpl implements RebateDetailService {
             LOG.error("findRebateDetailList error!rebateDetailQuery:" + JsonUtil.toJson(rebateDetailQuery), e);
         }
         return rebateDetails;
+    }
+
+    @Override
+    public PaginatedArrayList<OrderSummary> getOrderSummaryBySubUnionId(OrderSummary orderSummaryQuery) {
+        PaginatedArrayList<OrderSummary> orderSummaryList = new PaginatedArrayList<OrderSummary>(orderSummaryQuery.getIndex(), orderSummaryQuery.getPageSize());
+        try {
+            List<OrderSummary> list = rebateDetailDao.getOrderSummaryBySubUnionId(orderSummaryQuery);
+            orderSummaryList.addAll(list);
+        } catch (Exception e) {
+            LOG.error("getOrderSummaryBySubUnionId error!orderSummaryQuery:" + JsonUtil.toJson(orderSummaryQuery), e);
+        }
+        return orderSummaryList;
     }
 }

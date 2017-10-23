@@ -3,6 +3,7 @@ package com.rebate.controller;
 import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.controller.base.BaseController;
 import com.rebate.domain.ExtractDetail;
+import com.rebate.domain.OrderSummary;
 import com.rebate.domain.UserInfo;
 import com.rebate.domain.en.EAgent;
 import com.rebate.domain.en.EExtractCode;
@@ -193,13 +194,22 @@ public class PersonalController extends BaseController {
 
     @RequestMapping({"", "/", "/agentStatistits"})
     public ModelAndView agentStatistits(HttpServletRequest request) {
+        ModelAndView view = new ModelAndView();
         String vm = VIEW_PREFIX + "/agentStatistits";
         UserInfo userInfo = getUserInfo(request);
+        view.setViewName(vm);
 
         if (null == userInfo || userInfo.getAgent() == EAgent.NOT_AGENT.getCode()) {
-            vm = VIEW_PREFIX + "permission";
+            view.setViewName(VIEW_PREFIX + "permission");
+            return view;
         }
-        ModelAndView view = new ModelAndView(vm);
+
+        OrderSummary orderSummaryQuery = new OrderSummary();
+        orderSummaryQuery.setSubUnionId(userInfo.getSubUnionId());
+        orderSummaryQuery.setPageSize(30);//取近30
+        PaginatedArrayList<OrderSummary>  list =  rebateDetailService.getOrderSummaryBySubUnionId(orderSummaryQuery);
+
+        view.addObject("list", list);
         view.addObject("userInfo", userInfo);
         return view;
     }

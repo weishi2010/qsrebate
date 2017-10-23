@@ -234,7 +234,7 @@ function getTemplate(product, tab) {
     if (product.productCoupon) {
         htmlTemp += " <span class=\"quan\">券:" + product.productCoupon.discount + "</span>";
     }
-    htmlTemp += "  </div>";
+    htmlTemp += "(佣金" +product.userCommission+")</div>";
 
     htmlTemp += "            <div class=\"easy\">";
     // if (product.couponType == 2 && product.productCoupon) {
@@ -250,7 +250,7 @@ function getTemplate(product, tab) {
         // "                </a>" +
         "                <span class=\"share\"><a href =\"javascript:void(0);\" onclick=\"shareProduct(" + product.productId + ")\" >" +
         "                    <img class=\"zhuanfa\" src=\"/static/img/ico-zhuanfa-01.png\" alt=\"\">" +
-        "                    去推广" +
+        "                    去推广"+
         "                </a></span>" +
         "            </div>";
 

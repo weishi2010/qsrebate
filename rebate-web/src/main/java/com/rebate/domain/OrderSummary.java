@@ -1,25 +1,25 @@
 package com.rebate.domain;
 
+import com.rebate.domain.query.BaseQuery;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
 
-public class OrderSummary {
-  private Long id;
+public class OrderSummary extends BaseQuery {
   /**
-   * 微信openId
+   * 子联盟ID
    */
   @Getter
   @Setter
-  private Long openId;
+  private String subUnionId;
 
   /**
-   * 汇总时间
+   * 订单时间
    */
   @Getter
   @Setter
-  private Date summaryDate;
+  private Date submitDate;
   /**
    * 点击量
    */
@@ -31,35 +31,20 @@ public class OrderSummary {
    */
   @Getter
   @Setter
-  private Long activeOrderCount;
+  private Long orderCount;
+
   /**
-   * 有效订单金额
+   * 有效订单量
    */
   @Getter
   @Setter
-  private Double activeOrderPrice;
-  /**
-   * 预计佣金
-   */
-  @Getter
-  @Setter
-  private Double estimatedIncome;
+  private Double commission;
+
   /**
    * 订单渠道
    */
   @Getter
   @Setter
   private Long orderSource;
-  /**
-   * 创建时间
-   */
-  @Getter
-  @Setter
-  private Date created;
-  /**
-   * 修改时间
-   */
-  @Getter
-  @Setter
-  private Date modified;
+
 }
