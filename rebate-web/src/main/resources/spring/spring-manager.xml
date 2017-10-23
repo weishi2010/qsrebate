@@ -41,6 +41,7 @@
 	<bean id="jDProperty" class="com.rebate.domain.property.JDProperty">
 		<property name="saleDomains" value="${jd.saleDomains}"/>
 		<property name="newRegisterAward" value="${jd.newRegisterAward}"/>
+		<property name="whiteList" value="${jd.whiteList}" />
 	</bean>
 	
 	<!--URL处理工具类-->

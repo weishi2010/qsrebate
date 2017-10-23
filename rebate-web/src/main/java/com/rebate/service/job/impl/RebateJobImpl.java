@@ -7,6 +7,7 @@ import com.rebate.dao.*;
 import com.rebate.domain.*;
 import com.rebate.domain.agent.AgentRelation;
 import com.rebate.domain.en.*;
+import com.rebate.domain.property.JDProperty;
 import com.rebate.domain.query.*;
 import com.rebate.manager.jd.JdSdkManager;
 import com.rebate.service.job.RebateJob;
@@ -60,6 +61,10 @@ public class RebateJobImpl implements RebateJob {
     @Qualifier("productCouponDao")
     @Autowired(required = true)
     private ProductCouponDao productCouponDao;
+
+    @Qualifier("jDProperty")
+    @Autowired(required = true)
+    private JDProperty jDProperty;
 
     @Override
     public void freshProducts() {
@@ -189,6 +194,11 @@ public class RebateJobImpl implements RebateJob {
                         }else{
                             //一级代理、普通返利用户则按平台抽成后的佣金进行返佣
                             rebateDetail.setUserCommission(userCommission);
+                        }
+
+                        //如果是白名单则不进行抽成，进行使用联盟返还的佣金
+                        if(isWhiteAgent(userInfo.getSubUnionId())){
+                            rebateDetail.setUserCommission(rebateDetail.getCommission());
                         }
 
                         //插入明细
@@ -364,5 +374,21 @@ public class RebateJobImpl implements RebateJob {
             list = jdSdkManager.getMediaCoupons(page, pageSize);
         }
 
+    }
+
+    /**
+     * 是否白名单代理
+     */
+    private boolean isWhiteAgent(String subUnionId){
+        if(StringUtils.isBlank(jDProperty.getWhiteList())){
+            return false;
+        }
+        String[] whiteList = jDProperty.getWhiteList().split(",");
+        for(String agent:whiteList){
+            if(agent.equalsIgnoreCase(subUnionId)){
+                return true;
+            }
+        }
+        return false;
     }
 }

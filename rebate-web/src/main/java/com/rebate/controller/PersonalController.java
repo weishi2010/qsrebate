@@ -215,6 +215,7 @@ public class PersonalController extends BaseController {
             dayTab = 1;
         }
 
+
         OrderSummary orderSummaryQuery = new OrderSummary();
         orderSummaryQuery.setSubUnionId(userInfo.getSubUnionId());
         orderSummaryQuery.setPageSize(30);//取近30
@@ -238,6 +239,7 @@ public class PersonalController extends BaseController {
             todayOrderSummary.setOrderCount(0l);
         }
 
+        LOG.error("[agentStatistits]dayTab:"+dayTab+",size:"+list.size());
         view.addObject("dayTab", dayTab);
         view.addObject("todayOrderSummary", todayOrderSummary);
         view.addObject("list", list);

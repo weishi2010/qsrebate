@@ -22,4 +22,11 @@ public class JDProperty {
     @Getter
     @Setter
     private Double newRegisterAward;
+
+    /**
+     * 白名单
+     */
+    @Getter
+    @Setter
+    private String whiteList;
 }

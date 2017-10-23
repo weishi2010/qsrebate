@@ -17,13 +17,13 @@
 <div class="searchLayer">
 
 <div id="switches" class="switches redStyle" style="width:4.96rem;height:1.1rem;line-height:1.1rem">
-    <span class="switch #if($dayTab==1) active#end" id="today" style="font-size:0.65rem"><a href="/personal/agentStatistits?dayTab=1" style="color:#666;text-decoration:none;">今日</a></span>
-    <span class="switch #if($dayTab==2) active#end" id="yesterday" style="font-size:0.65rem"><a href="/personal/agentStatistits?dayTab=2" style="color:#666;text-decoration:none;">昨日</a></span>
+    <span class="switch #if($dayTab==1) active#end" id="today" style="font-size:0.65rem"><a href="/personal/agentStatistits?dayTab=1" style="color:#666;text-decoration:none;" target="_blank">今日</a></span>
+    <span class="switch #if($dayTab==2) active#end" id="yesterday" style="font-size:0.65rem"><a href="/personal/agentStatistits?dayTab=2" style="color:#666;text-decoration:none;" target="_blank">昨日</a></span>
 </div>
 </div>
 <div class="totalCommission">
     <div class="totalCommissionDetail">
-        <span>$dayTab预计佣金:</span>
+        <span>预计佣金:</span>
         <span class="money">$!{todayOrderSummary.commission}</span>
     </div>
     <div class="totalCommissionInfo">

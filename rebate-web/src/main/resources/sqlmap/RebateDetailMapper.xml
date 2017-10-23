@@ -191,6 +191,7 @@
         FROM rebate_detail
         WHERE sub_union_id=#subUnionId#
         <![CDATA[ AND DATE_SUB(CURDATE(), INTERVAL 30 DAY) <=submit_date ]]>
+        AND order_status=1
         GROUP BY submitDate,sub_union_id
         ORDER BY submitDate DESC
         LIMIT #pageSize#
