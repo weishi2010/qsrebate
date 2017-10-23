@@ -212,7 +212,7 @@ public class PersonalController extends BaseController {
         view.setViewName(vm);
 
         if (null == userInfo || userInfo.getAgent() == EAgent.NOT_AGENT.getCode()) {
-            view.setViewName(VIEW_PREFIX + "permission");
+            view.setViewName(VIEW_PREFIX + "/permission");
             return view;
         }
 
