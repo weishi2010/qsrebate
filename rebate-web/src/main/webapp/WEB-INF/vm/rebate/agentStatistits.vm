@@ -16,8 +16,22 @@
 <body style="font-size: 12px;">
 <div class="searchLayer">
 
-<div id="switches" class="switches redStyle" style="width:4.96rem;height:1.1rem;line-height:1.1rem"><span class="switch active" id="today" style="font-size:0.65rem">今日</span><span class="switch" id="yesterday" style="font-size:0.65rem">昨日</span></div></div>
-<div class="totalCommission"><div class="totalCommissionDetail"> <span>预计佣金:</span> <span class="money">0.58</span> </div> <div class="totalCommissionInfo"> <div> <h4>点击数</h4> <p>110</p> </div> <div> <h4>订单</h4> <p>62</p> </div> <div> <h4>转化率</h4> <p>56.36%</p> </div> </div></div>
+<div id="switches" class="switches redStyle" style="width:4.96rem;height:1.1rem;line-height:1.1rem">
+    <span class="switch #if($dayTab==1) active#end" id="today" style="font-size:0.65rem"><a href="/personal/agentStatistits?dayTab=1" style="color:#666;text-decoration:none;">今日</a></span>
+    <span class="switch #if($dayTab==2) active#end" id="yesterday" style="font-size:0.65rem"><a href="/personal/agentStatistits?dayTab=2" style="color:#666;text-decoration:none;">昨日</a></span>
+</div>
+</div>
+<div class="totalCommission">
+    <div class="totalCommissionDetail">
+        <span>$dayTab预计佣金:</span>
+        <span class="money">$!{todayOrderSummary.commission}</span>
+    </div>
+    <div class="totalCommissionInfo">
+        <!--<div> <h4>点击数</h4> <p>110</p> </div> -->
+        <div> <h4>订单</h4> <p>$!{todayOrderSummary.orderCount}</p> </div>
+       <!--<div> <h4>转化率</h4> <p>56.36%</p> </div>-->
+    </div>
+</div>
 <div class="commissionByDay">
     <div class="commissionType">
         <span class="active" id="">最近30天收益</span>
@@ -26,16 +40,19 @@
 <div class="reportTable">
     <div class="tHeader">
         <div class="th">时间</div>
-        <div class="th">点击数</div>
+        <!--<div class="th">点击数</div>-->
         <div class="th">订单数</div>
         <div class="th">预计佣金</div>
     </div>
-    <div class="tBody"><div class="tr" data-timer="1508342400000"> <div class="td">10/19</div> <div class="td">110</div> <div class="td">62</div> <div class="td"><span class="money">0.58</span></div> </div></div>
-	<div class="tBody"><div class="tr" data-timer="1508342400000"> <div class="td">10/19</div> <div class="td">110</div> <div class="td">62</div> <div class="td"><span class="money">0.58</span></div> </div></div>
-	<div class="tBody"><div class="tr" data-timer="1508342400000"> <div class="td">10/19</div> <div class="td">110</div> <div class="td">62</div> <div class="td"><span class="money">0.58</span></div> </div></div>
-	<div class="tBody"><div class="tr" data-timer="1508342400000"> <div class="td">10/19</div> <div class="td">110</div> <div class="td">62</div> <div class="td"><span class="money">0.58</span></div> </div></div>
-	<div class="tBody"><div class="tr" data-timer="1508342400000"> <div class="td">10/19</div> <div class="td">110</div> <div class="td">62</div> <div class="td"><span class="money">0.58</span></div> </div></div>
-	<div class="tBody"><div class="tr" data-timer="1508342400000"> <div class="td">10/19</div> <div class="td">110</div> <div class="td">62</div> <div class="td"><span class="money">0.58</span></div> </div></div>
-	<div class="tBody"><div class="tr" data-timer="1508342400000"> <div class="td">10/19</div> <div class="td">110</div> <div class="td">62</div> <div class="td"><span class="money">0.58</span></div> </div></div>
+    #foreach($orderSummary in $list)
+    <div class="tBody">
+        <div class="tr" data-timer="1508342400000">
+        <div class="td"> $!date.format('MM-dd',$!orderSummary.submitDate)</div>
+       <!-- <div class="td">$!{orderSummary.clickCount}</div>-->
+        <div class="td">$!{orderSummary.orderCount}</div>
+        <div class="td"><span class="money">$!{orderSummary.commission}</span></div>
+        </div>
+    </div>
+    #end
 </div>
 </body><style id="igor_ext_nofollow">a[rel~='nofollow']{outline:.14em dotted red !important;outline-offset:.2em;}a[rel~='nofollow'] > img{outline:thin dotted red !important;outline-offset:.2em;}</style></html>

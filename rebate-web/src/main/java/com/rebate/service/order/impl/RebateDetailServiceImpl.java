@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service("rebateDetailService")
@@ -58,7 +59,10 @@ public class RebateDetailServiceImpl implements RebateDetailService {
         PaginatedArrayList<OrderSummary> orderSummaryList = new PaginatedArrayList<OrderSummary>(orderSummaryQuery.getIndex(), orderSummaryQuery.getPageSize());
         try {
             List<OrderSummary> list = rebateDetailDao.getOrderSummaryBySubUnionId(orderSummaryQuery);
-            orderSummaryList.addAll(list);
+            for(OrderSummary orderSummary:list){
+                orderSummary.setCommission(new BigDecimal(orderSummary.getCommission()).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
+                orderSummaryList.add(orderSummary);
+            }
         } catch (Exception e) {
             LOG.error("getOrderSummaryBySubUnionId error!orderSummaryQuery:" + JsonUtil.toJson(orderSummaryQuery), e);
         }

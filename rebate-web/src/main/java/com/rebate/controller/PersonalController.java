@@ -1,5 +1,6 @@
 package com.rebate.controller;
 
+import com.rebate.common.util.JsonUtil;
 import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.controller.base.BaseController;
 import com.rebate.domain.ExtractDetail;
@@ -32,6 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -193,7 +195,7 @@ public class PersonalController extends BaseController {
     }
 
     @RequestMapping({"", "/", "/agentStatistits"})
-    public ModelAndView agentStatistits(HttpServletRequest request) {
+    public ModelAndView agentStatistits(HttpServletRequest request,Integer dayTab) {
         ModelAndView view = new ModelAndView();
         String vm = VIEW_PREFIX + "/agentStatistits";
         UserInfo userInfo = getUserInfo(request);
@@ -204,11 +206,40 @@ public class PersonalController extends BaseController {
             return view;
         }
 
+        Calendar calendar = Calendar.getInstance();
+        Date queryDate = new Date();
+        if (null != dayTab && 2 == dayTab) {
+            calendar.add(Calendar.DATE, -1);
+            queryDate = calendar.getTime();
+        }else{
+            dayTab = 1;
+        }
+
         OrderSummary orderSummaryQuery = new OrderSummary();
         orderSummaryQuery.setSubUnionId(userInfo.getSubUnionId());
         orderSummaryQuery.setPageSize(30);//取近30
         PaginatedArrayList<OrderSummary>  list =  rebateDetailService.getOrderSummaryBySubUnionId(orderSummaryQuery);
+        OrderSummary todayOrderSummary = null;
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd 00:00:00");
 
+        for(OrderSummary orderSummary:list){
+            try {
+                if(orderSummary.getSubmitDate().equals(format.parse(format.format(queryDate)))){
+                    todayOrderSummary = orderSummary;
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if(null== todayOrderSummary){
+            todayOrderSummary = new OrderSummary();
+            todayOrderSummary.setCommission(0.0);
+            todayOrderSummary.setOrderCount(0l);
+        }
+
+        view.addObject("dayTab", dayTab);
+        view.addObject("todayOrderSummary", todayOrderSummary);
         view.addObject("list", list);
         view.addObject("userInfo", userInfo);
         return view;
