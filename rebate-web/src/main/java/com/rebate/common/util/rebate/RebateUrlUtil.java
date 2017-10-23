@@ -1,5 +1,7 @@
 package com.rebate.common.util.rebate;
 
+import com.rebate.common.util.EncodeUtils;
+import com.rebate.common.util.des.DESUtil;
 import lombok.Getter;
 import lombok.Setter;
 import org.slf4j.Logger;
@@ -23,10 +25,11 @@ public class RebateUrlUtil {
      * @param jdPromotionUrl
      * @return
      */
-    public String jdPromotionUrlToQsrebateShortUrl(String jdPromotionUrl){
+    public String jdPromotionUrlToQsrebateShortUrl(String jdPromotionUrl,String subUnionIdEncrpyt){
         String url = jdPromotionUrl;//默认
         try{
             url =  jdPromotionUrl.replace(jdUnionUrlPrefix,rebateUrlPrefix);
+            url = url+"&sui="+subUnionIdEncrpyt;
         }catch (Exception e){
             LOG.error("jdPromotionUrlToQsrebateShortUrl error!url:"+jdPromotionUrl,e);
         }

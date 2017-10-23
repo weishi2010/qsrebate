@@ -197,7 +197,7 @@ public class RebateJobImpl implements RebateJob {
                         }
 
                         //如果是白名单则不进行抽成，进行使用联盟返还的佣金
-                        if(isWhiteAgent(userInfo.getSubUnionId())){
+                        if(jDProperty.isWhiteAgent(userInfo.getSubUnionId())){
                             rebateDetail.setUserCommission(rebateDetail.getCommission());
                         }
 
@@ -376,19 +376,5 @@ public class RebateJobImpl implements RebateJob {
 
     }
 
-    /**
-     * 是否白名单代理
-     */
-    private boolean isWhiteAgent(String subUnionId){
-        if(StringUtils.isBlank(jDProperty.getWhiteList())){
-            return false;
-        }
-        String[] whiteList = jDProperty.getWhiteList().split(",");
-        for(String agent:whiteList){
-            if(agent.equalsIgnoreCase(subUnionId)){
-                return true;
-            }
-        }
-        return false;
-    }
+
 }

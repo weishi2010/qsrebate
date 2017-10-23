@@ -10,10 +10,12 @@ import com.rebate.domain.en.EAgent;
 import com.rebate.domain.en.EExtractCode;
 import com.rebate.domain.en.EExtractStatus;
 import com.rebate.domain.en.EPromotionTab;
+import com.rebate.domain.property.JDProperty;
 import com.rebate.domain.query.ExtractDetailQuery;
 import com.rebate.domain.query.RebateDetailQuery;
 import com.rebate.domain.vo.ExtractDetailVo;
 import com.rebate.domain.vo.RebateDetailVo;
+import com.rebate.manager.shorturl.ShortUrlManager;
 import com.rebate.service.extract.ExtractDetailService;
 import com.rebate.service.order.RebateDetailService;
 import com.rebate.service.userinfo.UserInfoService;
@@ -57,6 +59,14 @@ public class PersonalController extends BaseController {
     @Qualifier("extractDetailService")
     @Autowired(required = true)
     private ExtractDetailService extractDetailService;
+
+    @Qualifier("shortUrlManager")
+    @Autowired(required = true)
+    private ShortUrlManager shortUrlManager;
+
+    @Qualifier("jDProperty")
+    @Autowired(required = true)
+    private JDProperty jDProperty;
 
     @RequestMapping({"", "/", "/extract"})
     public ModelAndView extract(HttpServletRequest request) {
@@ -241,6 +251,8 @@ public class PersonalController extends BaseController {
 
         LOG.error("[agentStatistits]dayTab:"+dayTab+",size:"+list.size());
         view.addObject("dayTab", dayTab);
+        view.addObject("adminFlag", jDProperty.isAdmin(userInfo.getSubUnionId()));
+        view.addObject("allQsClick",shortUrlManager.getALLJDUnionUrlClick(queryDate));
         view.addObject("todayOrderSummary", todayOrderSummary);
         view.addObject("list", list);
         view.addObject("userInfo", userInfo);

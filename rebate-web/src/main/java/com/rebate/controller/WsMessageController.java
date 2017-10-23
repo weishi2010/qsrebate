@@ -23,6 +23,7 @@ import com.rebate.domain.wx.OutputMessage;
 import com.rebate.domain.wx.WxConfig;
 import com.rebate.manager.MessageTempManager;
 import com.rebate.manager.jd.JdSdkManager;
+import com.rebate.manager.shorturl.ShortUrlManager;
 import com.rebate.service.product.ProductService;
 import com.rebate.service.userinfo.UserInfoService;
 import com.thoughtworks.xstream.XStream;
@@ -52,9 +53,9 @@ public class WsMessageController extends BaseController {
     private static final Logger LOG = LoggerFactory.getLogger(WsMessageController.class);
     public static final String PREFIX = "/wxmsg";
 
-    @Qualifier("productService")
+    @Qualifier("shortUrlManager")
     @Autowired(required = true)
-    private ProductService productService;
+    private ShortUrlManager shortUrlManager;
 
     @Qualifier("jdSdkManager")
     @Autowired(required = true)
@@ -427,6 +428,7 @@ public class WsMessageController extends BaseController {
 
                 LOG.error("getRecommendContent product:" + JsonUtil.toJson(product));
                 String shortUrl = jdSdkManager.getShortPromotinUrl(product.getProductId(), subUnionId);
+
                 //获取返利用户消息模板
                 recommendContent.append( messageTempManager.getRebateUserProductMessageTemp(product,shortUrl));
             }
@@ -460,6 +462,7 @@ public class WsMessageController extends BaseController {
 
                 LOG.error("getAgentRecommendContent product:" + JsonUtil.toJson(product));
                 String shortUrl = jdSdkManager.getShortPromotinUrl(product.getProductId(), subUnionId);
+                shortUrl = shortUrlManager.getQsShortPromotinUrl(shortUrl,subUnionId);
                 //获取代理户消息模板
                 recommendContent.append( messageTempManager.getAgentProductMessageTemp(product,shortUrl));
             }
@@ -479,6 +482,7 @@ public class WsMessageController extends BaseController {
             List<String> list = RegexUtils.getLinks(content);
             for (String link : list) {
                 String jdMediaUrl = jdSdkManager.getSalesActivityPromotinUrl(link, subUnionId);
+                jdMediaUrl = shortUrlManager.getQsShortPromotinUrl(jdMediaUrl,subUnionId);
                 if (StringUtils.isNotBlank(jdMediaUrl)) {
                     content = content.replace(link, jdMediaUrl);
                 }
@@ -539,6 +543,8 @@ public class WsMessageController extends BaseController {
                 sb.append("京东商城  正品保证\n");
 
                 String jdMediaUrl = jdSdkManager.getPromotionCouponCode(skuId, couponLink, subUnionId);
+                jdMediaUrl = shortUrlManager.getQsShortPromotinUrl(jdMediaUrl,subUnionId);
+
                 if (StringUtils.isNotBlank(jdMediaUrl)) {
                     result = sb.toString().replace(linkMark, jdMediaUrl);
                 } else {

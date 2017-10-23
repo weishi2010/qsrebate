@@ -2,6 +2,7 @@ package com.rebate.domain.property;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * JD配置参数
@@ -29,4 +30,52 @@ public class JDProperty {
     @Getter
     @Setter
     private String whiteList;
+
+    /**
+     * 管理员
+     */
+    @Getter
+    @Setter
+    private String adminList;
+
+    /**
+     * 密钥
+     */
+    @Getter
+    @Setter
+    private String encryptKey;
+
+    /**
+     * 是否是管理员
+     * @param subUnionId
+     * @return
+     */
+    public boolean isAdmin(String subUnionId){
+        if(StringUtils.isBlank(adminList)){
+            return false;
+        }
+        String[] array = adminList.split(",");
+        for(String agent:array){
+            if(agent.equalsIgnoreCase(subUnionId)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 是否白名单代理
+     */
+    public boolean isWhiteAgent(String subUnionId){
+        if(StringUtils.isBlank(whiteList)){
+            return false;
+        }
+        String[] array = whiteList.split(",");
+        for(String agent:array){
+            if(agent.equalsIgnoreCase(subUnionId)){
+                return true;
+            }
+        }
+        return false;
+    }
 }

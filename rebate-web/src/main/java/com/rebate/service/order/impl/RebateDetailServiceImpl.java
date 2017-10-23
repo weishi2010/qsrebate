@@ -9,6 +9,7 @@ import com.rebate.domain.Product;
 import com.rebate.domain.RebateDetail;
 import com.rebate.domain.query.RebateDetailQuery;
 import com.rebate.domain.vo.RebateDetailVo;
+import com.rebate.manager.shorturl.ShortUrlManager;
 import com.rebate.service.order.RebateDetailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,9 +27,9 @@ public class RebateDetailServiceImpl implements RebateDetailService {
     @Autowired
     private RebateDetailDao rebateDetailDao;
 
-    @Qualifier("productDao")
+    @Qualifier("shortUrlManager")
     @Autowired(required = true)
-    private ProductDao productDao;
+    private ShortUrlManager shortUrlManager;
 
     @Override
     public PaginatedArrayList<RebateDetailVo> findRebateDetailList(RebateDetailQuery rebateDetailQuery) {
@@ -61,6 +62,7 @@ public class RebateDetailServiceImpl implements RebateDetailService {
             List<OrderSummary> list = rebateDetailDao.getOrderSummaryBySubUnionId(orderSummaryQuery);
             for(OrderSummary orderSummary:list){
                 orderSummary.setCommission(new BigDecimal(orderSummary.getCommission()).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
+                orderSummary.setClickCount(shortUrlManager.getJDUnionUrlClick(orderSummary.getSubUnionId(),orderSummary.getSubmitDate()));
                 orderSummaryList.add(orderSummary);
             }
         } catch (Exception e) {

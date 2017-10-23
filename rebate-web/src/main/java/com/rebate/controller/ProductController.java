@@ -18,6 +18,7 @@ import com.rebate.domain.en.EProudctCouponType;
 import com.rebate.domain.query.ProductQuery;
 import com.rebate.domain.vo.ProductVo;
 import com.rebate.manager.jd.JdSdkManager;
+import com.rebate.manager.shorturl.ShortUrlManager;
 import com.rebate.service.product.ProductService;
 import net.sf.json.JSON;
 import org.apache.commons.lang.StringUtils;
@@ -52,10 +53,6 @@ public class ProductController extends BaseController {
     @Autowired(required = true)
     private JdSdkManager jdSdkManager;
 
-    @Qualifier("rebateUrlUtil")
-    @Autowired(required = true)
-    private RebateUrlUtil rebateUrlUtil;
-
     @Qualifier("productCouponDao")
     @Autowired(required = true)
     private ProductCouponDao productCouponDao;
@@ -63,6 +60,10 @@ public class ProductController extends BaseController {
     @Qualifier("productDao")
     @Autowired(required = true)
     private ProductDao productDao;
+
+    @Qualifier("shortUrlManager")
+    @Autowired(required = true)
+    private ShortUrlManager shortUrlManager;
 
     /**
      * 京东首页
@@ -194,7 +195,7 @@ public class ProductController extends BaseController {
         }
 
         String url = jdSdkManager.getShortPromotinUrl(skuId, subUnionId);
-        map.put("url", rebateUrlUtil.jdPromotionUrlToQsrebateShortUrl(url));
+        map.put("url", shortUrlManager.getQsShortPromotinUrl(url,subUnionId));
         LOG.error("jdPromotionShortUrl===============>url:" + url + ",subUnionId:" + subUnionId);
         return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
     }
@@ -220,6 +221,7 @@ public class ProductController extends BaseController {
         }
         String url = jdSdkManager.getPromotionCouponCode(skuId, couponLink, subUnionId);
         if (StringUtils.isNotBlank(url)) {
+            url = shortUrlManager.getQsShortPromotinUrl(url,subUnionId);
             map.put("success", true);
             map.put("url", url);
         } else {

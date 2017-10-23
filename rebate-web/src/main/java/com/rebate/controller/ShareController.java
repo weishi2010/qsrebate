@@ -13,6 +13,7 @@ import com.rebate.domain.vo.ProductVo;
 import com.rebate.domain.wx.WxConfig;
 import com.rebate.manager.MessageTempManager;
 import com.rebate.manager.jd.JdSdkManager;
+import com.rebate.manager.shorturl.ShortUrlManager;
 import com.rebate.service.product.ProductService;
 import com.rebate.service.wx.WxAccessTokenService;
 import com.rebate.service.wx.WxService;
@@ -57,9 +58,9 @@ public class ShareController extends BaseController {
     @Autowired(required = true)
     private ProductService productService;
 
-    @Qualifier("rebateUrlUtil")
+    @Qualifier("shortUrlManager")
     @Autowired(required = true)
-    private RebateUrlUtil rebateUrlUtil;
+    private ShortUrlManager shortUrlManager;
 
     @Qualifier("wxService")
     @Autowired(required = true)
@@ -82,7 +83,7 @@ public class ShareController extends BaseController {
         //查询商品
         ProductVo product = productService.findProduct(skuId);
 
-        String promotionShortUrl = rebateUrlUtil.jdPromotionUrlToQsrebateShortUrl(jdSdkManager.getShortPromotinUrl(skuId, subUnionId));
+        String promotionShortUrl = shortUrlManager.getQsShortPromotinUrl(jdSdkManager.getShortPromotinUrl(skuId, subUnionId),subUnionId);
 
         //转为微信短链接
         product.setPromotionShortUrl(wxService.getShortUrl(promotionShortUrl));
@@ -134,6 +135,8 @@ public class ShareController extends BaseController {
         }
         String content = "";
         if(StringUtils.isNotBlank(mediaUrl)){
+            mediaUrl = shortUrlManager.getQsShortPromotinUrl(mediaUrl,subUnionId);
+
             //推送消息
              content = messageTempManager.getAgentProductMessageTemp(productVo,mediaUrl);
         }else{

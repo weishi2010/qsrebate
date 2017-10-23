@@ -104,6 +104,16 @@ public class RedisUtil {
         return false;
     }
 
+    public Long incr(String key) {
+
+        try {
+            return jedis.incr(key);
+        } catch (Exception e) {
+            logger.debug("incr error!");
+            return 0l;
+        }
+    }
+
     public String get(String key) {
         try {
             return jedis.get(key);

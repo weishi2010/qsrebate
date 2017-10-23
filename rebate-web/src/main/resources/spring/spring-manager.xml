@@ -42,12 +42,14 @@
 		<property name="saleDomains" value="${jd.saleDomains}"/>
 		<property name="newRegisterAward" value="${jd.newRegisterAward}"/>
 		<property name="whiteList" value="${jd.whiteList}" />
+		<property name="adminList" value="${jd.adminList}" />
+		<property name="encryptKey" value="${jd.encryptKey}" />
 	</bean>
 	
 	<!--URL处理工具类-->
 	<bean id="rebateUrlUtil" class="com.rebate.common.util.rebate.RebateUrlUtil">
 		<property name="jdUnionUrlPrefix" value="https://union-click.jd.com/jdc?"></property>
-		<property name="rebateUrlPrefix" value="http://m.qingsongfan.com.cn/qsc/jumpJdUnionUrl?"></property>
+		<property name="rebateUrlPrefix" value="http://m.qingsongfan.com.cn/qsc/qsu?"></property>
 	</bean>
 	<!--json数据读取工具类-->
 	<bean id="jsonDataReader" class="com.rebate.common.data.json.JsonDataReader">

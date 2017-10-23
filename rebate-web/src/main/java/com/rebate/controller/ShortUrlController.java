@@ -1,8 +1,11 @@
 package com.rebate.controller;
 
 import com.rebate.controller.base.BaseController;
+import com.rebate.manager.shorturl.ShortUrlManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -13,8 +16,16 @@ public class ShortUrlController extends BaseController {
 
     public static final String PREFIX = "/qsc";
 
-    @RequestMapping({"", "/", "/jumpJdUnionUrl"})
-    public String jumpJdUnionUrl( String d) {
+    @Qualifier("shortUrlManager")
+    @Autowired(required = true)
+    private ShortUrlManager shortUrlManager;
+
+    @RequestMapping({"", "/", "/qsu"})
+    public String jumpJdUnionUrl( String d,String sui) {
+
+        //获取md5后的子联盟ID进行点击统计
+        shortUrlManager.incrJDUnionUrlClick(sui);
+
         return "redirect:https://union-click.jd.com/jdc?d=" + d;
     }
 

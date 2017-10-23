@@ -65,14 +65,14 @@
 	<mvc:interceptors>
 		<!-- 登录/权限拦截器 begin -->
 		<mvc:interceptor>
-			<mvc:mapping path="/product/**" />
-			<mvc:mapping path="/personal/**" />
+			<mvc:mapping path="/product1/**" />
+			<mvc:mapping path="/personal1/**" />
 
 			<bean class="com.rebate.common.web.inteceptor.QsLoginInteceptor">
 				<property name="wxConfig" ref="wxConfig" />
 				<property name="cookieUtils" ref="cookieUtils" />
 				<property name="charsetName" value="UTF-8"></property>
-				<property name="domain" value="m.qingsongfan.com"></property>
+				<property name="domain" value="m.qingsongfan.com.cn"></property>
 				<property name="staticResourcePath" value="/static/" />
 			</bean>
 		</mvc:interceptor>

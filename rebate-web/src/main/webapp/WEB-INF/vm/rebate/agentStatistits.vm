@@ -27,7 +27,10 @@
         <span class="money">$!{todayOrderSummary.commission}</span>
     </div>
     <div class="totalCommissionInfo">
-        <!--<div> <h4>点击数</h4> <p>110</p> </div> -->
+        <div> <h4>点击数</h4> <p>$!{todayOrderSummary.clickCount}</p> </div>
+        #if($adminFlag)
+            <div> <h4>全站点击数</h4> <p>$!{allQsClick}</p> </div>
+        #end
         <div> <h4>订单</h4> <p>$!{todayOrderSummary.orderCount}</p> </div>
        <!--<div> <h4>转化率</h4> <p>56.36%</p> </div>-->
     </div>
@@ -40,7 +43,7 @@
 <div class="reportTable">
     <div class="tHeader">
         <div class="th">时间</div>
-        <!--<div class="th">点击数</div>-->
+        <div class="th">点击数</div>
         <div class="th">订单数</div>
         <div class="th">预计佣金</div>
     </div>
@@ -48,7 +51,7 @@
     <div class="tBody">
         <div class="tr" data-timer="1508342400000">
         <div class="td"> $!date.format('MM-dd',$!orderSummary.submitDate)</div>
-       <!-- <div class="td">$!{orderSummary.clickCount}</div>-->
+       <div class="td">$!{orderSummary.clickCount}</div>
         <div class="td">$!{orderSummary.orderCount}</div>
         <div class="td"><span class="money">$!{orderSummary.commission}</span></div>
         </div>
