@@ -24,6 +24,15 @@ public class JDProperty {
     @Setter
     private Double newRegisterAward;
 
+
+
+    /**
+     * api开放商品数据子联盟ID
+     */
+    @Getter
+    @Setter
+    private String apiSubUnionId;
+
     /**
      * 白名单
      */

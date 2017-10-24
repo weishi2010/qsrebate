@@ -47,6 +47,7 @@
 		<property name="firstAgentPlatRatio" value="${jd.firstAgentPlatRatio}" />
 		<property name="sencondAgentPlatRatio" value="${jd.sencondAgentPlatRatio}" />
 		<property name="sencondAgentRatio" value="${jd.sencondAgentRatio}" />
+		<property name="apiSubUnionId" value="${jd.apiSubUnionId}" />
 
 	</bean>
 	

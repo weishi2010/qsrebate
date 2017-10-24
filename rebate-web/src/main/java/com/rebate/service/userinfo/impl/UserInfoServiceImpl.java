@@ -83,7 +83,13 @@ public class UserInfoServiceImpl implements UserInfoService {
             String subUnionId = ESubUnionIdPrefix.getSubUnionId(ESubUnionIdPrefix.JD.getCode(), sequenceUtil.get(ESequence.SUB_UNION_ID.getSequenceName()));
             userInfo.setSubUnionId(subUnionId);
             userInfo.setRecommendAccount("");
-            userInfoDao.insert(userInfo);
+            try{
+
+                userInfoDao.insert(userInfo);
+            }catch (Exception e){
+                userInfo.setNickName(wxUserInfo.getOpenid());
+                userInfoDao.insert(userInfo);
+            }
 
 //            IncomeDetailQuery incomeDetailQuery = new IncomeDetailQuery();
 //            incomeDetailQuery.setOpenId(wxUserInfo.getOpenid());
