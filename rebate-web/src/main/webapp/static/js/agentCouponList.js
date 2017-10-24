@@ -234,7 +234,7 @@ function getTemplate(product, tab) {
     if (product.productCoupon) {
         htmlTemp += " <span class=\"quan\">券:" + product.productCoupon.discount + "</span>";
     }
-    htmlTemp += "(佣金" +product.userCommission+")</div>";
+    htmlTemp += "(预估佣金:" +product.userCommission+"元)</div>";
 
     htmlTemp += "            <div class=\"easy\">";
     // if (product.couponType == 2 && product.productCoupon) {
