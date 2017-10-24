@@ -22,7 +22,7 @@
         </div>
         <ul class="list">
             <li ng-repeat="activity in activityList">
-                <a href="javascript:;"><em class="green">{{activity.category}}</em>-【<span class="ftx-red">{{activity.benefit}}</span>】{{activity.title}}</a>
+                <a href="{{activity.activityLink}}"><em class="green">{{activity.category}}</em>-【<span class="ftx-red">{{activity.benefit}}</span>】{{activity.title}}</a>
             </li>
         </ul>
     </div>
