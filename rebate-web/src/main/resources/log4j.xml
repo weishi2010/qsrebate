@@ -25,12 +25,26 @@
 			<param name="LevelMin" value="DEBUG" />
 		</filter>
 	</appender>
+
+	<appender name="FILE-SQL" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="encoding" value="UTF-8" />
+		<param name="DatePattern" value="'.'yyyy-MM-dd" />
+		<param name="file" value="/export/Logs/m.qsrebate.com/rebate-sql.log" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%d{ABSOLUTE}] %7r %6p - %.65c - %m%n" />
+		</layout>
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="LevelMin" value="DEBUG" />
+		</filter>
+	</appender>
+
 	<logger name="com.ibatis" additivity="true">
 		<level value="DEBUG" />
+		<appender-ref ref="FILE-SQL" />
 	</logger>
 
 	<root>
-		<priority value="ERROR" />
+		<priority value="DEBUG" />
 		<appender-ref ref="FILE" />
 		<appender-ref ref="CONSOLE" />
 	</root>
