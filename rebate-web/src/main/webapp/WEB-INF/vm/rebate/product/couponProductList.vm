@@ -4,7 +4,7 @@
 <div class="header-search" >
     <div class="inner mui-flex align-center">
         <div class="cell">
-            <input class="search-ipt" placeholder=" $!agent搜商品，买就返钱，分享还能再赚钱！" id="searchParam" type="text">
+            <input class="search-ipt" placeholder=" 搜商品，买就返钱，分享还能再赚钱！" id="searchParam" type="text">
         </div>
         <div class="cell fixed ico-search" >
             <a  onclick="searchProducts()"><img src="/static/img/ico-search-01.png" alt=""></a>

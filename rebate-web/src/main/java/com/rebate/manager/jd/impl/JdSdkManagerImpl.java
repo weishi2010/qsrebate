@@ -95,7 +95,7 @@ public class JdSdkManagerImpl implements JdSdkManager {
                     product.setCouponPrice(0.0);
                     product.setFreePost(EProductFreePost.NOT_FREE_POST.getCode());//默认为不包邮
                     product.setStock(0);
-                    product.setStatus(0);
+                    product.setStatus(EProductStatus.PASS.getCode());
                     product.setSortWeight(0);
                     product.setFirstCategoryName("");
                     product.setSecondCategoryName("");
