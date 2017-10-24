@@ -22,23 +22,6 @@
 		</property>
 	</bean>
 
-	<bean id="importProductJobTimer" class="org.springframework.scheduling.quartz.CronTriggerBean">
-		<property name="jobDetail">
-			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-				<property name="concurrent" value="false"></property>
-				<property name="targetObject">
-					<ref bean="rebateJob" />
-				</property>
-				<property name="targetMethod">
-					<value>importAllJdMediaProducts</value>
-				</property>
-			</bean>
-		</property>
-		<property name="cronExpression">
-			<value>0 0/30 * * * ?</value>
-		</property>
-	</bean>
-
 	<bean id="importMediaOrderJobTimer" class="org.springframework.scheduling.quartz.CronTriggerBean">
 		<property name="jobDetail">
 			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
@@ -52,7 +35,7 @@
 			</bean>
 		</property>
 		<property name="cronExpression">
-			<value>0 0 0/6 * * ?</value>
+			<value>0 0/5 * * * ?</value>
 		</property>
 	</bean>
 	<bean id="freshProductsJobTimer" class="org.springframework.scheduling.quartz.CronTriggerBean">
@@ -68,7 +51,7 @@
 			</bean>
 		</property>
 		<property name="cronExpression">
-			<value>0 0 0/12 * * ?</value>
+			<value>0 0 0/5 * * ?</value>
 		</property>
 	</bean>
 

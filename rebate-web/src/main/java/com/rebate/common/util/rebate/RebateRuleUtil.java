@@ -50,12 +50,23 @@ public class RebateRuleUtil {
     }
 
     /**
-     * 用户返佣金额，平台抽成后
+     * 获取平台抽成
      *
      * @param commission
      * @return
      */
-    public static double getJDUserCommission(Double commission) {
+    public static double computeCommission(Double commission,Double commissionRatio) {
+        double platformCommission = commissionRatio * commission;
+        return new BigDecimal(platformCommission).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+    }
+
+    /**
+     * 代理模式二用户佣金计算
+     *
+     * @param commission
+     * @return
+     */
+    public static double getJDSecondAgentUserCommission(Double commission) {
         double userCommission = (1 - PLATFORM_COMMISSION_RATIO) * commission;
         return new BigDecimal(userCommission).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
     }

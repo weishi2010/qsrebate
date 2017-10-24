@@ -45,6 +45,27 @@ public class JDProperty {
     @Setter
     private String encryptKey;
 
+
+    /**
+     * 代理模式一平台抽成
+     */
+    @Getter
+    @Setter
+    private Double firstAgentPlatRatio;
+    /**
+     * 代理模式二平台分成
+     */
+    @Getter
+    @Setter
+    private Double sencondAgentPlatRatio;
+
+    /**
+     * 代理模式二代理分成
+     */
+    @Getter
+    @Setter
+    private Double sencondAgentRatio;
+
     /**
      * 是否是管理员
      * @param subUnionId

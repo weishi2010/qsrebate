@@ -85,21 +85,21 @@ public class UserInfoServiceImpl implements UserInfoService {
             userInfo.setRecommendAccount("");
             userInfoDao.insert(userInfo);
 
-            IncomeDetailQuery incomeDetailQuery = new IncomeDetailQuery();
-            incomeDetailQuery.setOpenId(wxUserInfo.getOpenid());
-            incomeDetailQuery.setType(EIncomeType.REGIST.getCode());
-            //未获得奖励的则给予用户奖励10元
-            if (isAward && null == incomeDetailDao.findIncomeDetail(incomeDetailQuery)) {
-                //注册成功用户给用户发放10元提现金额插入支出记录
-                IncomeDetail incomeDetail = new IncomeDetail();
-                incomeDetail.setOpenId(openId);
-                incomeDetail.setReferenceId(userInfo.getId());
-                incomeDetail.setIncome(jDProperty.getNewRegisterAward());
-                incomeDetail.setStatus(0);
-                incomeDetail.setDealt(0);
-                incomeDetail.setType(EIncomeType.REGIST.getCode());
-                incomeDetailDao.insert(incomeDetail);
-            }
+//            IncomeDetailQuery incomeDetailQuery = new IncomeDetailQuery();
+//            incomeDetailQuery.setOpenId(wxUserInfo.getOpenid());
+//            incomeDetailQuery.setType(EIncomeType.REGIST.getCode());
+//            //未获得奖励的则给予用户奖励10元
+//            if (isAward && null == incomeDetailDao.findIncomeDetail(incomeDetailQuery)) {
+//                //注册成功用户给用户发放10元提现金额插入支出记录
+//                IncomeDetail incomeDetail = new IncomeDetail();
+//                incomeDetail.setOpenId(openId);
+//                incomeDetail.setReferenceId(userInfo.getId());
+//                incomeDetail.setIncome(jDProperty.getNewRegisterAward());
+//                incomeDetail.setStatus(0);
+//                incomeDetail.setDealt(0);
+//                incomeDetail.setType(EIncomeType.REGIST.getCode());
+//                incomeDetailDao.insert(incomeDetail);
+//            }
 
         }
 
@@ -156,7 +156,7 @@ public class UserInfoServiceImpl implements UserInfoService {
         //计算收入、支出
         IncomeDetailQuery incomeDetailQuery = new IncomeDetailQuery();
         incomeDetailQuery.setOpenId(openId);
-        incomeDetailQuery.setTypeList(EIncomeType.REGIST.getCode() + "," + EIncomeType.ORDER_REBATE.getCode());
+        incomeDetailQuery.setTypeList(EIncomeType.REGIST.getCode() + "," + EIncomeType.ORDER_REBATE.getCode()+ "," + EIncomeType.AGENT_REBATE.getCode());
         Double income = incomeDetailDao.findIncomeStatistisByType(incomeDetailQuery);
         if (null == income) {
             income = 0.0;

@@ -148,30 +148,23 @@ public class RebateJobImpl implements RebateJob {
             while (rebateDetails.size() > 0) {
                 LOG.error("[联盟订单导入任务]加载[" + queryTime + "]第" + page + "页{}条订单明细记录！", rebateDetails.size());
                 for (RebateDetail rebateDetail : rebateDetails) {
-                    //查询用户信息
-                    UserInfo userInfoQuery = new UserInfo();
-                    userInfoQuery.setSubUnionId(rebateDetail.getSubUnionId());
-                    UserInfo userInfo = userInfoDao.findUserInfoBySubUnionId(userInfoQuery);
+                    Double userCommission = 0.0;
 
-                    Double userCommission = RebateRuleUtil.getJDUserCommission(rebateDetail.getCommission());
-                    Double agentCommission = null;
-                    Double parentAgentCommission = null;
-
-                    //根据子联盟id查询代理关系
-                    AgentRelationQuery agentRelationQuery = new AgentRelationQuery();
-                    agentRelationQuery.setAgentSubUnionId(rebateDetail.getSubUnionId());
-                    AgentRelation agentRelation = agentRelationDao.findByAgentSubUnionId(agentRelationQuery);
-                    //如果存在上一级代理，则给上一级代理分成
-                    if (null != agentRelation && StringUtils.isNotBlank(agentRelation.getParentAgentSubUnionId())) {
-                        //代理用户,根据比例获取佣金
-                        agentCommission = userCommission * agentRelation.getCommissionRatio();
-                        agentCommission = new BigDecimal(agentCommission).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue();//精确2位小数
-
-                        //给上级代理进行分佣
-                        parentAgentCommission = userCommission - agentCommission;
-                        parentAgentCommission = new BigDecimal(parentAgentCommission).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue();//精确2位小数
-
+                    if (StringUtils.isNotBlank(rebateDetail.getSubUnionId())) {
+                        //查询用户信息
+                        UserInfo userInfoQuery = new UserInfo();
+                        userInfoQuery.setSubUnionId(rebateDetail.getSubUnionId());
+                        UserInfo userInfo = userInfoDao.findUserInfoBySubUnionId(userInfoQuery);
+                        //如果为代理模式一，则根据给上级代理进行分佣
+                        if (EAgent.FIRST_AGENT.getCode() == userInfo.getAgent()) {
+                            userCommission = addFirstAgentIncomeDetail(rebateDetail);
+                        } else if (EAgent.SECOND_AGENT.getCode() == userInfo.getAgent()) {
+                            userCommission = addSecondAgentIncomeDetail(rebateDetail, userInfo);
+                        }
                     }
+
+                    //设置订单明细中的用户返利佣金
+                    rebateDetail.setUserCommission(userCommission);
 
                     //查询是否已存在订单明细
                     RebateDetailQuery rebateDetailQuery = new RebateDetailQuery();
@@ -179,43 +172,14 @@ public class RebateJobImpl implements RebateJob {
                     RebateDetail existsRebateDetail = rebateDetailDao.queryRebateDetailByOrderId(rebateDetailQuery);
 
                     if (null == existsRebateDetail) {
-                        //查询商品，如果为不可返佣商品则返佣金额设置为0
-                        Product productQuery = new Product();
-                        productQuery.setProductId(rebateDetail.getProductId());
-                        Product product = productDao.findById(productQuery);
-
-                        //如果为普通用户则根据商品返利标识进行确认是否进行返利
-                        if (null != product && EProudctRebateType.NOT_REBATE.getCode() == product.getIsRebate()
-                                && userInfo.getAgent() == EAgent.NOT_AGENT.getCode()) {
-                            rebateDetail.setUserCommission(0.0);
-                        }else if(null!=agentCommission){
-                            //二级代理用户按二级代理比例进行计算
-                            rebateDetail.setUserCommission(agentCommission);
-                        }else{
-                            //一级代理、普通返利用户则按平台抽成后的佣金进行返佣
-                            rebateDetail.setUserCommission(userCommission);
-                        }
-
-                        //如果是白名单则不进行抽成，进行使用联盟返还的佣金
-                        if(jDProperty.isWhiteAgent(userInfo.getSubUnionId())){
-                            rebateDetail.setUserCommission(rebateDetail.getCommission());
-                        }
-
                         //插入明细
                         rebateDetailDao.insert(rebateDetail);
-
                     } else {
-
                         //更新明细状态
                         rebateDetailDao.update(rebateDetail);
                     }
-
-                    //对有子联盟ID且未结算过的订单明细进行用户返佣收入更新
-                    if (StringUtils.isNotBlank(rebateDetail.getSubUnionId()) && ERebateDetailStatus.SETTLEMENT.getCode() == rebateDetail.getStatus()) {
-                        userIncomeUpdate(rebateDetail, userInfo, agentRelation, agentCommission, parentAgentCommission);
-                    }
-
                 }
+
                 page++;
                 rebateDetails = jdSdkManager.getRebateDetails(queryTime, page, pageSize);
             }
@@ -223,20 +187,58 @@ public class RebateJobImpl implements RebateJob {
     }
 
     /**
-     * 更新用户收入
+     * 代理模式二插入收入明细
      *
      * @param rebateDetail
-     * @param userInfo
+     * @return
      */
-    private void userIncomeUpdate(RebateDetail rebateDetail, UserInfo userInfo, AgentRelation agentRelation, Double agentCommission, Double parentAgentCommission) {
-        if (rebateDetail.getUserCommission() <= 0) {
-            return;
+    private Double addSecondAgentIncomeDetail(RebateDetail rebateDetail, UserInfo userInfo) {
+        //平台抽成佣金
+        Double platCommission = RebateRuleUtil.computeCommission(rebateDetail.getCommission(), jDProperty.getSencondAgentPlatRatio());
+
+        Double agentCommission = 0.0;
+        if (StringUtils.isNotBlank(userInfo.getRecommendAccount())) {
+            //给推荐的代理用户根据比例分配佣金
+            agentCommission = RebateRuleUtil.computeCommission(rebateDetail.getCommission(), jDProperty.getSencondAgentRatio());
+            addIncomeDetail(rebateDetail, EIncomeType.AGENT_REBATE.getCode(), userInfo.getRecommendAccount(), agentCommission);
         }
 
-        //如果存在上一级代理，则给上一级代理分成
+        //给返利用户返佣金
+        Double userCommission = new BigDecimal(rebateDetail.getCommission() + "").subtract(new BigDecimal(platCommission + "")).subtract(new BigDecimal(agentCommission + "")).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+        addIncomeDetail(rebateDetail, EIncomeType.ORDER_REBATE.getCode(), rebateDetail.getOpenId(), userCommission);
+
+        return userCommission;
+    }
+
+    /**
+     * 代理模式一插入收入明细
+     *
+     * @param rebateDetail
+     * @return
+     */
+    private Double addFirstAgentIncomeDetail(RebateDetail rebateDetail) {
+        Double resultCommission = null;
+
+        //根据子联盟id查询代理关系
+        AgentRelationQuery agentRelationQuery = new AgentRelationQuery();
+        agentRelationQuery.setAgentSubUnionId(rebateDetail.getSubUnionId());
+        AgentRelation agentRelation = agentRelationDao.findByAgentSubUnionId(agentRelationQuery);
+
+        //平台抽成佣金
+        Double platCommission = RebateRuleUtil.computeCommission(rebateDetail.getCommission(), jDProperty.getFirstAgentPlatRatio());
+        Double commission = new BigDecimal(rebateDetail.getCommission() + "").subtract(new BigDecimal(platCommission + "")).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+
+        //如果当前用户为二级代理，则给一级代理进行分佣，所分佣金为平台抽成后的
         if (null != agentRelation && StringUtils.isNotBlank(agentRelation.getParentAgentSubUnionId())) {
+            //二级代理用户根据比例获取佣金
+            Double agentCommission = commission * agentRelation.getCommissionRatio();
+            agentCommission = new BigDecimal(agentCommission).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue();//精确2位小数
+
+            //给上一级代理即一级代理进行分佣
+            Double parentAgentCommission = new BigDecimal(commission + "").subtract(new BigDecimal(agentCommission + "")).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+
             //代理用户,根据比例获取佣金
-            addIncomeDetail(rebateDetail.getId(), EIncomeType.ORDER_REBATE.getCode(), rebateDetail.getOpenId(), agentCommission);
+            addIncomeDetail(rebateDetail, EIncomeType.ORDER_REBATE.getCode(), rebateDetail.getOpenId(), agentCommission);
 
             //给上级代理进行分佣
             String parentAgentOpenId = "";
@@ -245,44 +247,49 @@ public class RebateJobImpl implements RebateJob {
             UserInfo parentAgentUserInfo = userInfoDao.findUserInfoBySubUnionId(parentAgentQuery);
             if (null != parentAgentUserInfo) {
                 parentAgentOpenId = parentAgentUserInfo.getSubUnionId();
-                addIncomeDetail(rebateDetail.getId(), EIncomeType.AGENT_REBATE.getCode(), parentAgentOpenId, parentAgentCommission);
+                addIncomeDetail(rebateDetail, EIncomeType.AGENT_REBATE.getCode(), parentAgentOpenId, parentAgentCommission);
             }
+            resultCommission = agentCommission;
         } else {
-            //不存在代理关系的，则按普通返利用户进行返佣金
-            addIncomeDetail(rebateDetail.getId(), EIncomeType.ORDER_REBATE.getCode(), rebateDetail.getOpenId(), rebateDetail.getUserCommission());
+            //如果只是普通的代理则直接将平台抽成后的佣金返给此用户
+            addIncomeDetail(rebateDetail, EIncomeType.ORDER_REBATE.getCode(), rebateDetail.getOpenId(), commission);
+            resultCommission = commission;
+
         }
 
-
-        //更新用户提现余额
-        if (null != userInfo) {
-            userInfoService.updateUserCommission(rebateDetail.getOpenId());
-        }
-
+        return resultCommission;
     }
 
     /**
      * 添加收入明细
      *
-     * @param referenceId
+     * @param rebateDetail
      * @param type
      * @param openId
      * @param income
      */
-    private void addIncomeDetail(Long referenceId, int type, String openId, Double income) {
-        IncomeDetailQuery incomeDetailQuery = new IncomeDetailQuery();
-        incomeDetailQuery.setOpenId(openId);
-        incomeDetailQuery.setReferenceId(referenceId);
-        if (null == incomeDetailDao.findIncomeDetail(incomeDetailQuery)) {
-            //插入收支记录
-            IncomeDetail incomeDetail = new IncomeDetail();
-            incomeDetail.setOpenId(openId);
-            incomeDetail.setReferenceId(referenceId);
-            incomeDetail.setIncome(income);
-            incomeDetail.setStatus(0);
-            incomeDetail.setDealt(0);
-            incomeDetail.setType(type);
-            incomeDetailDao.insert(incomeDetail);
+    private void addIncomeDetail(RebateDetail rebateDetail, int type, String openId, Double income) {
+        Long referenceId = rebateDetail.getId();
+        if (StringUtils.isNotBlank(rebateDetail.getSubUnionId()) && ERebateDetailStatus.SETTLEMENT.getCode() == rebateDetail.getStatus()) {
+            IncomeDetailQuery incomeDetailQuery = new IncomeDetailQuery();
+            incomeDetailQuery.setOpenId(openId);
+            incomeDetailQuery.setReferenceId(referenceId);
+            if (null == incomeDetailDao.findIncomeDetail(incomeDetailQuery)) {
+                //插入收支记录
+                IncomeDetail incomeDetail = new IncomeDetail();
+                incomeDetail.setOpenId(openId);
+                incomeDetail.setReferenceId(referenceId);
+                incomeDetail.setIncome(income);
+                incomeDetail.setStatus(0);
+                incomeDetail.setDealt(0);
+                incomeDetail.setType(type);
+                incomeDetailDao.insert(incomeDetail);
+
+                //更新用户提现余额
+                userInfoService.updateUserCommission(openId);
+            }
         }
+
     }
 
 

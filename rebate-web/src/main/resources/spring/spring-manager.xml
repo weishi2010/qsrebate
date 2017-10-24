@@ -44,6 +44,10 @@
 		<property name="whiteList" value="${jd.whiteList}" />
 		<property name="adminList" value="${jd.adminList}" />
 		<property name="encryptKey" value="${jd.encryptKey}" />
+		<property name="firstAgentPlatRatio" value="${jd.firstAgentPlatRatio}" />
+		<property name="sencondAgentPlatRatio" value="${jd.sencondAgentPlatRatio}" />
+		<property name="sencondAgentRatio" value="${jd.sencondAgentRatio}" />
+
 	</bean>
 	
 	<!--URL处理工具类-->

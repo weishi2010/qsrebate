@@ -1,7 +1,7 @@
 package com.rebate.domain.en;
 
 /**
- * 代理枚举
+ * 代理模式枚举
  */
 public enum EAgent {
     /**
@@ -9,14 +9,14 @@ public enum EAgent {
      */
     NOT_AGENT(0,"非代理用户"),
     /**
-     * 一级代理
+     * 代理模式一:一级代理给二级代理设置分佣比例，二级代理根据比例给一级代理分佣金
      */
-    FIRST_AGENT(1,"一级代理"),
+    FIRST_AGENT(1,"代理模式一"),
 
     /**
-     * 二级代理
+     * 代理模式二:一级代理通过分享二维码带来返利用户
      */
-    SECOND_AGENT(2,"二级代理");
+    SECOND_AGENT(2,"代理模式二");
     private int code;
     private String name;
 

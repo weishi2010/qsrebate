@@ -15,7 +15,7 @@ public enum EIncomeType {
     /**
      * 代理订单返利
      */
-    AGENT_REBATE(3,"订单返利"),
+    AGENT_REBATE(3,"代理返利"),
     /**
      * 提现支出
      */

@@ -20,7 +20,7 @@ public class MessageTempManagerImpl implements MessageTempManager {
                 promotionPre.append("包邮");
             }
             if (null != productVo.getCouponPrice() && productVo.getCouponPrice() > 0) {
-                promotionPre.append(" 优惠券" + productVo.getCouponPrice() + "元");
+                promotionPre.append(" 优惠券" + productVo.getProductCoupon().getDiscount() + "元");
             }
             promotionPre.append("】");
         }
