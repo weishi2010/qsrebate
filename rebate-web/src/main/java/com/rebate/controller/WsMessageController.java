@@ -323,7 +323,7 @@ public class WsMessageController extends BaseController {
                 "<Title><![CDATA[轻松返钱网，怎么能返钱（返利）？]]></Title> " +
                 "<Description><![CDATA[加入“轻松返钱网”，怎么轻松拿返钱？请往下看...]]></Description>" +
                 "<PicUrl><![CDATA[http://m.qingsongfan.com.cn/static/img/article_1.jpg]]></PicUrl>" +
-                "<Url><![CDATA[http://mp.weixin.qq.com/s/O-wT3xd1nC80osQg1SQQuw]]></Url>" +
+                "<Url><![CDATA[https://mp.weixin.qq.com/s/CAIExEX3oxYyKtOEgq0SCg]]></Url>" +
                 "</item>" +
                 "</Articles>");
 
