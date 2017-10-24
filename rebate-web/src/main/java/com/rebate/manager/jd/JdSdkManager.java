@@ -110,4 +110,13 @@ public interface JdSdkManager {
      */
 
     List<RebateDetail> getRebateDetails(String queryTime, int page, int pageSize);
+
+    /**
+     * 获取佣金
+     * @param agent
+     * @param subUnionId
+     * @param commission
+     * @return
+     */
+    Double getQSCommission(int agent,String subUnionId,Double commission);
 }

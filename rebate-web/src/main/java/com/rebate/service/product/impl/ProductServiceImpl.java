@@ -169,7 +169,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public PaginatedArrayList<ProductVo> findProductList(ProductQuery productQuery) {
+    public PaginatedArrayList<ProductVo> findProductList(ProductQuery productQuery,int agent,String subUnionId) {
         PaginatedArrayList<ProductVo> products = new PaginatedArrayList<ProductVo>(productQuery.getIndex(), productQuery.getPageSize());
         try {
             int totalItem = productDao.findProductsCount(productQuery);
@@ -191,7 +191,7 @@ public class ProductServiceImpl implements ProductService {
                             ProductCoupon coupon = productCouponDao.findById(productCouponQuery);
                             vo.setProductCoupon(coupon);
 
-                            product.setUserCommission(RebateRuleUtil.getJDUserCommission(product.getCommissionWl()));//平台返还用户佣金
+                            product.setUserCommission(jdSdkManager.getQSCommission(agent,subUnionId,product.getCommissionWl()));//平台返还用户佣金
 
                             products.add(vo);
                         } catch (Exception e) {

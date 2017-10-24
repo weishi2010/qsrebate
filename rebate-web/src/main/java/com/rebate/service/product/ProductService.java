@@ -33,7 +33,7 @@ public interface ProductService {
      * @param productQuery
      * @return
      */
-    PaginatedArrayList<ProductVo> findProductList(ProductQuery productQuery);
+    PaginatedArrayList<ProductVo> findProductList(ProductQuery productQuery,int agent,String subUnionId);
 
     /**
      * 根据skuId查询

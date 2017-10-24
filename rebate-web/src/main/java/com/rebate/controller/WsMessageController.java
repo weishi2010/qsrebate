@@ -460,9 +460,17 @@ public class WsMessageController extends BaseController {
 
                 Product product =products.get(0);
 
+                //查询用户信息
+                UserInfo userInfoQuery = new UserInfo();
+                userInfoQuery.setSubUnionId(subUnionId);
+                UserInfo userInfo = userInfoDao.findUserInfoBySubUnionId(userInfoQuery);
+
+
                 LOG.error("getAgentRecommendContent product:" + JsonUtil.toJson(product));
                 String shortUrl = jdSdkManager.getShortPromotinUrl(product.getProductId(), subUnionId);
                 shortUrl = shortUrlManager.getQsShortPromotinUrl(shortUrl,subUnionId);
+
+                product.setUserCommission(jdSdkManager.getQSCommission(userInfo.getAgent(),subUnionId,product.getCommissionWl()));
                 //获取代理户消息模板
                 recommendContent.append( messageTempManager.getAgentProductMessageTemp(product,shortUrl));
             }

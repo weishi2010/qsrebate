@@ -153,6 +153,13 @@ public class ProductController extends BaseController {
             tab = EPromotionTab.COUPON_PROMOTION.getTab();
         }
 
+        UserInfo userInfo = getUserInfo(request);
+
+        Integer agent = EAgent.NOT_AGENT.getCode();
+        if (null != userInfo) {
+            agent = userInfo.getAgent();
+        }
+
         couponType = EProudctCouponType.COUPON.getCode();
         ProductQuery query = new ProductQuery();
 
@@ -167,7 +174,7 @@ public class ProductController extends BaseController {
         query.setSecondCategoryList(secondCategoryList);
         query.setCouponType(couponType);
         query.setStatus(EProductStatus.PASS.getCode());
-        PaginatedArrayList<ProductVo> products = productService.findProductList(query);
+        PaginatedArrayList<ProductVo> products = productService.findProductList(query,agent,userInfo.getSubUnionId());
         LOG.error("tab:" + tab + ",page:{},size:{}", page, products.size());
         map.put("products", products);
         map.put("page", page);
@@ -254,9 +261,16 @@ public class ProductController extends BaseController {
             query.setName(params);
         }
 
+        UserInfo userInfo = getUserInfo(request);
+
+        Integer agent = EAgent.NOT_AGENT.getCode();
+        if (null != userInfo) {
+            agent = userInfo.getAgent();
+        }
+
         query.setIndex(page);
         query.setPageSize(10);
-        PaginatedArrayList<ProductVo> products = productService.findProductList(query);
+        PaginatedArrayList<ProductVo> products = productService.findProductList(query,agent,userInfo.getSubUnionId());
         map.put("products", products);
         map.put("page", page);
         map.put("totalItem", products.getTotalItem());

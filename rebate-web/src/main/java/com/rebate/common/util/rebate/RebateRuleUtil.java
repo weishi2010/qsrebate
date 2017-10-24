@@ -60,15 +60,4 @@ public class RebateRuleUtil {
         return new BigDecimal(platformCommission).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
     }
 
-    /**
-     * 代理模式二用户佣金计算
-     *
-     * @param commission
-     * @return
-     */
-    public static double getJDSecondAgentUserCommission(Double commission) {
-        double userCommission = (1 - PLATFORM_COMMISSION_RATIO) * commission;
-        return new BigDecimal(userCommission).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-    }
-
 }

@@ -13,11 +13,16 @@ import com.rebate.common.util.rebate.CouponUtil;
 import com.rebate.common.util.rebate.JdMediaProductGrapUtil;
 import com.rebate.common.util.rebate.RebateRuleUtil;
 import com.rebate.common.web.page.PaginatedArrayList;
+import com.rebate.dao.AgentRelationDao;
 import com.rebate.domain.Product;
 import com.rebate.domain.ProductCoupon;
 import com.rebate.domain.RebateDetail;
+import com.rebate.domain.UserInfo;
+import com.rebate.domain.agent.AgentRelation;
 import com.rebate.domain.en.*;
 import com.rebate.domain.jd.JDConfig;
+import com.rebate.domain.property.JDProperty;
+import com.rebate.domain.query.AgentRelationQuery;
 import com.rebate.manager.jd.JdSdkManager;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -42,6 +47,14 @@ public class JdSdkManagerImpl implements JdSdkManager {
     @Autowired(required = true)
     private JDConfig jdConfig;
 
+    @Qualifier("jDProperty")
+    @Autowired(required = true)
+    private JDProperty jDProperty;
+
+
+    @Qualifier("agentRelationDao")
+    @Autowired(required = true)
+    private AgentRelationDao agentRelationDao;
 
     private static final TypeReference<List<Map>> mapTypeReference = new TypeReference<List<Map>>() {
     };
@@ -54,6 +67,74 @@ public class JdSdkManagerImpl implements JdSdkManager {
             product = list.get(0);
         }
         return product;
+    }
+
+    @Override
+    public Double getQSCommission(int agent,String subUnionId,Double commission){
+        Double userCommission = commission;
+        if(StringUtils.isNotBlank(subUnionId)){
+            return userCommission;
+        }
+
+        if (EAgent.FIRST_AGENT.getCode() == agent) {
+            userCommission = computeFirstAgentCommission(subUnionId,commission);
+        } else if (EAgent.SECOND_AGENT.getCode() == agent) {
+            userCommission = computeSecondAgentIncomeDetail(subUnionId,commission);
+        }
+        return userCommission;
+    }
+
+    /**
+     * 代理模式二佣金计算
+     */
+    private Double computeSecondAgentIncomeDetail(String recommmendSubUnionId,Double commission) {
+        //平台抽成佣金
+        Double platCommission = RebateRuleUtil.computeCommission(commission, jDProperty.getSencondAgentPlatRatio());
+
+        Double agentCommission = 0.0;
+        if (StringUtils.isNotBlank(recommmendSubUnionId)) {
+            //给推荐的代理用户根据比例分配佣金
+            agentCommission = RebateRuleUtil.computeCommission(commission, jDProperty.getSencondAgentRatio());
+        }
+
+        //给返利用户返佣金
+        Double userCommission = new BigDecimal(commission + "").subtract(new BigDecimal(platCommission + "")).subtract(new BigDecimal(agentCommission + "")).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+
+        return userCommission;
+    }
+
+    /**
+     * 代理模式一佣金计算
+     */
+    private Double computeFirstAgentCommission(String subUnionId,Double commission) {
+        Double resultCommission = null;
+
+        //根据子联盟id查询代理关系
+        AgentRelationQuery agentRelationQuery = new AgentRelationQuery();
+        agentRelationQuery.setAgentSubUnionId(subUnionId);
+        AgentRelation agentRelation = agentRelationDao.findByAgentSubUnionId(agentRelationQuery);
+
+        //平台抽成佣金
+        Double platCommission = RebateRuleUtil.computeCommission(commission, jDProperty.getFirstAgentPlatRatio());
+        if(jDProperty.isWhiteAgent(subUnionId)){
+            //如果为白名单，平台不抽成
+            platCommission = 0.0;
+        }
+
+        Double subCommission = new BigDecimal(commission + "").subtract(new BigDecimal(platCommission + "")).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+
+        //如果当前用户为二级代理，则给一级代理进行分佣，所分佣金为平台抽成后的
+        if (null != agentRelation && StringUtils.isNotBlank(agentRelation.getParentAgentSubUnionId())) {
+            //二级代理用户根据比例获取佣金
+            Double agentCommission = subCommission * agentRelation.getCommissionRatio();
+            agentCommission = new BigDecimal(agentCommission).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue();//精确2位小数
+            resultCommission = agentCommission;
+        } else {
+            resultCommission = subCommission;
+
+        }
+
+        return resultCommission;
     }
 
 
@@ -88,7 +169,7 @@ public class JdSdkManagerImpl implements JdSdkManager {
 
                     product.setCommissionPc(qsCommissionPc);//联盟给平台的移动返还佣金
                     product.setCommissionWl(qsCommissionWl);//联盟给平台的PC返还佣金
-                    product.setUserCommission(RebateRuleUtil.getJDUserCommission(product.getCommissionWl()));//平台返还用户佣金
+                    product.setUserCommission(0.0);//平台返还用户佣金
                     product.setShopId(Long.parseLong(map.get("shopId").toString()));
                     product.setDistribution(1);
                     product.setProductType(1);
@@ -198,7 +279,7 @@ public class JdSdkManagerImpl implements JdSdkManager {
 
                     product.setCommissionPc(qsCommissionPc);//联盟给平台的移动返还佣金
                     product.setCommissionWl(qsCommissionWl);//联盟给平台的PC返还佣金
-                    product.setUserCommission(RebateRuleUtil.getJDUserCommission(product.getCommissionWl()));//平台返还用户佣金
+                    product.setUserCommission(0.0);//平台返还用户佣金，初始为0
 
                     product.setDistribution(1);
                     product.setProductType(1);
@@ -270,7 +351,7 @@ public class JdSdkManagerImpl implements JdSdkManager {
 
                     product.setCommissionPc(qsCommissionPc);//联盟给平台的移动返还佣金
                     product.setCommissionWl(qsCommissionWl);//联盟给平台的PC返还佣金
-                    product.setUserCommission(RebateRuleUtil.getJDUserCommission(product.getCommissionWl()));//平台返还用户佣金
+                    product.setUserCommission(0.0);//平台返还用户佣金，初始为0
 
                     if (RebateRuleUtil.isRebate(product.getCommissionWl(), false)) {
                         product.setIsRebate(EProudctRebateType.REBATE.getCode());

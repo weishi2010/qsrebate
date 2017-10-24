@@ -226,6 +226,11 @@ public class RebateJobImpl implements RebateJob {
 
         //平台抽成佣金
         Double platCommission = RebateRuleUtil.computeCommission(rebateDetail.getCommission(), jDProperty.getFirstAgentPlatRatio());
+        if(jDProperty.isWhiteAgent(rebateDetail.getSubUnionId())){
+            //如果为白名单，平台不抽成
+            platCommission = 0.0;
+        }
+
         Double commission = new BigDecimal(rebateDetail.getCommission() + "").subtract(new BigDecimal(platCommission + "")).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
 
         //如果当前用户为二级代理，则给一级代理进行分佣，所分佣金为平台抽成后的
