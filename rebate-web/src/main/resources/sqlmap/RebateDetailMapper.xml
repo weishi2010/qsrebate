@@ -187,7 +187,7 @@
         limit 1
     </select>
     <select id="getOrderSummaryBySubUnionId" parameterClass="OrderSummary" resultMap="OrderSummaryResultMap">
-        SELECT COUNT(order_id) AS orderCount,SUM(commission) AS commission
+        SELECT COUNT(order_id) AS orderCount,SUM(user_commission) AS commission
         ,DATE_FORMAT(submit_date,"%Y-%m-%d") AS submitDate,sub_union_id AS subUnionId
         FROM rebate_detail
         WHERE sub_union_id=#subUnionId#
