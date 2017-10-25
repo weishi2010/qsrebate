@@ -42,18 +42,18 @@ public class QsLoginInteceptor extends LoginInteceptor {
     /**
      * WX授权accessToken Cookie
      */
-    private static String WX_ACCESSTOKEN_COOKIE = "WX_T_C";
+    public static String WX_ACCESSTOKEN_COOKIE = "WX_T_C";
 
 
     /**
      * 用户信息COOKIE
      */
-    private static String USERINFO_COOKIE = "qs_u_i_o";
+    public static String USERINFO_COOKIE = "qs_u_i_o";
 
     /**
      * 用户信息
      */
-    private static String USERINFO = "userInfo";
+    public static String USERINFO = "userInfo";
 
     private CookieUtils cookieUtils;
 

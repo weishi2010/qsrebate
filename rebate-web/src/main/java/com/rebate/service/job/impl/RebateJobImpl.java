@@ -148,39 +148,46 @@ public class RebateJobImpl implements RebateJob {
             while (rebateDetails.size() > 0) {
                 LOG.error("[联盟订单导入任务]加载[" + queryTime + "]第" + page + "页{}条订单明细记录！", rebateDetails.size());
                 for (RebateDetail rebateDetail : rebateDetails) {
-                    Double userCommission = 0.0;
+                    try{
 
-                    if (StringUtils.isNotBlank(rebateDetail.getSubUnionId())) {
-                        //查询用户信息
-                        UserInfo userInfoQuery = new UserInfo();
-                        userInfoQuery.setSubUnionId(rebateDetail.getSubUnionId());
-                        UserInfo userInfo = userInfoDao.findUserInfoBySubUnionId(userInfoQuery);
-                        if (EAgent.FIRST_AGENT.getCode() == userInfo.getAgent()) {
-                            //如果为代理模式一，则根据给上级代理进行分佣
-                            userCommission = addFirstAgentIncomeDetail(rebateDetail);
-                        } else if (EAgent.SECOND_AGENT.getCode() == userInfo.getAgent()) {
-                            //代理模式二
-                            userCommission = addSecondAgentIncomeDetail(rebateDetail, userInfo);
-                        }else{
-                            //普通返利用户
-                            addGeneralRebateUserIncomeDetail(rebateDetail);
+                        Double userCommission = 0.0;
+
+                        if (StringUtils.isNotBlank(rebateDetail.getSubUnionId())) {
+                            //查询用户信息
+                            UserInfo userInfoQuery = new UserInfo();
+                            userInfoQuery.setSubUnionId(rebateDetail.getSubUnionId());
+                            UserInfo userInfo = userInfoDao.findUserInfoBySubUnionId(userInfoQuery);
+                            if (null != userInfo) {
+                                if (EAgent.FIRST_AGENT.getCode() == userInfo.getAgent()) {
+                                    //如果为代理模式一，则根据给上级代理进行分佣
+                                    userCommission = addFirstAgentIncomeDetail(rebateDetail);
+                                } else if (EAgent.SECOND_AGENT.getCode() == userInfo.getAgent()) {
+                                    //代理模式二
+                                    userCommission = addSecondAgentIncomeDetail(rebateDetail, userInfo);
+                                }else{
+                                    //普通返利用户
+                                    addGeneralRebateUserIncomeDetail(rebateDetail);
+                                }
+                            }
                         }
-                    }
 
-                    //设置订单明细中的用户返利佣金
-                    rebateDetail.setUserCommission(userCommission);
+                        //设置订单明细中的用户返利佣金
+                        rebateDetail.setUserCommission(userCommission);
 
-                    //查询是否已存在订单明细
-                    RebateDetailQuery rebateDetailQuery = new RebateDetailQuery();
-                    rebateDetailQuery.setOrderId(rebateDetail.getOrderId());
-                    RebateDetail existsRebateDetail = rebateDetailDao.queryRebateDetailByOrderId(rebateDetailQuery);
+                        //查询是否已存在订单明细
+                        RebateDetailQuery rebateDetailQuery = new RebateDetailQuery();
+                        rebateDetailQuery.setOrderId(rebateDetail.getOrderId());
+                        RebateDetail existsRebateDetail = rebateDetailDao.queryRebateDetailByOrderId(rebateDetailQuery);
 
-                    if (null == existsRebateDetail) {
-                        //插入明细
-                        rebateDetailDao.insert(rebateDetail);
-                    } else {
-                        //更新明细状态
-                        rebateDetailDao.update(rebateDetail);
+                        if (null == existsRebateDetail) {
+                            //插入明细
+                            rebateDetailDao.insert(rebateDetail);
+                        } else {
+                            //更新明细状态
+                            rebateDetailDao.update(rebateDetail);
+                        }
+                    }catch (Exception e){
+                        LOG.error("subUnionId:{},openId:{}",rebateDetail.getSubUnionId(),rebateDetail.getOpenId());
                     }
                 }
 

@@ -1,6 +1,8 @@
 package com.rebate.controller;
 
+import com.rebate.common.util.CookieUtils;
 import com.rebate.common.util.JsonUtil;
+import com.rebate.common.web.inteceptor.QsLoginInteceptor;
 import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.controller.base.BaseController;
 import com.rebate.domain.ExtractDetail;
@@ -33,6 +35,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -68,6 +71,11 @@ public class PersonalController extends BaseController {
     @Qualifier("jDProperty")
     @Autowired(required = true)
     private JDProperty jDProperty;
+
+    @Qualifier("cookieUtils")
+    @Autowired(required = true)
+    public CookieUtils cookieUtils;
+
 
     @RequestMapping({"", "/", "/extract"})
     public ModelAndView extract(HttpServletRequest request) {
@@ -278,6 +286,17 @@ public class PersonalController extends BaseController {
         view.addObject("list", list);
         view.addObject("userInfo", userInfo);
         return view;
+    }
+
+    @RequestMapping({"", "/", "/logout"})
+    public ResponseEntity<?> logout(HttpServletResponse response) {
+        cookieUtils.deleteQsCookie(response, QsLoginInteceptor.USERINFO_COOKIE);
+        cookieUtils.deleteQsCookie(response, QsLoginInteceptor.WX_ACCESSTOKEN_COOKIE);
+
+        Map<String, Object> map = new HashMap<String, Object>();
+
+        map.put("success", true);
+        return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
     }
     //---------------------------------------------------------------
 

@@ -116,7 +116,22 @@ function redirectJdPromotionCouponUrl(skuId,couponLink) {
             }
         },
         error: function (xhr, type) {
-            console.log('加载更多数据错误！');
+            console.log('系统异常，请重试！');
+        }
+    });
+}
+
+
+function logout() {
+    $.ajax({
+        type: 'GET',
+        url: '/personal/logout?r' + Math.random(),
+        dataType: 'json',
+        success: function (reponse) {
+            location.href = "/product/couponProducts";
+        },
+        error: function (xhr, type) {
+            console.log('系统异常，请重试！');
         }
     });
 }
