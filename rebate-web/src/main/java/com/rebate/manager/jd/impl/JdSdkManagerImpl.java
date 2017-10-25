@@ -577,7 +577,9 @@ public class JdSdkManagerImpl implements JdSdkManager {
             request.setBasefields("category");
 
             NewWareBaseproductGetResponse response = client.execute(request);
-            list = response.getListproductbaseResult();
+            if(null!=response.getListproductbaseResult()){
+                list = response.getListproductbaseResult();
+            }
 
         } catch (Exception e) {
             LOG.error("[获取商品信息]调用异常!skuIds:{}", skuIds);

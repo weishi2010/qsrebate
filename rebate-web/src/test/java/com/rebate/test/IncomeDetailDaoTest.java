@@ -39,7 +39,7 @@ public class IncomeDetailDaoTest extends AbstractJUnit4SpringContextTests {
     public void findCommissionByOpenId() {
         IncomeDetailQuery incomeDetailQuery = new IncomeDetailQuery();
         incomeDetailQuery.setOpenId("weishi2010");
-        incomeDetailQuery.setTypeList(EIncomeType.REGIST.getCode()+","+EIncomeType.ORDER_REBATE.getCode());
+        incomeDetailQuery.setTypeList(EIncomeType.REGIST.getCode()+","+EIncomeType.FIRST_ORDER_REBATE.getCode());
         Double income = incomeDetailDao.findIncomeStatistisByType(incomeDetailQuery);
 
         incomeDetailQuery.setTypeList(EIncomeType.EXTRACT.getCode()+"");
