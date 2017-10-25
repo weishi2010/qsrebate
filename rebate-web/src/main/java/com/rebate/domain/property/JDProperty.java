@@ -75,6 +75,14 @@ public class JDProperty {
     @Setter
     private Double sencondAgentRatio;
 
+
+    /**
+     * 普通返利用户平台分成
+     */
+    @Getter
+    @Setter
+    private Double generalRebateUserPlatRatio;
+
     /**
      * 是否是管理员
      * @param subUnionId

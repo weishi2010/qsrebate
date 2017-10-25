@@ -175,7 +175,10 @@ public class ProductController extends BaseController {
         query.setCouponType(couponType);
         query.setStatus(EProductStatus.PASS.getCode());
         PaginatedArrayList<ProductVo> products = productService.findProductList(query,agent,userInfo.getSubUnionId());
-        LOG.error("tab:" + tab + ",page:{},size:{}", page, products.size());
+        if(products.size()>0){
+
+            LOG.error("tab:" + tab + ",page:{},first:{}", page, JsonUtil.toJson(products.get(0)));
+        }
         map.put("products", products);
         map.put("page", page);
         map.put("secondCategoryList", secondCategoryList);

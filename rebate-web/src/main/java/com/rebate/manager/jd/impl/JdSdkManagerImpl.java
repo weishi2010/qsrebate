@@ -72,22 +72,43 @@ public class JdSdkManagerImpl implements JdSdkManager {
     @Override
     public Double getQSCommission(int agent,String subUnionId,Double commission){
         Double userCommission = commission;
-        if(StringUtils.isNotBlank(subUnionId)){
+        if(StringUtils.isBlank(subUnionId)){
             return userCommission;
         }
 
         if (EAgent.FIRST_AGENT.getCode() == agent) {
+            //代理模式一佣金计算
             userCommission = computeFirstAgentCommission(subUnionId,commission);
         } else if (EAgent.SECOND_AGENT.getCode() == agent) {
-            userCommission = computeSecondAgentIncomeDetail(subUnionId,commission);
+            //代理模式二佣金计算
+            userCommission = computeSecondAgentCommission(subUnionId,commission);
+        }else{
+            //普通返利用户
+            computeGeneralRebateUserCommission(commission);
         }
+
+        return userCommission;
+    }
+
+    /**
+     * 普通返利用户佣金计算
+     * @param commission
+     * @return
+     */
+    private Double computeGeneralRebateUserCommission(Double commission){
+        //平台抽成佣金
+        Double platCommission = RebateRuleUtil.computeCommission(commission, jDProperty.getGeneralRebateUserPlatRatio());
+
+        //给返利用户返佣金
+        Double userCommission = new BigDecimal(commission + "").subtract(new BigDecimal(platCommission + "")).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+
         return userCommission;
     }
 
     /**
      * 代理模式二佣金计算
      */
-    private Double computeSecondAgentIncomeDetail(String recommmendSubUnionId,Double commission) {
+    private Double computeSecondAgentCommission(String recommmendSubUnionId,Double commission) {
         //平台抽成佣金
         Double platCommission = RebateRuleUtil.computeCommission(commission, jDProperty.getSencondAgentPlatRatio());
 

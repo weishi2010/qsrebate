@@ -176,6 +176,7 @@ public class WsMessageController extends BaseController {
                         if (null == userInfo) {
                             //关注公众号
                             if (EWxEventCode.QRCODE_SUBSCRIBE.getValue().equalsIgnoreCase(inputMsg.getEventKey())) {
+                                //TODO 扫码得区分是一级代理还是二级代理
                                 //通过关注公众号来的用户注册代理用户
                                 userInfo = userInfoService.registUserInfo(openId, EAgent.FIRST_AGENT.getCode(), true);
                                 //代理用户关注消息
@@ -183,28 +184,29 @@ public class WsMessageController extends BaseController {
 
                             } else {
 
-                                //注册普通用户
-                                userInfoService.registUserInfo(openId, EAgent.NOT_AGENT.getCode(), true);
+                                //注册普通返利用户
+                                userInfoService.registUserInfo(openId, EAgent.GENERAL_REBATE_USER.getCode(), true);
 
                                 //普通用户首次关注消息
                                 eventXml = subscribeTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
 
                             }
 
-                            //更新用户提现金额
-                            userInfoService.updateUserCommission(openId);
                         } else {
                             if (EWxEventCode.QRCODE_SUBSCRIBE.getValue().equalsIgnoreCase(inputMsg.getEventKey())) {
+                                //TODO 扫码得区分是一级代理还是二级代理
                                 //通过扫码关注来的老用户，重新更新为代理
                                 userInfoService.updateUserInfoAgent(openId, EAgent.FIRST_AGENT.getCode());
 
                                 //代理用户关注消息
                                 eventXml = agentTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
-                            } else if (EAgent.FIRST_AGENT.getCode() == userInfo.getAgent()) {
+                            } else if (EAgent.FIRST_AGENT.getCode() == userInfo.getAgent() ||EAgent.SECOND_AGENT.getCode() == userInfo.getAgent()) {
                                 //代理用户关注消息
                                 eventXml = agentTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
-                            } else if (EAgent.NOT_AGENT.getCode() == userInfo.getAgent()) {
-                                //普通用户关注消息
+                            } else{
+                                //通过扫码关注来的老用户，重新更新为普通返利用户
+                                userInfoService.updateUserInfoAgent(openId, EAgent.GENERAL_REBATE_USER.getCode());
+                                //普通返利用户关注消息
                                 eventXml = subscribeTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
                             }
                         }
@@ -426,8 +428,16 @@ public class WsMessageController extends BaseController {
 
                 Product product =products.get(0);
 
+
+                //查询用户信息
+                UserInfo userInfoQuery = new UserInfo();
+                userInfoQuery.setSubUnionId(subUnionId);
+                UserInfo userInfo = userInfoDao.findUserInfoBySubUnionId(userInfoQuery);
+
                 LOG.error("getRecommendContent product:" + JsonUtil.toJson(product));
                 String shortUrl = jdSdkManager.getShortPromotinUrl(product.getProductId(), subUnionId);
+
+                product.setUserCommission(jdSdkManager.getQSCommission(userInfo.getAgent(),subUnionId,product.getCommissionWl()));
 
                 //获取返利用户消息模板
                 recommendContent.append( messageTempManager.getRebateUserProductMessageTemp(product,shortUrl));

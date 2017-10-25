@@ -190,7 +190,7 @@ public class ProductServiceImpl implements ProductService {
                             ProductCoupon coupon = productCouponDao.findById(productCouponQuery);
                             vo.setProductCoupon(coupon);
 
-                            product.setUserCommission(jdSdkManager.getQSCommission(agent,subUnionId,product.getCommissionWl()));//平台返还用户佣金
+                            vo.setUserCommission(jdSdkManager.getQSCommission(agent,subUnionId,product.getCommissionWl()));//平台返还用户佣金
 
                             products.add(vo);
                         } catch (Exception e) {

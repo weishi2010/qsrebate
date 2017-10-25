@@ -162,7 +162,10 @@ public class UserInfoServiceImpl implements UserInfoService {
         //计算收入、支出
         IncomeDetailQuery incomeDetailQuery = new IncomeDetailQuery();
         incomeDetailQuery.setOpenId(openId);
-        incomeDetailQuery.setTypeList(EIncomeType.REGIST.getCode() + "," + EIncomeType.ORDER_REBATE.getCode()+ "," + EIncomeType.AGENT_REBATE.getCode());
+        incomeDetailQuery.setTypeList(EIncomeType.REGIST.getCode() + ","
+                + EIncomeType.FIRST_ORDER_REBATE.getCode()+ "," + EIncomeType.FIRST_AGENT_REBATE.getCode()
+                + EIncomeType.SECOND_ORDER_REBATE.getCode()+ "," + EIncomeType.SECOND_AGENT_REBATE.getCode()
+                + EIncomeType.GENERAL_ORDER_REBATE.getCode());
         Double income = incomeDetailDao.findIncomeStatistisByType(incomeDetailQuery);
         if (null == income) {
             income = 0.0;
