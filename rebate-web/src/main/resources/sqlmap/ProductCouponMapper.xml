@@ -113,7 +113,9 @@
                 coupon_note = #couponNote#
             </isNotNull>
             <isNotNull property="couponPrice" prepend=",">
-                coupon_price = #couponPrice#
+                <isGreaterThan property="couponPrice" compareValue="0">
+                    coupon_price = #couponPrice#
+                </isGreaterThan>
             </isNotNull>
             <isNotNull property="quota" prepend=",">
                 quota = #quota#

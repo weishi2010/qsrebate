@@ -12,6 +12,7 @@ import com.rebate.domain.en.EExtractStatus;
 import com.rebate.domain.en.EPromotionTab;
 import com.rebate.domain.property.JDProperty;
 import com.rebate.domain.query.ExtractDetailQuery;
+import com.rebate.domain.query.OrderSummaryQuery;
 import com.rebate.domain.query.RebateDetailQuery;
 import com.rebate.domain.vo.ExtractDetailVo;
 import com.rebate.domain.vo.RebateDetailVo;
@@ -208,9 +209,8 @@ public class PersonalController extends BaseController {
     public ModelAndView agentStatistits(HttpServletRequest request,Integer dayTab) {
         ModelAndView view = new ModelAndView();
         String vm = VIEW_PREFIX + "/agentStatistits";
-        UserInfo userInfo = getUserInfo(request);
         view.setViewName(vm);
-
+        UserInfo userInfo = getUserInfo(request);
         if (null == userInfo || userInfo.getAgent() == EAgent.NOT_AGENT.getCode()) {
             view.setViewName(VIEW_PREFIX + "/permission");
             return view;
@@ -225,17 +225,19 @@ public class PersonalController extends BaseController {
             dayTab = 1;
         }
 
+        boolean isAdmin = jDProperty.isAdmin(userInfo.getSubUnionId());
 
         OrderSummary orderSummaryQuery = new OrderSummary();
         orderSummaryQuery.setSubUnionId(userInfo.getSubUnionId());
         orderSummaryQuery.setPageSize(30);//取近30
         PaginatedArrayList<OrderSummary>  list =  rebateDetailService.getOrderSummaryBySubUnionId(orderSummaryQuery);
         OrderSummary todayOrderSummary = null;
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd 00:00:00");
+        SimpleDateFormat formatStart = new SimpleDateFormat("yyyy-MM-dd 00:00:00");
+        SimpleDateFormat formatEnd = new SimpleDateFormat("yyyy-MM-dd 23:59:59");
 
         for(OrderSummary orderSummary:list){
             try {
-                if(orderSummary.getSubmitDate().equals(format.parse(format.format(queryDate)))){
+                if(orderSummary.getSubmitDate().equals(formatStart.parse(formatStart.format(queryDate)))){
                     todayOrderSummary = orderSummary;
                 }
             } catch (ParseException e) {
@@ -249,11 +251,29 @@ public class PersonalController extends BaseController {
             todayOrderSummary.setOrderCount(0l);
         }
 
+        Date startDate = null;
+        Date endDate = queryDate;
+        if(isAdmin){
+            try {
+                startDate = formatStart.parse(formatStart.format(queryDate));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            OrderSummaryQuery orderSummaryQuery2 = new OrderSummaryQuery();
+            orderSummaryQuery2.setStartDate(startDate);
+            orderSummaryQuery2.setEndDate(endDate);
+            OrderSummary allOrderSummary = rebateDetailService.getAllOrderSummaryByDate(orderSummaryQuery2);
+            if (null != allOrderSummary) {
+                allOrderSummary.setClickCount(shortUrlManager.getALLJDUnionUrlClick(queryDate));
+                view.addObject("allOrderSummary", allOrderSummary);
+            }
+        }
+
         LOG.error("[agentStatistits]dayTab:"+dayTab+",size:"+list.size());
         view.addObject("dayTab", dayTab);
-        view.addObject("adminFlag", jDProperty.isAdmin(userInfo.getSubUnionId()));
+        view.addObject("adminFlag", isAdmin);
         view.addObject("todayClick",shortUrlManager.getJDUnionUrlClick(userInfo.getSubUnionId(),queryDate));
-        view.addObject("allQsClick",shortUrlManager.getALLJDUnionUrlClick(queryDate));
         view.addObject("todayOrderSummary", todayOrderSummary);
         view.addObject("list", list);
         view.addObject("userInfo", userInfo);

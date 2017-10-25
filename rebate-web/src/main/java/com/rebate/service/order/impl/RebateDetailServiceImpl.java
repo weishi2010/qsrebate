@@ -7,6 +7,7 @@ import com.rebate.dao.RebateDetailDao;
 import com.rebate.domain.OrderSummary;
 import com.rebate.domain.Product;
 import com.rebate.domain.RebateDetail;
+import com.rebate.domain.query.OrderSummaryQuery;
 import com.rebate.domain.query.RebateDetailQuery;
 import com.rebate.domain.vo.RebateDetailVo;
 import com.rebate.manager.shorturl.ShortUrlManager;
@@ -69,5 +70,10 @@ public class RebateDetailServiceImpl implements RebateDetailService {
             LOG.error("getOrderSummaryBySubUnionId error!orderSummaryQuery:" + JsonUtil.toJson(orderSummaryQuery), e);
         }
         return orderSummaryList;
+    }
+
+    @Override
+    public OrderSummary getAllOrderSummaryByDate(OrderSummaryQuery orderSummaryQuery) {
+        return rebateDetailDao.getAllOrderSummaryByDate(orderSummaryQuery);
     }
 }

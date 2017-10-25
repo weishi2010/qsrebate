@@ -2,6 +2,7 @@ package com.rebate.dao;
 
 import com.rebate.domain.OrderSummary;
 import com.rebate.domain.RebateDetail;
+import com.rebate.domain.query.OrderSummaryQuery;
 import com.rebate.domain.query.RebateDetailQuery;
 
 import java.util.List;
@@ -62,4 +63,11 @@ public interface RebateDetailDao {
      * @return
      */
     List<OrderSummary> getOrderSummaryBySubUnionId(OrderSummary orderSummary);
+
+    /**
+     * 根据时间查询全部统计
+     * @param orderSummaryQuery
+     * @return
+     */
+    OrderSummary getAllOrderSummaryByDate(OrderSummaryQuery orderSummaryQuery);
 }

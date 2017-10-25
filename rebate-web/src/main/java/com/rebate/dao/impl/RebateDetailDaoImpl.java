@@ -4,6 +4,7 @@ import com.rebate.common.dao.BaseDao;
 import com.rebate.dao.RebateDetailDao;
 import com.rebate.domain.OrderSummary;
 import com.rebate.domain.RebateDetail;
+import com.rebate.domain.query.OrderSummaryQuery;
 import com.rebate.domain.query.RebateDetailQuery;
 
 import java.util.List;
@@ -42,5 +43,10 @@ public class RebateDetailDaoImpl extends BaseDao implements RebateDetailDao {
     @Override
     public List<OrderSummary> getOrderSummaryBySubUnionId(OrderSummary orderSummary) {
         return (List<OrderSummary>) queryForList("RebateDetail.getOrderSummaryBySubUnionId", orderSummary);
+    }
+
+    @Override
+    public OrderSummary getAllOrderSummaryByDate(OrderSummaryQuery orderSummaryQuery) {
+        return (OrderSummary) queryForObject("RebateDetail.getAllOrderSummaryByDate", orderSummaryQuery);
     }
 }

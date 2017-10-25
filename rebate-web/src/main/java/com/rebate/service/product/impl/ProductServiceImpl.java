@@ -125,31 +125,30 @@ public class ProductServiceImpl implements ProductService {
                 productCoupon.setCouponPrice(product.getOriginalPrice()-productCoupon.getDiscount());
                 productCoupon.setCouponPrice(new BigDecimal(productCoupon.getCouponPrice()).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
 
-            }
+                if (null != couponInfo.getSortWeight()) {
+                    product.setSortWeight(couponInfo.getSortWeight());
+                }
 
-            if (null != couponInfo.getSortWeight()) {
-                product.setSortWeight(couponInfo.getSortWeight());
-            }
-
-            //是否包邮
-            if(null!=couponInfo.getFreePost()){
-                product.setFreePost(couponInfo.getFreePost());
-            }else {
-                product.setFreePost(EProductFreePost.NOT_FREE_POST.getCode());
-            }
+                //是否包邮
+                if(null!=couponInfo.getFreePost()){
+                    product.setFreePost(couponInfo.getFreePost());
+                }else {
+                    product.setFreePost(EProductFreePost.NOT_FREE_POST.getCode());
+                }
 
 
-            product.setStatus(EProductStatus.PASS.getCode());
-            product.setCouponType(EProudctCouponType.COUPON.getCode());
-            product.setCouponPrice(productCoupon.getCouponPrice());
-            //计算优惠券商品返利规则
-            product.setIsRebate(RebateRuleUtil.couponProductRebateRule(product.getCommissionWl()));
+                product.setStatus(EProductStatus.PASS.getCode());
+                product.setCouponType(EProudctCouponType.COUPON.getCode());
+                product.setCouponPrice(productCoupon.getCouponPrice());
+                //计算优惠券商品返利规则
+                product.setIsRebate(RebateRuleUtil.couponProductRebateRule(product.getCommissionWl()));
 
-            //插入或更新商品
-            if (null == productDao.findById(product)) {
-                productDao.insert(product);
-            } else {
-                productDao.update(product);
+                //插入或更新商品
+                if (null == productDao.findById(product)) {
+                    productDao.insert(product);
+                } else {
+                    productDao.update(product);
+                }
             }
 
 

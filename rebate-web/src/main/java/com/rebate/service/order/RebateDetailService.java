@@ -2,6 +2,7 @@ package com.rebate.service.order;
 
 import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.domain.OrderSummary;
+import com.rebate.domain.query.OrderSummaryQuery;
 import com.rebate.domain.query.RebateDetailQuery;
 import com.rebate.domain.vo.RebateDetailVo;
 
@@ -22,4 +23,11 @@ public interface RebateDetailService {
      * @return
      */
     PaginatedArrayList<OrderSummary> getOrderSummaryBySubUnionId(OrderSummary orderSummary);
+
+    /**
+     * 根据时间查询全部统计
+     * @param orderSummaryQuery
+     * @return
+     */
+    OrderSummary getAllOrderSummaryByDate(OrderSummaryQuery orderSummaryQuery);
 }

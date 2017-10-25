@@ -28,11 +28,12 @@
     </div>
     <div class="totalCommissionInfo">
         <div> <h4>点击数</h4> <p>$!{todayClick}</p> </div>
-        #if($adminFlag)
-            <div> <h4>全站点击数</h4> <p>$!{allQsClick}</p> </div>
-        #end
         <div> <h4>订单</h4> <p>$!{todayOrderSummary.orderCount}</p> </div>
-       <!--<div> <h4>转化率</h4> <p>56.36%</p> </div>-->
+        <!--<div> <h4>转化率</h4> <p>56.36%</p> </div>-->
+        #if($adminFlag)
+            <div> <h4>全站点击数</h4> <p>$!{allOrderSummary.clickCount}</p> </div>
+            <div> <h4>全站订单数</h4> <p>$!{allOrderSummary.orderCount}</p> </div>
+        #end
     </div>
 </div>
 <div class="commissionByDay">
