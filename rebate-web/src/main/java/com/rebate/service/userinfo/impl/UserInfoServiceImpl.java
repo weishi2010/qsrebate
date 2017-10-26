@@ -82,7 +82,12 @@ public class UserInfoServiceImpl implements UserInfoService {
             userInfo.setWxImage(wxUserInfo.getHeadimgurl());
             String subUnionId = ESubUnionIdPrefix.getSubUnionId(ESubUnionIdPrefix.JD.getCode(), sequenceUtil.get(ESequence.SUB_UNION_ID.getSequenceName()));
             userInfo.setSubUnionId(subUnionId);
-            userInfo.setRecommendAccount(recommendOpenId);
+            //如果推荐人为自己，则不设置推荐人
+            if(StringUtils.isNotBlank(recommendOpenId) && !recommendOpenId.equalsIgnoreCase(wxUserInfo.getOpenid())){
+                userInfo.setRecommendAccount(recommendOpenId);
+            }else{
+                userInfo.setRecommendAccount("");
+            }
             try{
 
                 userInfoDao.insert(userInfo);
