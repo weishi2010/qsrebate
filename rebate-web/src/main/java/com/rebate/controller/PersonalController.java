@@ -260,10 +260,14 @@ public class PersonalController extends BaseController {
         }
 
         Date startDate = null;
-        Date endDate = queryDate;
+        Date endDate = null;
         if(isAdmin){
             try {
                 startDate = formatStart.parse(formatStart.format(queryDate));
+
+                calendar.setTime(queryDate);
+                calendar.add(Calendar.DATE, 1);
+                endDate = formatEnd.parse(formatEnd.format(calendar.getTime()));
             } catch (ParseException e) {
                 e.printStackTrace();
             }
