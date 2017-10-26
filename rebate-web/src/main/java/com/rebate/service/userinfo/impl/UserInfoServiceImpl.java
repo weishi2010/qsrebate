@@ -67,7 +67,7 @@ public class UserInfoServiceImpl implements UserInfoService {
     private JDProperty jDProperty;
 
     @Override
-    public UserInfo registUserInfo(String openId, Integer angent, boolean isAward) {
+    public UserInfo registUserInfo(String openId,String recommendOpenId, Integer angent, boolean isAward) {
         UserInfo userInfo = null;
         WxUserInfo wxUserInfo = wxService.getWxApiUserInfo(wxAccessTokenService.getApiAccessToken().getAccessToken(), openId);
         if (null != wxUserInfo) {
@@ -82,7 +82,7 @@ public class UserInfoServiceImpl implements UserInfoService {
             userInfo.setWxImage(wxUserInfo.getHeadimgurl());
             String subUnionId = ESubUnionIdPrefix.getSubUnionId(ESubUnionIdPrefix.JD.getCode(), sequenceUtil.get(ESequence.SUB_UNION_ID.getSequenceName()));
             userInfo.setSubUnionId(subUnionId);
-            userInfo.setRecommendAccount("");
+            userInfo.setRecommendAccount(recommendOpenId);
             try{
 
                 userInfoDao.insert(userInfo);
@@ -112,10 +112,11 @@ public class UserInfoServiceImpl implements UserInfoService {
         return userInfo;
     }
     @Override
-    public void updateUserInfoAgent(String openId,Integer agent){
+    public void updateUserInfoAgent(String openId,String recommendOpenId,Integer agent){
         UserInfo  userInfo = new UserInfo();
         userInfo.setOpenId(openId);
         userInfo.setAgent(agent);
+        userInfo.setRecommendAccount(recommendOpenId);
         userInfoDao.update(userInfo);
     }
 

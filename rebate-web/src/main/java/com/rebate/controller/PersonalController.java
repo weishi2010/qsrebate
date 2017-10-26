@@ -23,6 +23,7 @@ import com.rebate.service.extract.ExtractDetailService;
 import com.rebate.service.order.RebateDetailService;
 import com.rebate.service.userinfo.UserInfoService;
 import com.rebate.service.wx.WxService;
+import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,6 +76,10 @@ public class PersonalController extends BaseController {
     @Qualifier("cookieUtils")
     @Autowired(required = true)
     public CookieUtils cookieUtils;
+
+    @Qualifier("wxService")
+    @Autowired(required = true)
+    private WxService wxService;
 
 
     @RequestMapping({"", "/", "/extract"})
@@ -301,6 +306,36 @@ public class PersonalController extends BaseController {
 
         map.put("success", true);
         return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
+    }
+
+    @RequestMapping({"", "/", "/firstAgentCode"})
+    public ModelAndView firstAgentCode(HttpServletRequest request) {
+        ModelAndView view = new ModelAndView(VIEW_PREFIX+ "/agent/qrcode");
+
+        UserInfo userInfo = getUserInfo(request);
+        String openId = null;
+        if(null!=userInfo){
+            openId = userInfo.getOpenId();
+        }
+
+        String sceneStr = openId+"#"+EAgent.FIRST_AGENT.getCode();
+        view.addObject("qrcodeUrl", wxService.getQrcodeUrl(sceneStr));
+        return view;
+    }
+
+    @RequestMapping({"", "/", "/secondAgentCode"})
+    public ModelAndView secondAgentCode(HttpServletRequest request) {
+        ModelAndView view = new ModelAndView(VIEW_PREFIX+ "/agent/qrcode");
+
+        UserInfo userInfo = getUserInfo(request);
+        String openId = "";
+        if(null!=userInfo){
+            openId = userInfo.getOpenId();
+        }
+
+        String sceneStr = openId+"#"+EAgent.SECOND_AGENT.getCode();
+        view.addObject("qrcodeUrl", wxService.getQrcodeUrl(sceneStr));
+        return view;
     }
     //---------------------------------------------------------------
 

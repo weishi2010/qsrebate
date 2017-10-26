@@ -89,9 +89,15 @@ public class WxServiceImpl implements WxService {
         long expireSeconds = 0l;
         try {
             Map<String, Object> params = new HashMap<String, Object>();
-            params.put("expire_seconds", 2592000);
+            params.put("expire_seconds", 60*60*24*30);//30天有效
             params.put("action_name", "QR_STR_SCENE");
-            params.put("action_info", " {\"scene\": {\"scene_str\": \"" + paramJson + "\"}}");
+
+            JSONObject sceneStr = new JSONObject();
+            sceneStr.put("scene_str",paramJson);
+            JSONObject actionInfo = new JSONObject();
+            actionInfo.put("scene",sceneStr);
+
+            params.put("action_info", actionInfo);
 
             String json = HttpClientUtil.post(wxConfig.getQrcodeUrl() + "?access_token=" + wxAccessTokenService.getApiAccessToken().getAccessToken(), params);
             LOG.error("getQrcodeUrl json:{},params:{}", json, JsonUtil.toJson(params));

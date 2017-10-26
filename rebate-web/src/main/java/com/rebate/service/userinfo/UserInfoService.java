@@ -9,7 +9,7 @@ public interface UserInfoService {
      * @param openId
      * @param agent
      */
-    void updateUserInfoAgent(String openId,Integer agent);
+    void updateUserInfoAgent(String openId,String recommendOpenId,Integer agent);
 
 
     /**
@@ -26,7 +26,7 @@ public interface UserInfoService {
      * @param isAward 是否进行注册奖励
      * @return
      */
-    UserInfo registUserInfo(String openId, Integer angent,boolean isAward);
+    UserInfo registUserInfo(String openId,String recommendOpenId, Integer angent,boolean isAward);
 
     /**
      * 查询用户信息
