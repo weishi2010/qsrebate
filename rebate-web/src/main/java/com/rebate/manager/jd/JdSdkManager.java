@@ -5,6 +5,7 @@ import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.domain.Product;
 import com.rebate.domain.ProductCoupon;
 import com.rebate.domain.RebateDetail;
+import com.rebate.domain.UserInfo;
 
 import java.util.List;
 
@@ -113,10 +114,9 @@ public interface JdSdkManager {
 
     /**
      * 获取佣金
-     * @param agent
-     * @param subUnionId
-     * @param commission
+     * @param userInfo
+     * @param product
      * @return
      */
-    Double getQSCommission(int agent,String subUnionId,Double commission);
+    Double getQSCommission(UserInfo userInfo, Product product);
 }

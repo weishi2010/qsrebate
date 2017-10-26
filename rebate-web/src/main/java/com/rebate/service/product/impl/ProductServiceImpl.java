@@ -10,6 +10,7 @@ import com.rebate.dao.ProductDao;
 import com.rebate.domain.Product;
 import com.rebate.domain.ProductCoupon;
 import com.rebate.domain.RecommendCategory;
+import com.rebate.domain.UserInfo;
 import com.rebate.domain.en.*;
 import com.rebate.domain.query.ProductQuery;
 import com.rebate.domain.vo.ProductVo;
@@ -114,6 +115,10 @@ public class ProductServiceImpl implements ProductService {
                     productCoupon.setDiscount(new BigDecimal(productCoupon.getDiscount()).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
                 }
 
+                productCoupon.setDiscount(new BigDecimal(productCoupon.getDiscount()).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
+                productCoupon.setQuota(new BigDecimal(productCoupon.getQuota()).setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
+
+
                 productCoupon.setStartDate(couponInfo.getStartDate());
                 productCoupon.setEndDate(couponInfo.getEndDate());
                 productCoupon.setCouponLink(couponInfo.getCouponLink());
@@ -168,7 +173,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public PaginatedArrayList<ProductVo> findProductList(ProductQuery productQuery,int agent,String subUnionId) {
+    public PaginatedArrayList<ProductVo> findProductList(ProductQuery productQuery, UserInfo userInfo) {
         PaginatedArrayList<ProductVo> products = new PaginatedArrayList<ProductVo>(productQuery.getIndex(), productQuery.getPageSize());
         try {
             int totalItem = productDao.findProductsCount(productQuery);
@@ -190,7 +195,7 @@ public class ProductServiceImpl implements ProductService {
                             ProductCoupon coupon = productCouponDao.findById(productCouponQuery);
                             vo.setProductCoupon(coupon);
 
-                            vo.setUserCommission(jdSdkManager.getQSCommission(agent,subUnionId,product.getCommissionWl()));//平台返还用户佣金
+                            vo.setUserCommission(jdSdkManager.getQSCommission(userInfo,product));//平台返还用户佣金
 
                             products.add(vo);
                         } catch (Exception e) {

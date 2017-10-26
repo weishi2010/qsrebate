@@ -2,6 +2,7 @@ package com.rebate.controller;
 
 import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.controller.base.BaseController;
+import com.rebate.dao.UserInfoDao;
 import com.rebate.domain.UserInfo;
 import com.rebate.domain.en.*;
 import com.rebate.domain.property.JDProperty;
@@ -30,9 +31,14 @@ import java.util.Map;
 public class ApiController extends BaseController {
     private static final Logger LOG = LoggerFactory.getLogger(ApiController.class);
     public static final String PREFIX = "/api";
+
     @Qualifier("productService")
     @Autowired(required = true)
     private ProductService productService;
+
+    @Qualifier("userInfoDao")
+    @Autowired(required = true)
+    private UserInfoDao userInfoDao;
 
 
     @Qualifier("jDProperty")
@@ -54,13 +60,20 @@ public class ApiController extends BaseController {
 
 
         String subUnionId = jDProperty.getApiSubUnionId();
+
+        //查询用户信息
+        UserInfo userInfoQuery = new UserInfo();
+        userInfoQuery.setSubUnionId(subUnionId);
+        UserInfo userInfo = userInfoDao.findUserInfoBySubUnionId(userInfoQuery);
+
+
         int agent = EAgent.FIRST_AGENT.getCode();
 
         query.setIndex(page);
         query.setPageSize(pageSize);
         query.setCouponType(couponType);
         query.setStatus(EProductStatus.PASS.getCode());
-        PaginatedArrayList<ProductVo> products = productService.findProductList(query,agent,subUnionId);
+        PaginatedArrayList<ProductVo> products = productService.findProductList(query,userInfo);
         map.put("products", products);
         map.put("page", page);
         map.put("totalItem", products.getTotalItem());

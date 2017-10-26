@@ -73,9 +73,8 @@ public class RedisUtil {
      * @return boolean 返回类型
      * @Description:插入对象
      */
-    public boolean set(String key, Object obj) {
+    public boolean set(String key, String value) {
 
-        String value = JSONObject.toJSONString(obj);
         try {
             String code = jedis.set(key, value);
             if (code.equals("ok")) {
@@ -88,9 +87,8 @@ public class RedisUtil {
         return false;
     }
 
-    public boolean set(String key, Object obj,int timeout) {
+    public boolean set(String key, String value,int timeout) {
 
-        String value = JSONObject.toJSONString(obj);
         try {
             String code = jedis.set(key, value);
             jedis.expire(key,timeout);

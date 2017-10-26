@@ -163,10 +163,10 @@ public class RebateJobImpl implements RebateJob {
                                     userCommission = addFirstAgentIncomeDetail(rebateDetail);
                                 } else if (EAgent.SECOND_AGENT.getCode() == userInfo.getAgent()) {
                                     //代理模式二
-                                    userCommission = addSecondAgentIncomeDetail(rebateDetail, userInfo);
+                                    userCommission = addSecondAgentIncomeDetail(rebateDetail);
                                 }else{
                                     //普通返利用户
-                                    addGeneralRebateUserIncomeDetail(rebateDetail);
+                                    addGeneralRebateUserIncomeDetail(rebateDetail,userInfo);
                                 }
                             }
                         }
@@ -203,7 +203,7 @@ public class RebateJobImpl implements RebateJob {
      * @param rebateDetail
      * @return
      */
-    private Double addGeneralRebateUserIncomeDetail(RebateDetail rebateDetail) {
+    private Double addGeneralRebateUserIncomeDetail(RebateDetail rebateDetail,UserInfo userInfo) {
 
         Product productQuery = new Product();
         productQuery.setProductId(rebateDetail.getProductId());
@@ -212,12 +212,24 @@ public class RebateJobImpl implements RebateJob {
         if(null!=product && product.getIsRebate()==EProudctRebateType.NOT_REBATE.getCode()){
             return 0.0;
         }
+        Double agentCommission = 0.0;
+        Double platCommission = null;
+        if (StringUtils.isNotBlank(userInfo.getRecommendAccount())) {
+            //代理模式2的分成
+            //平台抽成佣金
+            platCommission = RebateRuleUtil.computeCommission(rebateDetail.getCommission(), jDProperty.getSencondAgentPlatRatio());
 
-        //平台抽成佣金
-        Double platCommission = RebateRuleUtil.computeCommission(rebateDetail.getCommission(), jDProperty.getGeneralRebateUserPlatRatio());
+
+            //给推荐的代理用户根据比例分配佣金
+            agentCommission = RebateRuleUtil.computeCommission(rebateDetail.getCommission(), jDProperty.getSencondAgentRatio());
+            addIncomeDetail(rebateDetail, EIncomeType.SECOND_AGENT_REBATE.getCode(), userInfo.getRecommendAccount(), agentCommission);
+        }else{
+            //平台抽成佣金
+            platCommission = RebateRuleUtil.computeCommission(rebateDetail.getCommission(), jDProperty.getGeneralRebateUserPlatRatio());
+        }
 
         //给返利用户返佣金
-        Double userCommission = new BigDecimal(rebateDetail.getCommission() + "").subtract(new BigDecimal(platCommission + "")).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+        Double userCommission = new BigDecimal(rebateDetail.getCommission() + "").subtract(new BigDecimal(platCommission + "")).subtract(new BigDecimal(agentCommission + "")).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
         addIncomeDetail(rebateDetail, EIncomeType.GENERAL_ORDER_REBATE.getCode(), rebateDetail.getOpenId(), userCommission);
 
         return userCommission;
@@ -229,7 +241,7 @@ public class RebateJobImpl implements RebateJob {
      * @param rebateDetail
      * @return
      */
-    private Double addSecondAgentIncomeDetail(RebateDetail rebateDetail, UserInfo userInfo) {
+    private Double addSecondAgentIncomeDetail(RebateDetail rebateDetail) {
         //平台抽成佣金
         Double platCommission = RebateRuleUtil.computeCommission(rebateDetail.getCommission(), jDProperty.getSencondAgentPlatRatio());
 
@@ -238,15 +250,8 @@ public class RebateJobImpl implements RebateJob {
             platCommission = 0.0;
         }
 
-        Double agentCommission = 0.0;
-        if (StringUtils.isNotBlank(userInfo.getRecommendAccount())) {
-            //给推荐的代理用户根据比例分配佣金
-            agentCommission = RebateRuleUtil.computeCommission(rebateDetail.getCommission(), jDProperty.getSencondAgentRatio());
-            addIncomeDetail(rebateDetail, EIncomeType.SECOND_AGENT_REBATE.getCode(), userInfo.getRecommendAccount(), agentCommission);
-        }
-
         //给返利用户返佣金
-        Double userCommission = new BigDecimal(rebateDetail.getCommission() + "").subtract(new BigDecimal(platCommission + "")).subtract(new BigDecimal(agentCommission + "")).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+        Double userCommission = new BigDecimal(rebateDetail.getCommission() + "").subtract(new BigDecimal(platCommission + "")).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
         addIncomeDetail(rebateDetail, EIncomeType.SECOND_ORDER_REBATE.getCode(), rebateDetail.getOpenId(), userCommission);
 
         return userCommission;

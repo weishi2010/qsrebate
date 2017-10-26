@@ -346,6 +346,21 @@ public class PersonalController extends BaseController {
         view.addObject("qrcodeUrl", wxService.getQrcodeUrl(sceneStr));
         return view;
     }
+
+    @RequestMapping({"", "/", "/recommendUserCode"})
+    public ModelAndView recommendUserCode(HttpServletRequest request) {
+        ModelAndView view = new ModelAndView(VIEW_PREFIX+ "/agent/qrcode");
+
+        UserInfo userInfo = getUserInfo(request);
+        String openId = "";
+        if(null!=userInfo){
+            openId = userInfo.getOpenId();
+        }
+
+        String sceneStr = openId+"#"+EAgent.GENERAL_REBATE_USER.getCode();
+        view.addObject("qrcodeUrl", wxService.getQrcodeUrl(sceneStr));
+        return view;
+    }
     //---------------------------------------------------------------
 
     /**

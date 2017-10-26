@@ -3,6 +3,7 @@ package com.rebate.service.product;
 import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.domain.ProductCoupon;
 import com.rebate.domain.RecommendCategory;
+import com.rebate.domain.UserInfo;
 import com.rebate.domain.query.ProductQuery;
 import com.rebate.domain.vo.ProductVo;
 
@@ -33,7 +34,7 @@ public interface ProductService {
      * @param productQuery
      * @return
      */
-    PaginatedArrayList<ProductVo> findProductList(ProductQuery productQuery,int agent,String subUnionId);
+    PaginatedArrayList<ProductVo> findProductList(ProductQuery productQuery, UserInfo userInfo);
 
     /**
      * 根据skuId查询

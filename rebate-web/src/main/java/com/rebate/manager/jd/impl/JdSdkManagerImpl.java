@@ -70,21 +70,21 @@ public class JdSdkManagerImpl implements JdSdkManager {
     }
 
     @Override
-    public Double getQSCommission(int agent,String subUnionId,Double commission){
-        Double userCommission = commission;
-        if(StringUtils.isBlank(subUnionId)){
+    public Double getQSCommission(UserInfo userInfo,Product product){
+        Double userCommission = 0.0;
+        if(null==userInfo){
             return userCommission;
         }
 
-        if (EAgent.FIRST_AGENT.getCode() == agent) {
+        if (EAgent.FIRST_AGENT.getCode() == userInfo.getAgent()) {
             //代理模式一佣金计算
-            userCommission = computeFirstAgentCommission(subUnionId,commission);
-        } else if (EAgent.SECOND_AGENT.getCode() == agent) {
+            userCommission = computeFirstAgentCommission(userInfo.getSubUnionId(),product.getCommissionWl());
+        } else if (EAgent.SECOND_AGENT.getCode() == userInfo.getAgent()) {
             //代理模式二佣金计算
-            userCommission = computeSecondAgentCommission(subUnionId,commission);
+            userCommission = computeSecondAgentCommission(userInfo.getSubUnionId(),product.getCommissionWl());
         }else{
             //普通返利用户
-            computeGeneralRebateUserCommission(commission);
+            computeGeneralRebateUserCommission(userInfo,product);
         }
 
         return userCommission;
@@ -92,16 +92,31 @@ public class JdSdkManagerImpl implements JdSdkManager {
 
     /**
      * 普通返利用户佣金计算
-     * @param commission
+     * @param product
      * @return
      */
-    private Double computeGeneralRebateUserCommission(Double commission){
-        //平台抽成佣金
-        Double platCommission = RebateRuleUtil.computeCommission(commission, jDProperty.getGeneralRebateUserPlatRatio());
+    private Double computeGeneralRebateUserCommission(UserInfo userInfo,Product product){
+        if(null!=product && product.getIsRebate()==EProudctRebateType.NOT_REBATE.getCode()){
+            return 0.0;
+        }
+        Double agentCommission = 0.0;
+        Double platCommission = null;
+        Double commission = product.getCommissionWl();
+
+        if (StringUtils.isNotBlank(userInfo.getRecommendAccount())) {
+            //代理模式2的分成
+            //平台抽成佣金
+            platCommission = RebateRuleUtil.computeCommission(commission, jDProperty.getSencondAgentPlatRatio());
+
+            //给推荐的代理用户根据比例分配佣金
+            agentCommission = RebateRuleUtil.computeCommission(commission, jDProperty.getSencondAgentRatio());
+        }else{
+            //平台抽成佣金
+            platCommission = RebateRuleUtil.computeCommission(commission, jDProperty.getGeneralRebateUserPlatRatio());
+        }
 
         //给返利用户返佣金
-        Double userCommission = new BigDecimal(commission + "").subtract(new BigDecimal(platCommission + "")).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-
+        Double userCommission = new BigDecimal(commission + "").subtract(new BigDecimal(platCommission + "")).subtract(new BigDecimal(agentCommission + "")).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
         return userCommission;
     }
 
@@ -112,14 +127,13 @@ public class JdSdkManagerImpl implements JdSdkManager {
         //平台抽成佣金
         Double platCommission = RebateRuleUtil.computeCommission(commission, jDProperty.getSencondAgentPlatRatio());
 
-        Double agentCommission = 0.0;
-        if (StringUtils.isNotBlank(recommmendSubUnionId)) {
-            //给推荐的代理用户根据比例分配佣金
-            agentCommission = RebateRuleUtil.computeCommission(commission, jDProperty.getSencondAgentRatio());
+        if(jDProperty.isWhiteAgent(recommmendSubUnionId)){
+            //如果为白名单，平台不抽成
+            platCommission = 0.0;
         }
 
         //给返利用户返佣金
-        Double userCommission = new BigDecimal(commission + "").subtract(new BigDecimal(platCommission + "")).subtract(new BigDecimal(agentCommission + "")).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+        Double userCommission = new BigDecimal(commission + "").subtract(new BigDecimal(platCommission + "")).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
 
         return userCommission;
     }

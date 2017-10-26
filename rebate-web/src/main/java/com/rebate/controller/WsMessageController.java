@@ -205,9 +205,14 @@ public class WsMessageController extends BaseController {
 
                                 } else if (EAgent.SECOND_AGENT.getCode() == agentType) {
                                     //代理模式2-注册代理用户
-                                    userInfo = userInfoService.registUserInfo(openId, agentOpenId, EAgent.SECOND_AGENT.getCode(), true);
+                                    userInfo = userInfoService.registUserInfo(openId, "", EAgent.SECOND_AGENT.getCode(), true);
                                     //代理用户关注消息
                                     eventXml = agentTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), userInfo.getSubUnionId());
+
+                                }else if (EAgent.GENERAL_REBATE_USER.getCode() == agentType) {
+                                    //代理模式2-拉粉丝返利用户
+                                    userInfoService.registUserInfo(openId, agentOpenId, EAgent.GENERAL_REBATE_USER.getCode(), true);
+                                    eventXml = subscribeTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
 
                                 }
 
@@ -235,9 +240,14 @@ public class WsMessageController extends BaseController {
 
                                 } else if (EAgent.SECOND_AGENT.getCode() == agentType) {
                                     //代理模式2-注册代理用户
-                                    userInfoService.updateUserInfoAgent(openId,agentOpenId, EAgent.SECOND_AGENT.getCode());
+                                    userInfoService.updateUserInfoAgent(openId,"", EAgent.SECOND_AGENT.getCode());
                                     //代理用户关注消息
                                     eventXml = agentTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), userInfo.getSubUnionId());
+                                }else if (EAgent.GENERAL_REBATE_USER.getCode() == agentType && StringUtils.isNotBlank(userInfo.getRecommendAccount())) {
+                                    //代理模式2-拉粉丝返利用户
+                                    userInfoService.updateUserInfoAgent(openId, agentOpenId, EAgent.GENERAL_REBATE_USER.getCode());
+                                    eventXml = subscribeTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
+
                                 }
 
                             } else {
@@ -483,7 +493,7 @@ public class WsMessageController extends BaseController {
                 LOG.error("getRecommendContent product:" + JsonUtil.toJson(product));
                 String shortUrl = jdSdkManager.getShortPromotinUrl(product.getProductId(), subUnionId);
 
-                product.setUserCommission(jdSdkManager.getQSCommission(userInfo.getAgent(), subUnionId, product.getCommissionWl()));
+                product.setUserCommission(jdSdkManager.getQSCommission(userInfo, product));
 
                 //获取返利用户消息模板
                 recommendContent.append(messageTempManager.getRebateUserProductMessageTemp(product, shortUrl));
@@ -526,7 +536,7 @@ public class WsMessageController extends BaseController {
                 String shortUrl = jdSdkManager.getShortPromotinUrl(product.getProductId(), subUnionId);
                 shortUrl = shortUrlManager.getQsShortPromotinUrl(shortUrl, subUnionId);
 
-                product.setUserCommission(jdSdkManager.getQSCommission(userInfo.getAgent(), subUnionId, product.getCommissionWl()));
+                product.setUserCommission(jdSdkManager.getQSCommission(userInfo, product));
                 //获取代理户消息模板
                 recommendContent.append(messageTempManager.getAgentProductMessageTemp(product, shortUrl));
             }
