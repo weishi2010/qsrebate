@@ -67,6 +67,7 @@
 		<mvc:interceptor>
 			<mvc:mapping path="/product/**" />
 			<mvc:mapping path="/personal/**" />
+			<mvc:mapping path="/share/**" />
 
 			<bean class="com.rebate.common.web.inteceptor.QsLoginInteceptor">
 				<property name="wxConfig" ref="wxConfig" />
