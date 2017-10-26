@@ -207,6 +207,7 @@ public class RebateJobImpl implements RebateJob {
 
         Product productQuery = new Product();
         productQuery.setProductId(rebateDetail.getProductId());
+        productQuery.setStatus(EProductStatus.PASS.getCode());
         Product product = productDao.findById(productQuery);
         if(null!=product && product.getIsRebate()==EProudctRebateType.NOT_REBATE.getCode()){
             return 0.0;

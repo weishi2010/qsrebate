@@ -2,6 +2,7 @@ package com.rebate.manager.impl;
 
 import com.rebate.domain.Product;
 import com.rebate.domain.en.EProductFreePost;
+import com.rebate.domain.en.EProudctRebateType;
 import com.rebate.domain.vo.ProductVo;
 import com.rebate.manager.MessageTempManager;
 import org.springframework.stereotype.Component;
@@ -47,8 +48,13 @@ public class MessageTempManagerImpl implements MessageTempManager {
         StringBuffer recommendContent = new StringBuffer();
         //商品名
         recommendContent.append("已成功转成返钱链接，从返利链接下单，才可以返钱哦！\n\n");
-        //可返钱
-        recommendContent.append("[Packet]预估返钱：").append(product.getUserCommission()).append("元\n\n");
+        if(null!=product && null!=product.getIsRebate() && product.getIsRebate()== EProudctRebateType.NOT_REBATE.getCode()) {
+
+            //可返钱
+            recommendContent.append("[Packet]预估返钱：").append(product.getUserCommission()).append("元\n\n");
+        }else{
+            recommendContent.append("[Packet]内购券商品不返佣!\n\n");
+        }
         //推广地址
         recommendContent.append("/:gift返钱链接：").append(mediaUrl).append("");
         return recommendContent.toString();

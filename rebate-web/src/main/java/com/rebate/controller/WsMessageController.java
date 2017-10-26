@@ -78,6 +78,10 @@ public class WsMessageController extends BaseController {
     @Autowired(required = true)
     private JDProperty jDProperty;
 
+    @Qualifier("productDao")
+    @Autowired(required = true)
+    private ProductDao productDao;
+
     /**
      * 微信公众号接口配置
      */
@@ -460,6 +464,15 @@ public class WsMessageController extends BaseController {
             if (null != products && products.size() > 0) {
 
                 Product product = products.get(0);
+
+                //查询是否已存在此商品，存在则获取其返利状态
+                Product productQuery = new Product();
+                productQuery.setProductId(product.getProductId());
+                productQuery.setStatus(EProductStatus.PASS.getCode());
+                Product productExists = productDao.findById(productQuery);
+                if(null!=productExists ){
+                    product.setIsRebate(productExists.getIsRebate());
+                }
 
 
                 //查询用户信息
