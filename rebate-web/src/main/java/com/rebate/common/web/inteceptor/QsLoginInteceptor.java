@@ -48,7 +48,7 @@ public class QsLoginInteceptor extends LoginInteceptor {
     /**
      * 用户信息COOKIE
      */
-    public static String USERINFO_COOKIE = "qs_u_i_o";
+    public static String USERINFO_COOKIE = "qs_u_i_c";
 
     /**
      * 用户信息

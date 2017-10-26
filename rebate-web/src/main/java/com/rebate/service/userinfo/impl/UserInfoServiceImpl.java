@@ -129,16 +129,16 @@ public class UserInfoServiceImpl implements UserInfoService {
     @Override
     public UserInfo getUserInfo(String openId) {
         //从缓存获取用户信息
-        UserInfo userInfo = getUserInfoCache(openId);
-        if (null != userInfo) {
-            LOG.error("[getUserInfo]userInfo cache:" + JsonUtil.toJson(userInfo));
-            return userInfo;
-        }
+//        UserInfo userInfo = getUserInfoCache(openId);
+//        if (null != userInfo) {
+//            LOG.error("[getUserInfo]userInfo cache:" + JsonUtil.toJson(userInfo));
+//            return userInfo;
+//        }
 
         //从db查询
         UserInfo userInfoQuery = new UserInfo();
         userInfoQuery.setOpenId(openId);
-        userInfo = userInfoDao.findLoginUserInfo(userInfoQuery);
+        UserInfo userInfo = userInfoDao.findLoginUserInfo(userInfoQuery);
 
         //设置缓存
         if (null != userInfo) {

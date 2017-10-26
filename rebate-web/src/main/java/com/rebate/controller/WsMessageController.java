@@ -243,7 +243,7 @@ public class WsMessageController extends BaseController {
                                     userInfoService.updateUserInfoAgent(openId,"", EAgent.SECOND_AGENT.getCode());
                                     //代理用户关注消息
                                     eventXml = agentTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), userInfo.getSubUnionId());
-                                }else if (EAgent.GENERAL_REBATE_USER.getCode() == agentType && StringUtils.isNotBlank(userInfo.getRecommendAccount())) {
+                                }else if (EAgent.GENERAL_REBATE_USER.getCode() == agentType && StringUtils.isBlank(userInfo.getRecommendAccount())) {
                                     //代理模式2-拉粉丝返利用户
                                     userInfoService.updateUserInfoAgent(openId, agentOpenId, EAgent.GENERAL_REBATE_USER.getCode());
                                     eventXml = subscribeTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
