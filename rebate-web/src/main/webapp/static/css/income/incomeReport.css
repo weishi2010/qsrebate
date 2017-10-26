@@ -61,7 +61,7 @@ textarea {
   position: absolute;
   width: 0.575rem;
   height: 0.6rem;
-  background: url("https://ystatic.qutu.com/report/image/icons/searchIcon.png") no-repeat 0 0;
+  background: url("/static/img/searchIcon.png") no-repeat 0 0;
   background-size: cover;
 }
 html,
@@ -101,7 +101,7 @@ body {
   position: absolute;
   width: 0.575rem;
   height: 0.6rem;
-  background: url("https://ystatic.qutu.com/report/image/icons/searchIcon.png") no-repeat 0 0;
+  background: url("/static/img/searchIcon.png") no-repeat 0 0;
   background-size: cover;
   z-index: 1;
 }
@@ -139,7 +139,7 @@ body {
   margin:-1rem 0 0 -1rem;
   width: 2rem;
   height: 2rem;
-  background:url("https://ystatic.qutu.com/report/image/loading.png") no-repeat 0 0;
+  background:url("/static/img/loading.png") no-repeat 0 0;
   background-size:contain;
   -webkit-animation:rotate 2s infinite;
   animation:rotate 2s infinite;
@@ -246,7 +246,7 @@ body {
   margin:7rem 0 0 -1rem;
   width: 2rem;
   height: 2rem;
-  background:url("https://ystatic.qutu.com/report/image/loading.png") no-repeat 0 0;
+  background:url("/static/img/loading.png") no-repeat 0 0;
   background-size:contain;
   -webkit-animation:rotate 2s infinite;
   animation:rotate 2s infinite;
