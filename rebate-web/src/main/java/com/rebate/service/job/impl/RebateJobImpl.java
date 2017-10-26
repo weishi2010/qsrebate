@@ -204,6 +204,14 @@ public class RebateJobImpl implements RebateJob {
      * @return
      */
     private Double addGeneralRebateUserIncomeDetail(RebateDetail rebateDetail) {
+
+        Product productQuery = new Product();
+        productQuery.setProductId(rebateDetail.getProductId());
+        Product product = productDao.findById(productQuery);
+        if(null!=product && product.getIsRebate()==EProudctRebateType.NOT_REBATE.getCode()){
+            return 0.0;
+        }
+
         //平台抽成佣金
         Double platCommission = RebateRuleUtil.computeCommission(rebateDetail.getCommission(), jDProperty.getGeneralRebateUserPlatRatio());
 
