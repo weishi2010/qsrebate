@@ -8,7 +8,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="format-detection" content="telephone=no">
     <link rel="stylesheet" href="/static/css/income/normalize.min.css" type="text/css">
-    <link rel="stylesheet" href="/static/css/income/incomeReport.css" type="text/css">
+    <link rel="stylesheet" href="/static/css/income/incomeReport.css?v1" type="text/css">
     <link rel="stylesheet" href="/static/css/income/classic.css">
     <link rel="stylesheet" href="/static/css/income/classic.date.css">
 
@@ -26,6 +26,11 @@
         <span>预计佣金:</span>
         <span class="money">$!{todayOrderSummary.commission}</span>
     </div>
+    #if($recommendUserCount)
+    <div class="recommendCount">
+            <label style="color:#59d625">粉丝：$!{recommendUserCount}</label>
+    </div>
+    #end
     <div class="totalCommissionInfo">
         <div> <h4>点击数</h4> <p>$!{todayClick}</p> </div>
         <div> <h4>订单</h4> <p>$!{todayOrderSummary.orderCount}</p> </div>

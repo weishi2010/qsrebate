@@ -2,6 +2,7 @@ package com.rebate.service.userinfo;
 
 import com.rebate.domain.Commission;
 import com.rebate.domain.UserInfo;
+import com.rebate.domain.query.UserInfoQuery;
 
 public interface UserInfoService {
     /**
@@ -43,4 +44,11 @@ public interface UserInfoService {
      * @return
      */
     Commission getUserCommission(String openId);
+
+    /**
+     * 按时间查询推荐过来的粉丝用户
+     * @param userInfoQuery
+     * @return
+     */
+    int findRecommendUserCount(UserInfoQuery userInfoQuery);
 }

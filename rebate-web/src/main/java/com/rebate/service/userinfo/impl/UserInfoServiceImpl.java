@@ -16,6 +16,7 @@ import com.rebate.domain.en.ESequence;
 import com.rebate.domain.en.ESubUnionIdPrefix;
 import com.rebate.domain.property.JDProperty;
 import com.rebate.domain.query.IncomeDetailQuery;
+import com.rebate.domain.query.UserInfoQuery;
 import com.rebate.domain.wx.WxUserInfo;
 import com.rebate.service.userinfo.UserInfoService;
 import com.rebate.service.wx.WxAccessTokenService;
@@ -156,6 +157,11 @@ public class UserInfoServiceImpl implements UserInfoService {
             commission.setTotalCommission(0.0);
         }
         return commission;
+    }
+
+    @Override
+    public int findRecommendUserCount(UserInfoQuery userInfoQuery) {
+        return userInfoDao.findRecommendUserCount(userInfoQuery);
     }
 
     /**

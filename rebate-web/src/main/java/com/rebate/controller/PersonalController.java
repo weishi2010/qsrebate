@@ -16,6 +16,7 @@ import com.rebate.domain.property.JDProperty;
 import com.rebate.domain.query.ExtractDetailQuery;
 import com.rebate.domain.query.OrderSummaryQuery;
 import com.rebate.domain.query.RebateDetailQuery;
+import com.rebate.domain.query.UserInfoQuery;
 import com.rebate.domain.vo.ExtractDetailVo;
 import com.rebate.domain.vo.RebateDetailVo;
 import com.rebate.manager.shorturl.ShortUrlManager;
@@ -266,16 +267,16 @@ public class PersonalController extends BaseController {
 
         Date startDate = null;
         Date endDate = null;
-        if(isAdmin){
-            try {
-                startDate = formatStart.parse(formatStart.format(queryDate));
+        try {
+            startDate = formatStart.parse(formatStart.format(queryDate));
 
-                calendar.setTime(queryDate);
-                calendar.add(Calendar.DATE, 1);
-                endDate = formatEnd.parse(formatEnd.format(calendar.getTime()));
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+            calendar.setTime(queryDate);
+            calendar.add(Calendar.DATE, 1);
+            endDate = formatEnd.parse(formatEnd.format(calendar.getTime()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        if(isAdmin){
 
             OrderSummaryQuery orderSummaryQuery2 = new OrderSummaryQuery();
             orderSummaryQuery2.setStartDate(startDate);
@@ -285,6 +286,14 @@ public class PersonalController extends BaseController {
                 allOrderSummary.setClickCount(shortUrlManager.getALLJDUnionUrlClick(queryDate));
                 view.addObject("allOrderSummary", allOrderSummary);
             }
+        }
+
+        if (userInfo.getAgent() == EAgent.SECOND_AGENT.getCode()) {
+            UserInfoQuery userInfoQuery = new UserInfoQuery();
+            userInfoQuery.setOpenId(userInfo.getOpenId());
+            userInfoQuery.setStartDate(startDate);
+            userInfoQuery.setEndDate(endDate);
+            view.addObject("recommendUserCount", userInfoService.findRecommendUserCount(userInfoQuery));
         }
 
         LOG.error("[agentStatistits]dayTab:"+dayTab+",size:"+list.size());

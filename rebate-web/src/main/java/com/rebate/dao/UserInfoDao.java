@@ -1,6 +1,7 @@
 package com.rebate.dao;
 
 import com.rebate.domain.UserInfo;
+import com.rebate.domain.query.UserInfoQuery;
 
 /**
  * Created by weishi on 2017/7/15.
@@ -32,4 +33,11 @@ public interface UserInfoDao {
      * @return
      */
     UserInfo findUserInfoBySubUnionId(UserInfo userInfo);
+
+    /**
+     * 按时间查询推荐过来的粉丝用户
+     * @param userInfoQuery
+     * @return
+     */
+    int findRecommendUserCount(UserInfoQuery userInfoQuery);
 }

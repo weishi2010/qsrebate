@@ -3,6 +3,7 @@
 <sqlMap namespace="UserInfo">
 
     <typeAlias alias="UserInfo" type="com.rebate.domain.UserInfo"/>
+    <typeAlias alias="UserInfoQuery" type="com.rebate.domain.query.UserInfoQuery"/>
 
     <resultMap class="UserInfo" id="UserInfoResultMap">
         <result property="id" column="id"/>
@@ -75,6 +76,9 @@
             <isNotNull property="agent" prepend=",">
                 agent = #agent#
             </isNotNull>
+            <isNotNull property="agent" prepend=",">
+                recommend_account = #recommendAccount#
+            </isNotNull>
         </dynamic>
         where open_id=#openId#
     </update>
@@ -101,5 +105,14 @@
         from user_info
         where sub_union_id=#subUnionId#
         limit 1
+    </select>
+
+    <!--根据子联盟ID查询用户信息-->
+    <select id="findRecommendUserCount" parameterClass="UserInfoQuery" resultClass="int">
+        select
+        count(1)
+        from user_info
+        where recommend_account=#openId#
+         <![CDATA[  and created>=#startDate# and created <=#endDate# ]]>
     </select>
 </sqlMap>

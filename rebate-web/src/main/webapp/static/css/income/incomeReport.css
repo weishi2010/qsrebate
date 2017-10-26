@@ -144,6 +144,14 @@ body {
   -webkit-animation:rotate 2s infinite;
   animation:rotate 2s infinite;
 }
+
+.totalCommission > .recommendCount {
+  font-size: 0.65rem;
+  color: #452200;
+  padding-bottom: 0.4rem;
+  width: 3.35rem;
+}
+
 .totalCommission > .totalCommissionDetail {
   font-size: 0;
 }
@@ -159,7 +167,7 @@ body {
 }
 .totalCommission > .totalCommissionDetail > span:last-of-type {
   position: relative;
-  font-size: 1.65rem;
+  font-size: 1.25rem;
   color: #ec4e4d;
   padding-left: 0.5rem;
 }
