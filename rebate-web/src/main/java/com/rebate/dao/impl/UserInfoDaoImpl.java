@@ -5,6 +5,8 @@ import com.rebate.dao.UserInfoDao;
 import com.rebate.domain.UserInfo;
 import com.rebate.domain.query.UserInfoQuery;
 
+import java.util.List;
+
 public class UserInfoDaoImpl extends BaseDao implements UserInfoDao {
     @Override
     public long insert(UserInfo userInfo) {
@@ -29,5 +31,10 @@ public class UserInfoDaoImpl extends BaseDao implements UserInfoDao {
     @Override
     public int findRecommendUserCount(UserInfoQuery userInfoQuery) {
         return (int) queryForObject("UserInfo.findRecommendUserCount",userInfoQuery);
+    }
+
+    @Override
+    public List<UserInfo> findAllUsers(UserInfo userInfo) {
+        return ( List<UserInfo>) queryForList("UserInfo.findAllUsers",userInfo);
     }
 }

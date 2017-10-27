@@ -2,9 +2,13 @@ package com.rebate.service.userinfo;
 
 import com.rebate.domain.Commission;
 import com.rebate.domain.UserInfo;
+import com.rebate.domain.query.RecommendUserInfoQuery;
 import com.rebate.domain.query.UserInfoQuery;
 
 public interface UserInfoService {
+
+    public void sysRecommendUser();
+
     /**
      * 更新代理状态
      * @param openId
@@ -47,8 +51,8 @@ public interface UserInfoService {
 
     /**
      * 按时间查询推荐过来的粉丝用户
-     * @param userInfoQuery
+     * @param recommendUserInfoQuery
      * @return
      */
-    int findRecommendUserCount(UserInfoQuery userInfoQuery);
+    int findRecommendUserCount(RecommendUserInfoQuery recommendUserInfoQuery);
 }

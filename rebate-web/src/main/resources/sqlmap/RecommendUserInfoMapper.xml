@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="RecommendUserInfo">
+
+    <typeAlias alias="RecommendUserInfo" type="com.rebate.domain.RecommendUserInfo"/>
+    <typeAlias alias="RecommendUserInfoQuery" type="com.rebate.domain.query.RecommendUserInfoQuery"/>
+
+    <resultMap class="RecommendUserInfo" id="RecommendUserInfoResultMap">
+        <result property="id" column="id"/>
+        <result property="openId" column="open_id"/>
+        <result property="recommendAccount" column="recommend_account"/>
+        <result property="status" column="status"/>
+        <result property="created" column="created"/>
+        <result property="modified" column="modified"/>
+    </resultMap>
+
+    <sql id="fields">
+       id,
+        open_id,
+        recommend_account,
+        status,
+        created,
+        modified
+    </sql>
+
+    <insert id="insert" parameterClass="RecommendUserInfo">
+        insert into recommend_user_info
+        (
+        open_id,
+        recommend_account,
+        status,
+        created,
+        modified
+        )
+        values
+        (
+        #openId#,
+        #recommendAccount#,
+        #status#,
+        now(),
+        now()
+        )
+        <selectKey resultClass="long" keyProperty="id">
+            SELECT @@IDENTITY as id
+        </selectKey>
+    </insert>
+
+    <update id="update">
+        update recommend_user_info
+        set  modified=now()
+        <dynamic>
+            <isNotNull property="recommendAccount" prepend=",">
+                recommend_account = #recommendAccount#
+            </isNotNull>
+        </dynamic>
+        where open_id=#openId#
+    </update>
+
+    <!--根据推荐者及被推荐者查询-->
+    <select id="findRecommendUserInfo" parameterClass="RecommendUserInfoQuery" resultMap="RecommendUserInfoResultMap">
+        select
+        <include refid="fields"/>
+        from recommend_user_info
+        where open_id=#openId# and recommend_account=#recommendAccount#
+        limit 1
+    </select>
+
+    <!--根据时间及推荐账号查询带来的推荐用户-->
+    <select id="findRecommendUserCount" parameterClass="RecommendUserInfoQuery" resultClass="int">
+        select
+        count(1)
+        from recommend_user_info
+        where recommend_account=#recommendAccount#
+         <![CDATA[  and created>=#startDate# and created <=#endDate# ]]>
+    </select>
+</sqlMap>

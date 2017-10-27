@@ -3,6 +3,8 @@ package com.rebate.dao;
 import com.rebate.domain.UserInfo;
 import com.rebate.domain.query.UserInfoQuery;
 
+import java.util.List;
+
 /**
  * Created by weishi on 2017/7/15.
  */
@@ -40,4 +42,6 @@ public interface UserInfoDao {
      * @return
      */
     int findRecommendUserCount(UserInfoQuery userInfoQuery);
+
+    List<UserInfo> findAllUsers(UserInfo userInfo);
 }

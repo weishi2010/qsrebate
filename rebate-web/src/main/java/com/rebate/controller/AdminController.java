@@ -89,6 +89,10 @@ public class AdminController extends BaseController {
     @Autowired(required = true)
     private WxService wxService;
 
+    @Qualifier("userInfoService")
+    @Autowired(required = true)
+    private UserInfoService userInfoService;
+
     @RequestMapping({"", "/", "/importProducts.json"})
     public ResponseEntity<?> importProducts(HttpServletRequest request, String productIds) {
         //导入普通返利商品
@@ -213,4 +217,13 @@ public class AdminController extends BaseController {
         return view;
     }
 
+    @RequestMapping({"", "/", "/sysRecommendUser.json"})
+    public ResponseEntity<?> sysRecommendUser() {
+
+        userInfoService.sysRecommendUser();
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("success", true);
+        return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
+    }
 }

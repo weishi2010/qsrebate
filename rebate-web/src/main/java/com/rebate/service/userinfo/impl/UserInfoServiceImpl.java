@@ -6,9 +6,11 @@ import com.rebate.common.util.JsonUtil;
 import com.rebate.common.util.RedisUtil;
 import com.rebate.dao.CommissionDao;
 import com.rebate.dao.IncomeDetailDao;
+import com.rebate.dao.RecommendUserInfoDao;
 import com.rebate.dao.UserInfoDao;
 import com.rebate.domain.Commission;
 import com.rebate.domain.IncomeDetail;
+import com.rebate.domain.RecommendUserInfo;
 import com.rebate.domain.UserInfo;
 import com.rebate.domain.en.EAgent;
 import com.rebate.domain.en.EIncomeType;
@@ -16,6 +18,7 @@ import com.rebate.domain.en.ESequence;
 import com.rebate.domain.en.ESubUnionIdPrefix;
 import com.rebate.domain.property.JDProperty;
 import com.rebate.domain.query.IncomeDetailQuery;
+import com.rebate.domain.query.RecommendUserInfoQuery;
 import com.rebate.domain.query.UserInfoQuery;
 import com.rebate.domain.wx.WxUserInfo;
 import com.rebate.service.userinfo.UserInfoService;
@@ -27,6 +30,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service("userInfoService")
 public class UserInfoServiceImpl implements UserInfoService {
@@ -57,18 +62,42 @@ public class UserInfoServiceImpl implements UserInfoService {
     @Autowired(required = false)
     private WxAccessTokenService wxAccessTokenService;
 
-
     @Qualifier("sequenceUtil")
     @Autowired(required = true)
     private SequenceUtil sequenceUtil;
 
 
-    @Qualifier("jDProperty")
+    @Qualifier("recommendUserInfoDao")
     @Autowired(required = true)
-    private JDProperty jDProperty;
+    private RecommendUserInfoDao recommendUserInfoDao;
 
     @Override
-    public UserInfo registUserInfo(String openId,String recommendOpenId, Integer angent, boolean isAward) {
+    public void sysRecommendUser() {
+
+        List<UserInfo> list = userInfoDao.findAllUsers(new UserInfo());
+        for (UserInfo userInfo : list) {
+            if (StringUtils.isNotBlank(userInfo.getRecommendAccount()) && userInfo.getRecommendAccount().equalsIgnoreCase(userInfo.getOpenId())) {
+                RecommendUserInfo recommendUserInfo = new RecommendUserInfo();
+                recommendUserInfo.setOpenId(userInfo.getOpenId());
+                recommendUserInfo.setRecommendAccount(userInfo.getRecommendAccount());
+                recommendUserInfo.setStatus(0);
+
+                RecommendUserInfoQuery recommendUserInfoQuery = new RecommendUserInfoQuery();
+                recommendUserInfoQuery.setRecommendAccount(userInfo.getRecommendAccount());
+                recommendUserInfoQuery.setOpenId(userInfo.getOpenId());
+                RecommendUserInfo existsRecommendUserInfo = recommendUserInfoDao.findRecommendUserInfo(recommendUserInfoQuery);
+                if (null == existsRecommendUserInfo) {
+                    recommendUserInfoDao.insert(recommendUserInfo);
+                } else {
+                    recommendUserInfoDao.update(recommendUserInfo);
+                }
+            }
+        }
+
+    }
+
+    @Override
+    public UserInfo registUserInfo(String openId, String recommendOpenId, Integer angent, boolean isAward) {
         UserInfo userInfo = null;
         WxUserInfo wxUserInfo = wxService.getWxApiUserInfo(wxAccessTokenService.getApiAccessToken().getAccessToken(), openId);
         if (null != wxUserInfo) {
@@ -83,16 +112,20 @@ public class UserInfoServiceImpl implements UserInfoService {
             userInfo.setWxImage(wxUserInfo.getHeadimgurl());
             String subUnionId = ESubUnionIdPrefix.getSubUnionId(ESubUnionIdPrefix.JD.getCode(), sequenceUtil.get(ESequence.SUB_UNION_ID.getSequenceName()));
             userInfo.setSubUnionId(subUnionId);
+
             //如果推荐人为自己，则不设置推荐人
-            if(StringUtils.isNotBlank(recommendOpenId) && !recommendOpenId.equalsIgnoreCase(wxUserInfo.getOpenid())){
+            if (StringUtils.isNotBlank(recommendOpenId) && !recommendOpenId.equalsIgnoreCase(openId)) {
                 userInfo.setRecommendAccount(recommendOpenId);
-            }else{
+                //添加推荐记录，即拉粉记录
+                addRecommendUser(openId, recommendOpenId);
+            } else {
                 userInfo.setRecommendAccount("");
             }
-            try{
+
+            try {
 
                 userInfoDao.insert(userInfo);
-            }catch (Exception e){
+            } catch (Exception e) {
                 userInfo.setNickName(wxUserInfo.getOpenid());
                 userInfoDao.insert(userInfo);
             }
@@ -117,12 +150,20 @@ public class UserInfoServiceImpl implements UserInfoService {
 
         return userInfo;
     }
+
     @Override
-    public void updateUserInfoAgent(String openId,String recommendOpenId,Integer agent){
-        UserInfo  userInfo = new UserInfo();
+    public void updateUserInfoAgent(String openId, String recommendOpenId, Integer agent) {
+        UserInfo userInfo = new UserInfo();
         userInfo.setOpenId(openId);
         userInfo.setAgent(agent);
-        userInfo.setRecommendAccount(recommendOpenId);
+        //如果推荐人为自己，则不设置推荐人
+        if (StringUtils.isNotBlank(recommendOpenId) && !recommendOpenId.equalsIgnoreCase(openId)) {
+            userInfo.setRecommendAccount(recommendOpenId);
+            updateRecommendUser(openId, recommendOpenId);
+        } else {
+            userInfo.setRecommendAccount("");
+        }
+
         userInfoDao.update(userInfo);
     }
 
@@ -160,8 +201,8 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
-    public int findRecommendUserCount(UserInfoQuery userInfoQuery) {
-        return userInfoDao.findRecommendUserCount(userInfoQuery);
+    public int findRecommendUserCount(RecommendUserInfoQuery recommendUserInfoQuery) {
+        return recommendUserInfoDao.findRecommendUserCount(recommendUserInfoQuery);
     }
 
     /**
@@ -175,8 +216,8 @@ public class UserInfoServiceImpl implements UserInfoService {
         IncomeDetailQuery incomeDetailQuery = new IncomeDetailQuery();
         incomeDetailQuery.setOpenId(openId);
         incomeDetailQuery.setTypeList(EIncomeType.REGIST.getCode() + ","
-                + EIncomeType.FIRST_ORDER_REBATE.getCode()+ "," + EIncomeType.FIRST_AGENT_REBATE.getCode()
-                + EIncomeType.SECOND_ORDER_REBATE.getCode()+ "," + EIncomeType.SECOND_AGENT_REBATE.getCode()
+                + EIncomeType.FIRST_ORDER_REBATE.getCode() + "," + EIncomeType.FIRST_AGENT_REBATE.getCode()
+                + EIncomeType.SECOND_ORDER_REBATE.getCode() + "," + EIncomeType.SECOND_AGENT_REBATE.getCode()
                 + EIncomeType.GENERAL_ORDER_REBATE.getCode());
         Double income = incomeDetailDao.findIncomeStatistisByType(incomeDetailQuery);
         if (null == income) {
@@ -206,6 +247,44 @@ public class UserInfoServiceImpl implements UserInfoService {
         }
     }
     //------------------------------private methods----------------------------------------
+
+    /**
+     * 添加推荐记录
+     *
+     * @param openId
+     * @param recommendOpenId
+     */
+    private void addRecommendUser(String openId, String recommendOpenId) {
+        if (StringUtils.isNotBlank(recommendOpenId) && !recommendOpenId.equalsIgnoreCase(openId)) {
+            RecommendUserInfo recommendUserInfo = new RecommendUserInfo();
+            recommendUserInfo.setOpenId(openId);
+            recommendUserInfo.setRecommendAccount(recommendOpenId);
+            recommendUserInfo.setStatus(0);
+
+            RecommendUserInfoQuery recommendUserInfoQuery = new RecommendUserInfoQuery();
+            recommendUserInfoQuery.setRecommendAccount(recommendOpenId);
+            recommendUserInfoQuery.setOpenId(openId);
+            RecommendUserInfo existsRecommendUserInfo = recommendUserInfoDao.findRecommendUserInfo(recommendUserInfoQuery);
+            if (null == existsRecommendUserInfo) {
+                recommendUserInfoDao.insert(recommendUserInfo);
+            }
+        }
+    }
+
+    /**
+     * 更新推荐记录
+     *
+     * @param openId
+     * @param recommendOpenId
+     */
+    private void updateRecommendUser(String openId, String recommendOpenId) {
+        if (StringUtils.isNotBlank(recommendOpenId) && !recommendOpenId.equalsIgnoreCase(openId)) {
+            RecommendUserInfo recommendUserInfo = new RecommendUserInfo();
+            recommendUserInfo.setOpenId(openId);
+            recommendUserInfo.setRecommendAccount(recommendOpenId);
+            recommendUserInfoDao.update(recommendUserInfo);
+        }
+    }
 
     /**
      * 查询用户缓存

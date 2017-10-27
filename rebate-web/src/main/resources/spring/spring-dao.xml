@@ -67,4 +67,8 @@
     <bean id="agentRelationDao" class="com.rebate.dao.impl.AgentRelationDaoImpl">
         <property name="dataSource" ref="dataSource"/>
     </bean>
+
+    <bean id="recommendUserInfoDao" class="com.rebate.dao.impl.RecommendUserInfoDaoImpl">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
 </beans>

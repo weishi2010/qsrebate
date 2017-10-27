@@ -13,10 +13,7 @@ import com.rebate.domain.en.EExtractCode;
 import com.rebate.domain.en.EExtractStatus;
 import com.rebate.domain.en.EPromotionTab;
 import com.rebate.domain.property.JDProperty;
-import com.rebate.domain.query.ExtractDetailQuery;
-import com.rebate.domain.query.OrderSummaryQuery;
-import com.rebate.domain.query.RebateDetailQuery;
-import com.rebate.domain.query.UserInfoQuery;
+import com.rebate.domain.query.*;
 import com.rebate.domain.vo.ExtractDetailVo;
 import com.rebate.domain.vo.RebateDetailVo;
 import com.rebate.manager.shorturl.ShortUrlManager;
@@ -289,11 +286,11 @@ public class PersonalController extends BaseController {
         }
 
         if (userInfo.getAgent() == EAgent.SECOND_AGENT.getCode()) {
-            UserInfoQuery userInfoQuery = new UserInfoQuery();
-            userInfoQuery.setOpenId(userInfo.getOpenId());
-            userInfoQuery.setStartDate(startDate);
-            userInfoQuery.setEndDate(endDate);
-            view.addObject("recommendUserCount", userInfoService.findRecommendUserCount(userInfoQuery));
+            RecommendUserInfoQuery recommendUserInfoQuery = new RecommendUserInfoQuery();
+            recommendUserInfoQuery.setRecommendAccount(userInfo.getOpenId());
+            recommendUserInfoQuery.setStartDate(startDate);
+            recommendUserInfoQuery.setEndDate(endDate);
+            view.addObject("recommendUserCount", userInfoService.findRecommendUserCount(recommendUserInfoQuery));
         }
 
         LOG.error("[agentStatistits]dayTab:"+dayTab+",size:"+list.size());

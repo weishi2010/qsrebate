@@ -115,4 +115,12 @@
         where recommend_account=#openId#
          <![CDATA[  and created>=#startDate# and created <=#endDate# ]]>
     </select>
+
+
+    <!--根据子联盟ID查询用户信息-->
+    <select id="findAllUsers" parameterClass="UserInfo" resultMap="UserInfoResultMap">
+        select
+        <include refid="fields"/>
+        from user_info
+    </select>
 </sqlMap>
