@@ -482,8 +482,10 @@ public class WsMessageController extends BaseController {
                 productQuery.setProductId(product.getProductId());
                 productQuery.setStatus(EProductStatus.PASS.getCode());
                 Product productExists = productDao.findById(productQuery);
-                if(null!=productExists ){
+                if(null!=productExists){
                     product.setIsRebate(productExists.getIsRebate());
+                }else{
+                    product.setIsRebate(EProudctRebateType.REBATE.getCode());
                 }
 
 
@@ -492,7 +494,6 @@ public class WsMessageController extends BaseController {
                 userInfoQuery.setSubUnionId(subUnionId);
                 UserInfo userInfo = userInfoDao.findUserInfoBySubUnionId(userInfoQuery);
 
-                LOG.error("getRecommendContent product:" + JsonUtil.toJson(product));
                 String shortUrl = jdSdkManager.getShortPromotinUrl(product.getProductId(), subUnionId);
 
                 product.setUserCommission(jdSdkManager.getQSCommission(userInfo, product));

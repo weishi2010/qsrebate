@@ -84,7 +84,7 @@ public class JdSdkManagerImpl implements JdSdkManager {
             userCommission = computeSecondAgentCommission(userInfo.getSubUnionId(),product.getCommissionWl());
         }else{
             //普通返利用户
-            computeGeneralRebateUserCommission(userInfo,product);
+            userCommission = computeGeneralRebateUserCommission(userInfo,product);
         }
 
         return userCommission;
@@ -96,7 +96,7 @@ public class JdSdkManagerImpl implements JdSdkManager {
      * @return
      */
     private Double computeGeneralRebateUserCommission(UserInfo userInfo,Product product){
-        if(null!=product && product.getIsRebate()==EProudctRebateType.NOT_REBATE.getCode()){
+        if(null!=product && null!=product.getIsRebate() && product.getIsRebate()==EProudctRebateType.NOT_REBATE.getCode()){
             return 0.0;
         }
         Double agentCommission = 0.0;
@@ -113,8 +113,11 @@ public class JdSdkManagerImpl implements JdSdkManager {
         }else{
             //平台抽成佣金
             platCommission = RebateRuleUtil.computeCommission(commission, jDProperty.getGeneralRebateUserPlatRatio());
+
+            agentCommission = 0.0;
         }
 
+        LOG.error("computeGeneralRebateUserCommission,commission:"+commission+",platCommission:"+platCommission+",agentCommission:"+agentCommission);
         //给返利用户返佣金
         Double userCommission = new BigDecimal(commission + "").subtract(new BigDecimal(platCommission + "")).subtract(new BigDecimal(agentCommission + "")).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
         return userCommission;

@@ -48,7 +48,7 @@ public class MessageTempManagerImpl implements MessageTempManager {
         StringBuffer recommendContent = new StringBuffer();
         //商品名
         recommendContent.append("已成功转成返钱链接，从返利链接下单，才可以返钱哦！\n\n");
-        if(null!=product && null!=product.getIsRebate() && product.getIsRebate()== EProudctRebateType.NOT_REBATE.getCode()) {
+        if (null != product && null != product.getIsRebate() && product.getIsRebate() != EProudctRebateType.NOT_REBATE.getCode()) {
 
             //可返钱
             recommendContent.append("[Packet]预估返钱：").append(product.getUserCommission()).append("元\n\n");
