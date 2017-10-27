@@ -61,7 +61,15 @@
         select
         <include refid="fields"/>
         from recommend_user_info
-        where open_id=#openId# and recommend_account=#recommendAccount#
+        <dynamic prepend="where">
+            <isNotNull property="openId" prepend="and">
+                open_id=#openId#
+            </isNotNull>
+
+            <isNotNull property="recommendAccount" prepend="and">
+                recommend_account = #recommendAccount#
+            </isNotNull>
+        </dynamic>
         limit 1
     </select>
 

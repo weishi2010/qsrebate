@@ -43,7 +43,8 @@ public class RecommendUserInfoDaoTest extends AbstractJUnit4SpringContextTests {
         recommendUserInfo.setStatus(0);
 
         RecommendUserInfoQuery recommendUserInfoQuery = new RecommendUserInfoQuery();
-        recommendUserInfoQuery.setRecommendAccount("weishi2010");
+        recommendUserInfoQuery.setRecommendAccount("weishia2010");
+
         RecommendUserInfo existsRecommendUserInfo = recommendUserInfoDao.findRecommendUserInfo(recommendUserInfoQuery);
         if (null == existsRecommendUserInfo) {
             recommendUserInfoDao.insert(recommendUserInfo);

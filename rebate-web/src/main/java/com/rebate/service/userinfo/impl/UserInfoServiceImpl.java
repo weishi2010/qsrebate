@@ -76,7 +76,7 @@ public class UserInfoServiceImpl implements UserInfoService {
 
         List<UserInfo> list = userInfoDao.findAllUsers(new UserInfo());
         for (UserInfo userInfo : list) {
-            if (StringUtils.isNotBlank(userInfo.getRecommendAccount()) && userInfo.getRecommendAccount().equalsIgnoreCase(userInfo.getOpenId())) {
+            if (StringUtils.isNotBlank(userInfo.getRecommendAccount()) && !userInfo.getRecommendAccount().equalsIgnoreCase(userInfo.getOpenId())) {
                 RecommendUserInfo recommendUserInfo = new RecommendUserInfo();
                 recommendUserInfo.setOpenId(userInfo.getOpenId());
                 recommendUserInfo.setRecommendAccount(userInfo.getRecommendAccount());

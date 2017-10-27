@@ -66,6 +66,10 @@ public class RebateJobImpl implements RebateJob {
     @Autowired(required = true)
     private JDProperty jDProperty;
 
+    @Qualifier("recommendUserInfoDao")
+    @Autowired(required = true)
+    private RecommendUserInfoDao recommendUserInfoDao;
+
     @Override
     public void freshProducts() {
         int page = 1;
@@ -214,7 +218,11 @@ public class RebateJobImpl implements RebateJob {
         }
         Double agentCommission = 0.0;
         Double platCommission = null;
-        if (StringUtils.isNotBlank(userInfo.getRecommendAccount())) {
+
+        RecommendUserInfoQuery recommendUserInfoQuery = new RecommendUserInfoQuery();
+        recommendUserInfoQuery.setOpenId(userInfo.getOpenId());
+        RecommendUserInfo existsRecommendUserInfo = recommendUserInfoDao.findRecommendUserInfo(recommendUserInfoQuery);
+        if (null!=existsRecommendUserInfo && StringUtils.isNotBlank(existsRecommendUserInfo.getRecommendAccount())) {
             //代理模式2的分成
             //平台抽成佣金
             platCommission = RebateRuleUtil.computeCommission(rebateDetail.getCommission(), jDProperty.getSencondAgentPlatRatio());
