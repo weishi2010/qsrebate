@@ -1,17 +1,22 @@
 package com.rebate.manager.impl;
 
+import com.rebate.common.util.JsonUtil;
 import com.rebate.domain.Product;
 import com.rebate.domain.en.EProductFreePost;
 import com.rebate.domain.en.EProudctRebateType;
 import com.rebate.domain.vo.ProductVo;
 import com.rebate.manager.MessageTempManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component("messageTempManager")
 public class MessageTempManagerImpl implements MessageTempManager {
+    private static final Logger LOG = LoggerFactory.getLogger(MessageTempManagerImpl.class);
 
     @Override
     public String getAgentProductMessageTemp(ProductVo productVo, String mediaUrl) {
+        LOG.error("getAgentProductMessageTemp,productVo:"+ JsonUtil.toJson(productVo));
         StringBuffer content = new StringBuffer();
         StringBuffer promotionPre = new StringBuffer();
 
@@ -31,7 +36,7 @@ public class MessageTempManagerImpl implements MessageTempManager {
         //可返钱
         content.append("◆原价：").append(productVo.getOriginalPrice()).append("元\n");
 
-        if (null != productVo.getCouponPrice() && productVo.getCouponPrice() > 0) {
+        if (null != productVo.getProductCoupon() && productVo.getProductCoupon().getCouponPrice() > 0) {
             content.append("◆券后价：").append(productVo.getCouponPrice()).append("元\n\n");
         }
 
