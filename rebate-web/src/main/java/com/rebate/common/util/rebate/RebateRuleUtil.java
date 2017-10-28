@@ -57,7 +57,7 @@ public class RebateRuleUtil {
      */
     public static double computeCommission(Double commission,Double commissionRatio) {
         double platformCommission = commissionRatio * commission;
-        return new BigDecimal(platformCommission).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+        return new BigDecimal(platformCommission+"").setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
     }
 
 }
