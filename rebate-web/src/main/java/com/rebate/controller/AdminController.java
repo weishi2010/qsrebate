@@ -1,5 +1,6 @@
 package com.rebate.controller;
 
+import com.rebate.common.util.EncodeUtils;
 import com.rebate.common.util.JsonUtil;
 import com.rebate.common.util.RequestUtils;
 import com.rebate.common.util.Sha1Util;
@@ -217,10 +218,120 @@ public class AdminController extends BaseController {
         return view;
     }
 
+    @RequestMapping({"", "/", "/manager"})
+    public ModelAndView manager(HttpServletRequest request) {
+        ModelAndView view = new ModelAndView(VIEW_PREFIX+ "/admin/index");
+        return view;
+    }
+
     @RequestMapping({"", "/", "/sysRecommendUser.json"})
     public ResponseEntity<?> sysRecommendUser() {
 
         userInfoService.sysRecommendUser();
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("success", true);
+        return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
+    }
+
+    @RequestMapping({"", "/", "/getProducts.json"})
+    public ResponseEntity<?> getProducts(HttpServletRequest request,Integer page, Integer pageSize, Integer couponType,String productName,Long productId) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        ProductQuery query = new ProductQuery();
+        if (StringUtils.isNotBlank(productName)) {
+            query.setName(EncodeUtils.urlDecode(productName));
+        }
+        if(null!=productId){
+            query.setProductId(productId);
+        }
+        if(null!=couponType){
+            query.setCouponType(couponType);
+        }
+        if(null==page){
+            page = 1;
+        }
+        if(null==pageSize){
+            pageSize = 20;
+        }
+
+        query.setIndex(page);
+        query.setPageSize(pageSize);
+        PaginatedArrayList<ProductVo> products = productService.findProductList(query,null);
+        map.put("products", products);
+        map.put("page", page);
+        map.put("totalItem", products.getTotalItem());
+        map.put("success",true);
+        return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
+    }
+
+    /**
+     * 批量置顶
+     * @param productId
+     * @return
+     */
+    @RequestMapping({"", "/", "/findProduct.json"})
+    public ResponseEntity<?> findProduct(Long productId) {
+
+        ProductVo product = productService.findProduct(productId);
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("success", true);
+        map.put("product", product);
+
+        return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
+    }
+
+    /**
+     * 批量置顶
+     * @param productIds
+     * @return
+     */
+    @RequestMapping({"", "/", "/batchResetTop.json"})
+    public ResponseEntity<?> batchResetTop(String productIds) {
+
+        Integer sortWeight = 10000;
+        ProductQuery productQuery = new ProductQuery();
+        productQuery.setSortWeight(sortWeight);
+        productQuery.setProductIds(productIds);
+        productService.batchResetProductSortWeight(productQuery);
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("success", true);
+        return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
+    }
+
+    /**
+     * 取消置顶
+     * @param productIds
+     * @return
+     */
+    @RequestMapping({"", "/", "/batchResetCancel.json"})
+    public ResponseEntity<?> batchResetCancel(String productIds) {
+
+        Integer sortWeight = 0;
+        ProductQuery productQuery = new ProductQuery();
+        productQuery.setSortWeight(sortWeight);
+        productQuery.setProductIds(productIds);
+        productService.batchResetProductSortWeight(productQuery);
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("success", true);
+        return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
+    }
+
+    /**
+     * 批量沉底
+     * @param productIds
+     * @return
+     */
+    @RequestMapping({"", "/", "/batchResetBottom.json"})
+    public ResponseEntity<?> batchResetBottom(String productIds) {
+        Integer sortWeight = -10000;
+
+        ProductQuery productQuery = new ProductQuery();
+        productQuery.setSortWeight(sortWeight);
+        productQuery.setProductIds(productIds);
+        productService.batchResetProductSortWeight(productQuery);
 
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("success", true);
