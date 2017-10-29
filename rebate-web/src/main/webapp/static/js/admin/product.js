@@ -5,7 +5,7 @@ adminModule.controller("productController", ["$scope", "$http", function ($scope
         productName= $("#search_productName").val();
         productId =$("#search_productId").val();
         couponType =$("#search_couponType").val();
-        $http.get("/admin/getProducts.json",{params:{productName: encodeURIComponent(productName),productId:productId,couponType:couponType}}).success(function (response) {
+        $http.get("/admin/getProducts.json",{params:{productName: encodeURIComponent(productName),productId:productId,couponType:couponType,r:Math.random()}}).success(function (response) {
             if (response.success) {
                 $scope.products = response.products;
             }
@@ -44,7 +44,7 @@ adminModule.controller("productController", ["$scope", "$http", function ($scope
         }
         productIds = array.join(",");
 
-        $http.get("/admin/batchResetTop.json",{params:{productIds:productIds}}).success(function (response) {
+        $http.get("/admin/batchResetTop.json",{params:{productIds:productIds,r:Math.random()}}).success(function (response) {
             if (response.success) {
                 $scope.query();
             }
@@ -67,7 +67,7 @@ adminModule.controller("productController", ["$scope", "$http", function ($scope
         }
         productIds = array.join(",");
 
-        $http.get("/admin/batchResetCancel.json",{params:{productIds:productIds}}).success(function (response) {
+        $http.get("/admin/batchResetCancel.json",{params:{productIds:productIds,r:Math.random()}}).success(function (response) {
             if (response.success) {
                 $scope.query();
             }
@@ -75,26 +75,12 @@ adminModule.controller("productController", ["$scope", "$http", function ($scope
 
     }
 
-    $scope.save = function () {
-        systemName= $("#systemName").val();
-        accountType= $("#accountType").val();
-            $http.get('/system/add',{params:{'name':systemName,'accountType':accountType}}).success(function(response){
-            var result = response.data;
-            if (result.success) {
-                $("#addSystemModal").modal("hide");
-            }else{
-                alert("系统异常，请稍后重试!")
-            }
-
-        });
-    }
-
     $scope.edit = function (productId) {
         $("#editBtn"+productId).attr("data-toggle", "modal");
         $("#editBtn"+productId).attr("data-target", "#editProductModal");
         $scope.product = [];
         $scope.sortWeight = 0;
-        $http.get("/admin/findProduct.json",{params:{productId:productId}}).success(function (response) {
+        $http.get("/admin/findProduct.json",{params:{productId:productId,r:Math.random()}}).success(function (response) {
             if (response.success) {
                 $scope.product = response.product;
                 $scope.sortWeight =$scope.product.sortWeight;
@@ -109,7 +95,7 @@ adminModule.controller("productController", ["$scope", "$http", function ($scope
             return;
         }
 
-        $http.get("/admin/updateProduct.json",{params:{productId:productId,sortWeight:sortWeight}}).success(function (response) {
+        $http.get("/admin/updateProduct.json",{params:{productId:productId,sortWeight:sortWeight,r:Math.random()}}).success(function (response) {
             if (response.success) {
                 $scope.query();
                 $("#editProductModal").modal("hide");

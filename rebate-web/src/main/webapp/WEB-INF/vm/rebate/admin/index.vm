@@ -45,7 +45,7 @@
     <script src="/static/lib/angular/angular.js"></script>
     <script src="/static/lib/angular/angular-route.js"></script>
     <script src="/static/js/admin/index.js" ></script>
-    <script src="/static/js/admin/product.js" ></script>
+    <script src="/static/js/admin/product.js?v2" ></script>
 
 </head>
 
