@@ -24,4 +24,8 @@ public class ProductQuery extends Product{
     @Getter
     @Setter
     private String secondCategoryList;
+
+    @Getter
+    @Setter
+    private String productIds;
 }

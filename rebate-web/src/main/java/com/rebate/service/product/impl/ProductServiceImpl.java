@@ -53,6 +53,11 @@ public class ProductServiceImpl implements ProductService {
     private ProductCouponDao productCouponDao;
 
     @Override
+    public void update(Product product) {
+        productDao.update(product);
+    }
+
+    @Override
     public void importProducts(String products) {
         if (StringUtils.isBlank(products)) {
             return;
@@ -145,6 +150,7 @@ public class ProductServiceImpl implements ProductService {
                 product.setStatus(EProductStatus.PASS.getCode());
                 product.setCouponType(EProudctCouponType.COUPON.getCode());
                 product.setCouponPrice(productCoupon.getCouponPrice());
+                product.setSortWeight(0);
                 //计算优惠券商品返利规则
                 product.setIsRebate(RebateRuleUtil.couponProductRebateRule(product.getCommissionWl()));
 
@@ -237,6 +243,11 @@ public class ProductServiceImpl implements ProductService {
             LOG.error("findProduct error!skuId:" + skuId, e);
         }
         return vo;
+    }
+
+    @Override
+    public long batchResetProductSortWeight(ProductQuery productQuery) {
+        return productDao.batchResetProductSortWeight( productQuery);
     }
 
 //------------------------------------------------------------------------------

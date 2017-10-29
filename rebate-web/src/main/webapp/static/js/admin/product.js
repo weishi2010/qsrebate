@@ -92,19 +92,27 @@ adminModule.controller("productController", ["$scope", "$http", function ($scope
     $scope.edit = function (productId) {
         $("#editBtn"+productId).attr("data-toggle", "modal");
         $("#editBtn"+productId).attr("data-target", "#editProductModal");
-
+        $scope.product = [];
+        $scope.sortWeight = 0;
         $http.get("/admin/findProduct.json",{params:{productId:productId}}).success(function (response) {
             if (response.success) {
                 $scope.product = response.product;
+                $scope.sortWeight =$scope.product.sortWeight;
             }
         });
     }
 
-    $scope.update = function () {
-        $http.get("/system/update").then(function (response) {
-            var result = response.data;
-            if (result.success) {
+    $scope.update = function (productId) {
+        sortWeight = $("#sortWeight").val();
+        if(!sortWeight){
+            alert("请输入完整参数!")
+            return;
+        }
 
+        $http.get("/admin/updateProduct.json",{params:{productId:productId,sortWeight:sortWeight}}).success(function (response) {
+            if (response.success) {
+                $scope.query();
+                $("#editProductModal").modal("hide");
             }
         });
     }

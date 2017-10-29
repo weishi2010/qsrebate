@@ -7,9 +7,6 @@ import com.rebate.domain.query.ProductQuery;
 
 import java.util.List;
 
-/**
- * Created by weishi on 2017/7/13.
- */
 public class ProductDaoImpl extends BaseDao implements ProductDao {
     @Override
     public void insert(Product product) {
@@ -39,5 +36,10 @@ public class ProductDaoImpl extends BaseDao implements ProductDao {
     @Override
     public int findProductsCount(ProductQuery productQuery) {
         return (Integer)queryForObject("Product.findProductsCount",productQuery);
+    }
+
+    @Override
+    public int batchResetProductSortWeight(ProductQuery productQuery) {
+        return update("Product.batchResetProductSortWeight",productQuery);
     }
 }

@@ -48,4 +48,7 @@ public interface ProductDao {
      * @return
      */
     int findProductsCount(ProductQuery productQuery);
+
+    int batchResetProductSortWeight(ProductQuery productQuery);
+
 }

@@ -36,6 +36,7 @@
         <result property="materialUrl" column="material_url"/>
         <result property="couponType" column="coupon_type"/>
         <result property="shopId" column="shop_id"/>
+        <result property="sortWeight" column="sort_weight"/>
         <result property="startDate" column="start_date"/>
         <result property="endDate" column="end_date"/>
         <result property="created" column="created"/>
@@ -72,6 +73,7 @@
         free_post,
         material_url,
         shop_id,
+        sort_weight,
         start_date,
         end_date,
         created,
@@ -203,6 +205,9 @@
             <isNotNull property="status" prepend=",">
                 status = #status#
             </isNotNull>
+            <isNotNull property="sortWeight" prepend=",">
+                sort_weight = #sortWeight#
+            </isNotNull>
             <isNotNull property="originalPrice" prepend=",">
                 original_price = #originalPrice#
             </isNotNull>
@@ -234,6 +239,12 @@
             </isNotNull>
         </dynamic>
         where product_id=#productId#
+    </update>
+
+    <update id="batchResetProductSortWeight" parameterClass="ProductQuery">
+        update product
+        set  modified=now(),sort_weight=#sortWeight#
+        where product_id in ($productIds$)
     </update>
 
     <delete id="deleteByProductId" parameterClass="long">

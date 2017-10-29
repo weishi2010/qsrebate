@@ -337,4 +337,25 @@ public class AdminController extends BaseController {
         map.put("success", true);
         return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
     }
+
+    /**
+     * 商品更新
+     * @param productId
+     * @param sortWeight
+     * @return
+     */
+    @RequestMapping({"", "/", "/updateProduct.json"})
+    public ResponseEntity<?> updateProduct(Long productId,Integer sortWeight) {
+        if(null!=productId){
+
+            Product product = new Product();
+            product.setProductId(productId);
+            product.setSortWeight(sortWeight);
+            productService.update(product);
+        }
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("success", true);
+        return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
+    }
 }

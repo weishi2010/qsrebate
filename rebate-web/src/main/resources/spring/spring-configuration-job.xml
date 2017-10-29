@@ -8,8 +8,8 @@
 	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="triggers">
 			<list>
-				<ref bean="importMediaOrderJobTimer"/>
-				<ref bean="freshProductsJobTimer"/>
+				<!--<ref bean="importMediaOrderJobTimer"/>-->
+				<!--<ref bean="freshProductsJobTimer"/>-->
 			</list>
 		</property>
 	</bean>

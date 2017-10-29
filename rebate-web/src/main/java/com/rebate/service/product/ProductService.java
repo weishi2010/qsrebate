@@ -1,6 +1,7 @@
 package com.rebate.service.product;
 
 import com.rebate.common.web.page.PaginatedArrayList;
+import com.rebate.domain.Product;
 import com.rebate.domain.ProductCoupon;
 import com.rebate.domain.RecommendCategory;
 import com.rebate.domain.UserInfo;
@@ -10,6 +11,12 @@ import com.rebate.domain.vo.ProductVo;
 import java.util.List;
 
 public interface ProductService {
+
+    /**
+     * 更新
+     * @param product
+     */
+    void update(Product product);
 
     /**
      * 导入商品
@@ -42,5 +49,11 @@ public interface ProductService {
      * @return
      */
     ProductVo findProduct(Long skuId);
+
+    /**
+     * 批量置顶
+     * @return
+     */
+    long batchResetProductSortWeight(ProductQuery productQuery);
 
 }
