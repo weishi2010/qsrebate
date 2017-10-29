@@ -130,6 +130,15 @@ public class RebateDetail extends BaseQuery {
     @Getter
     @Setter
     private Double userCommission;
+
+    /**
+     * 代理分佣
+     */
+    @Getter
+    @Setter
+    private Double agentCommission;
+
+
     /**
      * 推广位
      */

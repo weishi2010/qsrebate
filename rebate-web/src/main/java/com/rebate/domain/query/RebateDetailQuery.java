@@ -13,4 +13,8 @@ public class RebateDetailQuery extends RebateDetail {
     @Getter
     @Setter
     private Date startDate;
+
+    @Getter
+    @Setter
+    private Date endDate;
 }

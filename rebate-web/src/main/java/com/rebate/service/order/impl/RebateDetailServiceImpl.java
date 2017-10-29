@@ -76,4 +76,9 @@ public class RebateDetailServiceImpl implements RebateDetailService {
     public OrderSummary getAllOrderSummaryByDate(OrderSummaryQuery orderSummaryQuery) {
         return rebateDetailDao.getAllOrderSummaryByDate(orderSummaryQuery);
     }
+
+    @Override
+    public OrderSummary getRecommendUserOrderSummaryByOpenId(RebateDetailQuery rebateDetailQuery) {
+        return rebateDetailDao.getRecommendUserOrderSummaryByOpenId(rebateDetailQuery);
+    }
 }

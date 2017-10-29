@@ -222,6 +222,8 @@ public class PersonalController extends BaseController {
         String vm = VIEW_PREFIX + "/agentStatistits";
         view.setViewName(vm);
         UserInfo userInfo = getUserInfo(request);
+
+
         if (null == userInfo || userInfo.getAgent() == EAgent.NOT_AGENT.getCode()) {
             view.setViewName(VIEW_PREFIX + "/permission");
             return view;
@@ -291,6 +293,12 @@ public class PersonalController extends BaseController {
             recommendUserInfoQuery.setStartDate(startDate);
             recommendUserInfoQuery.setEndDate(endDate);
             view.addObject("recommendUserCount", userInfoService.findRecommendUserCount(recommendUserInfoQuery));
+
+            RebateDetailQuery  rebateDetailQuery = new RebateDetailQuery();
+            rebateDetailQuery.setOpenId(userInfo.getOpenId());
+            rebateDetailQuery.setStartDate(startDate);
+            rebateDetailQuery.setEndDate(endDate);
+            view.addObject("recommendUserOrderSummary", rebateDetailService.getRecommendUserOrderSummaryByOpenId(rebateDetailQuery));
         }
 
         LOG.error("[agentStatistits]dayTab:"+dayTab+",size:"+list.size());

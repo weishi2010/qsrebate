@@ -26,9 +26,12 @@
         <span>预计佣金:</span>
         <span class="money">$!{todayOrderSummary.commission}</span>
     </div>
-    #if($recommendUserCount)
-    <div class="recommendCount">
+    #if($userInfo.agent==2)
+    <div>
             <label style="color:#59d625">粉丝：$!{recommendUserCount}</label>
+            #if($recommendUserOrderSummary)
+                <label style="color:#59d625">引入订单数：$!{recommendUserOrderSummary.orderCount} 引入佣金：$!{recommendUserOrderSummary.commission}</label>
+            #end
     </div>
     #end
     <div class="totalCommissionInfo">

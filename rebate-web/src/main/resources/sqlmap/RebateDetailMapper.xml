@@ -36,6 +36,7 @@
         <result property="subUnionId" column="sub_union_id"/>
         <result property="platformRatio" column="platform_ratio"/>
         <result property="userCommission" column="user_commission"/>
+        <result property="agentCommission" column="agent_commission"/>
         <result property="positionId" column="position_id"/>
 
     </resultMap>
@@ -61,6 +62,7 @@
         sub_union_id,
         platform_ratio,
         user_commission,
+        agent_commission,
         position_id,
         created,
         modified
@@ -86,6 +88,7 @@
         sub_union_id,
         platform_ratio,
         user_commission,
+        agent_commission,
         position_id,
         created,
         modified
@@ -109,6 +112,7 @@
         #subUnionId#,
         #platformRatio#,
         #userCommission#,
+        #agentCommission#,
         #positionId#,
         now(),
         now()
@@ -205,5 +209,18 @@
         <![CDATA[  submit_date>=#startDate# and submit_date <=#endDate# ]]>
         AND order_status=1
         LIMIT 1
+    </select>
+
+    <select id="getRecommendUserOrderSummaryByOpenId" parameterClass="RebateDetailQuery" resultClass="OrderSummary">
+        SELECT COUNT(order_id) AS orderCount,SUM(commission) AS commission
+            FROM rebate_detail
+            WHERE sub_union_id in (
+            select ui.sub_union_id from recommend_user_info  rui
+            left join user_info ui
+            on rui.open_id=ui.open_id
+            where rui.recommend_account=#openId#
+        )
+        and <![CDATA[  submit_date>=#startDate# and submit_date <=#endDate# ]]>
+        limit 1
     </select>
 </sqlMap>

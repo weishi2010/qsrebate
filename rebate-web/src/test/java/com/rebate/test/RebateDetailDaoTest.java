@@ -3,6 +3,7 @@ package com.rebate.test;
 
 import com.rebate.common.util.JsonUtil;
 import com.rebate.dao.RebateDetailDao;
+import com.rebate.domain.OrderSummary;
 import com.rebate.domain.RebateDetail;
 import com.rebate.domain.query.RebateDetailQuery;
 import com.rebate.manager.jd.JdSdkManager;
@@ -65,5 +66,19 @@ public class RebateDetailDaoTest extends AbstractJUnit4SpringContextTests {
         System.out.println("count," + count + ",list" + JsonUtil.toJson(list));
     }
 
+    @Test
+    public void getRecommendUserOrderSummaryByOpenId() {
+        Calendar cal = Calendar.getInstance();
+
+
+        RebateDetailQuery  rebateDetailQuery = new RebateDetailQuery();
+        rebateDetailQuery.setOpenId("oIAUmv0flnzqXPCEF03ZB5lOyVkg");
+        rebateDetailQuery.setEndDate(cal.getTime());
+        cal.add(Calendar.DATE, -1);
+        rebateDetailQuery.setStartDate(cal.getTime());
+
+        OrderSummary orderSummary = rebateDetailDao.getRecommendUserOrderSummaryByOpenId(rebateDetailQuery);
+        System.out.println(",orderSummary" + JsonUtil.toJson(orderSummary));
+    }
 
 }

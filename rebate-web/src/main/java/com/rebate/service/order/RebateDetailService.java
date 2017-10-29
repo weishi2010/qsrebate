@@ -30,4 +30,11 @@ public interface RebateDetailService {
      * @return
      */
     OrderSummary getAllOrderSummaryByDate(OrderSummaryQuery orderSummaryQuery);
+
+    /**
+     * 根据时间查询推荐用户带来的订单统计
+     * @param rebateDetailQuery
+     * @return
+     */
+    OrderSummary getRecommendUserOrderSummaryByOpenId(RebateDetailQuery rebateDetailQuery);
 }

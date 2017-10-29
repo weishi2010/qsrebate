@@ -245,7 +245,7 @@ public class RebateJobImpl implements RebateJob {
 
         rebateDetail.setPlatformRatio(jDProperty.getSencondAgentPlatRatio());
         rebateDetail.setUserCommission(userCommission);
-
+        rebateDetail.setAgentCommission(agentCommission);//给推荐用户分佣金时记录到明细中
         return rebateDetail;
     }
 
@@ -271,6 +271,8 @@ public class RebateJobImpl implements RebateJob {
 
         rebateDetail.setPlatformRatio(jDProperty.getSencondAgentPlatRatio());
         rebateDetail.setUserCommission(userCommission);
+        rebateDetail.setAgentCommission(0.0);
+
         return rebateDetail;
     }
 
@@ -297,11 +299,11 @@ public class RebateJobImpl implements RebateJob {
         }
 
         Double commission = new BigDecimal(rebateDetail.getCommission() + "").subtract(new BigDecimal(platCommission + "")).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-
+        Double agentCommission = 0.0;
         //如果当前用户为二级代理，则给一级代理进行分佣，所分佣金为平台抽成后的
         if (null != agentRelation && StringUtils.isNotBlank(agentRelation.getParentAgentSubUnionId())) {
             //二级代理用户根据比例获取佣金
-            Double agentCommission = commission * agentRelation.getCommissionRatio();
+            agentCommission = commission * agentRelation.getCommissionRatio();
             agentCommission = new BigDecimal(agentCommission+"").setScale(2, BigDecimal.ROUND_FLOOR).doubleValue();//精确2位小数
 
             //给上一级代理即一级代理进行分佣
@@ -329,7 +331,7 @@ public class RebateJobImpl implements RebateJob {
 
         rebateDetail.setPlatformRatio(jDProperty.getFirstAgentPlatRatio());
         rebateDetail.setUserCommission(resultCommission);
-
+        rebateDetail.setAgentCommission(agentCommission);
         return rebateDetail;
     }
 
