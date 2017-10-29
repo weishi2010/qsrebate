@@ -212,7 +212,7 @@
     </select>
 
     <select id="getRecommendUserOrderSummaryByOpenId" parameterClass="RebateDetailQuery" resultClass="OrderSummary">
-        SELECT COUNT(order_id) AS orderCount,SUM(commission) AS commission
+        SELECT COUNT(order_id) AS orderCount,SUM(agent_commission) AS commission
             FROM rebate_detail
             WHERE sub_union_id in (
             select ui.sub_union_id from recommend_user_info  rui

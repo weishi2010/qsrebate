@@ -24,13 +24,20 @@
 <div class="totalCommission">
     <div class="totalCommissionDetail">
         <span>预计佣金:</span>
-        <span class="money">$!{todayOrderSummary.commission}</span>
+        <span class="money">
+            #if($recommendUserOrderSummary.commission)
+                #set($commission=$!{recommendUserOrderSummary.commission} + $!{todayOrderSummary.commission})
+                $!commission
+            #else
+                $!{todayOrderSummary.commission}
+            #end
+        </span>
     </div>
     #if($userInfo.agent==2)
     <div>
             <label style="color:#59d625">粉丝：$!{recommendUserCount}</label>
             #if($recommendUserOrderSummary)
-                <label style="color:#59d625">引入订单数：$!{recommendUserOrderSummary.orderCount} 引入佣金：$!{recommendUserOrderSummary.commission}</label>
+                <label style="color:#59d625">   引入订单数：$!{recommendUserOrderSummary.orderCount}  引入佣金：$!{recommendUserOrderSummary.commission}</label>
             #end
     </div>
     #end
