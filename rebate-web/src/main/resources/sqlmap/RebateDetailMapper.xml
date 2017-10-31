@@ -124,14 +124,17 @@
 
     <sql id="condition">
         <dynamic prepend="where">
-            <isNotNull property="orderStatus" prepend=",">
+            <isNotNull property="orderStatus" prepend="and">
                 order_status = #orderStatus#
             </isNotNull>
-            <isNotNull property="status" prepend=",">
+            <isNotNull property="status" prepend="and">
                 status = #status#
             </isNotNull>
-            <isNotNull property="orderId" prepend=",">
+            <isNotNull property="orderId" prepend="and">
                 order_id=#orderId#
+            </isNotNull>
+            <isNotNull property="productId" prepend="and">
+                product_id=#productId#
             </isNotNull>
         </dynamic>
     </sql>

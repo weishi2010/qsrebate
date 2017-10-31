@@ -178,10 +178,14 @@ public class RebateJobImpl implements RebateJob {
                         }
 
 
+                        if(null==rebateDetail.getAgentCommission()){
+                            rebateDetail.setAgentCommission(0.0);
+                        }
 
                         //查询是否已存在订单明细
                         RebateDetailQuery rebateDetailQuery = new RebateDetailQuery();
                         rebateDetailQuery.setOrderId(rebateDetail.getOrderId());
+                        rebateDetailQuery.setProductId(rebateDetail.getProductId());
                         RebateDetail existsRebateDetail = rebateDetailDao.queryRebateDetailByOrderId(rebateDetailQuery);
 
                         if (null == existsRebateDetail) {
@@ -192,7 +196,7 @@ public class RebateJobImpl implements RebateJob {
                             rebateDetailDao.update(rebateDetail);
                         }
                     }catch (Exception e){
-                        LOG.error("subUnionId:{},openId:{}",rebateDetail.getSubUnionId(),rebateDetail.getOpenId());
+                        LOG.error("subUnionId:{}",rebateDetail.getSubUnionId(),e);
                     }
                 }
 
