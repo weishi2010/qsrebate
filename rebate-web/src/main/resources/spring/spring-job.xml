@@ -46,7 +46,7 @@
 					<ref bean="rebateJob" />
 				</property>
 				<property name="targetMethod">
-					<value>freshProducts</value>
+					<value>refreshProducts</value>
 				</property>
 			</bean>
 		</property>
@@ -55,4 +55,37 @@
 		</property>
 	</bean>
 
+	<bean id="refreshDaXueCouponProductsJobTimer" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="concurrent" value="false"></property>
+				<property name="targetObject">
+					<ref bean="rebateJob" />
+				</property>
+				<property name="targetMethod">
+					<value>refreshDaxueCouponProductsCache</value>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>0 0 0/5 * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="refreshUserInfoJobTimer" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="concurrent" value="false"></property>
+				<property name="targetObject">
+					<ref bean="rebateJob" />
+				</property>
+				<property name="targetMethod">
+					<value>refreshUserInfo</value>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>0 0 0/5 * * ?</value>
+		</property>
+	</bean>
 </beans>
