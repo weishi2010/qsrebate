@@ -88,4 +88,7 @@ public class UserInfo implements Serializable{
     @Setter
     private Date modified;
 
+    public UserInfo(){
+    }
+
 }

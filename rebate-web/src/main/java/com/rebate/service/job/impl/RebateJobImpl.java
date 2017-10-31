@@ -9,9 +9,14 @@ import com.rebate.domain.agent.AgentRelation;
 import com.rebate.domain.en.*;
 import com.rebate.domain.property.JDProperty;
 import com.rebate.domain.query.*;
+import com.rebate.domain.vo.ProductVo;
+import com.rebate.domain.wx.WxUserInfo;
 import com.rebate.manager.jd.JdSdkManager;
 import com.rebate.service.job.RebateJob;
+import com.rebate.service.product.ProductCouponService;
 import com.rebate.service.userinfo.UserInfoService;
+import com.rebate.service.wx.WxAccessTokenService;
+import com.rebate.service.wx.WxService;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,8 +75,34 @@ public class RebateJobImpl implements RebateJob {
     @Autowired(required = true)
     private RecommendUserInfoDao recommendUserInfoDao;
 
+    @Qualifier("productCouponService")
+    @Autowired(required = true)
+    private ProductCouponService productCouponService;
+
+
+    @Qualifier("wxService")
+    @Autowired(required = false)
+    private WxService wxService;
+
+    @Qualifier("wxAccessTokenService")
+    @Autowired(required = false)
+    private WxAccessTokenService wxAccessTokenService;
+
     @Override
-    public void freshProducts() {
+    public void refreshUserInfo() {
+        List<UserInfo> list = userInfoDao.findAllUsers(new UserInfo());
+        for (UserInfo userInfo : list) {
+            WxUserInfo wxUserInfo = wxService.getWxApiUserInfo(wxAccessTokenService.getApiAccessToken().getAccessToken(), userInfo.getOpenId());
+            if (null != wxUserInfo) {
+                //更新昵称
+                userInfo.setNickName(wxUserInfo.getNickname());
+                userInfoDao.update(userInfo);
+            }
+        }
+    }
+
+    @Override
+    public void refreshProducts() {
         int page = 1;
         int pageSize = 100;
         ProductQuery productQuery = new ProductQuery();
@@ -136,6 +167,53 @@ public class RebateJobImpl implements RebateJob {
     }
 
     @Override
+    public void refreshDaxueCouponProductsCache() {
+        String subUnionId = jDProperty.getApiSubUnionId();
+        int page = 1;
+        int pageSize = 100;
+        ProductCouponQuery productCouponQuery = new ProductCouponQuery();
+        productCouponQuery.setStartRow((page - 1) * pageSize);
+        productCouponQuery.setPageSize(pageSize);
+        productCouponQuery.setStatus(EProductStatus.PASS.getCode());
+
+        List<ProductCoupon> productCoupons = productCouponDao.findProductCoupons(productCouponQuery);
+
+        while (productCoupons.size() > 0) {
+            LOG.error("[掌上大学优惠券商品缓存刷新任务]加载第" + page + "页{}条记录！", productCoupons.size());
+
+            for (ProductCoupon productCoupon : productCoupons) {
+                //清理掉没有优惠券转链接的信息
+                String coupontPromotionLink = jdSdkManager.getPromotionCouponCode(productCoupon.getProductId(), productCoupon.getCouponLink(),subUnionId);
+                if (StringUtils.isNotBlank(coupontPromotionLink)) {
+                    Long productId = productCoupon.getProductId();
+                    //查询商品信息
+                    Product productQuery = new Product();
+                    productQuery.setProductId(productId);
+                    Product product = productDao.findById(productQuery);
+                    //构造vo
+                    ProductVo productVo = new ProductVo(product);
+
+                    productVo.setPromotionUrl(coupontPromotionLink);
+                    //存在则更新到单条缓存
+                    productCouponService.addProductVoCache(productVo);
+                    //添加到缓存id列表中
+                    productCouponService.addProductCouponListCache(productVo);
+                } else {
+                    //券链接为空说明已失效，删除单条缓存
+                    productCouponService.cleanProductVoCache(productCoupon.getProductId());
+                    //从id列表缓存中删除
+                    productCouponService.cleanProductCouponListCache(productCoupon.getProductId());
+                }
+            }
+
+            page++;
+            productCouponQuery.setStartRow((page - 1) * pageSize);
+            productCoupons = productCouponDao.findProductCoupons(productCouponQuery);
+        }
+    }
+
+
+    @Override
     public void importMediaOrder() {
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
 
@@ -152,7 +230,7 @@ public class RebateJobImpl implements RebateJob {
             while (rebateDetails.size() > 0) {
                 LOG.error("[联盟订单导入任务]加载[" + queryTime + "]第" + page + "页{}条订单明细记录！", rebateDetails.size());
                 for (RebateDetail rebateDetail : rebateDetails) {
-                    try{
+                    try {
 
                         if (StringUtils.isNotBlank(rebateDetail.getSubUnionId())) {
                             //查询用户信息
@@ -166,19 +244,19 @@ public class RebateJobImpl implements RebateJob {
                                 } else if (EAgent.SECOND_AGENT.getCode() == userInfo.getAgent()) {
                                     //代理模式二
                                     rebateDetail = addSecondAgentIncomeDetail(rebateDetail);
-                                }else{
+                                } else {
                                     //普通返利用户
-                                    rebateDetail =  addGeneralRebateUserIncomeDetail(rebateDetail,userInfo);
+                                    rebateDetail = addGeneralRebateUserIncomeDetail(rebateDetail, userInfo);
                                 }
-                            }else{
+                            } else {
                                 rebateDetail.setUserCommission(0.0);
                             }
-                        }else{
+                        } else {
                             rebateDetail.setUserCommission(0.0);
                         }
 
 
-                        if(null==rebateDetail.getAgentCommission()){
+                        if (null == rebateDetail.getAgentCommission()) {
                             rebateDetail.setAgentCommission(0.0);
                         }
 
@@ -195,8 +273,8 @@ public class RebateJobImpl implements RebateJob {
                             //更新明细状态
                             rebateDetailDao.update(rebateDetail);
                         }
-                    }catch (Exception e){
-                        LOG.error("subUnionId:{}",rebateDetail.getSubUnionId(),e);
+                    } catch (Exception e) {
+                        LOG.error("subUnionId:{}", rebateDetail.getSubUnionId(), e);
                     }
                 }
 
@@ -212,13 +290,13 @@ public class RebateJobImpl implements RebateJob {
      * @param rebateDetail
      * @return
      */
-    private RebateDetail addGeneralRebateUserIncomeDetail(RebateDetail rebateDetail,UserInfo userInfo) {
+    private RebateDetail addGeneralRebateUserIncomeDetail(RebateDetail rebateDetail, UserInfo userInfo) {
 
         Product productQuery = new Product();
         productQuery.setProductId(rebateDetail.getProductId());
         productQuery.setStatus(EProductStatus.PASS.getCode());
         Product product = productDao.findById(productQuery);
-        if(null!=product && product.getIsRebate()==EProudctRebateType.NOT_REBATE.getCode()){
+        if (null != product && product.getIsRebate() == EProudctRebateType.NOT_REBATE.getCode()) {
             rebateDetail.setUserCommission(0.0);
             return rebateDetail;
         }
@@ -228,7 +306,7 @@ public class RebateJobImpl implements RebateJob {
         RecommendUserInfoQuery recommendUserInfoQuery = new RecommendUserInfoQuery();
         recommendUserInfoQuery.setOpenId(userInfo.getOpenId());
         RecommendUserInfo existsRecommendUserInfo = recommendUserInfoDao.findRecommendUserInfo(recommendUserInfoQuery);
-        if (null!=existsRecommendUserInfo && StringUtils.isNotBlank(existsRecommendUserInfo.getRecommendAccount())) {
+        if (null != existsRecommendUserInfo && StringUtils.isNotBlank(existsRecommendUserInfo.getRecommendAccount())) {
             //代理模式2的分成
             //平台抽成佣金
             platCommission = RebateRuleUtil.computeCommission(rebateDetail.getCommission(), jDProperty.getSencondAgentPlatRatio());
@@ -237,7 +315,7 @@ public class RebateJobImpl implements RebateJob {
             //给推荐的代理用户根据比例分配佣金
             agentCommission = RebateRuleUtil.computeCommission(rebateDetail.getCommission(), jDProperty.getSencondAgentRatio());
             addIncomeDetail(rebateDetail, EIncomeType.SECOND_AGENT_REBATE.getCode(), userInfo.getRecommendAccount(), agentCommission);
-        }else{
+        } else {
             //平台抽成佣金
             platCommission = RebateRuleUtil.computeCommission(rebateDetail.getCommission(), jDProperty.getGeneralRebateUserPlatRatio());
         }
@@ -263,7 +341,7 @@ public class RebateJobImpl implements RebateJob {
         //平台抽成佣金
         Double platCommission = RebateRuleUtil.computeCommission(rebateDetail.getCommission(), jDProperty.getSencondAgentPlatRatio());
 
-        if(jDProperty.isWhiteAgent(rebateDetail.getSubUnionId())){
+        if (jDProperty.isWhiteAgent(rebateDetail.getSubUnionId())) {
             //如果为白名单，平台不抽成
             platCommission = 0.0;
         }
@@ -297,7 +375,7 @@ public class RebateJobImpl implements RebateJob {
         //平台抽成佣金
         Double platCommission = RebateRuleUtil.computeCommission(rebateDetail.getCommission(), jDProperty.getFirstAgentPlatRatio());
 
-        if(jDProperty.isWhiteAgent(rebateDetail.getSubUnionId())){
+        if (jDProperty.isWhiteAgent(rebateDetail.getSubUnionId())) {
             //如果为白名单，平台不抽成
             platCommission = 0.0;
         }
@@ -308,7 +386,7 @@ public class RebateJobImpl implements RebateJob {
         if (null != agentRelation && StringUtils.isNotBlank(agentRelation.getParentAgentSubUnionId())) {
             //二级代理用户根据比例获取佣金
             agentCommission = commission * agentRelation.getCommissionRatio();
-            agentCommission = new BigDecimal(agentCommission+"").setScale(2, BigDecimal.ROUND_FLOOR).doubleValue();//精确2位小数
+            agentCommission = new BigDecimal(agentCommission + "").setScale(2, BigDecimal.ROUND_FLOOR).doubleValue();//精确2位小数
 
             //给上一级代理即一级代理进行分佣
             Double parentAgentCommission = new BigDecimal(commission + "").subtract(new BigDecimal(agentCommission + "")).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();

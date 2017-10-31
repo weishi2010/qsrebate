@@ -15,6 +15,7 @@ import com.rebate.domain.en.*;
 import com.rebate.domain.query.ProductQuery;
 import com.rebate.domain.vo.ProductVo;
 import com.rebate.manager.jd.JdSdkManager;
+import com.rebate.service.product.ProductCouponService;
 import com.rebate.service.product.ProductService;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -51,6 +52,13 @@ public class ProductServiceImpl implements ProductService {
     @Qualifier("productCouponDao")
     @Autowired(required = true)
     private ProductCouponDao productCouponDao;
+
+
+    @Qualifier("productCouponService")
+    @Autowired(required = true)
+    private ProductCouponService productCouponService;
+
+
 
     @Override
     public void update(Product product) {
@@ -243,6 +251,23 @@ public class ProductServiceImpl implements ProductService {
             LOG.error("findProduct error!skuId:" + skuId, e);
         }
         return vo;
+    }
+
+    @Override
+    public PaginatedArrayList<ProductVo> findCouponProducts(String subUnionId,int page,int pageSize) {
+        PaginatedArrayList<ProductVo> list = new PaginatedArrayList<>();
+
+        try {
+            PaginatedArrayList<Long> productList  = productCouponService.getProductCouponList(page,pageSize);
+            list.setTotalItem(productList.getTotalItem());
+
+            for(Long productId:productList){
+                list.add(productCouponService.getProductVoCache(productId));
+            }
+        } catch (Exception e) {
+            LOG.error("findProduct error!subUnionId:" + subUnionId, e);
+        }
+        return list;
     }
 
     @Override

@@ -51,6 +51,15 @@ public interface ProductService {
     ProductVo findProduct(Long skuId);
 
     /**
+     * 获取内购券商品列表
+     * @param subUnionId
+     * @param page
+     * @param pageSize
+     * @return
+     */
+    PaginatedArrayList<ProductVo> findCouponProducts(String subUnionId,int page,int pageSize);
+
+    /**
      * 批量置顶
      * @return
      */

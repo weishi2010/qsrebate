@@ -1,14 +1,5 @@
 package com.rebate.common.cache;
 
-/**
- * @author xiaodao
- * @version 1.0.0
- */
-/*
- * =========================== 维护日志 ===========================
- * 2017/9/13 9:40  xiaodao 新建代码
- * =========================== 维护日志 ===========================
- */
 public enum RedisKey {
 
     /**
@@ -22,7 +13,15 @@ public enum RedisKey {
     /**
      * JD联盟推广链接点击
      */
-    JD_UNION_URL_CLICK("JD_CK_",60*60*24*1000);
+    JD_UNION_URL_CLICK("JD_CK_",60*60*24*1000),
+    /**
+     * 内购券商品ID列表
+     */
+    JD_PRODUCT_COUPONS("JD_P_C",60*60*24*1000),
+    /**
+     * 内购券商品单条缓存
+     */
+    JD_PRODUCT_VO("JD_P_VO_",60*60*24*1000);
 
     RedisKey(String key,int timeout){
         this.key = key;

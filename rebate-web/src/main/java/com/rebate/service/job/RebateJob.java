@@ -21,9 +21,20 @@ public interface RebateJob {
      */
     void importCouponProducts();
 
+    /**
+     * 刷新用户信息
+     */
+    void refreshUserInfo();
 
     /**
      * 更新商品信息
      */
-    void freshProducts();
+    void refreshProducts();
+
+    /**
+     * 刷新掌上大学优惠券商品缓存
+     */
+    void refreshDaxueCouponProductsCache();
+
+
 }

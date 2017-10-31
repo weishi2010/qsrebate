@@ -7,6 +7,8 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
+import java.util.Set;
+
 public class RedisUtil {
     private static Logger logger = Logger.getLogger(RedisUtil.class);
     private static int MAX_ACTIVE = 1024;       // 最大连接数
@@ -102,6 +104,49 @@ public class RedisUtil {
         return false;
     }
 
+    public Long zadd(String key,String value,Double score) {
+
+        try {
+
+            return jedis.zadd(key,score,value);
+        } catch (Exception e) {
+            logger.debug("zadd error!",e);
+            return -1l;
+        }
+    }
+
+    public Long zrem(String key,String value) {
+
+        try {
+            return jedis.zrem(key,value);
+        } catch (Exception e) {
+            logger.debug("zrem error!");
+            return -1l;
+        }
+    }
+
+    public Set<String> zrevrange(String key, long start, long end) {
+
+        try {
+
+            return jedis.zrevrange(key,start,end);
+        } catch (Exception e) {
+            logger.debug("zcard error!");
+            return null;
+        }
+    }
+
+    public Long zcard(String key) {
+
+        try {
+
+            return jedis.zcard(key);
+        } catch (Exception e) {
+            logger.debug("zcard error!");
+            return 0l;
+        }
+    }
+
     public Long incr(String key) {
 
         try {
@@ -126,7 +171,7 @@ public class RedisUtil {
      * @return boolean 返回类型
      * @Description:删除key
      */
-    public boolean delKey(String key) {
+    public boolean del(String key) {
         try {
             Long code = jedis.del(key);
             if (code > 1) {

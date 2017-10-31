@@ -262,6 +262,9 @@ public class ProductVo extends BaseQuery {
     @Setter
     private ProductCoupon productCoupon;
 
+    public ProductVo(){
+    }
+
     public ProductVo(Product product){
         BeanUtils.copyProperties(product,this);
     }

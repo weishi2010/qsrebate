@@ -76,7 +76,10 @@
             <isNotNull property="agent" prepend=",">
                 agent = #agent#
             </isNotNull>
-            <isNotNull property="agent" prepend=",">
+            <isNotNull property="nickName" prepend=",">
+                nick_name = #nickName#
+            </isNotNull>
+            <isNotNull property="recommendAccount" prepend=",">
                 recommend_account = #recommendAccount#
             </isNotNull>
         </dynamic>
