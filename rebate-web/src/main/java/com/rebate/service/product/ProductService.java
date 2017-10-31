@@ -6,6 +6,7 @@ import com.rebate.domain.ProductCoupon;
 import com.rebate.domain.RecommendCategory;
 import com.rebate.domain.UserInfo;
 import com.rebate.domain.query.ProductQuery;
+import com.rebate.domain.vo.ApiProductVo;
 import com.rebate.domain.vo.ProductVo;
 
 import java.util.List;
@@ -57,7 +58,7 @@ public interface ProductService {
      * @param pageSize
      * @return
      */
-    PaginatedArrayList<ProductVo> findCouponProducts(String subUnionId,int page,int pageSize);
+    PaginatedArrayList<ApiProductVo> findCouponProducts(String subUnionId, int page, int pageSize);
 
     /**
      * 批量置顶

@@ -9,6 +9,7 @@ import com.rebate.domain.en.*;
 import com.rebate.domain.property.JDProperty;
 import com.rebate.domain.query.ActivityQuery;
 import com.rebate.domain.query.ProductQuery;
+import com.rebate.domain.vo.ApiProductVo;
 import com.rebate.domain.vo.ProductVo;
 import com.rebate.service.activity.ActivityService;
 import com.rebate.service.activity.AdvertismentPositionService;
@@ -56,7 +57,7 @@ public class ApiController extends BaseController {
 
         Map<String, Object> map = new HashMap<String, Object>();
         if(validateToken(token,subUnionId)){
-            PaginatedArrayList<ProductVo> products = productService.findCouponProducts(subUnionId,page,pageSize);
+            PaginatedArrayList<ApiProductVo> products = productService.findCouponProducts(subUnionId,page,pageSize);
             map.put("products", products);
             map.put("page", page);
             map.put("totalItem", products.getTotalItem());

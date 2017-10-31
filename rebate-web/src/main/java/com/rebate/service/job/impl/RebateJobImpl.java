@@ -194,6 +194,7 @@ public class RebateJobImpl implements RebateJob {
                     ProductVo productVo = new ProductVo(product);
 
                     productVo.setPromotionUrl(coupontPromotionLink);
+                    productVo.setPromotionShortUrl(coupontPromotionLink);
                     //存在则更新到单条缓存
                     productCouponService.addProductVoCache(productVo);
                     //添加到缓存id列表中

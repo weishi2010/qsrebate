@@ -13,6 +13,7 @@ import com.rebate.domain.RecommendCategory;
 import com.rebate.domain.UserInfo;
 import com.rebate.domain.en.*;
 import com.rebate.domain.query.ProductQuery;
+import com.rebate.domain.vo.ApiProductVo;
 import com.rebate.domain.vo.ProductVo;
 import com.rebate.manager.jd.JdSdkManager;
 import com.rebate.service.product.ProductCouponService;
@@ -254,18 +255,21 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public PaginatedArrayList<ProductVo> findCouponProducts(String subUnionId,int page,int pageSize) {
-        PaginatedArrayList<ProductVo> list = new PaginatedArrayList<>();
+    public PaginatedArrayList<ApiProductVo> findCouponProducts(String subUnionId,int page,int pageSize) {
+        PaginatedArrayList<ApiProductVo> list = new PaginatedArrayList<>();
 
         try {
             PaginatedArrayList<Long> productList  = productCouponService.getProductCouponList(page,pageSize);
             list.setTotalItem(productList.getTotalItem());
 
             for(Long productId:productList){
-                list.add(productCouponService.getProductVoCache(productId));
+                ProductVo productVo = productCouponService.getProductVoCache(productId);
+                if(null!=productVo){
+                    list.add(new ApiProductVo(productVo));
+                }
             }
         } catch (Exception e) {
-            LOG.error("findProduct error!subUnionId:" + subUnionId, e);
+            LOG.error("findCouponProducts error!subUnionId:" + subUnionId, e);
         }
         return list;
     }
