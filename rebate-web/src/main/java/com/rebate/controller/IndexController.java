@@ -3,6 +3,7 @@ package com.rebate.controller;
 import com.rebate.controller.base.BaseController;
 import com.rebate.domain.CategoryQuery;
 import com.rebate.domain.RecommendCategory;
+import com.rebate.domain.UserInfo;
 import com.rebate.domain.en.EPromotionTab;
 import com.rebate.domain.wx.WxConfig;
 import com.rebate.manager.jd.JdSdkManager;
@@ -11,6 +12,7 @@ import com.rebate.service.order.RebateDetailService;
 import com.rebate.service.product.ProductService;
 import com.rebate.service.userinfo.UserInfoService;
 import com.rebate.service.wx.WxAccessTokenService;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,42 +36,31 @@ public class IndexController extends BaseController {
 
     public static final String PREFIX = "/rebate";
 
-    @Qualifier("userInfoService")
-    @Autowired(required = true)
-    private UserInfoService userInfoService;
-
     @Qualifier("productService")
     @Autowired(required = true)
     private ProductService productService;
-
-    @Qualifier("rebateDetailService")
-    @Autowired(required = true)
-    private RebateDetailService rebateDetailService;
-
-    @Qualifier("extractDetailService")
-    @Autowired(required = true)
-    private ExtractDetailService extractDetailService;
 
     @Qualifier("jdSdkManager")
     @Autowired(required = true)
     private JdSdkManager jdSdkManager;
 
-    /**
-     * 微信公众号接口配置
-     */
-    @Qualifier("wxConfig")
-    @Autowired(required = true)
-    private WxConfig wxConfig;
-
-    @Qualifier("wxAccessTokenService")
-    @Autowired(required = true)
-    private WxAccessTokenService wxAccessTokenService;
 
 
     @RequestMapping({"", "/", "/index"})
     public ModelAndView index(HttpServletRequest request, HttpServletResponse response) {
         ModelAndView view = new ModelAndView(PREFIX + "/index");
+        String jdWlDomain = "https://m.jd.com";
+        UserInfo userInfo = getUserInfo(request);
+        String subUnionId = "";
+        if (null != userInfo) {
+            subUnionId = userInfo.getSubUnionId();
+        }
 
+        String promotionUrl = jdSdkManager.getLongPromotinUrl(jdWlDomain, subUnionId);
+        if(StringUtils.isBlank(promotionUrl)){
+            promotionUrl = jdWlDomain;
+        }
+        view.addObject("promotionUrl",promotionUrl);
         return view;
     }
 
