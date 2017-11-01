@@ -35,6 +35,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -282,6 +283,11 @@ public class PersonalController extends BaseController {
             orderSummaryQuery2.setEndDate(endDate);
             OrderSummary allOrderSummary = rebateDetailService.getAllOrderSummaryByDate(orderSummaryQuery2);
             if (null != allOrderSummary) {
+                if(null!=allOrderSummary.getCommission()){
+                    allOrderSummary.setCommission(new BigDecimal(allOrderSummary.getCommission()+"").setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
+                }else{
+                    allOrderSummary.setCommission(0.0);
+                }
                 allOrderSummary.setClickCount(shortUrlManager.getALLJDUnionUrlClick(queryDate));
                 view.addObject("allOrderSummary", allOrderSummary);
             }
