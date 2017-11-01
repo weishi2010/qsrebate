@@ -195,15 +195,29 @@ public class RebateJobImpl implements RebateJob {
 
                     productVo.setPromotionUrl(coupontPromotionLink);
                     productVo.setPromotionShortUrl(coupontPromotionLink);
+                    productVo.setProductCoupon(productCoupon);
+
+                    if(productVo.getCouponPrice()<=10){
+                        //添加到9.9商品缓存id列表中
+                        productCouponService.addSecskillProductListCache(productVo);
+                    }else{
+                        //添加到内购券缓存id列表中
+                        productCouponService.addProductCouponListCache(productVo);
+                    }
                     //存在则更新到单条缓存
                     productCouponService.addProductVoCache(productVo);
-                    //添加到缓存id列表中
-                    productCouponService.addProductCouponListCache(productVo);
+
                 } else {
                     //券链接为空说明已失效，删除单条缓存
                     productCouponService.cleanProductVoCache(productCoupon.getProductId());
-                    //从id列表缓存中删除
-                    productCouponService.cleanProductCouponListCache(productCoupon.getProductId());
+                    if(productCoupon.getCouponPrice()<=10){
+                        //从id列表缓存中删除
+                        productCouponService.cleanSecskillProductListCache(productCoupon.getProductId());
+                    }else{
+                        //从id列表缓存中删除
+                        productCouponService.cleanProductCouponListCache(productCoupon.getProductId());
+                    }
+
                 }
             }
 

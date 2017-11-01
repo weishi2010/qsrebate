@@ -4,6 +4,7 @@ import com.rebate.common.util.EncodeUtils;
 import com.rebate.common.util.JsonUtil;
 import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.controller.base.BaseController;
+import com.rebate.domain.en.EPromotionTab;
 import com.rebate.domain.property.JDProperty;
 import com.rebate.domain.vo.ApiProductVo;
 import com.rebate.service.product.ProductService;
@@ -36,7 +37,7 @@ public class ApiController extends BaseController {
 
     @RequestMapping({"", "/", "/daxue/productList.json"})
     @ResponseBody
-    public JSONPObject productList(HttpServletRequest request,String callback, Integer page,Integer pageSize) {
+    public JSONPObject productList(HttpServletRequest request,String callback,Integer tab, Integer page,Integer pageSize) {
         if(null==page){
             page = 1;
         }
@@ -44,10 +45,18 @@ public class ApiController extends BaseController {
             pageSize = 10;
         }
 
+
+
         String subUnionId = jDProperty.getApiSubUnionId();
 
         Map<String, Object> map = new HashMap<String, Object>();
-        PaginatedArrayList<ApiProductVo> products = productService.findCouponProducts(subUnionId, page, pageSize);
+        PaginatedArrayList<ApiProductVo> products = null;
+        if (EPromotionTab.SECKILL.getTab() == tab) {
+            products = productService.findSecSkillProducts(subUnionId, page, pageSize);
+        }else{
+            products = productService.findCouponProducts(subUnionId, page, pageSize);
+        }
+
         map.put("products", products);
         map.put("page", page);
         map.put("totalItem", products.getTotalItem());

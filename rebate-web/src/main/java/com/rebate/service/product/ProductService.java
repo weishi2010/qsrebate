@@ -61,6 +61,15 @@ public interface ProductService {
     PaginatedArrayList<ApiProductVo> findCouponProducts(String subUnionId, int page, int pageSize);
 
     /**
+     * 获取9.9商品列表
+     * @param subUnionId
+     * @param page
+     * @param pageSize
+     * @return
+     */
+    PaginatedArrayList<ApiProductVo> findSecSkillProducts(String subUnionId, int page, int pageSize);
+
+    /**
      * 批量置顶
      * @return
      */

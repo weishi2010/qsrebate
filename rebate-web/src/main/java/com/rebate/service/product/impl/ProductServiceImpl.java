@@ -265,7 +265,39 @@ public class ProductServiceImpl implements ProductService {
             for(Long productId:productList){
                 ProductVo productVo = productCouponService.getProductVoCache(productId);
                 if(null!=productVo){
-                    list.add(new ApiProductVo(productVo));
+                    ApiProductVo apiProductVo =  new ApiProductVo(productVo);
+                    if (null != productVo.getProductCoupon()) {
+                        apiProductVo.setDiscount(productVo.getProductCoupon().getDiscount());
+                    }else{
+                        apiProductVo.setDiscount(0.0);
+                    }
+                    list.add(apiProductVo);
+                }
+            }
+        } catch (Exception e) {
+            LOG.error("findCouponProducts error!subUnionId:" + subUnionId, e);
+        }
+        return list;
+    }
+
+    @Override
+    public PaginatedArrayList<ApiProductVo> findSecSkillProducts(String subUnionId, int page, int pageSize) {
+        PaginatedArrayList<ApiProductVo> list = new PaginatedArrayList<>();
+
+        try {
+            PaginatedArrayList<Long> productList  = productCouponService.findSecSkillProducts(page,pageSize);
+            list.setTotalItem(productList.getTotalItem());
+
+            for(Long productId:productList){
+                ProductVo productVo = productCouponService.getProductVoCache(productId);
+                if(null!=productVo){
+                    ApiProductVo apiProductVo =  new ApiProductVo(productVo);
+                    if (null != productVo.getProductCoupon()) {
+                        apiProductVo.setDiscount(productVo.getProductCoupon().getDiscount());
+                    }else{
+                        apiProductVo.setDiscount(0.0);
+                    }
+                    list.add(apiProductVo);
                 }
             }
         } catch (Exception e) {

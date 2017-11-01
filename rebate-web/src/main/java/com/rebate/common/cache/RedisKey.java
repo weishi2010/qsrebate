@@ -17,11 +17,16 @@ public enum RedisKey {
     /**
      * 内购券商品ID列表
      */
-    JD_PRODUCT_COUPONS("JD_P_C",60*60*24*1000),
+    JD_COUPON_PRODUCT("JD_C_PT",60*60*24*1000),
+
+    /**
+     * 9.9元商品ID列表
+     */
+    JD_SECSKILL_PRODUCTS("JD_S_PT",60*60*24*1000),
     /**
      * 内购券商品单条缓存
      */
-    JD_PRODUCT_VO("JD_P_VO_",60*60*24*1000);
+    JD_PRODUCT_VO("JD_PT_VO_",60*60*24*1000);
 
     RedisKey(String key,int timeout){
         this.key = key;

@@ -56,6 +56,13 @@ public class ApiProductVo extends BaseQuery {
     private Double couponPrice;
 
     /**
+     * 优惠券面额
+     */
+    @Getter
+    @Setter
+    private Double discount;
+
+    /**
      * 创建时间
      */
     @Getter

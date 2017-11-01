@@ -35,6 +35,10 @@ public interface ProductCouponService {
      */
     void cleanProductCouponListCache(Long productId);
 
+    void addSecskillProductListCache(ProductVo productVo);
+
+    void cleanSecskillProductListCache(Long productId);
+
     /**
      * 获取优惠券商品列表
      * @param page
@@ -42,5 +46,13 @@ public interface ProductCouponService {
      * @return
      */
     PaginatedArrayList<Long> getProductCouponList(int page,int pageSize);
+
+    /**
+     * 获取9.9商品列表
+     * @param page
+     * @param pageSize
+     * @return
+     */
+    PaginatedArrayList<Long> findSecSkillProducts(int page,int pageSize);
 
 }
