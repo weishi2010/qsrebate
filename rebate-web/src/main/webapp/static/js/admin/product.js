@@ -1,13 +1,25 @@
 adminModule.controller("productController", ["$scope", "$http", function ($scope, $http) {
     $scope.search_systemName='';
+    $scope.paginationConf = {
+        currentPage: 1,
+        totalItems: 0,
+        itemsPerPage: 15,
+        pagesLength: 5,
+        perPageOptions: [10, 20, 30, 40, 50],
+        onChange: function(){
+            $scope.query();
+        }
+    };
 
     $scope.query = function () {
         productName= $("#search_productName").val();
         productId =$("#search_productId").val();
         couponType =$("#search_couponType").val();
-        $http.get("/admin/getProducts.json",{params:{productName: encodeURIComponent(productName),productId:productId,couponType:couponType,r:Math.random()}}).success(function (response) {
+        $http.get("/admin/getProducts.json",{params:{productName: encodeURIComponent(productName),productId:productId,couponType:couponType,page:page,pageSize:pageSize,r:Math.random()}}).success(function (response) {
             if (response.success) {
                 $scope.products = response.products;
+                $scope.paginationConf.totalItems = response.totalItem;
+
             }
         });
     }
