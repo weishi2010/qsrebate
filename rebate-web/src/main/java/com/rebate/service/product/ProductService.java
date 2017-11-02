@@ -69,6 +69,8 @@ public interface ProductService {
      */
     PaginatedArrayList<ApiProductVo> findSecSkillProducts(String subUnionId, int page, int pageSize);
 
+    PaginatedArrayList<ApiProductVo> findDaxueProductList(ProductQuery productQuery);
+
     /**
      * 批量置顶
      * @return

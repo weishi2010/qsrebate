@@ -6,6 +6,7 @@ import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.controller.base.BaseController;
 import com.rebate.domain.en.EPromotionTab;
 import com.rebate.domain.property.JDProperty;
+import com.rebate.domain.query.ProductQuery;
 import com.rebate.domain.vo.ApiProductVo;
 import com.rebate.service.product.ProductService;
 import org.codehaus.jackson.map.util.JSONPObject;
@@ -45,17 +46,20 @@ public class ApiController extends BaseController {
             pageSize = 10;
         }
 
-
-
-        String subUnionId = jDProperty.getApiSubUnionId();
-
         Map<String, Object> map = new HashMap<String, Object>();
-        PaginatedArrayList<ApiProductVo> products = null;
+
+        ProductQuery query = new ProductQuery();
+
+        query.setPageSize(pageSize);
+        query.setIndex(page);
+
         if (EPromotionTab.SECKILL.getTab() == tab) {
-            products = productService.findSecSkillProducts(subUnionId, page, pageSize);
+            query.setLetPrice(10.0);
         }else{
-            products = productService.findCouponProducts(subUnionId, page, pageSize);
+            query.setGtPrice(10.0);
         }
+
+        PaginatedArrayList<ApiProductVo> products = productService.findDaxueProductList(query);
 
         map.put("products", products);
         map.put("page", page);

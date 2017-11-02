@@ -3,8 +3,47 @@
 <sqlMap namespace="Product">
 
     <typeAlias alias="Product" type="com.rebate.domain.Product"/>
+    <typeAlias alias="DaxueProduct" type="com.rebate.domain.DaxueProduct"/>
+
     <typeAlias alias="ProductQuery" type="com.rebate.domain.query.ProductQuery"/>
 
+    <resultMap class="DaxueProduct" id="DaxueProductMap">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="imgUrl" column="img_url"/>
+        <result property="productId" column="product_id"/>
+        <result property="firstCategory" column="first_category"/>
+        <result property="secondCategory" column="second_category"/>
+        <result property="thirdCategory" column="third_category"/>
+        <result property="firstCategoryName" column="first_category_name"/>
+        <result property="secondCategoryName" column="second_category_name"/>
+        <result property="thirdCategoryName" column="third_category_name"/>
+        <result property="originalPrice" column="original_price"/>
+        <result property="couponPrice" column="coupon_price"/>
+        <result property="stock" column="stock"/>
+        <result property="commissionRatioPc" column="commission_ratio_wl"/>
+        <result property="commissionRatioWl" column="commission_ratio_pc"/>
+        <result property="commissionPc" column="commission_pc"/>
+        <result property="commissionWl" column="commission_wl"/>
+        <result property="userCommission" column="user_commission"/>
+        <result property="productType" column="product_type"/>
+        <result property="distribution" column="distribution"/>
+        <result property="status" column="status"/>
+        <result property="isRebate" column="is_rebate"/>
+        <result property="unitPrice" column="unit_price"/>
+        <result property="wlUnitPrice" column="wl_unit_price"/>
+        <result property="sourcePlatform" column="source_platform"/>
+        <result property="freePost" column="free_post"/>
+        <result property="materialUrl" column="material_url"/>
+        <result property="couponType" column="coupon_type"/>
+        <result property="shopId" column="shop_id"/>
+        <result property="sortWeight" column="sort_weight"/>
+        <result property="startDate" column="start_date"/>
+        <result property="endDate" column="end_date"/>
+        <result property="created" column="created"/>
+        <result property="modified" column="modified"/>
+        <result property="promotionUrl" column="promotion_url"/>
+    </resultMap>
 
     <resultMap class="Product" id="ProductResultMap">
         <result property="id" column="id"/>
@@ -43,6 +82,44 @@
         <result property="modified" column="modified"/>
     </resultMap>
 
+    <sql id="aliasDaxueFields">
+        p.id,
+        p.name,
+        p.img_url,
+        p.product_id,
+        p.first_category,
+        p.first_category_name,
+        p.second_category,
+        p.second_category_name,
+        p.third_category,
+        p.third_category_name,
+        p.original_price,
+        p.coupon_price,
+        p.stock,
+        p.commission_ratio_pc,
+        p.commission_ratio_wl,
+        p.commission_pc,
+        p.commission_wl,
+        p.user_commission,
+        p.product_type,
+        p.distribution,
+        p.status,
+        p.coupon_type,
+        p.is_rebate,
+        p.unit_price,
+        p.wl_unit_price,
+        p.source_platform,
+        p.free_post,
+        p.material_url,
+        p.shop_id,
+        p.sort_weight,
+        p.start_date,
+        p.end_date,
+        p.created,
+        p.modified,
+        dp.promotion_url
+    </sql>
+
     <sql id="fields">
        id,
         name,
@@ -80,6 +157,52 @@
         modified
         modified
     </sql>
+
+    <sql id="daxueCondition">
+        <dynamic prepend="where">
+            <isNotNull property="thirdCategory">
+                <isGreaterThan property="thirdCategory" compareValue="0" prepend="and">
+                    p.third_category = #thirdCategory#
+                </isGreaterThan>
+            </isNotNull>
+            <isNotNull property="secondCategoryList">
+                <isNotEmpty property="secondCategoryList"  prepend="and">
+                    p.second_category in ($secondCategoryList$)
+                </isNotEmpty>
+            </isNotNull>
+
+            <isNotNull property="secondCategory" prepend="and">
+                <isGreaterThan property="secondCategory" compareValue="0" prepend="and">
+                    p.second_category = #secondCategory#
+                </isGreaterThan>
+            </isNotNull>
+            <isNotNull property="queryPrice" prepend="and">
+                p.original_price=#queryPrice#
+            </isNotNull>
+            <isNotNull property="couponType" prepend="and">
+                p.coupon_type=#couponType#
+            </isNotNull>
+            <isNotNull property="letPrice" prepend="and">
+                <![CDATA[ p.coupon_price>0 and p.coupon_price <= #letPrice# ]]>
+            </isNotNull>
+            <isNotNull property="gtPrice" prepend="and">
+                <![CDATA[p.coupon_price > #gtPrice# ]]>
+            </isNotNull>
+            <isNotNull property="status" prepend="and">
+                p.status=#status#
+            </isNotNull>
+            <isNotNull property="name" prepend="and">
+                p.name like '%$name$%'
+            </isNotNull>
+            <isNotNull property="productId" prepend="and">
+                p.product_id like '%$productId$%'
+            </isNotNull>
+            <isParameterPresent prepend="and" >
+                p.original_price>0
+            </isParameterPresent>
+        </dynamic>
+    </sql>
+
     <sql id="condition">
         <dynamic prepend="where">
             <isNotNull property="thirdCategory">
@@ -124,6 +247,23 @@
             </isParameterPresent>
         </dynamic>
     </sql>
+
+    <insert id="insertDaxueProduct" parameterClass="DaxueProduct">
+        INSERT INTO daxue_product
+        (
+        product_id,
+        promotion_url,
+        created,
+        modified
+        )
+        VALUES
+        (
+        #productId#,
+        #promotionUrl#,
+        now(),
+        now()
+        )
+    </insert>
 
     <insert id="insert" parameterClass="Product">
         INSERT INTO product
@@ -241,6 +381,17 @@
         where product_id=#productId#
     </update>
 
+    <update id="updateDaxueProduct">
+        update daxue_product
+        set  modified=now()
+        <dynamic>
+            <isNotNull property="promotionUrl" prepend=",">
+                promotion_url = #promotionUrl#
+            </isNotNull>
+        </dynamic>
+        where product_id=#productId#
+    </update>
+
     <update id="batchResetProductSortWeight" parameterClass="ProductQuery">
         update product
         set  modified=now(),sort_weight=#sortWeight#
@@ -249,6 +400,10 @@
 
     <delete id="deleteByProductId" parameterClass="long">
         delete from product where product_id=#product_id#
+    </delete>
+
+    <delete id="deleteDaxueProductByProductId" parameterClass="long">
+        delete from daxue_product where product_id=#product_id#
     </delete>
 
     <select id="findById" parameterClass="Product" resultMap="ProductResultMap">
@@ -274,5 +429,38 @@
         <include refid="condition"></include>
         order by sort_weight desc,created desc
         limit #startRow#,#pageSize#
+    </select>
+
+    <select id="findDaxueProductsCount" parameterClass="ProductQuery" resultClass="int">
+        select
+        count(1)
+        from  daxue_product dp
+        left join
+        product p
+        on dp.product_id=p.product_id
+        <include refid="daxueCondition"/>
+    </select>
+
+    <select id="findDaxueProducts" parameterClass="ProductQuery" resultMap="DaxueProductMap">
+        select
+        <include refid="aliasDaxueFields"/>
+        from  daxue_product dp
+        left join
+        product p
+        on dp.product_id=p.product_id
+        <include refid="daxueCondition"/>
+        order by p.sort_weight desc,p.created desc
+        limit #startRow#,#pageSize#
+    </select>
+
+    <select id="findDaxueProductById" parameterClass="DaxueProduct" resultMap="DaxueProductMap">
+        select
+        <include refid="aliasDaxueFields"/>
+        from  daxue_product dp
+        left join
+        product p
+        on dp.product_id=p.product_id
+        where dp.product_id=#productId#
+        limit 1
     </select>
 </sqlMap>

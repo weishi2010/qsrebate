@@ -4,8 +4,10 @@ package com.rebate.test;
 import com.rebate.common.util.JsonUtil;
 import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.dao.ProductDao;
+import com.rebate.domain.DaxueProduct;
 import com.rebate.domain.Product;
 import com.rebate.domain.ProductCoupon;
+import com.rebate.domain.en.EPromotionTab;
 import com.rebate.domain.en.EProudctCouponType;
 import com.rebate.domain.en.EProudctRebateType;
 import com.rebate.domain.query.ProductQuery;
@@ -28,6 +30,19 @@ public class ProductDaoTest extends AbstractJUnit4SpringContextTests {
     private JdSdkManager jdSdkManager;
 
     @Test
+    public void testInsertDaxueProduct() {
+        Long productId = 11679471340l;
+        DaxueProduct daxueProduct = new DaxueProduct();
+        daxueProduct.setProductId(productId);
+        daxueProduct.setPromotionUrl("http://xxx.jd.com");
+        if(null==productDao.findDaxueProductById(daxueProduct)){
+            productDao.insertDaxueProduct(daxueProduct);
+        }else{
+            productDao.updateDaxueProduct(daxueProduct);
+        }
+    }
+
+    @Test
     public void testInsert() {
         List<Product> list = jdSdkManager.getMediaProducts("1615786");
 
@@ -42,6 +57,22 @@ public class ProductDaoTest extends AbstractJUnit4SpringContextTests {
         }
     }
 
+    @Test
+    public void testGetDaxueProduct(){
+        ProductQuery query = new ProductQuery();
+        int tab = 1;
+        if (EPromotionTab.SECKILL.getTab() == tab) {
+            query.setLetPrice(10.0);
+        }else{
+            query.setGtPrice(10.0);
+        }
+
+        query.setPageSize(10);
+        query.setIndex(1);
+
+        List<DaxueProduct> list = productDao.findDaxueProducts(query);
+        System.out.println(JsonUtil.toJson(list));
+    }
     @Test
     public void testGetProducts() {
         ProductQuery productQuery = new ProductQuery();

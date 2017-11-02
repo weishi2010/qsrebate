@@ -7,10 +7,7 @@ import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.dao.CategoryDao;
 import com.rebate.dao.ProductCouponDao;
 import com.rebate.dao.ProductDao;
-import com.rebate.domain.Product;
-import com.rebate.domain.ProductCoupon;
-import com.rebate.domain.RecommendCategory;
-import com.rebate.domain.UserInfo;
+import com.rebate.domain.*;
 import com.rebate.domain.en.*;
 import com.rebate.domain.query.ProductQuery;
 import com.rebate.domain.vo.ApiProductVo;
@@ -228,6 +225,49 @@ public class ProductServiceImpl implements ProductService {
         return products;
     }
 
+    @Override
+    public PaginatedArrayList<ApiProductVo> findDaxueProductList(ProductQuery productQuery) {
+        PaginatedArrayList<ApiProductVo> products = new PaginatedArrayList<ApiProductVo>(productQuery.getIndex(), productQuery.getPageSize());
+        try {
+            int totalItem = productDao.findDaxueProductsCount(productQuery);
+            if (totalItem > 0) {
+                products.setTotalItem(totalItem);
+                productQuery.setStartRow(products.getStartRow());
+                if (productQuery.getIndex() <= products.getTotalPage()) {
+                    List<DaxueProduct> list = productDao.findDaxueProducts(productQuery);
+                    for (DaxueProduct daxueProduct : list) {
+                        try {
+
+                            //获取商品链接
+                            daxueProduct.setImgUrl(daxueProduct.getImgUrl().replace(DEFAULT_IMG_SIZE, IMG_SIZE));
+
+                            //查询优惠券信息
+                            ProductCoupon productCouponQuery = new ProductCoupon();
+                            productCouponQuery.setProductId(daxueProduct.getProductId());
+                            ProductCoupon coupon = productCouponDao.findById(productCouponQuery);
+
+                            ApiProductVo apiProductVo =  new ApiProductVo(daxueProduct);
+                            if (null != coupon) {
+                                apiProductVo.setDiscount(coupon.getDiscount());
+                            }else{
+                                apiProductVo.setDiscount(0.0);
+                            }
+                            products.add(apiProductVo);
+
+                        } catch (Exception e) {
+                            LOG.error("findDaxueProductList error!product:{}", JsonUtil.toJson(daxueProduct), e);
+                        }
+
+                    }
+                }
+
+            }
+
+        } catch (Exception e) {
+            LOG.error("findDaxueProductList error!productQuery:" + JsonUtil.toJson(productQuery), e);
+        }
+        return products;
+    }
     @Override
     public ProductVo findProduct(Long skuId) {
         ProductVo vo = null;

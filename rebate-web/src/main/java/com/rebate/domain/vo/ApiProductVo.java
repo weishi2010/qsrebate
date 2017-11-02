@@ -1,6 +1,7 @@
 package com.rebate.domain.vo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.rebate.domain.DaxueProduct;
 import com.rebate.domain.Product;
 import com.rebate.domain.ProductCoupon;
 import com.rebate.domain.query.BaseQuery;
@@ -122,6 +123,10 @@ public class ApiProductVo extends BaseQuery {
 
     public ApiProductVo(ProductVo productVo){
         BeanUtils.copyProperties(productVo,this);
+    }
+
+    public ApiProductVo(DaxueProduct daxueProduct){
+        BeanUtils.copyProperties(daxueProduct,this);
     }
 
 }

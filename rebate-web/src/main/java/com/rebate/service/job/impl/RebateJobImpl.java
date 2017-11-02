@@ -182,14 +182,32 @@ public class RebateJobImpl implements RebateJob {
             LOG.error("[掌上大学优惠券商品缓存刷新任务]加载第" + page + "页{}条记录！", productCoupons.size());
 
             for (ProductCoupon productCoupon : productCoupons) {
+                Long productId = productCoupon.getProductId();
                 //清理掉没有优惠券转链接的信息
                 String coupontPromotionLink = jdSdkManager.getPromotionCouponCode(productCoupon.getProductId(), productCoupon.getCouponLink(),subUnionId);
                 if (StringUtils.isNotBlank(coupontPromotionLink)) {
-                    Long productId = productCoupon.getProductId();
+
                     //查询商品信息
                     Product productQuery = new Product();
                     productQuery.setProductId(productId);
                     Product product = productDao.findById(productQuery);
+                    //保健一级分类先暂时不推送
+                    if(null!=product && 9192==product.getFirstCategory()){
+                        continue;
+                    }
+
+                    //方案一：记录到数据库表中
+                    DaxueProduct daxueProduct = new DaxueProduct();
+                    daxueProduct.setProductId(productId);
+                    daxueProduct.setPromotionUrl(coupontPromotionLink);
+                    if(null==productDao.findDaxueProductById(daxueProduct)){
+                        productDao.insertDaxueProduct(daxueProduct);
+                    }else{
+                        productDao.updateDaxueProduct(daxueProduct);
+                    }
+
+
+                    //方案二：记录到缓存中
                     //构造vo
                     ProductVo productVo = new ProductVo(product);
 
@@ -208,6 +226,11 @@ public class RebateJobImpl implements RebateJob {
                     productCouponService.addProductVoCache(productVo);
 
                 } else {
+                    //方案一
+                    // 从数据库中清除掉SKU
+                    productDao.deleteDaxueProductByProductId(productId);
+
+                    //方案二
                     //券链接为空说明已失效，删除单条缓存
                     productCouponService.cleanProductVoCache(productCoupon.getProductId());
                     if(productCoupon.getCouponPrice()<=10){

@@ -2,6 +2,7 @@ package com.rebate.dao.impl;
 
 import com.rebate.common.dao.BaseDao;
 import com.rebate.dao.ProductDao;
+import com.rebate.domain.DaxueProduct;
 import com.rebate.domain.Product;
 import com.rebate.domain.query.ProductQuery;
 
@@ -41,5 +42,35 @@ public class ProductDaoImpl extends BaseDao implements ProductDao {
     @Override
     public int batchResetProductSortWeight(ProductQuery productQuery) {
         return update("Product.batchResetProductSortWeight",productQuery);
+    }
+
+    @Override
+    public void insertDaxueProduct(DaxueProduct daxueProduct) {
+        insert("Product.insertDaxueProduct",daxueProduct);
+    }
+
+    @Override
+    public void deleteDaxueProductByProductId(Long productId) {
+        delete("Product.deleteDaxueProductByProductId",productId);
+    }
+
+    @Override
+    public void updateDaxueProduct(DaxueProduct daxueProduct) {
+        update("Product.updateDaxueProduct",daxueProduct);
+    }
+
+    @Override
+    public DaxueProduct findDaxueProductById(Product product) {
+        return (DaxueProduct)queryForObject("Product.findDaxueProductById",product);
+    }
+
+    @Override
+    public List<DaxueProduct> findDaxueProducts(ProductQuery productQuery) {
+        return queryForList("Product.findDaxueProducts",productQuery);
+    }
+
+    @Override
+    public int findDaxueProductsCount(ProductQuery productQuery) {
+        return (int)queryForObject("Product.findDaxueProductsCount",productQuery);
     }
 }
