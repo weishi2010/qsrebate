@@ -47,8 +47,8 @@
     <script src="/static/lib/page/tm.pagination.js"></script>
 
 
-    <script src="/static/js/admin/index.js" ></script>
-    <script src="/static/js/admin/product.js?v2" ></script>
+    <script src="/static/js/admin/index.js?v1" ></script>
+    <script src="/static/js/admin/product.js?v3" ></script>
 
     <style>
         .page-list .pagination {float:left;}

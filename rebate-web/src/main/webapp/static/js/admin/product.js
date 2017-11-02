@@ -15,6 +15,9 @@ adminModule.controller("productController", ["$scope", "$http", function ($scope
         productName= $("#search_productName").val();
         productId =$("#search_productId").val();
         couponType =$("#search_couponType").val();
+        page =  $scope.paginationConf.currentPage;
+        pageSize =  $scope.paginationConf.itemsPerPage;
+
         $http.get("/admin/getProducts.json",{params:{productName: encodeURIComponent(productName),productId:productId,couponType:couponType,page:page,pageSize:pageSize,r:Math.random()}}).success(function (response) {
             if (response.success) {
                 $scope.products = response.products;
