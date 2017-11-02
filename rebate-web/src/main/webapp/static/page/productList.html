@@ -22,6 +22,28 @@
                         </div>
 
                     </div>
+
+                    <div class="form-group">
+                        <div class="control-group">
+                            <label class="control-label bolder no-padding-left ">一级分类：</label>
+                            <select id="firstCategory" name="firstCategory" ng-model="firstCategory" ng-change="getSecondCategoryList()">
+                                <option value="">请选择</option>
+                                <option ng-repeat="category in firstCategoryList" value="{{category.id}}">{{category.name}}</option>
+                            </select>
+                            <label class="control-label bolder no-padding-left " >二级分类：</label>
+                            <select id="secondCategory" name="secondCategory" ng-model="secondCategory" ng-change="getThirdCategoryList()">
+                                <option value="">请选择</option>
+                                <option ng-repeat="category in secondCategoryList" value="{{category.id}}">{{category.name}}</option>
+                            </select>
+                            <label class="control-label bolder no-padding-left ">三级分类：</label>
+                            <select id="thirdCategory" name="thirdCategory">
+                                <option value="">请选择</option>
+                                <option ng-repeat="category in thirdCategoryList" value="{{category.id}}">{{category.name}}</option>
+                            </select>
+                        </div>
+
+                    </div>
+
                     <div class="form-group">
                         <div class="control-group">
                             <button type="button" id="btn_query" class="btn btn-sm btn-primary" ng-click="query()">

@@ -15,13 +15,47 @@ adminModule.controller("productController", ["$scope", "$http", function ($scope
         productName= $("#search_productName").val();
         productId =$("#search_productId").val();
         couponType =$("#search_couponType").val();
+        thirdCategory =$("#thirdCategory").val();
+
         page =  $scope.paginationConf.currentPage;
         pageSize =  $scope.paginationConf.itemsPerPage;
 
-        $http.get("/admin/getProducts.json",{params:{productName: encodeURIComponent(productName),productId:productId,couponType:couponType,page:page,pageSize:pageSize,r:Math.random()}}).success(function (response) {
+        $http.get("/admin/getProducts.json",{params:{productName: encodeURIComponent(productName),productId:productId,couponType:couponType,thirdCategory:thirdCategory,page:page,pageSize:pageSize,r:Math.random()}}).success(function (response) {
             if (response.success) {
                 $scope.products = response.products;
                 $scope.paginationConf.totalItems = response.totalItem;
+
+            }
+        });
+    }
+
+    $scope.getFirstCategoryList = function () {
+
+        $http.get("/admin/getFirstCategory.json",{params:{r:Math.random()}}).success(function (response) {
+            if (response.success) {
+                $scope.firstCategoryList = response.firstCategoryList;
+
+            }
+        });
+    }
+
+    $scope.getSecondCategoryList = function () {
+        firstCategoryId= $("#firstCategory").val();
+
+        $http.get("/admin/getSecondCategory.json",{params:{categoryId: firstCategoryId,r:Math.random()}}).success(function (response) {
+            if (response.success) {
+                $scope.secondCategoryList = response.secondCategoryList;
+
+            }
+        });
+    }
+
+    $scope.getThirdCategoryList = function () {
+        secondCategoryId= $("#secondCategory").val();
+
+        $http.get("/admin/getThirdCategory.json",{params:{categoryId: secondCategoryId,r:Math.random()}}).success(function (response) {
+            if (response.success) {
+                $scope.secondCategoryList = response.secondCategoryList;
 
             }
         });
@@ -120,6 +154,8 @@ adminModule.controller("productController", ["$scope", "$http", function ($scope
 
 
     $scope.query();
+
+    $scope.getFirstCategoryList();
 }]);
 
 function editProduct(obj) {

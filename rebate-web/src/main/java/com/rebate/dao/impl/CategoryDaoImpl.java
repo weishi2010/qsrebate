@@ -29,4 +29,9 @@ public class CategoryDaoImpl extends BaseDao implements CategoryDao {
         return queryForList("Category.findByRecommendCategories",recommendCategory);
     }
 
+    @Override
+    public List<Category> selectAllCategory() {
+        return queryForList("Category.selectAllCategory");
+    }
+
 }

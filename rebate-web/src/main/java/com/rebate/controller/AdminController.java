@@ -23,6 +23,7 @@ import com.rebate.domain.wx.WxConfig;
 import com.rebate.manager.jd.JdSdkManager;
 import com.rebate.service.activity.ActivityService;
 import com.rebate.service.activity.AdvertismentPositionService;
+import com.rebate.service.admin.AdminService;
 import com.rebate.service.extract.ExtractDetailService;
 import com.rebate.service.order.RebateDetailService;
 import com.rebate.service.product.ProductService;
@@ -93,6 +94,10 @@ public class AdminController extends BaseController {
     @Qualifier("userInfoService")
     @Autowired(required = true)
     private UserInfoService userInfoService;
+
+    @Qualifier("adminService")
+    @Autowired(required = true)
+    private AdminService adminService;
 
     @RequestMapping({"", "/", "/importProducts.json"})
     public ResponseEntity<?> importProducts(HttpServletRequest request, String productIds) {
@@ -235,7 +240,7 @@ public class AdminController extends BaseController {
     }
 
     @RequestMapping({"", "/", "/getProducts.json"})
-    public ResponseEntity<?> getProducts(HttpServletRequest request,Integer page, Integer pageSize, Integer couponType,String productName,Long productId) {
+    public ResponseEntity<?> getProducts(HttpServletRequest request,Integer page, Integer pageSize, Integer couponType,String productName,Long productId,Integer thirdCategory) {
         Map<String, Object> map = new HashMap<String, Object>();
         ProductQuery query = new ProductQuery();
         if (StringUtils.isNotBlank(productName)) {
@@ -247,6 +252,7 @@ public class AdminController extends BaseController {
         if(null!=couponType){
             query.setCouponType(couponType);
         }
+
         if(null==page){
             page = 1;
         }
@@ -256,6 +262,7 @@ public class AdminController extends BaseController {
 
         query.setIndex(page);
         query.setPageSize(pageSize);
+        query.setThirdCategory(thirdCategory);
         PaginatedArrayList<ProductVo> products = productService.findProductList(query,null);
         map.put("products", products);
         map.put("page", page);
@@ -356,6 +363,32 @@ public class AdminController extends BaseController {
 
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("success", true);
+        return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
+    }
+
+    @RequestMapping({"", "/", "/getFirstCategory.json"})
+    public ResponseEntity<?> getFirstCategory() {
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("success", true);
+        map.put("firstCategoryList",adminService.getFirstCategory() );
+        return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
+    }
+    @RequestMapping({"", "/", "/getSecondCategory.json"})
+    public ResponseEntity<?> getSecondCategory(Integer categoryId) {
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("success", true);
+        map.put("secondCategoryList",adminService.getSecondCategory(categoryId) );
+        return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
+    }
+
+    @RequestMapping({"", "/", "/getThirdCategory.json"})
+    public ResponseEntity<?> getThirdCategory(Integer categoryId) {
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("success", true);
+        map.put("thirdCategoryList",adminService.getThirdCategory(categoryId) );
         return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
     }
 }

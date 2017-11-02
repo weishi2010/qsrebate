@@ -40,4 +40,9 @@ public interface CategoryDao {
     List<RecommendCategory> findByRecommendCategories(RecommendCategory recommendCategory);
 
 
+    /**
+     * 全列表
+     * @return
+     */
+    List<Category> selectAllCategory();
 }

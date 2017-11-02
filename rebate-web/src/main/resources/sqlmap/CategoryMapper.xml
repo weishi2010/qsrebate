@@ -7,6 +7,15 @@
 
     <typeAlias alias="CategoryQuery" type="com.rebate.domain.CategoryQuery"/>
 
+    <resultMap class="Category" id="CategoryInfo">
+        <result property="firstCategory" column="first_category"/>
+        <result property="secondCategory" column="second_category"/>
+        <result property="thirdCategory" column="third_category"/>
+        <result property="firstCategoryName" column="first_category_name"/>
+        <result property="secondCategoryName" column="second_category_name"/>
+        <result property="thirdCategoryName" column="third_category_name"/>
+    </resultMap>
+
 
     <resultMap class="Category" id="CategoryResultMap">
         <result property="id" column="id"/>
@@ -69,6 +78,16 @@
         now())
     </insert>
 
+    <select id="selectAllCategory" parameterClass="CategoryQuery" resultMap="CategoryInfo">
+        select p.first_category,p.second_category,p.third_category,
+        c.first_category_name,c.second_category_name,c.third_category_name
+        from product p
+        left join
+        category c
+        on p.third_category = c.third_category
+        group by
+        p.first_category,p.second_category,p.third_category
+    </select>
     <select id="findByThirdCategory" parameterClass="CategoryQuery" resultMap="CategoryResultMap">
         select
         <include refid="fields"/>
