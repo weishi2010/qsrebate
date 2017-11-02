@@ -55,7 +55,7 @@ adminModule.controller("productController", ["$scope", "$http", function ($scope
 
         $http.get("/admin/getThirdCategory.json",{params:{categoryId: secondCategoryId,r:Math.random()}}).success(function (response) {
             if (response.success) {
-                $scope.secondCategoryList = response.secondCategoryList;
+                $scope.thirdCategoryList = response.thirdCategoryList;
 
             }
         });

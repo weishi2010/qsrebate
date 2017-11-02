@@ -51,7 +51,7 @@ public class AdminServiceImpl implements AdminService {
 
         for (Category category : allCategoryList) {
             if (categoryId.equals(category.getFirstCategory())) {
-                categoryMap.put(category.getFirstCategory(), category.getFirstCategoryName());
+                categoryMap.put(category.getSecondCategory(), category.getSecondCategoryName());
             }
         }
 
@@ -78,7 +78,7 @@ public class AdminServiceImpl implements AdminService {
 
         for (Category category : allCategoryList) {
             if (categoryId.equals(category.getSecondCategory())) {
-                categoryMap.put(category.getFirstCategory(), category.getFirstCategoryName());
+                categoryMap.put(category.getThirdCategory(), category.getThirdCategoryName());
             }
         }
 
