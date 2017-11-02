@@ -9,10 +9,12 @@ import com.rebate.dao.ProductCouponDao;
 import com.rebate.dao.ProductDao;
 import com.rebate.domain.*;
 import com.rebate.domain.en.*;
+import com.rebate.domain.property.JDProperty;
 import com.rebate.domain.query.ProductQuery;
 import com.rebate.domain.vo.ApiProductVo;
 import com.rebate.domain.vo.ProductVo;
 import com.rebate.manager.jd.JdSdkManager;
+import com.rebate.manager.shorturl.ShortUrlManager;
 import com.rebate.service.product.ProductCouponService;
 import com.rebate.service.product.ProductService;
 import org.apache.commons.lang.StringUtils;
@@ -57,6 +59,13 @@ public class ProductServiceImpl implements ProductService {
     private ProductCouponService productCouponService;
 
 
+    @Qualifier("shortUrlManager")
+    @Autowired(required = true)
+    private ShortUrlManager shortUrlManager;
+
+    @Qualifier("jDProperty")
+    @Autowired(required = true)
+    private JDProperty jDProperty;
 
     @Override
     public void update(Product product) {
@@ -252,6 +261,8 @@ public class ProductServiceImpl implements ProductService {
                             }else{
                                 apiProductVo.setDiscount(0.0);
                             }
+
+                            apiProductVo.setPromotionUrl(shortUrlManager.getQsShortPromotinUrl(apiProductVo.getPromotionUrl(),jDProperty.getApiSubUnionId()));
                             products.add(apiProductVo);
 
                         } catch (Exception e) {
