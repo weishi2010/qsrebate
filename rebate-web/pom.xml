@@ -240,6 +240,18 @@
             <groupId>xstream</groupId>
             <artifactId>xstream</artifactId>
         </dependency>
+
+        <dependency>
+            <artifactId>redis-common-data</artifactId>
+            <groupId>redis-common-data-noahv2</groupId>
+            <version>2.0.2-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>spring</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
     </dependencies>
 
     <build>

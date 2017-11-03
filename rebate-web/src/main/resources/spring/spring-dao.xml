@@ -71,4 +71,7 @@
     <bean id="recommendUserInfoDao" class="com.rebate.dao.impl.RecommendUserInfoDaoImpl">
         <property name="dataSource" ref="dataSource"/>
     </bean>
+    <bean id="userSummaryDao" class="com.rebate.dao.impl.UserSummaryDaoImpl">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
 </beans>

@@ -37,4 +37,9 @@ public interface RebateJob {
     void refreshDaxueCouponProductsCache();
 
 
+    /**
+     * 将点击数入库
+     */
+    void refreshUserClick();
+
 }

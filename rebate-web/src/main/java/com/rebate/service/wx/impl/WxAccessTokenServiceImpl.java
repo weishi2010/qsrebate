@@ -7,10 +7,11 @@
 
 package com.rebate.service.wx.impl;
 
+import com.jd.data.redis.RedisUtils;
+import com.jd.data.redis.connection.RedisAccessException;
 import com.rebate.common.cache.RedisKey;
 import com.rebate.common.util.HttpClientUtil;
 import com.rebate.common.util.JsonUtil;
-import com.rebate.common.util.RedisUtil;
 import com.rebate.domain.wx.ApiAccessToken;
 import com.rebate.domain.wx.AuthorizationCodeInfo;
 import com.rebate.domain.wx.WxConfig;
@@ -43,7 +44,7 @@ public class WxAccessTokenServiceImpl implements WxAccessTokenService {
 
     @Qualifier("redisUtil")
     @Autowired(required = false)
-    private RedisUtil redisUtil;
+    private RedisUtils redisUtil;
 
 
     @Override
@@ -139,7 +140,11 @@ public class WxAccessTokenServiceImpl implements WxAccessTokenService {
         if (null != apiAccessToken) {
             accessToken = apiAccessToken.getAccessToken();
             int timeOut = Integer.parseInt(apiAccessToken.getExpiresIn());
-            redisUtil.set(RedisKey.WX_API_ACCESSTOKEN.getKey(), accessToken, timeOut);
+            try {
+                redisUtil.set(RedisKey.WX_API_ACCESSTOKEN.getKey(), timeOut,accessToken);
+            } catch (RedisAccessException e) {
+                e.printStackTrace();
+            }
         }
 
         if (StringUtils.isNotBlank(accessToken)) {

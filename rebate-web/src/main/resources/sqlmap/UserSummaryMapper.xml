@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="UserSummary">
+
+    <typeAlias alias="UserSummary" type="com.rebate.domain.UserSummary"/>
+
+    <resultMap class="UserSummary" id="UserSummaryResultMap">
+        <result property="id" column="id"/>
+        <result property="subUnionId" column="sub_union_id"/>
+        <result property="clickCount" column="click_count"/>
+        <result property="opDate" column="op_date"/>
+        <result property="created" column="created"/>
+        <result property="modified" column="modified"/>
+    </resultMap>
+
+    <sql id="fields">
+      id,
+      sub_union_id,
+      click_count,
+      op_date,
+      created,
+      modified
+    </sql>
+
+    <insert id="insert" parameterClass="UserSummary">
+        insert into user_summary
+        (
+        sub_union_id,
+        click_count,
+        op_date,
+        created,
+        modified
+        )
+        values
+        (
+        #subUnionId#,
+        #clickCount#,
+        #opDate#,
+        now(),
+        now()
+        )
+        <selectKey resultClass="long" keyProperty="id">
+            SELECT @@IDENTITY as id
+        </selectKey>
+    </insert>
+
+    <update id="update" parameterClass="UserSummary" >
+        update user_summary
+        set click_count=#clickCount#,modified=now()
+        where sub_union_id=#subUnionId# and op_date=#opDate#
+    </update>
+
+
+    <update id="incrUserClick" parameterClass="UserSummary" >
+        update user_summary
+        set click_count=click_count+1,modified=now()
+        where sub_union_id=#subUnionId# and op_date=#opDate#
+    </update>
+
+    <select id="findUserSummary" parameterClass="UserSummary" resultMap="UserSummaryResultMap">
+        select
+        <include refid="fields"/>
+        from user_summary
+        where sub_union_id=#subUnionId# and op_date=#opDate#
+        limit 1
+    </select>
+</sqlMap>

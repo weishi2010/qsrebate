@@ -3,9 +3,12 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
        default-autowire="byName">
 
-    <bean id="redisUtil" class="com.rebate.common.util.RedisUtil" init-method="init">
-        <property name="masterAddrs" value="${qs.rebate.redis}"></property>
-        <property name="timeout" value="432000"></property>
+    <bean id="redisUtil" class="com.jd.data.spring.RedisClientFactoryBean">
+        <property name="maxActive" value="100" />
+        <property name="maxIdle" value="50" />
+        <property name="maxWait" value="1000" />
+        <property name="testOnBorrow" value="false" />
+        <property name="timeout" value="800" />
+        <property name="masterConfString" value="${qs.rebate.redis}" />
     </bean>
-
 </beans>

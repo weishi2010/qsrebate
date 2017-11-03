@@ -12,6 +12,7 @@ import com.rebate.domain.query.*;
 import com.rebate.domain.vo.ProductVo;
 import com.rebate.domain.wx.WxUserInfo;
 import com.rebate.manager.jd.JdSdkManager;
+import com.rebate.manager.shorturl.ShortUrlManager;
 import com.rebate.service.job.RebateJob;
 import com.rebate.service.product.ProductCouponService;
 import com.rebate.service.userinfo.UserInfoService;
@@ -25,6 +26,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -87,6 +89,66 @@ public class RebateJobImpl implements RebateJob {
     @Qualifier("wxAccessTokenService")
     @Autowired(required = false)
     private WxAccessTokenService wxAccessTokenService;
+
+    @Qualifier("userSummaryDao")
+    @Autowired
+    private UserSummaryDao userSummaryDao;
+
+    @Qualifier("shortUrlManager")
+    @Autowired(required = true)
+    private ShortUrlManager shortUrlManager;
+
+    @Override
+    public void refreshUserClick() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            List<UserInfo> list = userInfoDao.findAllUsers(new UserInfo());
+            LOG.error("[点击数入库任务]加载第{}条用户记录！", list.size());
+
+
+            for (UserInfo userInfo : list) {
+                for (int days = 0; days < 20; days++) {
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(new Date());
+                    calendar.add(Calendar.DAY_OF_WEEK, -days);
+                    Date day = calendar.getTime();
+                    Long clickCount = shortUrlManager.getJDUnionUrlClick(userInfo.getSubUnionId(), day);
+                    if (clickCount > 0) {
+
+                        UserSummary userSummary = new UserSummary();
+                        userSummary.setSubUnionId(userInfo.getSubUnionId());
+                        userSummary.setOpDate(sdf.parse(sdf.format(day)));
+                        userSummary.setClickCount(clickCount.intValue());
+                        if (null == userSummaryDao.findUserSummary(userSummary)) {
+                            userSummaryDao.insert(userSummary);
+                        } else {
+                            userSummaryDao.update(userSummary);
+
+                        }
+                    }
+
+                    //全站点击更新
+                    String qsSubUnionId = "ALL";
+                    UserSummary userSummary = new UserSummary();
+                    userSummary.setSubUnionId(qsSubUnionId);
+                    userSummary.setOpDate(sdf.parse(sdf.format(day)));
+                    userSummary.setClickCount(shortUrlManager.getJDUnionUrlClick(qsSubUnionId, day).intValue());
+                    if (null == userSummaryDao.findUserSummary(userSummary)) {
+                        userSummaryDao.insert(userSummary);
+                    } else {
+                        userSummaryDao.update(userSummary);
+
+                    }
+                }
+
+            }
+
+
+        } catch (ParseException e) {
+            LOG.error("refreshUserClick error!", e);
+        }
+
+    }
 
     @Override
     public void refreshUserInfo() {
@@ -184,7 +246,7 @@ public class RebateJobImpl implements RebateJob {
             for (ProductCoupon productCoupon : productCoupons) {
                 Long productId = productCoupon.getProductId();
                 //清理掉没有优惠券转链接的信息
-                String coupontPromotionLink = jdSdkManager.getPromotionCouponCode(productCoupon.getProductId(), productCoupon.getCouponLink(),subUnionId);
+                String coupontPromotionLink = jdSdkManager.getPromotionCouponCode(productCoupon.getProductId(), productCoupon.getCouponLink(), subUnionId);
                 if (StringUtils.isNotBlank(coupontPromotionLink)) {
 
                     //查询商品信息
@@ -192,7 +254,7 @@ public class RebateJobImpl implements RebateJob {
                     productQuery.setProductId(productId);
                     Product product = productDao.findById(productQuery);
                     //保健一级分类先暂时不推送
-                    if(null!=product && 9192==product.getFirstCategory()){
+                    if (null != product && 9192 == product.getFirstCategory()) {
                         continue;
                     }
 
@@ -200,9 +262,9 @@ public class RebateJobImpl implements RebateJob {
                     DaxueProduct daxueProduct = new DaxueProduct();
                     daxueProduct.setProductId(productId);
                     daxueProduct.setPromotionUrl(coupontPromotionLink);
-                    if(null==productDao.findDaxueProductById(daxueProduct)){
+                    if (null == productDao.findDaxueProductById(daxueProduct)) {
                         productDao.insertDaxueProduct(daxueProduct);
-                    }else{
+                    } else {
                         productDao.updateDaxueProduct(daxueProduct);
                     }
 
@@ -215,10 +277,10 @@ public class RebateJobImpl implements RebateJob {
                     productVo.setPromotionShortUrl(coupontPromotionLink);
                     productVo.setProductCoupon(productCoupon);
 
-                    if(productVo.getCouponPrice()<=10){
+                    if (productVo.getCouponPrice() <= 10) {
                         //添加到9.9商品缓存id列表中
                         productCouponService.addSecskillProductListCache(productVo);
-                    }else{
+                    } else {
                         //添加到内购券缓存id列表中
                         productCouponService.addProductCouponListCache(productVo);
                     }
@@ -233,10 +295,10 @@ public class RebateJobImpl implements RebateJob {
                     //方案二
                     //券链接为空说明已失效，删除单条缓存
                     productCouponService.cleanProductVoCache(productCoupon.getProductId());
-                    if(productCoupon.getCouponPrice()<=10){
+                    if (productCoupon.getCouponPrice() <= 10) {
                         //从id列表缓存中删除
                         productCouponService.cleanSecskillProductListCache(productCoupon.getProductId());
-                    }else{
+                    } else {
                         //从id列表缓存中删除
                         productCouponService.cleanProductCouponListCache(productCoupon.getProductId());
                     }

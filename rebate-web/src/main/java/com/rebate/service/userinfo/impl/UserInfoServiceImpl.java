@@ -1,25 +1,21 @@
 package com.rebate.service.userinfo.impl;
 
+import com.jd.data.redis.RedisUtils;
 import com.rebate.common.cache.RedisKey;
 import com.rebate.common.data.seq.SequenceUtil;
 import com.rebate.common.util.JsonUtil;
-import com.rebate.common.util.RedisUtil;
 import com.rebate.dao.CommissionDao;
 import com.rebate.dao.IncomeDetailDao;
 import com.rebate.dao.RecommendUserInfoDao;
 import com.rebate.dao.UserInfoDao;
 import com.rebate.domain.Commission;
-import com.rebate.domain.IncomeDetail;
 import com.rebate.domain.RecommendUserInfo;
 import com.rebate.domain.UserInfo;
-import com.rebate.domain.en.EAgent;
 import com.rebate.domain.en.EIncomeType;
 import com.rebate.domain.en.ESequence;
 import com.rebate.domain.en.ESubUnionIdPrefix;
-import com.rebate.domain.property.JDProperty;
 import com.rebate.domain.query.IncomeDetailQuery;
 import com.rebate.domain.query.RecommendUserInfoQuery;
-import com.rebate.domain.query.UserInfoQuery;
 import com.rebate.domain.wx.WxUserInfo;
 import com.rebate.service.userinfo.UserInfoService;
 import com.rebate.service.wx.WxAccessTokenService;
@@ -52,7 +48,7 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     @Qualifier("redisUtil")
     @Autowired(required = false)
-    private RedisUtil redisUtil;
+    private RedisUtils redisUtil;
 
     @Qualifier("wxService")
     @Autowired(required = false)
@@ -313,7 +309,7 @@ public class UserInfoServiceImpl implements UserInfoService {
     private void setUserInfoCache(UserInfo userInfo) {
         try {
             //设置到缓存
-            redisUtil.set(RedisKey.USER_INFO.getPrefix(userInfo.getOpenId()), JsonUtil.toJson(userInfo), RedisKey.USER_INFO.getTimeout());
+            redisUtil.set(RedisKey.USER_INFO.getPrefix(userInfo.getOpenId()), RedisKey.USER_INFO.getTimeout(), JsonUtil.toJson(userInfo));
         } catch (Exception e) {
             LOG.error("setUserInfoCache error!userInfo:{}", JsonUtil.toJson(userInfo));
         }
