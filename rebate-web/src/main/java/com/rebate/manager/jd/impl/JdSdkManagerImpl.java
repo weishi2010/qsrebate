@@ -129,7 +129,6 @@ public class JdSdkManagerImpl implements JdSdkManager {
             agentCommission = 0.0;
         }
 
-        LOG.error("computeGeneralRebateUserCommission,commission:"+commission+",platCommission:"+platCommission+",agentCommission:"+agentCommission);
         //给返利用户返佣金
         Double userCommission = new BigDecimal(commission + "").subtract(new BigDecimal(platCommission + "")).subtract(new BigDecimal(agentCommission + "")).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
         return userCommission;
