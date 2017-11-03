@@ -155,12 +155,12 @@ public class UserInfoServiceImpl implements UserInfoService {
         //如果推荐人为自己，则不设置推荐人
         if (StringUtils.isNotBlank(recommendOpenId) && !recommendOpenId.equalsIgnoreCase(openId)) {
             userInfo.setRecommendAccount(recommendOpenId);
-            updateRecommendUser(openId, recommendOpenId);
-        } else {
-            userInfo.setRecommendAccount("");
+            boolean flag = addRecommendUser(openId, recommendOpenId);
+            if(flag){
+                userInfoDao.update(userInfo);
+            }
         }
 
-        userInfoDao.update(userInfo);
     }
 
     @Override
@@ -250,7 +250,8 @@ public class UserInfoServiceImpl implements UserInfoService {
      * @param openId
      * @param recommendOpenId
      */
-    private void addRecommendUser(String openId, String recommendOpenId) {
+    private boolean addRecommendUser(String openId, String recommendOpenId) {
+        boolean flag = false;
         if (StringUtils.isNotBlank(recommendOpenId) && !recommendOpenId.equalsIgnoreCase(openId)) {
             RecommendUserInfo recommendUserInfo = new RecommendUserInfo();
             recommendUserInfo.setOpenId(openId);
@@ -263,8 +264,10 @@ public class UserInfoServiceImpl implements UserInfoService {
             RecommendUserInfo existsRecommendUserInfo = recommendUserInfoDao.findRecommendUserInfo(recommendUserInfoQuery);
             if (null == existsRecommendUserInfo) {
                 recommendUserInfoDao.insert(recommendUserInfo);
+                flag = true;
             }
         }
+        return flag;
     }
 
     /**

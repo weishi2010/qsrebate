@@ -139,144 +139,242 @@ public class WsMessageController extends BaseController {
      * @param response
      */
     private void accept(HttpServletRequest request, HttpServletResponse response) {
-        try {
-            // 处理接收消息
-            InputMessage inputMsg = getInputMessage(request);
+        // 处理接收消息
+        InputMessage inputMsg = getInputMessage(request);
 
-            if (null != inputMsg) {
-                LOG.error("accept[" + inputMsg.getFromUserName() + "],msgType:" + inputMsg.getMsgType());
-                //查询用户信息获取子联盟ID
-                UserInfo userInfo = userInfoService.getUserInfo(inputMsg.getFromUserName());
-                String subUnionId = "";
-                int agent = EAgent.NOT_AGENT.getCode();
-                if (null != userInfo) {
-                    subUnionId = userInfo.getSubUnionId();
-                    agent = userInfo.getAgent();
-                }
-                // 取得消息类型
-                String msgType = inputMsg.getMsgType();
-                // 根据消息类型获取对应的消息内容
-                if (msgType.equals(EWxMsgType.TEXT.getValue())) {
+        if (null != inputMsg) {
+            LOG.error("accept[" + inputMsg.getFromUserName() + "],msgType:" + inputMsg.getMsgType());
+            //查询用户信息获取子联盟ID
+            UserInfo userInfo = userInfoService.getUserInfo(inputMsg.getFromUserName());
+            String subUnionId = "";
+            int agent = EAgent.NOT_AGENT.getCode();
+            if (null != userInfo) {
+                subUnionId = userInfo.getSubUnionId();
+                agent = userInfo.getAgent();
+            }
+            // 取得消息类型
+            String msgType = inputMsg.getMsgType();
+            // 根据消息类型获取对应的消息内容
+            if (msgType.equals(EWxMsgType.TEXT.getValue())) {
+                //文本事件
+                textEvent(agent, inputMsg, subUnionId, response);
 
-                    //默认为普通用户获取文本推送商品推荐xml
-                    String textXml = recommendProductPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
-
-                    //如果为代理用户则解析消息进行推广转链处理
-                    if (EAgent.FIRST_AGENT.getCode() == agent || EAgent.SECOND_AGENT.getCode() == agent) {
-                        textXml = agentConvertLinkPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
-                    }
-                    LOG.error("output wx textXml:" + textXml);
-
-                    response.getWriter().write(textXml.toString());
-
-                } else if (msgType.equals(EWxMsgType.EVENT.getValue())) {
-                    String openId = inputMsg.getFromUserName();
-                    LOG.error("accept[" + openId + "],msgType:" + inputMsg.getMsgType() + ",event:" + inputMsg.getEvent());
-                    if (EWxEventType.SUBSCRIBE.getValue().equalsIgnoreCase(inputMsg.getEvent())) {
-                        //查询是否已存在此用户
-                        UserInfo userInfoQuery = new UserInfo();
-                        userInfoQuery.setOpenId(openId);
-                        userInfo = userInfoDao.findLoginUserInfo(userInfoQuery);
-                        String eventXml = "";
-
-                        String eventKey = inputMsg.getEventKey();
-                        Integer agentType = null;
-                        String agentOpenId = null;
-                        if (StringUtils.isNotBlank(eventKey) && eventKey.contains(EWxEventCode.QRCODE_SUBSCRIBE.getValue())) {
-                            String paramJson = eventKey.replace(EWxEventCode.QRCODE_SUBSCRIBE.getValue(), "");//前缀去掉
-
-                            if (StringUtils.isNotBlank(paramJson)) {
-                                //如果扫码带数据则进行代理参数解析
-                                String[]  paramArray =paramJson.split("#");
-                                agentOpenId = paramArray[0];
-                                agentType = Integer.parseInt(paramArray[1]);
-                            }
-                        }
-
-
-                        if (null == userInfo) {
-                            if (null != agentType) {
-                                //代理用户扫码，带参数
-                                if (EAgent.FIRST_AGENT.getCode() == agentType) {
-                                    //代理模式1-注册代理用户
-                                    userInfo = userInfoService.registUserInfo(openId, "", EAgent.FIRST_AGENT.getCode(), true);
-                                    //代理用户关注消息
-                                    eventXml = agentTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), userInfo.getSubUnionId());
-
-                                } else if (EAgent.SECOND_AGENT.getCode() == agentType) {
-                                    //代理模式2-注册代理用户
-                                    userInfo = userInfoService.registUserInfo(openId, "", EAgent.SECOND_AGENT.getCode(), true);
-                                    //代理用户关注消息
-                                    eventXml = agentTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), userInfo.getSubUnionId());
-
-                                }else if (EAgent.GENERAL_REBATE_USER.getCode() == agentType) {
-                                    //代理模式2-拉粉丝返利用户
-                                    userInfoService.registUserInfo(openId, agentOpenId, EAgent.GENERAL_REBATE_USER.getCode(), true);
-                                    eventXml = subscribeTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
-
-                                }
-
-                            } else {
-                                //普通用户扫码，不带参数
-                                //注册普通返利用户
-                                userInfoService.registUserInfo(openId, "", EAgent.GENERAL_REBATE_USER.getCode(), true);
-
-                                //普通用户首次关注消息
-                                eventXml = subscribeTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
-
-                            }
-
-
-                        } else {
-
-                            if (null != agentType) {
-                                //代理用户扫码，带参数
-                                if (EAgent.FIRST_AGENT.getCode() == agentType) {
-                                    //代理模式1-注册代理用户
-                                    userInfoService.updateUserInfoAgent(openId,"", EAgent.FIRST_AGENT.getCode());
-
-                                    //代理用户关注消息
-                                    eventXml = agentTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), userInfo.getSubUnionId());
-
-                                } else if (EAgent.SECOND_AGENT.getCode() == agentType) {
-                                    //代理模式2-注册代理用户
-                                    userInfoService.updateUserInfoAgent(openId,"", EAgent.SECOND_AGENT.getCode());
-                                    //代理用户关注消息
-                                    eventXml = agentTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), userInfo.getSubUnionId());
-                                }else if (EAgent.GENERAL_REBATE_USER.getCode() == agentType ) {
-                                    //代理模式2-拉粉丝返利用户
-                                    if(StringUtils.isBlank(userInfo.getRecommendAccount())){
-                                        userInfoService.updateUserInfoAgent(openId, agentOpenId, EAgent.GENERAL_REBATE_USER.getCode());
-                                    }
-                                    eventXml = subscribeTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
-
-                                }
-
-                            } else {
-                                //普通用户扫码，不带参数
-                                //普通用户首次关注消息
-                                eventXml = subscribeTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
-
-                            }
-                        }
-                        LOG.error("output wx eventXml:" + eventXml);
-                        response.getWriter().write(eventXml.toString());
-                    } else if (EWxEventType.CLICK.getValue().equalsIgnoreCase(inputMsg.getEvent())) {
-                        //点击
-                        String eventXml = "";
-                        if (EWxEventCode.QS_WX_CLICK001.getValue().equalsIgnoreCase(inputMsg.getEventKey())) {
-                            eventXml = articlePushXml(inputMsg.getFromUserName(), inputMsg.getToUserName());
-                        }
-                        LOG.error("output wx eventXml:" + eventXml);
-                        response.getWriter().write(eventXml.toString());
-                    }
+            } else if (msgType.equals(EWxMsgType.EVENT.getValue())) {
+                String openId = inputMsg.getFromUserName();
+                LOG.error("accept[" + openId + "],msgType:" + inputMsg.getMsgType() + ",event:" + inputMsg.getEvent());
+                if (EWxEventType.SUBSCRIBE.getValue().equalsIgnoreCase(inputMsg.getEvent())) {
+                    //订阅处理
+                    subscribteEvent(openId, inputMsg, subUnionId, response);
+                } else if (EWxEventType.CLICK.getValue().equalsIgnoreCase(inputMsg.getEvent())) {
+                    //点击事件
+                    clickEvent(openId, inputMsg, subUnionId, response);
+                } else if (EWxEventType.SCAN.getValue().equalsIgnoreCase(inputMsg.getEvent())) {
+                    //扫描处理
+                    scanEvent(openId, inputMsg, subUnionId, response);
                 }
             }
+        }
+    }
 
+    /**
+     * 文本事件
+     * @param agent
+     * @param inputMsg
+     * @param subUnionId
+     * @param response
+     */
+    private void textEvent(int agent, InputMessage inputMsg, String subUnionId, HttpServletResponse response){
+        //默认为普通用户获取文本推送商品推荐xml
+        String textXml = recommendProductPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
+
+        //如果为代理用户则解析消息进行推广转链处理
+        if (EAgent.FIRST_AGENT.getCode() == agent || EAgent.SECOND_AGENT.getCode() == agent) {
+            textXml = agentConvertLinkPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
+        }
+        LOG.error("output wx textXml:" + textXml);
+
+        try {
+            response.getWriter().write(textXml.toString());
         } catch (IOException e) {
-            LOG.error("accept wx message error!", e);
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 订阅事件
+     *
+     * @param openId
+     * @param inputMsg
+     * @param subUnionId
+     * @param response
+     */
+    private void clickEvent(String openId, InputMessage inputMsg, String subUnionId, HttpServletResponse response){
+        //点击
+        String eventXml = "";
+        if (EWxEventCode.QS_WX_CLICK001.getValue().equalsIgnoreCase(inputMsg.getEventKey())) {
+            eventXml = articlePushXml(inputMsg.getFromUserName(), inputMsg.getToUserName());
+        }
+        LOG.error("output wx eventXml:" + eventXml);
+        try {
+            response.getWriter().write(eventXml.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 订阅事件
+     *
+     * @param openId
+     * @param inputMsg
+     * @param subUnionId
+     * @param response
+     */
+    private void subscribteEvent(String openId, InputMessage inputMsg, String subUnionId, HttpServletResponse response) {
+        //查询是否已存在此用户
+        UserInfo userInfoQuery = new UserInfo();
+        userInfoQuery.setOpenId(openId);
+        UserInfo userInfo = userInfoDao.findLoginUserInfo(userInfoQuery);
+        String eventXml = "";
+
+        String eventKey = inputMsg.getEventKey();
+        Integer agentType = null;
+        String agentOpenId = null;
+        if (StringUtils.isNotBlank(eventKey) && eventKey.contains(EWxEventCode.QRCODE_SUBSCRIBE.getValue())) {
+            String paramJson = eventKey.replace(EWxEventCode.QRCODE_SUBSCRIBE.getValue(), "");//前缀去掉
+
+            if (StringUtils.isNotBlank(paramJson)) {
+                //如果扫码带数据则进行代理参数解析
+                String[] paramArray = paramJson.split("#");
+                agentOpenId = paramArray[0];
+                agentType = Integer.parseInt(paramArray[1]);
+            }
         }
 
+        if (null == userInfo) {
+            if (null != agentType) {
+                //代理用户扫码，带参数
+                if (EAgent.FIRST_AGENT.getCode() == agentType) {
+                    //代理模式1-注册代理用户
+                    userInfo = userInfoService.registUserInfo(openId, "", EAgent.FIRST_AGENT.getCode(), true);
+                    //代理用户关注消息
+                    eventXml = agentTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), userInfo.getSubUnionId());
+
+                } else if (EAgent.SECOND_AGENT.getCode() == agentType) {
+                    //代理模式2-注册代理用户
+                    userInfo = userInfoService.registUserInfo(openId, "", EAgent.SECOND_AGENT.getCode(), true);
+                    //代理用户关注消息
+                    eventXml = agentTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), userInfo.getSubUnionId());
+
+                } else if (EAgent.GENERAL_REBATE_USER.getCode() == agentType) {
+                    //代理模式2-拉粉丝返利用户
+                    userInfoService.registUserInfo(openId, agentOpenId, EAgent.GENERAL_REBATE_USER.getCode(), true);
+                    eventXml = subscribeTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
+
+                }
+
+            } else {
+                //普通用户扫码，不带参数
+                //注册普通返利用户
+                userInfoService.registUserInfo(openId, "", EAgent.GENERAL_REBATE_USER.getCode(), true);
+
+                //普通用户首次关注消息
+                eventXml = subscribeTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
+
+            }
+
+        } else {
+
+            if (null != agentType) {
+                //代理用户扫码，带参数
+                if (EAgent.FIRST_AGENT.getCode() == agentType) {
+                    //代理模式1-注册代理用户
+                    userInfoService.updateUserInfoAgent(openId, "", EAgent.FIRST_AGENT.getCode());
+
+                    //代理用户关注消息
+                    eventXml = agentTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), userInfo.getSubUnionId());
+
+                } else if (EAgent.SECOND_AGENT.getCode() == agentType) {
+                    //代理模式2-注册代理用户
+                    userInfoService.updateUserInfoAgent(openId, "", EAgent.SECOND_AGENT.getCode());
+                    //代理用户关注消息
+                    eventXml = agentTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), userInfo.getSubUnionId());
+                } else if (EAgent.GENERAL_REBATE_USER.getCode() == agentType) {
+                    //代理模式2-拉粉丝返利用户
+                    if (StringUtils.isBlank(userInfo.getRecommendAccount())) {
+                        userInfoService.updateUserInfoAgent(openId, agentOpenId, EAgent.GENERAL_REBATE_USER.getCode());
+                    }
+                    eventXml = subscribeTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
+
+                }
+
+            } else {
+                //普通用户扫码，不带参数
+                //普通用户首次关注消息
+                eventXml = subscribeTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
+
+            }
+        }
+
+        LOG.error("output wx eventXml:" + eventXml);
+        try {
+            response.getWriter().write(eventXml.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 扫描事件
+     *
+     * @param openId
+     * @param inputMsg
+     * @param subUnionId
+     * @param response
+     */
+    private void scanEvent(String openId, InputMessage inputMsg, String subUnionId, HttpServletResponse response) {
+        //查询是否已存在此用户
+        UserInfo userInfoQuery = new UserInfo();
+        userInfoQuery.setOpenId(openId);
+        UserInfo userInfo = userInfoDao.findLoginUserInfo(userInfoQuery);
+        String eventXml = "";
+
+        String eventKey = inputMsg.getEventKey();
+        Integer agentType = null;
+        String agentOpenId = null;
+        if (StringUtils.isNotBlank(eventKey)) {
+            String paramJson = eventKey.replace(EWxEventCode.QRCODE_SUBSCRIBE.getValue(), "");//前缀去掉
+
+            if (StringUtils.isNotBlank(paramJson)) {
+                //如果扫码带数据则进行代理参数解析
+                String[] paramArray = paramJson.split("#");
+                if(paramArray.length>0){
+                    agentType = Integer.parseInt(paramArray[paramArray.length-1]);
+                    agentOpenId = paramArray[paramArray.length-2];
+                }
+            }
+        }
+
+        if (null != agentType && EAgent.GENERAL_REBATE_USER.getCode() == agentType) {
+            if (null == userInfo) {
+                //代理模式2-拉粉丝返利用户
+                userInfoService.registUserInfo(openId, agentOpenId, EAgent.GENERAL_REBATE_USER.getCode(), true);
+                eventXml = subscribeTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
+            } else {
+                //代理模式2-拉粉丝返利用户
+                if (StringUtils.isBlank(userInfo.getRecommendAccount())) {
+                    userInfoService.updateUserInfoAgent(openId, agentOpenId, EAgent.GENERAL_REBATE_USER.getCode());
+                }
+                eventXml = subscribeTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
+            }
+        }
+
+        LOG.error("output wx eventXml:" + eventXml);
+        try {
+            response.getWriter().write(eventXml.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -482,9 +580,9 @@ public class WsMessageController extends BaseController {
                 productQuery.setProductId(product.getProductId());
                 productQuery.setStatus(EProductStatus.PASS.getCode());
                 Product productExists = productDao.findById(productQuery);
-                if(null!=productExists){
+                if (null != productExists) {
                     product.setIsRebate(productExists.getIsRebate());
-                }else{
+                } else {
                     product.setIsRebate(EProudctRebateType.REBATE.getCode());
                 }
 

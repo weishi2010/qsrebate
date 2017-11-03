@@ -39,6 +39,7 @@
             #if($recommendUserOrderSummary)
                 <label style="color:#59d625">   引入订单数：$!{recommendUserOrderSummary.orderCount}  引入佣金：$!{recommendUserOrderSummary.commission}</label>
             #end
+        <span style=""><a style="font-size:18px;color:#e20f05;text-decoration:none;" href="/personal/recommendUserCode">去拉粉</a></span>
     </div>
     #end
     <div class="totalCommissionInfo">

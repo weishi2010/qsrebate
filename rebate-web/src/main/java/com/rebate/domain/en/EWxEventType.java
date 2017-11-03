@@ -17,7 +17,12 @@ public enum EWxEventType {
     /**
      * 点击
      */
-    CLICK("CLICK");
+    CLICK("CLICK"),
+
+    /**
+     * 扫描二维码
+     */
+    SCAN("SCAN");
 
     private String value;
 
