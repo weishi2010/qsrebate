@@ -4,6 +4,7 @@ import net.sf.json.JSONObject;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -23,7 +24,11 @@ import org.apache.log4j.Logger;
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class HttpClientUtil {
     private final static Logger LOG = Logger.getLogger(HttpClientUtil.class);
@@ -263,5 +268,58 @@ public class HttpClientUtil {
             to = "";
         }
         return to;
+    }
+
+    /**
+     * JD多重跳转活动链接解析
+     * @param oriUrl
+     * @return
+     */
+    public  static String convertJDPromotionUrl(String oriUrl){
+        //获取重定向后的URL
+        String url = HttpClientUtil.getFinalURL(oriUrl);
+        if(StringUtils.isNotBlank(url)){
+            //如果还JD下级跳转页，则从页面中解析出活动链接
+            String html = HttpClientUtil.get(url);
+            if(StringUtils.isNotBlank(html) && html.contains("hrl")){
+                List<String> links = getJDPromotionLinks(html);
+                for(String link:links){
+                    link = link.trim().replace("\'","");
+                    link = HttpClientUtil.getFinalURL(link);
+
+                    String[] urlArray = link.split("\\?");
+                    String domainStr = urlArray[0];
+                    String paramStr = urlArray[1];
+                    StringBuffer params = new StringBuffer();
+                    String[] paramArray = paramStr.split("\\&");
+                    for(String param:paramArray){
+                        if(!param.contains("utm")){
+                            params.append(param).append("&");
+                        }
+                    }
+                    url = domainStr+"?"+params.toString();
+
+                }
+            }
+        }else{
+            url = oriUrl;
+        }
+        return url;
+    }
+
+    /**
+     * 从html中解析出活动链接
+     * @param html
+     * @return
+     */
+    public static List<String> getJDPromotionLinks(String html) {
+        List<String> urls = new ArrayList<>();
+        Pattern pattern = Pattern
+                .compile("\\s*(?i)hrl\\s*=\\s*(\"([^\"]*\")|'[^']*'|([^'\">\\s]+))");
+        Matcher matcher = pattern.matcher(html);
+        while(matcher.find()){
+            urls.add(matcher.group(0).replace("hrl=",""));
+        }
+        return urls;
     }
 }

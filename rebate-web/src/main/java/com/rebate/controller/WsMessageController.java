@@ -1,10 +1,7 @@
 package com.rebate.controller;
 
 import com.google.common.base.Joiner;
-import com.rebate.common.util.JsonUtil;
-import com.rebate.common.util.RegexUtils;
-import com.rebate.common.util.SerializeXmlUtil;
-import com.rebate.common.util.Sha1Util;
+import com.rebate.common.util.*;
 import com.rebate.common.util.rebate.RebateUrlUtil;
 import com.rebate.controller.base.BaseController;
 import com.rebate.dao.IncomeDetailDao;
@@ -653,10 +650,12 @@ public class WsMessageController extends BaseController {
     private String salesMessageConvertJDMediaUrl(String content, String subUnionId) {
         String result = "很抱歉，活动链接转换失败，请联系公众号管理员!";
         try {
-            String line = "";
             List<String> list = RegexUtils.getLinks(content);
             for (String link : list) {
-                String jdMediaUrl = jdSdkManager.getSalesActivityPromotinUrl(link, subUnionId);
+                //JD活动多重跳转解析
+                String convertJDPromotionUrl = HttpClientUtil.convertJDPromotionUrl(link);
+                //转换为推广链接
+                String jdMediaUrl = jdSdkManager.getSalesActivityPromotinUrl(convertJDPromotionUrl, subUnionId);
                 jdMediaUrl = shortUrlManager.getQsShortPromotinUrl(jdMediaUrl, subUnionId);
                 if (StringUtils.isNotBlank(jdMediaUrl)) {
                     content = content.replace(link, jdMediaUrl);
