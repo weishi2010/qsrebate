@@ -37,7 +37,7 @@
     #if($userInfo.agent==2)
         <div>
             <label style="color:#59d625">粉计[粉丝：$!{recommendUserCount} 订单数：$!{recommendUserOrderSummary.orderCount} 佣金：$!{recommendUserOrderSummary.commission} 总粉丝：$!{allRecommendUserCount}]</label>
-            <span style=""><a style="font-size:18px;color:#e20f05;text-decoration:none;" href="/personal/recommendUserCode"> 去拉粉>></a></span>
+            <span style=""><a style="font-size:18px;color:#e20f05;text-decoration:none;" href="/personal/recommendUserCode">去拉粉>></a></span>
         </div>
     #end
     <div class="totalCommissionInfo">
