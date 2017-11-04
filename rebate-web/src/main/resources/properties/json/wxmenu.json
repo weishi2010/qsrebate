@@ -27,18 +27,8 @@
     },
     {
       "name": "返钱教程",
-      "sub_button": [
-        {
-          "type": "click",
-          "name": "怎么返？",
-          "key": "QS_WX_CLICK001"
-        },
-        {
-          "type": "view",
-          "name": "怎么赚？",
-          "url": "http://m.qingsongfan.com.cn/product/couponProducts"
-        }
-      ]
+      "type": "click",
+      "key": "QS_WX_CLICK001"
     },
     {
       "name": "个人中心",

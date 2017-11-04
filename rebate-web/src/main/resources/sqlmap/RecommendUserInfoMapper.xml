@@ -79,6 +79,13 @@
         count(1)
         from recommend_user_info
         where recommend_account=#recommendAccount#
-         <![CDATA[  and created>=#startDate# and created <=#endDate# ]]>
+        <dynamic>
+            <isNotNull prepend="and" property="startDate">
+                <![CDATA[created>=#startDate# ]]>
+            </isNotNull>
+            <isNotNull prepend="and" property="endDate">
+                <![CDATA[ created <=#endDate# ]]>
+            </isNotNull>
+        </dynamic>
     </select>
 </sqlMap>

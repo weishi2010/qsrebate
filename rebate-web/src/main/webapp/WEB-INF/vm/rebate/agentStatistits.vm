@@ -33,14 +33,12 @@
             #end
         </span>
     </div>
+
     #if($userInfo.agent==2)
-    <div>
-            <label style="color:#59d625">粉丝：$!{recommendUserCount}</label>
-            #if($recommendUserOrderSummary)
-                <label style="color:#59d625">   引入订单数：$!{recommendUserOrderSummary.orderCount}  引入佣金：$!{recommendUserOrderSummary.commission}</label>
-            #end
-        <span style=""><a style="font-size:18px;color:#e20f05;text-decoration:none;" href="/personal/recommendUserCode">去拉粉</a></span>
-    </div>
+        <div>
+            <label style="color:#59d625">粉计[粉丝：$!{recommendUserCount} 订单数：$!{recommendUserOrderSummary.orderCount} 佣金：$!{recommendUserOrderSummary.commission} 总粉丝：$!{allRecommendUserCount}]</label>
+            <span style=""><a style="font-size:18px;color:#e20f05;text-decoration:none;" href="/personal/recommendUserCode"> 去拉粉>></a></span>
+        </div>
     #end
     <div class="totalCommissionInfo">
 
@@ -55,6 +53,7 @@
             <!--<div> <h4>转化率</h4> <p>56.36%</p> </div>-->
         #end
     </div>
+
 </div>
 <div class="commissionByDay">
     <div class="commissionType">

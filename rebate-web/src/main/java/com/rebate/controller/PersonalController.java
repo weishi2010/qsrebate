@@ -294,17 +294,27 @@ public class PersonalController extends BaseController {
         }
 
         if (userInfo.getAgent() == EAgent.SECOND_AGENT.getCode()) {
+            //按时间取粉丝数
             RecommendUserInfoQuery recommendUserInfoQuery = new RecommendUserInfoQuery();
             recommendUserInfoQuery.setRecommendAccount(userInfo.getOpenId());
             recommendUserInfoQuery.setStartDate(startDate);
             recommendUserInfoQuery.setEndDate(endDate);
             view.addObject("recommendUserCount", userInfoService.findRecommendUserCount(recommendUserInfoQuery));
 
+            //取全部粉丝数
+            RecommendUserInfoQuery recommendAllUserInfoQuery = new RecommendUserInfoQuery();
+            recommendAllUserInfoQuery.setRecommendAccount(userInfo.getOpenId());
+            view.addObject("allRecommendUserCount", userInfoService.findRecommendUserCount(recommendAllUserInfoQuery));
+
             RebateDetailQuery  rebateDetailQuery = new RebateDetailQuery();
             rebateDetailQuery.setOpenId(userInfo.getOpenId());
             rebateDetailQuery.setStartDate(startDate);
             rebateDetailQuery.setEndDate(endDate);
-            view.addObject("recommendUserOrderSummary", rebateDetailService.getRecommendUserOrderSummaryByOpenId(rebateDetailQuery));
+            OrderSummary orderSummary = rebateDetailService.getRecommendUserOrderSummaryByOpenId(rebateDetailQuery);
+            if (null != orderSummary && orderSummary.getClickCount() == null) {
+                orderSummary.setCommission(0.0);
+            }
+            view.addObject("recommendUserOrderSummary",orderSummary);
         }
 
         LOG.error("[agentStatistits]dayTab:"+dayTab+",size:"+list.size());
