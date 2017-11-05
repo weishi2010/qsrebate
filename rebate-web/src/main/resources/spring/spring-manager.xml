@@ -51,7 +51,13 @@
 		<property name="generalRebateUserPlatRatio" value="${jd.generalRebateUserPlatRatio}" />
 
 	</bean>
-	
+
+	<!--weibo SDK-->
+	<bean id="weiBoProperty" class="com.rebate.domain.property.WeiBoProperty">
+		<property name="shortUrlApiUrl" value="${weibo.shorturl.url}"/>
+		<property name="accessToken" value="${weibo.shorturl.accessToken}"/>
+	</bean>
+
 	<!--URL处理工具类-->
 	<bean id="rebateUrlUtil" class="com.rebate.common.util.rebate.RebateUrlUtil">
 		<property name="jdUnionUrlPrefix" value="https://union-click.jd.com/jdc?"></property>

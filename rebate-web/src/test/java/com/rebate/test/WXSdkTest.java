@@ -1,22 +1,13 @@
 package com.rebate.test;
 
-import com.jd.open.api.sdk.DefaultJdClient;
-import com.jd.open.api.sdk.JdClient;
-import com.jd.open.api.sdk.JdException;
-import com.jd.open.api.sdk.request.cps.ServicePromotionGoodsInfoRequest;
-import com.jd.open.api.sdk.response.cps.ServicePromotionGoodsInfoResponse;
-import com.rebate.common.util.HttpClientUtil;
 import com.rebate.common.util.JsonUtil;
 import com.rebate.common.util.SerializeXmlUtil;
 import com.rebate.domain.UserInfo;
 import com.rebate.domain.wx.AuthorizationCodeInfo;
 import com.rebate.domain.wx.InputMessage;
-import com.rebate.domain.wx.WxConfig;
 import com.rebate.domain.wx.WxUserInfo;
 import com.rebate.service.wx.WxAccessTokenService;
 import com.thoughtworks.xstream.XStream;
-import net.sf.json.JSON;
-import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,13 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-
-import javax.servlet.ServletInputStream;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 
 @ContextConfiguration(locations = {"/spring-config.xml"})
 public class WXSdkTest extends AbstractJUnit4SpringContextTests {

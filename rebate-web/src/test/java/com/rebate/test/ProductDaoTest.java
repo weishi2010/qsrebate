@@ -109,6 +109,14 @@ public class ProductDaoTest extends AbstractJUnit4SpringContextTests {
     }
 
     @Test
+    public void testGetSalesActivityPromotinUrl() {
+        String url = "http://m.qingsongfan.com.cn/qsc/qsu?d=iI1Vkj&sui=MY9mKeYstF1lGzrk4g5Mtw==";
+        String subUnionId ="JD100001251";
+        String promotionUrl = jdSdkManager.getSalesActivityPromotinUrl(url,subUnionId);
+        System.out.println("promotionUrl:" + promotionUrl);
+    }
+
+    @Test
     public void testGetMediaCouponProducts() {
         List<ProductCoupon> list = jdSdkManager.getMediaCoupons(1, 10);
         System.out.println("list:" + JsonUtil.toJson(list));
