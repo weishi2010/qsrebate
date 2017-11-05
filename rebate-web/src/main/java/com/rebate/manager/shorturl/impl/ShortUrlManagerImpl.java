@@ -53,8 +53,9 @@ public class ShortUrlManagerImpl implements ShortUrlManager {
 
         //写入缓存
         incrCacheUserClick(subUnionId);
+
         //写入数据库
-        incrDbUserClick();
+        incrDbUserClick(subUnionId);
 
     }
 
@@ -132,24 +133,38 @@ public class ShortUrlManagerImpl implements ShortUrlManager {
 
 
             String key = RedisKey.JD_UNION_URL_CLICK.getPrefix(day + subUnionId);
-            redisUtil.incr(key);
+            long clickCount = redisUtil.incr(key);
 
             //统计全站的点击
             String qsAllClickKey = RedisKey.JD_UNION_URL_CLICK.getPrefix(day + "ALL");
-            long count = redisUtil.incr(qsAllClickKey);
-            LOG.error("incrJDUnionUrlClick count:{}", count);
+            long allClickCount = redisUtil.incr(qsAllClickKey);
+            LOG.error("incrCacheUserClick count:{},subUnionId:" + subUnionId + ",allClickCount:" + allClickCount, clickCount);
         } catch (Exception e) {
             LOG.error("incrJDUnionUrlClick error!:subUnionId:" + subUnionId, e);
         }
     }
 
-    public void incrDbUserClick() {
-        String subUnionId = "ALL";
+    /**
+     * 更新数据库点击
+     * @param subUnionId
+     */
+    public void incrDbUserClick(String subUnionId) {
+        //更新全站点击
+        updateUserSummary("ALL");
+        //更新子联盟ID的点击
+        updateUserSummary(subUnionId);
+
+    }
+
+    /**
+     * 更新用户点击统计
+     * @param subUnionId
+     */
+    private void updateUserSummary(String subUnionId) {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             UserSummary userSummary = new UserSummary();
             userSummary.setSubUnionId(subUnionId);
-
             userSummary.setOpDate(sdf.parse(sdf.format(new Date())));
 
             if (null == userSummaryDao.findUserSummary(userSummary)) {
@@ -158,9 +173,8 @@ public class ShortUrlManagerImpl implements ShortUrlManager {
             } else {
                 userSummaryDao.incrUserClick(userSummary);
             }
-
         } catch (ParseException e) {
-            LOG.error("incrDbUserClick error!:subUnionId:" + subUnionId, e);
+            LOG.error("updateUserSummary error!:subUnionId:" + subUnionId, e);
         }
     }
 
