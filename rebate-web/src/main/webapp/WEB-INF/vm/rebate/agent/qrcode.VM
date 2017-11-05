@@ -1,6 +1,18 @@
 #set( $title = "轻松返二维码")
 #parse("/common/head.vm")
-<body class="bd">
-<img id="qrcode" src="$!{qrcodeUrl}" width="150" height="150"/>
+
+<style>
+    .scan_bg{
+        background-image: url(/static/img/scan2.jpg);
+        background-repeat:no-repeat;
+        background-size:375px;
+        height: 780px;
+    }
+</style>
+<body>
+
+<div class="scan_bg">
+    <img id="qrcode" src="$!{qrcodeUrl}" width="140" height="140" style="margin-top:443px;margin-left: 32px"/>
+</div>
 </body>
 </html>
