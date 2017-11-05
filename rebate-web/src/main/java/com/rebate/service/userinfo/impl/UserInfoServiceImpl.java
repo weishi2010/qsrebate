@@ -156,10 +156,8 @@ public class UserInfoServiceImpl implements UserInfoService {
         if (StringUtils.isNotBlank(recommendOpenId) && !recommendOpenId.equalsIgnoreCase(openId)) {
             userInfo.setRecommendAccount(recommendOpenId);
             boolean flag = addRecommendUser(openId, recommendOpenId);
-            if(flag){
-                userInfoDao.update(userInfo);
-            }
         }
+        userInfoDao.update(userInfo);
 
     }
 

@@ -232,7 +232,7 @@ public class WsMessageController extends BaseController {
         UserInfo userInfoQuery = new UserInfo();
         userInfoQuery.setOpenId(openId);
         UserInfo userInfo = userInfoDao.findLoginUserInfo(userInfoQuery);
-        String eventXml = "";
+
 
         String eventKey = inputMsg.getEventKey();
         Integer agentType = null;
@@ -248,6 +248,18 @@ public class WsMessageController extends BaseController {
             }
         }
 
+        String eventXml = getPushXml(openId,agentOpenId,userInfo,agentType,inputMsg,subUnionId);
+
+        LOG.error("output wx eventXml:" + eventXml);
+        try {
+            response.getWriter().write(eventXml.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String getPushXml(String openId,String agentOpenId,UserInfo userInfo,Integer agentType, InputMessage inputMsg, String subUnionId){
+        String eventXml = "";
         if (null == userInfo) {
             if (null != agentType) {
                 //代理用户扫码，带参数
@@ -313,12 +325,7 @@ public class WsMessageController extends BaseController {
             }
         }
 
-        LOG.error("output wx eventXml:" + eventXml);
-        try {
-            response.getWriter().write(eventXml.toString());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        return eventXml;
     }
 
     /**
@@ -334,7 +341,6 @@ public class WsMessageController extends BaseController {
         UserInfo userInfoQuery = new UserInfo();
         userInfoQuery.setOpenId(openId);
         UserInfo userInfo = userInfoDao.findLoginUserInfo(userInfoQuery);
-        String eventXml = "";
 
         String eventKey = inputMsg.getEventKey();
         Integer agentType = null;
@@ -352,19 +358,8 @@ public class WsMessageController extends BaseController {
             }
         }
 
-        if (null != agentType && EAgent.GENERAL_REBATE_USER.getCode() == agentType) {
-            if (null == userInfo) {
-                //代理模式2-拉粉丝返利用户
-                userInfoService.registUserInfo(openId, agentOpenId, EAgent.GENERAL_REBATE_USER.getCode(), true);
-                eventXml = subscribeTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
-            } else {
-                //代理模式2-拉粉丝返利用户
-                if (StringUtils.isBlank(userInfo.getRecommendAccount())) {
-                    userInfoService.updateUserInfoAgent(openId, agentOpenId, EAgent.GENERAL_REBATE_USER.getCode());
-                }
-                eventXml = subscribeTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
-            }
-        }
+        String eventXml = getPushXml(openId,agentOpenId,userInfo,agentType,inputMsg,subUnionId);
+
 
         LOG.error("output wx eventXml:" + eventXml);
         try {
