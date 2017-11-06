@@ -14,6 +14,14 @@ public interface ShortUrlManager {
     String getQsShortPromotinUrl(String jdUnionUrl,String subUnionId);
 
     /**
+     * 获取推广微信短链接
+     * @param jdUnionUrl
+     * @param subUnionId
+     * @return
+     */
+    String getWxShortPromotinUrl(String jdUnionUrl, String subUnionId);
+
+    /**
      * 链接点击统计
      * @param subUnionIdMd5
      */

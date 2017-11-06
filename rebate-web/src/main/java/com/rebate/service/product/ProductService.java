@@ -77,4 +77,6 @@ public interface ProductService {
      */
     long batchResetProductSortWeight(ProductQuery productQuery);
 
+    String getCouponPromotionUrl(Long skuId,String subUnionId);
+
 }

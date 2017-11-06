@@ -8,6 +8,7 @@ import com.rebate.dao.UserSummaryDao;
 import com.rebate.domain.UserSummary;
 import com.rebate.domain.property.JDProperty;
 import com.rebate.manager.shorturl.ShortUrlManager;
+import com.rebate.service.wx.WxService;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +37,10 @@ public class ShortUrlManagerImpl implements ShortUrlManager {
     @Autowired(required = true)
     private JDProperty jDProperty;
 
+    @Qualifier("wxService")
+    @Autowired(required = true)
+    private WxService wxService;
+
     @Autowired
     private UserSummaryDao userSummaryDao;
 
@@ -43,6 +48,14 @@ public class ShortUrlManagerImpl implements ShortUrlManager {
     public String getQsShortPromotinUrl(String jdUnionUrl, String subUnionId) {
         String subUnionIdEncrpyt = DESUtil.encrypt(jDProperty.getEncryptKey(), subUnionId, "UTF-8");
         return rebateUrlUtil.jdPromotionUrlToQsrebateShortUrl(jdUnionUrl, subUnionIdEncrpyt);
+    }
+
+    @Override
+    public String getWxShortPromotinUrl(String jdUnionUrl, String subUnionId) {
+        String subUnionIdEncrpyt = DESUtil.encrypt(jDProperty.getEncryptKey(), subUnionId, "UTF-8");
+        String qsShortUrl = rebateUrlUtil.jdPromotionUrlToQsrebateShortUrl(jdUnionUrl, subUnionIdEncrpyt);
+        qsShortUrl = wxService.getShortUrl(qsShortUrl);
+        return qsShortUrl;
     }
 
     @Override

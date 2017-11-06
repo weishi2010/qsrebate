@@ -362,6 +362,38 @@ public class ProductServiceImpl implements ProductService {
         return productDao.batchResetProductSortWeight( productQuery);
     }
 
+    @Override
+    public String getCouponPromotionUrl(Long skuId,String subUnionId) {
+        String couponLink = "";
+        //查询优惠券信息
+        ProductCoupon productCouponQuery = new ProductCoupon();
+        productCouponQuery.setProductId(skuId);
+        ProductCoupon coupon = productCouponDao.findById(productCouponQuery);
+        if (null != coupon) {
+            couponLink = coupon.getCouponLink();
+        }
+        String url = jdSdkManager.getPromotionCouponCode(skuId, couponLink, subUnionId);
+        if (StringUtils.isNotBlank(url)) {
+            url = shortUrlManager.getQsShortPromotinUrl(url,subUnionId);
+        } else {
+            //清理掉活动过期的商品信息
+            Product productUpdate = new Product();
+            productUpdate.setProductId(skuId);
+            productUpdate.setStatus(EProductStatus.DELETE.getCode());
+            productDao.update(productUpdate);
+
+            ProductCoupon productCouponUpdate = new ProductCoupon();
+            productCouponUpdate.setProductId(skuId);
+            productCouponUpdate.setStatus(EProductStatus.DELETE.getCode());
+            productCouponDao.update(productCouponUpdate);
+
+        }
+
+        LOG.error("getPromotionCouponCode===============>skuId:" + skuId + ",couponLink:" + couponLink + ",url:" + url + ",subUnionId:" + subUnionId);
+
+        return url;
+    }
+
 //------------------------------------------------------------------------------
 
     /**

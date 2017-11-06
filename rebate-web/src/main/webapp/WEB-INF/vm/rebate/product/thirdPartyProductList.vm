@@ -1,0 +1,29 @@
+#if($promotionTab==2)
+    #set( $title = "巴州在线特供：超值9.9元")
+#else
+    #set( $title = "巴州在线特供：京东内购商品")
+#end
+
+#parse("/common/head.vm")
+<body class="bd bd-pb">
+<div class="header-search" >
+    <div class="inner mui-flex align-center">
+        <div class="cell">
+            <input class="search-ipt" placeholder=" 搜索商品，更多优惠等着你哦！" id="searchParam" type="text">
+        </div>
+        <div class="cell fixed ico-search" >
+            <a  onclick="searchProducts()"><img src="/static/img/ico-search-01.png" alt=""></a>
+        </div>
+    </div>
+</div>
+    #parse("/common/category.vm")
+<div class="g-list"  >
+
+</div>
+<input type="hidden" id="promotionTab" value="$!{promotionTab}"/>
+<input type="hidden" id="sui" value="$!{sui}"/>
+
+
+<script type="text/javascript" src="/static/js/tpProductList.js?v2"></script>
+</body>
+</html>

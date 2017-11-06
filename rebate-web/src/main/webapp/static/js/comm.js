@@ -121,6 +121,41 @@ function redirectJdPromotionCouponUrl(skuId,couponLink) {
     });
 }
 
+function redirectJdPromotionUrlBySui(skuId) {
+    var sui = $("#sui").val();
+
+    $.ajax({
+        type: 'GET',
+        url: '/product/jdShortUrl.json?skuId=' + skuId+ "&sui="+sui + "&r=" + Math.random(),
+        dataType: 'json',
+        success: function (reponse) {
+            var url = reponse.url;
+            location.href = url;
+        },
+        error: function (xhr, type) {
+            console.log('加载更多数据错误！');
+        }
+    });
+}
+function redirectJdPromotionCouponUrlBySui(skuId) {
+    var sui = $("#sui").val();
+    $.ajax({
+        type: 'GET',
+        url: '/promotion/getPromotionCouponCode.json?skuId=' + skuId + "&sui="+sui+"&r=" + Math.random(),
+        dataType: 'json',
+        success: function (reponse) {
+            if(reponse.success){
+                var url = reponse.url;
+                location.href = url;
+            }else{
+                alert("很抱歉，优惠券活动已经结束！")
+            }
+        },
+        error: function (xhr, type) {
+            console.log('系统异常，请重试！');
+        }
+    });
+}
 
 function logout() {
     $.ajax({

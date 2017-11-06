@@ -221,34 +221,13 @@ public class ProductController extends BaseController {
             subUnionId = userInfo.getSubUnionId();
         }
 
-        String couponLink = "";
-        //查询优惠券信息
-        ProductCoupon productCouponQuery = new ProductCoupon();
-        productCouponQuery.setProductId(skuId);
-        ProductCoupon coupon = productCouponDao.findById(productCouponQuery);
-        if (null != coupon) {
-            couponLink = coupon.getCouponLink();
-        }
-        String url = jdSdkManager.getPromotionCouponCode(skuId, couponLink, subUnionId);
+        String url = productService.getCouponPromotionUrl(skuId, subUnionId);
         if (StringUtils.isNotBlank(url)) {
-            url = shortUrlManager.getQsShortPromotinUrl(url,subUnionId);
             map.put("success", true);
             map.put("url", url);
         } else {
-            //清理掉活动过期的商品信息
-            Product productUpdate = new Product();
-            productUpdate.setProductId(skuId);
-            productUpdate.setStatus(EProductStatus.DELETE.getCode());
-            productDao.update(productUpdate);
-
-            ProductCoupon productCouponUpdate = new ProductCoupon();
-            productCouponUpdate.setProductId(skuId);
-            productCouponUpdate.setStatus(EProductStatus.DELETE.getCode());
-            productCouponDao.update(productCouponUpdate);
-
             map.put("success", false);
         }
-        LOG.error("getPromotionCouponCode===============>skuId:" + skuId + ",couponLink:" + couponLink + ",url:" + url + ",subUnionId:" + subUnionId);
         return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
     }
 
