@@ -645,17 +645,34 @@ public class WsMessageController extends BaseController {
     private String salesMessageConvertJDMediaUrl(String content, String subUnionId) {
         String result = "很抱歉，活动链接转换失败，请联系公众号管理员!";
         try {
-            List<String> list = RegexUtils.getLinks(content);
-            for (String link : list) {
-                //JD活动多重跳转解析
-                String convertJDPromotionUrl = HttpClientUtil.convertJDPromotionUrl(link);
-                //转换为推广链接
-                String jdMediaUrl = jdSdkManager.getSalesActivityPromotinUrl(convertJDPromotionUrl, subUnionId);
-                jdMediaUrl = shortUrlManager.getQsShortPromotinUrl(jdMediaUrl, subUnionId);
-                if (StringUtils.isNotBlank(jdMediaUrl)) {
-                    content = content.replace(link, jdMediaUrl);
+            boolean hasSku = false;
+            //包括sku的则只转sku为推广链接
+            List<Long> dataList = RegexUtils.getLongList(content);
+            for (Long data : dataList) {
+                //如果大于5位大数据则转为商品推广链接
+                if(data.toString().length()>5){
+                    hasSku = true;
+                    String url = jdSdkManager.getShortPromotinUrl(data,subUnionId);
+                    content = content.replace(""+data,url);
                 }
             }
+
+            //不包含sku的则按活动转链处理
+            if(!hasSku){
+                List<String> list = RegexUtils.getLinks(content);
+                for (String link : list) {
+                    //JD活动多重跳转解析
+                    String convertJDPromotionUrl = HttpClientUtil.convertJDPromotionUrl(link);
+                    //转换为推广链接
+                    String jdMediaUrl = jdSdkManager.getSalesActivityPromotinUrl(convertJDPromotionUrl, subUnionId);
+                    jdMediaUrl = shortUrlManager.getQsShortPromotinUrl(jdMediaUrl, subUnionId);
+                    if (StringUtils.isNotBlank(jdMediaUrl)) {
+                        content = content.replace(link, jdMediaUrl);
+                    }
+
+                }
+            }
+
             result = content;
         } catch (Exception e) {
             LOG.error("salesMessageConvertJDMediaUrl", e);
@@ -721,6 +738,16 @@ public class WsMessageController extends BaseController {
                 }
                 LOG.error("couponMessageConvertJDMediaUrl sb:{}jdMediaUrl:{}", sb.toString(), jdMediaUrl);
 
+            }else{
+                List<Long> list = RegexUtils.getLongList(content);
+                for (Long data : list) {
+                    //如果大于5位大数据则转为商品推广链接
+                    if(data.toString().length()>5){
+                        String url = jdSdkManager.getShortPromotinUrl(data,subUnionId);
+                        content = content.replace(""+data,url);
+                    }
+                }
+                result = content;
             }
             LOG.error("couponMessageConvertJDMediaUrl couponLink:{}skuId:{}", couponLink, skuId);
 
