@@ -81,9 +81,10 @@ public class PromotionController extends BaseController {
         }
 
         //通过子联盟ID+tab获取标题
-        String title =  titleMap.get(subUnionId+"_"+tab).toString();
-        if(StringUtils.isBlank(title)){
-            title = "京东内部优惠";
+        String title = "京东内部优惠";
+        if(titleMap.containsKey(subUnionId+"_"+tab)){
+            title =  titleMap.get(subUnionId+"_"+tab).toString();
+
         }
 
 

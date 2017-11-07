@@ -135,7 +135,7 @@ public class ShareController extends BaseController {
         }
         String content = "";
         if(StringUtils.isNotBlank(mediaUrl)){
-            mediaUrl = shortUrlManager.getQsShortPromotinUrl(mediaUrl,subUnionId);
+            mediaUrl = shortUrlManager.getWxShortPromotinUrl(mediaUrl,subUnionId);
 
             //推送消息
              content = messageTempManager.getAgentProductMessageTemp(productVo,mediaUrl);
