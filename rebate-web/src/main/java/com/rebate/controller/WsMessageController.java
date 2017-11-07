@@ -250,7 +250,6 @@ public class WsMessageController extends BaseController {
 
         String eventXml = getPushXml(openId,agentOpenId,userInfo,agentType,inputMsg,subUnionId);
 
-        LOG.error("output wx eventXml:" + eventXml);
         try {
             response.getWriter().write(eventXml.toString());
         } catch (IOException e) {

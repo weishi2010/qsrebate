@@ -12,6 +12,7 @@ import com.jd.data.redis.connection.RedisAccessException;
 import com.rebate.common.cache.RedisKey;
 import com.rebate.common.util.HttpClientUtil;
 import com.rebate.common.util.JsonUtil;
+import com.rebate.domain.UserInfo;
 import com.rebate.domain.wx.ApiAccessToken;
 import com.rebate.domain.wx.AuthorizationCodeInfo;
 import com.rebate.domain.wx.WxConfig;
@@ -107,7 +108,13 @@ public class WxAccessTokenServiceImpl implements WxAccessTokenService {
 
     @Override
     public ApiAccessToken getApiAccessToken() {
-        ApiAccessToken apiAccessToken = null;
+
+        ApiAccessToken apiAccessToken = getApiAccessTokenCache();
+        if (null != apiAccessToken) {
+            LOG.error("[getApiAccessToken]getApiAccessTokenCache:"+JsonUtil.toJson(apiAccessToken));
+            return apiAccessToken;
+        }
+
         Map<String, String> params = new HashMap<String, String>();
         params.put("grant_type", "client_credential");
         params.put("appid", wxConfig.getAppId());
@@ -117,9 +124,14 @@ public class WxAccessTokenServiceImpl implements WxAccessTokenService {
 
         if (json.contains("access_token")) {
             apiAccessToken = JsonUtil.fromJson(json, ApiAccessToken.class);
+            Long timeout = Long.parseLong(apiAccessToken.getExpiresIn());
+            setApiAccessTokenCache(json,timeout.intValue());
         }else{
             LOG.error("[getApiAccessToken]json:"+json);
         }
+
+        LOG.error("[getApiAccessToken]apiAccessToken:"+json);
+
         return apiAccessToken;
     }
 
@@ -160,6 +172,37 @@ public class WxAccessTokenServiceImpl implements WxAccessTokenService {
             }
         }
         return jsapiTicket;
+    }
+
+    /**
+     * 查询用户缓存
+     *
+     */
+    private ApiAccessToken getApiAccessTokenCache() {
+        ApiAccessToken apiAccessToken = null;
+        try {
+            //设置到缓存
+            String json = redisUtil.get(RedisKey.WX_API_ACCESSTOKEN.getKey());
+            if (StringUtils.isNotBlank(json)) {
+                apiAccessToken = JsonUtil.fromJson(json, ApiAccessToken.class);
+            }
+        } catch (Exception e) {
+            LOG.error("getApiAccessTokenCache error!", e);
+        }
+        return apiAccessToken;
+    }
+
+    /**
+     * 设置缓存
+     *
+     */
+    private void setApiAccessTokenCache(String json,int timeout) {
+        try {
+            //设置到缓存
+            redisUtil.set(RedisKey.WX_API_ACCESSTOKEN.getPrefix(""),timeout, json);
+        } catch (Exception e) {
+            LOG.error("setApiAccessTokenCache error!json:{}", json);
+        }
     }
 
 }
