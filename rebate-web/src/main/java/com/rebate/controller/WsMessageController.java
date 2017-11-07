@@ -584,6 +584,7 @@ public class WsMessageController extends BaseController {
                 UserInfo userInfo = userInfoDao.findUserInfoBySubUnionId(userInfoQuery);
 
                 String shortUrl = jdSdkManager.getShortPromotinUrl(product.getProductId(), subUnionId);
+                shortUrl = shortUrlManager.getWxShortPromotinUrl(shortUrl, subUnionId);
 
                 product.setUserCommission(jdSdkManager.getQSCommission(userInfo, product));
 
@@ -626,7 +627,7 @@ public class WsMessageController extends BaseController {
 
                 LOG.error("getAgentRecommendContent product:" + JsonUtil.toJson(product));
                 String shortUrl = jdSdkManager.getShortPromotinUrl(product.getProductId(), subUnionId);
-                shortUrl = shortUrlManager.getQsShortPromotinUrl(shortUrl, subUnionId);
+                shortUrl = shortUrlManager.getWxShortPromotinUrl(shortUrl, subUnionId);
 
                 product.setUserCommission(jdSdkManager.getQSCommission(userInfo, product));
                 //获取代理户消息模板

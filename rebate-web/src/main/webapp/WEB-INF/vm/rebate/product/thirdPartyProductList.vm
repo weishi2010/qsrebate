@@ -1,8 +1,4 @@
-#if($promotionTab==2)
-    #set( $title = "巴州在线特供：超值9.9元")
-#else
-    #set( $title = "巴州在线特供：京东内购商品")
-#end
+#set( $title = $promotionTitle)
 
 #parse("/common/head.vm")
 <body class="bd bd-pb">

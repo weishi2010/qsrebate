@@ -1,26 +1,26 @@
 {
   "button": [
     {
-      "name": "京东返钱",
+      "name": "🔥京东返钱",
       "sub_button": [
         {
           "type": "view",
-          "name": "【内购券】",
+          "name": "🎁内购券",
           "url": "http://m.qingsongfan.com.cn/product/couponProducts"
         },
         {
           "type": "view",
-          "name": "超值9.9元",
+          "name": "🔥超值9.9元",
           "url": "http://m.qingsongfan.com.cn/product/seckill"
         },
         {
           "type": "view",
-          "name": "大型促销",
+          "name": "🎈大型促销",
           "url": "http://m.qingsongfan.com.cn/activity/activityIndex"
         },
         {
           "type": "view",
-          "name": "京东首页",
+          "name": "🐶京东首页",
           "url": "https://union-click.jd.com/jdc?d=P9VC3G"
         }
       ]
@@ -31,7 +31,7 @@
       "key": "QS_WX_CLICK001"
     },
     {
-      "name": "个人中心",
+      "name": "👤个人中心",
       "sub_button": [
         {
           "type": "view",

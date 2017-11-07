@@ -1,6 +1,7 @@
 package com.rebate.service.job.impl;
 
 import com.google.common.base.Joiner;
+import com.rebate.common.util.JsonUtil;
 import com.rebate.common.util.rebate.JdMediaProductGrapUtil;
 import com.rebate.common.util.rebate.RebateRuleUtil;
 import com.rebate.dao.*;
@@ -156,9 +157,14 @@ public class RebateJobImpl implements RebateJob {
         for (UserInfo userInfo : list) {
             WxUserInfo wxUserInfo = wxService.getWxApiUserInfo(wxAccessTokenService.getApiAccessToken().getAccessToken(), userInfo.getOpenId());
             if (null != wxUserInfo) {
-                //更新昵称
-                userInfo.setNickName(wxUserInfo.getNickname());
-                userInfoDao.update(userInfo);
+                try{
+
+                    //更新昵称
+                    userInfo.setNickName(wxUserInfo.getNickname());
+                    userInfoDao.update(userInfo);
+                }catch (Exception e){
+                    LOG.error("refreshUserInfo error!wxUserInfo:"+ JsonUtil.toJson(wxUserInfo));
+                }
             }
         }
     }

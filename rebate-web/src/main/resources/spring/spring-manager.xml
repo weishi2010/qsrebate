@@ -67,4 +67,15 @@
 	<bean id="jsonDataReader" class="com.rebate.common.data.json.JsonDataReader">
 		<constructor-arg name="path" value="classpath*:properties/json/**.json"></constructor-arg>
 	</bean>
+
+	<bean id="titleMap" class="java.util.HashMap">
+		<constructor-arg>
+			<map>
+				<entry key="JD100005007_1" value="巴州在线特供：京东内购商品"></entry>
+				<entry key="JD100005007_2" value="巴州在线特供：超值9.9元" ></entry>
+				<entry key="JD100002901_1" value="掌大专供：京东内购优惠券"></entry>
+				<entry key="JD100002901_2" value="掌大专供：京东超值9.9" ></entry>
+			</map>
+		</constructor-arg>
+	</bean>
 </beans>

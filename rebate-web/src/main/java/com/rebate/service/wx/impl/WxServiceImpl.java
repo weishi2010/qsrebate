@@ -49,7 +49,6 @@ public class WxServiceImpl implements WxService {
             String json = HttpClientUtil.get(wxConfig.getUserInfoApiUrl(), params);
 
             json = new String(json.getBytes("ISO-8859-1"), "UTF-8");
-            LOG.error("[getWxApiUserInfo]json:" + json);
 
             if (json.contains("openid")) {
                 wxUserInfo = JsonUtil.fromJson(json, WxUserInfo.class);

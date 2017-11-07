@@ -61,6 +61,10 @@ public class PromotionController extends BaseController {
     @Autowired(required = true)
     private ShortUrlManager shortUrlManager;
 
+    @Qualifier("titleMap")
+    @Autowired(required = true)
+    private HashMap titleMap = new HashMap();
+
     @RequestMapping({"", "/", "/productList"})
     public ModelAndView productList(HttpServletRequest request,String sui,Integer tab) {
         String vm = "/product/thirdPartyProductList";
@@ -71,6 +75,18 @@ public class PromotionController extends BaseController {
 
         ModelAndView view = new ModelAndView(VIEW_PREFIX + vm);
 
+        String subUnionId = DESUtil.decrypt(jDProperty.getEncryptKey(), sui, "UTF-8");
+        if (null == subUnionId) {
+            subUnionId = "";
+        }
+
+        //通过子联盟ID+tab获取标题
+        String title =  titleMap.get(subUnionId+"_"+tab).toString();
+        if(StringUtils.isBlank(title)){
+            title = "京东内部优惠";
+        }
+
+
         view.addObject("sui",sui);//子联盟id加密后的串
         RecommendCategory recommendCategory = new RecommendCategory();
         recommendCategory.setPageSize(10);
@@ -78,6 +94,8 @@ public class PromotionController extends BaseController {
         recommendCategory.setPageSize(50);
         view.addObject("allCategories", productService.findByRecommendCategories(recommendCategory));
         view.addObject("promotionTab", tab);
+        view.addObject("promotionTitle", title);
+
         return view;
     }
 
@@ -86,10 +104,9 @@ public class PromotionController extends BaseController {
     public ResponseEntity<?> jdShortUrl(HttpServletRequest request,String sui, Long skuId) {
         Map<String, Object> map = new HashMap<String, Object>();
 
-        String subUnionId = "";
-        try{
-            subUnionId = DESUtil.decrypt(jDProperty.getEncryptKey(), sui, "UTF-8");
-        }catch (Exception e){
+        String subUnionId = DESUtil.decrypt(jDProperty.getEncryptKey(), sui, "UTF-8");
+        if(null==subUnionId){
+            subUnionId ="";
         }
 
         String url = jdSdkManager.getShortPromotinUrl(skuId, subUnionId);
