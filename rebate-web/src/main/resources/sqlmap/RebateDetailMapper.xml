@@ -194,7 +194,7 @@
         limit 1
     </select>
     <select id="getOrderSummaryBySubUnionId" parameterClass="OrderSummary" resultMap="OrderSummaryResultMap">
-        SELECT COUNT(order_id) AS orderCount,SUM(user_commission) AS commission
+        SELECT COUNT(distinct order_id) AS orderCount,SUM(user_commission) AS commission
         ,DATE_FORMAT(submit_date,"%Y-%m-%d") AS submitDate,sub_union_id AS subUnionId
         FROM rebate_detail
         WHERE sub_union_id=#subUnionId#
@@ -206,7 +206,7 @@
     </select>
 
     <select id="getAllOrderSummaryByDate" parameterClass="OrderSummaryQuery" resultClass="OrderSummary">
-        SELECT COUNT(order_id) AS orderCount,SUM(commission) AS commission
+        SELECT COUNT(distinct order_id) AS orderCount,SUM(commission) AS commission
         FROM rebate_detail
         WHERE
         <![CDATA[  submit_date>=#startDate# and submit_date <=#endDate# ]]>
@@ -215,7 +215,7 @@
     </select>
 
     <select id="getRecommendUserOrderSummaryByOpenId" parameterClass="RebateDetailQuery" resultClass="OrderSummary">
-        SELECT COUNT(order_id) AS orderCount,SUM(agent_commission) AS commission
+        SELECT COUNT(distinct order_id) AS orderCount,SUM(agent_commission) AS commission
             FROM rebate_detail
             WHERE sub_union_id in (
             select ui.sub_union_id from recommend_user_info  rui
