@@ -67,11 +67,15 @@ public class ShortUrlManagerImpl implements ShortUrlManager {
             //按子联盟ID进行统计
             String subUnionId = DESUtil.decrypt(jDProperty.getEncryptKey(), subUnionIdEncrypt, "UTF-8");
 
-            //写入缓存
-            incrCacheUserClick(subUnionId);
+            if(StringUtils.isNotBlank(subUnionId)){
+                //写入缓存
+                incrCacheUserClick(subUnionId);
 
-            //写入数据库
-            incrDbUserClick(subUnionId);
+                //写入数据库
+                incrDbUserClick(subUnionId);
+            }else{
+                LOG.error("incrJDUnionUrlClick decrypt error!subUnionIdEncrypt:"+subUnionIdEncrypt);
+            }
         }catch (Exception e){
             LOG.error("incrJDUnionUrlClick error!subUnionIdEncrypt:"+subUnionIdEncrypt,e);
         }
