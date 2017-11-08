@@ -5,6 +5,10 @@ package com.rebate.domain.en;
  */
 public enum ESubUnionIdPrefix {
     /**
+     * 管理员子联盟ID前缀
+     */
+    ADMIN("QS_ADM_"),
+    /**
      * JD联盟
      */
     JD("JD"),
