@@ -9,6 +9,7 @@ import com.rebate.domain.property.JDProperty;
 import com.rebate.domain.query.ProductQuery;
 import com.rebate.domain.vo.ApiProductVo;
 import com.rebate.service.product.ProductService;
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.util.JSONPObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +39,10 @@ public class ApiController extends BaseController {
 
     @RequestMapping({"", "/", "/daxue/productList.json"})
     @ResponseBody
-    public JSONPObject productList(HttpServletRequest request,String callback,Integer tab, Integer page,Integer pageSize) {
+    public JSONPObject productList(HttpServletRequest request,String callback,String productName,Integer tab, Integer page,Integer pageSize) {
+        Map<String, Object> map = new HashMap<String, Object>();
+
+        ProductQuery query = new ProductQuery();
         if(null==page){
             page = 1;
         }
@@ -46,9 +50,9 @@ public class ApiController extends BaseController {
             pageSize = 10;
         }
 
-        Map<String, Object> map = new HashMap<String, Object>();
-
-        ProductQuery query = new ProductQuery();
+        if (StringUtils.isNotBlank(productName)) {
+            query.setName(EncodeUtils.urlDecode(EncodeUtils.urlDecode(productName)));
+        }
 
         query.setPageSize(pageSize);
         query.setIndex(page);
