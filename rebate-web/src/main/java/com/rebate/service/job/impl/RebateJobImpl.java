@@ -350,7 +350,12 @@ public class RebateJobImpl implements RebateJob {
                                 } else if (EAgent.SECOND_AGENT.getCode() == userInfo.getAgent()) {
                                     //代理模式二
                                     rebateDetail = addSecondAgentIncomeDetail(rebateDetail);
-                                } else {
+                                }else if (EAgent.ADMIN.getCode() == userInfo.getAgent()) {
+                                    //管理员则不处理
+                                    rebateDetail.setUserCommission(0.0);
+                                    rebateDetail.setPlatformRatio(0.0);
+                                    rebateDetail.setAgentCommission(0.0);
+                                }  else {
                                     //普通返利用户
                                     rebateDetail = addGeneralRebateUserIncomeDetail(rebateDetail, userInfo);
                                 }

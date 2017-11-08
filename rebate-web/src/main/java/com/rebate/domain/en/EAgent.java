@@ -4,6 +4,11 @@ package com.rebate.domain.en;
  * 代理模式枚举
  */
 public enum EAgent {
+
+    /**
+     * 管理员
+     */
+    ADMIN(99,"管理员"),
     /**
      * 非代理用户
      */

@@ -144,7 +144,7 @@ public class WsMessageController extends BaseController {
             //查询用户信息获取子联盟ID
             UserInfo userInfo = userInfoService.getUserInfo(inputMsg.getFromUserName());
             String subUnionId = "";
-            int agent = EAgent.NOT_AGENT.getCode();
+            int agent = EAgent.GENERAL_REBATE_USER.getCode();
             if (null != userInfo) {
                 subUnionId = userInfo.getSubUnionId();
                 agent = userInfo.getAgent();

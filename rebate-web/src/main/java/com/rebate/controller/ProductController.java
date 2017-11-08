@@ -96,7 +96,7 @@ public class ProductController extends BaseController {
 
         UserInfo userInfo = getUserInfo(request);
 
-        Integer agent = EAgent.NOT_AGENT.getCode();
+        Integer agent = EAgent.GENERAL_REBATE_USER.getCode();
         if (null != userInfo) {
             agent = userInfo.getAgent();
         }
@@ -128,7 +128,7 @@ public class ProductController extends BaseController {
 
         UserInfo userInfo = getUserInfo(request);
 
-        Integer agent = EAgent.NOT_AGENT.getCode();
+        Integer agent = EAgent.GENERAL_REBATE_USER.getCode();
         if (null != userInfo) {
             agent = userInfo.getAgent();
         }
@@ -154,11 +154,6 @@ public class ProductController extends BaseController {
         }
 
         UserInfo userInfo = getUserInfo(request);
-
-        Integer agent = EAgent.NOT_AGENT.getCode();
-        if (null != userInfo) {
-            agent = userInfo.getAgent();
-        }
 
         couponType = EProudctCouponType.COUPON.getCode();
         ProductQuery query = new ProductQuery();
@@ -244,11 +239,6 @@ public class ProductController extends BaseController {
         }
 
         UserInfo userInfo = getUserInfo(request);
-
-        Integer agent = EAgent.NOT_AGENT.getCode();
-        if (null != userInfo) {
-            agent = userInfo.getAgent();
-        }
 
         query.setIndex(page);
         query.setPageSize(10);
