@@ -132,11 +132,11 @@ public class ProductServiceImpl implements ProductService {
                 } else if (null != couponInfo.getOriginalPrice() && null != couponInfo.getCouponPrice()) {
                     productCoupon.setQuota(0.0);//没有面额值，填0
                     productCoupon.setDiscount(couponInfo.getOriginalPrice() - couponInfo.getCouponPrice());//原价减券后价来计算面额
-                    productCoupon.setDiscount(new BigDecimal(productCoupon.getDiscount()+"").setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
+                    productCoupon.setDiscount(new BigDecimal(productCoupon.getDiscount()+"").setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
                 }
 
-                productCoupon.setDiscount(new BigDecimal(productCoupon.getDiscount()+"").setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
-                productCoupon.setQuota(new BigDecimal(productCoupon.getQuota()+"").setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
+                productCoupon.setDiscount(new BigDecimal(productCoupon.getDiscount()+"").setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+                productCoupon.setQuota(new BigDecimal(productCoupon.getQuota()+"").setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
 
 
                 productCoupon.setStartDate(couponInfo.getStartDate());
@@ -144,11 +144,11 @@ public class ProductServiceImpl implements ProductService {
                 productCoupon.setCouponLink(couponInfo.getCouponLink());
                 //原价
                 productCoupon.setOriginalPrice(product.getOriginalPrice());
-                productCoupon.setOriginalPrice(new BigDecimal(product.getOriginalPrice()+"").setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
+                productCoupon.setOriginalPrice(new BigDecimal(product.getOriginalPrice()+"").setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
 
                 //券后价
                 productCoupon.setCouponPrice(product.getOriginalPrice()-productCoupon.getDiscount());
-                productCoupon.setCouponPrice(new BigDecimal(productCoupon.getCouponPrice()+"").setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
+                productCoupon.setCouponPrice(new BigDecimal(productCoupon.getCouponPrice()+"").setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
 
                 if (null != couponInfo.getSortWeight()) {
                     product.setSortWeight(couponInfo.getSortWeight());

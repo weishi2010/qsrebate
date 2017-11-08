@@ -492,7 +492,7 @@ public class RebateJobImpl implements RebateJob {
         if (null != agentRelation && StringUtils.isNotBlank(agentRelation.getParentAgentSubUnionId())) {
             //二级代理用户根据比例获取佣金
             agentCommission = commission * agentRelation.getCommissionRatio();
-            agentCommission = new BigDecimal(agentCommission + "").setScale(2, BigDecimal.ROUND_FLOOR).doubleValue();//精确2位小数
+            agentCommission = new BigDecimal(agentCommission + "").setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();//精确2位小数
 
             //给上一级代理即一级代理进行分佣
             Double parentAgentCommission = new BigDecimal(commission + "").subtract(new BigDecimal(agentCommission + "")).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();

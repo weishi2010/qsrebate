@@ -284,7 +284,7 @@ public class PersonalController extends BaseController {
             OrderSummary allOrderSummary = rebateDetailService.getAllOrderSummaryByDate(orderSummaryQuery2);
             if (null != allOrderSummary) {
                 if(null!=allOrderSummary.getCommission()){
-                    allOrderSummary.setCommission(new BigDecimal(allOrderSummary.getCommission()+"").setScale(2, BigDecimal.ROUND_FLOOR).doubleValue());
+                    allOrderSummary.setCommission(new BigDecimal(allOrderSummary.getCommission()+"").setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
                 }else{
                     allOrderSummary.setCommission(0.0);
                 }
