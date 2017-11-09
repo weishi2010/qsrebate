@@ -30,9 +30,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.annotation.Resource;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -42,6 +44,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,6 +56,10 @@ import java.util.regex.Pattern;
 public class WsMessageController extends BaseController {
     private static final Logger LOG = LoggerFactory.getLogger(WsMessageController.class);
     public static final String PREFIX = "/wxmsg";
+
+    @Qualifier("threadPoolTaskExecutor")
+    @Autowired(required = true)
+    private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
     @Qualifier("shortUrlManager")
     @Autowired(required = true)
@@ -660,17 +670,25 @@ public class WsMessageController extends BaseController {
             //不包含sku的则按活动转链处理
             if(!hasSku){
                 List<String> list = RegexUtils.getLinks(content);
+                List<LinkTask> tasks = new ArrayList<>();
                 for (String link : list) {
-                    //JD活动多重跳转解析
-                    String convertJDPromotionUrl = HttpClientUtil.convertJDPromotionUrl(link);
-                    //转换为推广链接
-                    String jdMediaUrl = jdSdkManager.getSalesActivityPromotinUrl(convertJDPromotionUrl, subUnionId);
-                    jdMediaUrl = shortUrlManager.getQsShortPromotinUrl(jdMediaUrl, subUnionId);
-                    if (StringUtils.isNotBlank(jdMediaUrl)) {
-                        content = content.replace(link, jdMediaUrl);
+                    tasks.add(new LinkTask(link,subUnionId));
+                }
+
+                //通过并发获取
+                List<Future<Map>> futures = threadPoolTaskExecutor.getThreadPoolExecutor().invokeAll(tasks, 5000, TimeUnit.MILLISECONDS);
+                for (int i = 0; i < futures.size(); i++) {
+                    Map map = futures.get(i).get();
+                    if (null != map) {
+                        Iterator it = map.keySet().iterator();
+                        while(it.hasNext()){
+                            String key = it.next().toString();
+                            content = content.replace(key, map.get(key).toString());
+                        }
                     }
 
                 }
+
             }
 
             result = content;
@@ -678,6 +696,29 @@ public class WsMessageController extends BaseController {
             LOG.error("salesMessageConvertJDMediaUrl", e);
         }
         return result;
+    }
+
+    private class LinkTask implements Callable<Map> {
+        private String url;
+        private String subUnionId;
+
+        public LinkTask(String url,String subUnionId){
+            this.url=url;
+            this.subUnionId = subUnionId;
+        }
+
+        @Override
+        public Map call() throws Exception {
+            //JD活动多重跳转解析
+            String convertJDPromotionUrl = HttpClientUtil.convertJDPromotionUrl(url);
+            //转换为推广链接
+            String jdMediaUrl = jdSdkManager.getSalesActivityPromotinUrl(convertJDPromotionUrl, subUnionId);
+            jdMediaUrl = shortUrlManager.getWxShortPromotinUrl(jdMediaUrl, subUnionId);
+
+            Map map = new HashMap();
+            map.put(url,jdMediaUrl);
+            return  map;
+        }
     }
 
     /**

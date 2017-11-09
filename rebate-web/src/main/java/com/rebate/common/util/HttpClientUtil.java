@@ -1,5 +1,6 @@
 package com.rebate.common.util;
 
+import com.google.common.base.Joiner;
 import net.sf.json.JSONObject;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.NameValuePair;
@@ -271,39 +272,56 @@ public class HttpClientUtil {
     }
 
     /**
-     * JD多重跳转活动链接解析
-     * @param oriUrl
+     * 过滤JD联盟参数
+     * @param url
      * @return
      */
-    public  static String convertJDPromotionUrl(String oriUrl){
+    public  static String filterJDUnionParam(String url){
+        List<String> params = new ArrayList<>();
         //获取重定向后的URL
-        String url = HttpClientUtil.getFinalURL(oriUrl);
-        if(StringUtils.isNotBlank(url)){
-            //如果还JD下级跳转页，则从页面中解析出活动链接
+        if (StringUtils.isNotBlank(url)) {
+            String[] urlArray = url.split("\\?");
+            String domainStr = urlArray[0];
+            if(urlArray.length>1){
+                String paramStr = urlArray[1];
+                String[] paramArray = paramStr.split("\\&");
+                for (String param : paramArray) {
+                    if (!param.contains("utm")) {
+                        params.add(param);
+                    }
+                }
+            }
+            if(params.size()>0){
+                url = domainStr + "?" + Joiner.on("&").join(params);
+            }else{
+                url = domainStr;
+            }
+
+        }
+        return url;
+    }
+
+    /**
+     * 使用递归的方式进行JD多重跳转活动链接解析
+     * @param url
+     * @return
+     */
+    public  static String convertJDPromotionUrl(String url){
+        String oriUrl = HttpClientUtil.getFinalURL(url);
+        if(StringUtils.isBlank(oriUrl)||oriUrl.contains("union-click.jd.com")){
+            //如果获取不到原始URl则再解析HTML看是否还有跳转URL
             String html = HttpClientUtil.get(url);
             if(StringUtils.isNotBlank(html) && html.contains("hrl")){
                 List<String> links = getJDPromotionLinks(html);
-                for(String link:links){
-                    link = link.trim().replace("\'","");
-                    link = HttpClientUtil.getFinalURL(link);
-
-                    String[] urlArray = link.split("\\?");
-                    String domainStr = urlArray[0];
-                    String paramStr = urlArray[1];
-                    StringBuffer params = new StringBuffer();
-                    String[] paramArray = paramStr.split("\\&");
-                    for(String param:paramArray){
-                        if(!param.contains("utm")){
-                            params.append(param).append("&");
-                        }
-                    }
-                    url = domainStr+"?"+params.toString();
-
+                if(null!=links&&links.size()>0){
+                    url = convertJDPromotionUrl(links.get(0));
                 }
             }
         }else{
             url = oriUrl;
         }
+
+        url = filterJDUnionParam(url);
         return url;
     }
 
@@ -318,7 +336,7 @@ public class HttpClientUtil {
                 .compile("\\s*(?i)hrl\\s*=\\s*(\"([^\"]*\")|'[^']*'|([^'\">\\s]+))");
         Matcher matcher = pattern.matcher(html);
         while(matcher.find()){
-            urls.add(matcher.group(0).replace("hrl=",""));
+            urls.add(matcher.group(0).replace("hrl=","").replace("\'","").trim());
         }
         return urls;
     }
