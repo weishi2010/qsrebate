@@ -197,10 +197,12 @@ public class WsMessageController extends BaseController {
         //如果为代理用户则解析消息进行推广转链处理
         if (EAgent.FIRST_AGENT.getCode() == agent || EAgent.SECOND_AGENT.getCode() == agent) {
             textXml = agentConvertLinkPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
+            LOG.error("[agent]output wx textXml:" + textXml);
+
         }else{
             textXml = recommendProductPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
+            LOG.error("[rebate_user]output wx textXml:" + textXml);
         }
-        LOG.error("output wx textXml:" + textXml);
 
         try {
             response.getWriter().write(textXml.toString());
