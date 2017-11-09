@@ -378,6 +378,12 @@ public class RebateJobImpl implements RebateJob {
                         RebateDetail existsRebateDetail = rebateDetailDao.queryRebateDetailByOrderId(rebateDetailQuery);
 
                         if (null == existsRebateDetail) {
+                            List<Product> mediaProducts = jdSdkManager.getMediaProducts(rebateDetail.getProductId().toString());
+                            if (null != mediaProducts && mediaProducts.size() > 0) {
+                                rebateDetail.setImgUrl(mediaProducts.get(0).getImgUrl());
+                            } else {
+                                rebateDetail.setImgUrl("");
+                            }
                             //插入明细
                             rebateDetailDao.insert(rebateDetail);
                         } else {

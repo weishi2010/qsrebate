@@ -510,13 +510,6 @@ public class JdSdkManagerImpl implements JdSdkManager {
                     detail.setProductCount(skuObj.getInt("skuNum"));
                     detail.setProductName(skuObj.getString("skuName"));
 
-                    List<Product> mediaProducts = getMediaProducts(detail.getProductId().toString());
-                    if (null != mediaProducts && mediaProducts.size() > 0) {
-                        detail.setImgUrl(mediaProducts.get(0).getImgUrl());
-                    } else {
-                        detail.setImgUrl("");
-                    }
-
                     detail.setPrice(skuObj.getDouble("cosPrice"));
                     detail.setUnionId("");
                     if (skuObj.containsKey("subUnionId")) {
@@ -579,10 +572,13 @@ public class JdSdkManagerImpl implements JdSdkManager {
     public String getPromotionCouponCode(Long skuId, String couponUrl, String subUnionId) {
         String url = "";
         String json = getServicePromotionCouponCode(skuId.toString(), couponUrl, subUnionId);
+        LOG.error("getPromotionCouponCode json:"+JsonUtil.toJson(json));
         JSONObject resultObj = JsonUtil.fromJson(json, JSONObject.class);
         if (null != resultObj && 0 == Integer.parseInt(resultObj.getString("resultCode"))) {
             JSONObject urlListObj = (JSONObject) resultObj.get("urlList");
             url = urlListObj.getString(couponUrl.trim() + "," + skuId);
+        }else{
+            LOG.error("getPromotionCouponCode error,resultObj:"+JsonUtil.toJson(resultObj));
         }
         return url;
     }
@@ -638,6 +634,9 @@ public class JdSdkManagerImpl implements JdSdkManager {
             ServicePromotionGoodsInfoResponse response = client.execute(request);
 
             json = response.getGetpromotioninfoResult();
+            if(StringUtils.isBlank(json)){
+                LOG.error("[获取推广链接]调用异常!json:{}", json);
+            }
         } catch (Exception e) {
             LOG.error("[获取推广商品详细信息]调用异常!skuids:" + skuIds);
         }
@@ -671,6 +670,9 @@ public class JdSdkManagerImpl implements JdSdkManager {
             ServicePromotionGetcodeResponse response = client.execute(request);
 
             json = response.getQueryjsResult();
+            if(StringUtils.isBlank(json)){
+                LOG.error("[获取推广链接]调用异常!json:{}", json);
+            }
         } catch (Exception e) {
             LOG.error("[获取推广链接]调用异常!itemUrl:{},subUnionId:{}", itemUrl, subUnionId);
         }
@@ -693,6 +695,10 @@ public class JdSdkManagerImpl implements JdSdkManager {
             ServicePromotionCouponGetCodeBySubUnionIdResponse response = client.execute(request);
 
             json = response.getGetcodebysubunionidResult();
+
+            if(StringUtils.isBlank(json)){
+                LOG.error("[获取推广链接]调用异常!json:{}", json);
+            }
 
         } catch (Exception e) {
             LOG.error("[获取推广链接]调用异常!skuIds:{},subUnionId:{},couponUrl:" + couponUrl, skuIds, subUnionId);
@@ -723,6 +729,9 @@ public class JdSdkManagerImpl implements JdSdkManager {
             ServicePromotionWxsqGetCodeBySubUnionIdResponse response = client.execute(request);
 
             json = response.getGetcodebysubunionidResult();
+            if(StringUtils.isBlank(json)){
+                LOG.error("[获取推广链接]调用异常!json:{}", json);
+            }
         } catch (Exception e) {
             LOG.error("[获取推广短链接]调用异常!materialIds:{},subUnionId:{}", materialIds, subUnionId);
         }
@@ -751,6 +760,9 @@ public class JdSdkManagerImpl implements JdSdkManager {
             UnionThemeGoodsServiceQueryCouponGoodsResponse response = client.execute(request);
 
             json = response.getQueryCouponGoodsResult();
+            if(StringUtils.isBlank(json)){
+                LOG.error("[获取推广链接]调用异常!json:{}", json);
+            }
         } catch (Exception e) {
             LOG.error("[获取优惠商品]调用异常!page:" + page);
         }
@@ -780,6 +792,9 @@ public class JdSdkManagerImpl implements JdSdkManager {
 
             UnionServiceQueryImportOrdersResponse response = client.execute(request);
             json = response.getQueryImportOrdersResult();
+            if(StringUtils.isBlank(json)){
+                LOG.error("[获取推广链接]调用异常!json:{}", json);
+            }
         } catch (Exception e) {
             LOG.error("[查询引入订单]调用异常!", e);
         }
