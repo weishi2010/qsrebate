@@ -192,11 +192,13 @@ public class WsMessageController extends BaseController {
      */
     private void textEvent(int agent, InputMessage inputMsg, String subUnionId, HttpServletResponse response){
         //默认为普通用户获取文本推送商品推荐xml
-        String textXml = recommendProductPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
+        String textXml = "";
 
         //如果为代理用户则解析消息进行推广转链处理
         if (EAgent.FIRST_AGENT.getCode() == agent || EAgent.SECOND_AGENT.getCode() == agent) {
             textXml = agentConvertLinkPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
+        }else{
+            textXml = recommendProductPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
         }
         LOG.error("output wx textXml:" + textXml);
 
