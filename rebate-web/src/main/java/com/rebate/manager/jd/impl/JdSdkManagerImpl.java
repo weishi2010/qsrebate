@@ -572,7 +572,7 @@ public class JdSdkManagerImpl implements JdSdkManager {
     public String getPromotionCouponCode(Long skuId, String couponUrl, String subUnionId) {
         String url = "";
         String json = getServicePromotionCouponCode(skuId.toString(), couponUrl, subUnionId);
-        LOG.error("getPromotionCouponCode json:"+JsonUtil.toJson(json));
+
         JSONObject resultObj = JsonUtil.fromJson(json, JSONObject.class);
         if (null != resultObj && 0 == Integer.parseInt(resultObj.getString("resultCode"))) {
             JSONObject urlListObj = (JSONObject) resultObj.get("urlList");
