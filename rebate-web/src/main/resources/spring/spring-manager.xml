@@ -93,6 +93,8 @@
 				<entry key="JD100002901_2" value="掌大专供：京东超值9.9" ></entry>
 				<entry key="QS_ADM_10_1" value="福利：京东11.11限量内购券"></entry>
 				<entry key="QS_ADM_10_2" value="福利：京东11.11超值9.9" ></entry>
+				<entry key="QS_ADM_9_1" value="福利：京东11.11限量内购券"></entry>
+				<entry key="QS_ADM_9_2" value="福利：京东11.11超值9.9" ></entry>
 			</map>
 		</constructor-arg>
 	</bean>

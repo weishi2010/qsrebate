@@ -4,6 +4,7 @@ import com.rebate.common.util.EncodeUtils;
 import com.rebate.common.util.JsonUtil;
 import com.rebate.common.util.RequestUtils;
 import com.rebate.common.util.Sha1Util;
+import com.rebate.common.util.des.DESUtil;
 import com.rebate.common.util.rebate.RebateUrlUtil;
 import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.controller.base.BaseController;
@@ -12,15 +13,14 @@ import com.rebate.dao.ProductCouponDao;
 import com.rebate.dao.ProductDao;
 import com.rebate.domain.*;
 import com.rebate.domain.en.*;
-import com.rebate.domain.query.ExtractDetailQuery;
-import com.rebate.domain.query.ProductCouponQuery;
-import com.rebate.domain.query.ProductQuery;
-import com.rebate.domain.query.RebateDetailQuery;
+import com.rebate.domain.property.JDProperty;
+import com.rebate.domain.query.*;
 import com.rebate.domain.vo.ExtractDetailVo;
 import com.rebate.domain.vo.ProductVo;
 import com.rebate.domain.vo.RebateDetailVo;
 import com.rebate.domain.wx.WxConfig;
 import com.rebate.manager.jd.JdSdkManager;
+import com.rebate.manager.shorturl.ShortUrlManager;
 import com.rebate.service.activity.ActivityService;
 import com.rebate.service.activity.AdvertismentPositionService;
 import com.rebate.service.admin.AdminService;
@@ -47,6 +47,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -98,6 +99,18 @@ public class AdminController extends BaseController {
     @Qualifier("adminService")
     @Autowired(required = true)
     private AdminService adminService;
+
+    @Qualifier("shortUrlManager")
+    @Autowired(required = true)
+    private ShortUrlManager shortUrlManager;
+
+    @Qualifier("jDProperty")
+    @Autowired(required = true)
+    private JDProperty jDProperty;
+
+    @Qualifier("rebateDetailService")
+    @Autowired(required = true)
+    private RebateDetailService rebateDetailService;
 
     @RequestMapping({"", "/", "/importProducts.json"})
     public ResponseEntity<?> importProducts(HttpServletRequest request, String productIds) {
@@ -390,5 +403,74 @@ public class AdminController extends BaseController {
         map.put("success", true);
         map.put("thirdCategoryList",adminService.getThirdCategory(categoryId) );
         return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
+    }
+
+    @RequestMapping({"", "/", "/agentStatistits"})
+    public ModelAndView agentStatistits(HttpServletRequest request,String sui,Integer dayTab) {
+        ModelAndView view = new ModelAndView();
+        String vm = VIEW_PREFIX + "/adminStatistits";
+        view.setViewName(vm);
+
+        String subUnionId = DESUtil.decrypt(jDProperty.getEncryptKey(), sui, "UTF-8");
+        if (StringUtils.isBlank(subUnionId)) {
+            view.setViewName(VIEW_PREFIX + "/permission");
+            return view;
+        }
+
+        Calendar calendar = Calendar.getInstance();
+        Date queryDate = new Date();
+        if (null != dayTab && 2 == dayTab) {
+            calendar.add(Calendar.DATE, -1);
+            queryDate = calendar.getTime();
+        }else{
+            dayTab = 1;
+        }
+
+
+        OrderSummary orderSummaryQuery = new OrderSummary();
+        orderSummaryQuery.setSubUnionId(subUnionId);
+        orderSummaryQuery.setPageSize(30);//取近30
+        PaginatedArrayList<OrderSummary>  list =  rebateDetailService.getOrderSummaryBySubUnionId(orderSummaryQuery);
+        OrderSummary todayOrderSummary = null;
+        SimpleDateFormat formatStart = new SimpleDateFormat("yyyy-MM-dd 00:00:00");
+        SimpleDateFormat formatEnd = new SimpleDateFormat("yyyy-MM-dd 23:59:59");
+
+        for(OrderSummary orderSummary:list){
+            try {
+                if(orderSummary.getSubmitDate().equals(formatStart.parse(formatStart.format(queryDate)))){
+                    todayOrderSummary = orderSummary;
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if(null== todayOrderSummary){
+            todayOrderSummary = new OrderSummary();
+            todayOrderSummary.setCommission(0.0);
+            todayOrderSummary.setOrderCount(0l);
+        }
+
+        Date startDate = null;
+        Date endDate = null;
+        try {
+            startDate = formatStart.parse(formatStart.format(queryDate));
+
+            calendar.setTime(queryDate);
+            calendar.add(Calendar.DATE, 1);
+            endDate = formatEnd.parse(formatEnd.format(calendar.getTime()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+
+        LOG.error("[agentStatistits]dayTab:"+dayTab+",size:"+list.size());
+        view.addObject("dayTab", dayTab);
+        view.addObject("adminFlag", false);
+        view.addObject("todayClick",shortUrlManager.getJDUnionUrlClick(subUnionId,queryDate));
+        view.addObject("todayOrderSummary", todayOrderSummary);
+        view.addObject("list", list);
+        view.addObject("sui",sui);
+        return view;
     }
 }
