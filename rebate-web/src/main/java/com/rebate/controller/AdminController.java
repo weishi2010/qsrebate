@@ -471,6 +471,8 @@ public class AdminController extends BaseController {
         view.addObject("todayOrderSummary", todayOrderSummary);
         view.addObject("list", list);
         view.addObject("sui",sui);
+        view.addObject("subUnionId",subUnionId);
+
         return view;
     }
 }
