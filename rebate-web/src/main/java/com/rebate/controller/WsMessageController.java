@@ -512,12 +512,12 @@ public class WsMessageController extends BaseController {
                 }
             }
         }
-        if (isSaleConvert) {
-            //解析活动消息进行活动链接转推广链接
-            pushContent = salesMessageConvertJDMediaUrl(content, subUnionId);
-        } else if (RegexUtils.checkURL(content) || StringUtils.isNumeric(content)) {
+        if (RegexUtils.checkURL(content) || StringUtils.isNumeric(content)) {
             //如果只是商品url或sku则进行商品转链接返回
             pushContent = getAgentRecommendContent(content, subUnionId);
+        }else if (isSaleConvert) {
+            //解析活动消息进行活动链接转推广链接
+            pushContent = salesMessageConvertJDMediaUrl(content, subUnionId);
         } else {
             //解析优惠券消息进行券二合一推广链接转换
             pushContent = couponMessageConvertJDMediaUrl(content, subUnionId);
