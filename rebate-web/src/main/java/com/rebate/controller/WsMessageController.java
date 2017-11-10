@@ -2,18 +2,13 @@ package com.rebate.controller;
 
 import com.google.common.base.Joiner;
 import com.rebate.common.util.*;
-import com.rebate.common.util.rebate.RebateUrlUtil;
 import com.rebate.controller.base.BaseController;
-import com.rebate.dao.IncomeDetailDao;
-import com.rebate.dao.ProductCouponDao;
 import com.rebate.dao.ProductDao;
 import com.rebate.dao.UserInfoDao;
-import com.rebate.domain.IncomeDetail;
 import com.rebate.domain.Product;
 import com.rebate.domain.UserInfo;
 import com.rebate.domain.en.*;
 import com.rebate.domain.property.JDProperty;
-import com.rebate.domain.vo.ProductVo;
 import com.rebate.domain.wx.ImageMessage;
 import com.rebate.domain.wx.InputMessage;
 import com.rebate.domain.wx.OutputMessage;
@@ -21,10 +16,8 @@ import com.rebate.domain.wx.WxConfig;
 import com.rebate.manager.MessageTempManager;
 import com.rebate.manager.jd.JdSdkManager;
 import com.rebate.manager.shorturl.ShortUrlManager;
-import com.rebate.service.product.ProductService;
 import com.rebate.service.userinfo.UserInfoService;
 import com.thoughtworks.xstream.XStream;
-import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +27,6 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import javax.annotation.Resource;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -45,11 +37,8 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.*;
 import java.util.concurrent.Callable;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Controller
 @RequestMapping(WsMessageController.PREFIX)
@@ -681,6 +670,7 @@ public class WsMessageController extends BaseController {
 
                 //通过并发获取
                 List<Future<Map>> futures = threadPoolTaskExecutor.getThreadPoolExecutor().invokeAll(tasks, 5000, TimeUnit.MILLISECONDS);
+
                 for (int i = 0; i < futures.size(); i++) {
                     Map map = futures.get(i).get();
                     if (null != map) {

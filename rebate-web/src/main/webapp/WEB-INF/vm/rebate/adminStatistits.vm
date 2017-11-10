@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="/static/css/income/incomeReport.css?v1" type="text/css">
     <link rel="stylesheet" href="/static/css/income/classic.css">
     <link rel="stylesheet" href="/static/css/income/classic.date.css">
+    <script type="text/javascript" src="/static/lib/jquery/jquery-2.0.3.min.js"></script>
 
 </head>
 <body style="font-size: 12px;">
@@ -64,4 +65,5 @@
     </div>
     #end
 </div>
+    #parse("/rebate/product/redPackage.vm")
 </body><style id="igor_ext_nofollow">a[rel~='nofollow']{outline:.14em dotted red !important;outline-offset:.2em;}a[rel~='nofollow'] > img{outline:thin dotted red !important;outline-offset:.2em;}</style></html>
