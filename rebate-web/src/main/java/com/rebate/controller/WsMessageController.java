@@ -636,6 +636,13 @@ public class WsMessageController extends BaseController {
                 //获取代理户消息模板
                 recommendContent.append(messageTempManager.getAgentProductMessageTemp(product, shortUrl));
             }
+        }else{
+            if(RegexUtils.checkURL(content)){
+                //转换为推广链接
+                String jdMediaUrl = jdSdkManager.getSalesActivityPromotinUrl(content, subUnionId);
+                jdMediaUrl = shortUrlManager.getWxShortPromotinUrl(jdMediaUrl, subUnionId);
+                recommendContent.append(jdMediaUrl);
+            }
         }
 
         if (StringUtils.isBlank(recommendContent.toString())) {

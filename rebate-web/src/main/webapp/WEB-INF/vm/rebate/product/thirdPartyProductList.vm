@@ -13,13 +13,14 @@
     </div>
 </div>
     #parse("/common/category.vm")
+    #parse("/common/hiddenParams.vm")
 <div class="g-list"  >
 
 </div>
 <input type="hidden" id="promotionTab" value="$!{promotionTab}"/>
-<input type="hidden" id="sui" value="$!{sui}"/>
 
 
+    #parse("/rebate/product/redPackage.vm")
 <script type="text/javascript" src="/static/js/tpProductList.js?v2"></script>
 </body>
 </html>

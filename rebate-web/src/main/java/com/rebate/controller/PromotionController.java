@@ -116,6 +116,26 @@ public class PromotionController extends BaseController {
         return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
     }
 
+    @RequestMapping({"", "/", "/getSalesMainUrl.json"})
+    @ResponseBody
+    public ResponseEntity<?> getSalesMainUrl(HttpServletRequest request,String sui) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        String subUnionId = "";
+        try{
+            subUnionId = DESUtil.decrypt(jDProperty.getEncryptKey(), sui, "UTF-8");
+        }catch (Exception e){
+        }
+
+        String url = jdSdkManager.getSalesActivityPromotinUrl(jDProperty.getSalesActivityMainUrl(),subUnionId);
+        if (StringUtils.isNotBlank(url)) {
+            map.put("success", true);
+            map.put("url", url);
+        } else {
+            map.put("success", false);
+        }
+        return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
+    }
+
     @RequestMapping({"", "/", "/getPromotionCouponCode.json"})
     @ResponseBody
     public ResponseEntity<?> getPromotionCouponCode(HttpServletRequest request,String sui, Long skuId) {

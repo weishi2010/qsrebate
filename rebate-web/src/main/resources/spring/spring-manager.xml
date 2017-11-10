@@ -65,6 +65,7 @@
 		<property name="sencondAgentRatio" value="${jd.sencondAgentRatio}" />
 		<property name="apiSubUnionId" value="${jd.apiSubUnionId}" />
 		<property name="generalRebateUserPlatRatio" value="${jd.generalRebateUserPlatRatio}" />
+		<property name="salesActivityMainUrl" value="${jd.salesActivityMainUrl}" />
 
 	</bean>
 

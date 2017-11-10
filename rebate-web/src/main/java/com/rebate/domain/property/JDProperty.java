@@ -84,6 +84,13 @@ public class JDProperty {
     private Double generalRebateUserPlatRatio;
 
     /**
+     * 双11活动主场链接
+     */
+    @Getter
+    @Setter
+    private String salesActivityMainUrl;
+
+    /**
      * 是否是管理员
      * @param subUnionId
      * @return

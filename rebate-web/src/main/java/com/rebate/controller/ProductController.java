@@ -2,6 +2,7 @@ package com.rebate.controller;
 
 import com.rebate.common.util.EncodeUtils;
 import com.rebate.common.util.JsonUtil;
+import com.rebate.common.util.des.DESUtil;
 import com.rebate.common.util.rebate.RebateUrlUtil;
 import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.controller.base.BaseController;
@@ -15,6 +16,7 @@ import com.rebate.domain.en.EAgent;
 import com.rebate.domain.en.EProductStatus;
 import com.rebate.domain.en.EPromotionTab;
 import com.rebate.domain.en.EProudctCouponType;
+import com.rebate.domain.property.JDProperty;
 import com.rebate.domain.query.ProductQuery;
 import com.rebate.domain.vo.ProductVo;
 import com.rebate.manager.jd.JdSdkManager;
@@ -65,6 +67,9 @@ public class ProductController extends BaseController {
     @Autowired(required = true)
     private ShortUrlManager shortUrlManager;
 
+    @Qualifier("jDProperty")
+    @Autowired(required = true)
+    private JDProperty jDProperty;
     /**
      * 京东首页
      *
@@ -129,8 +134,10 @@ public class ProductController extends BaseController {
         UserInfo userInfo = getUserInfo(request);
 
         Integer agent = EAgent.GENERAL_REBATE_USER.getCode();
+        String sui = "";
         if (null != userInfo) {
             agent = userInfo.getAgent();
+            sui = DESUtil.encrypt(jDProperty.getEncryptKey(), userInfo.getSubUnionId(), "UTF-8");
         }
 
         //独家优惠券、9.9秒杀时查询分类列表
@@ -141,7 +148,7 @@ public class ProductController extends BaseController {
         view.addObject("allCategories", productService.findByRecommendCategories(recommendCategory));
         view.addObject("promotionTab", EPromotionTab.COUPON_PROMOTION.getTab());
         view.addObject("agent",agent);
-
+        view.addObject("sui",sui);//子联盟id加密后的串
         return view;
     }
 
