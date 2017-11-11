@@ -41,9 +41,9 @@
 </style>
 <div class="redPaperBox">
     <div class="redPaper">
-        <a href="/activity/activityIndex"><img src="/static/img/red_paper.png"></a>
+        <a href="javascript:void(0);" onclick="redirectSalesUrl()"><img src="/static/img/red_paper.png"></a>
         <div class="pcm-show">
-            <p class="rp-desc">双十一狂欢   疯抢超级红包<br>1111元红包等你拿！</p>
+            <p class="rp-desc"></p>
         </div>
         <div class="redPaperClose">
             <img src="/static/img/ren-paper-close.png">
@@ -63,5 +63,29 @@
 
         })
     })
+
+    function redirectSalesUrl(){
+        sui = $("#sui").val();
+        if(sui){
+
+        }
+
+        $.ajax({
+            type: 'GET',
+            url: '/promotion/getSalesMainUrl.json?sui=' + sui +"&r=" + Math.random(),
+            dataType: 'json',
+            success: function (reponse) {
+                if(reponse.success){
+                    var url = reponse.url;
+                    location.href = url;
+                }else{
+                    alert("很抱歉，优惠券活动已经结束！")
+                }
+            },
+            error: function (xhr, type) {
+                console.log('系统异常，请重试！');
+            }
+        });
+    }
 </script>
 <!-- 2017-11-11 活动红包1 -->

@@ -66,5 +66,4 @@
     #end
 </div>
     #parse("/common/hiddenParams.vm")
-    #parse("/rebate/product/redPackage.vm")
 </body><style id="igor_ext_nofollow">a[rel~='nofollow']{outline:.14em dotted red !important;outline-offset:.2em;}a[rel~='nofollow'] > img{outline:thin dotted red !important;outline-offset:.2em;}</style></html>
