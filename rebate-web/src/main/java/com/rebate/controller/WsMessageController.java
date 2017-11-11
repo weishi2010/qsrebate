@@ -426,6 +426,7 @@ public class WsMessageController extends BaseController {
                 "打开菜单栏，《内购券》每日爆出更新！独家！专享！超值！     [阴险][阴险]直接访问官网没有的哦！\n" +
                 "\n" +
                 " 【提现】\uD83C\uDE35 20元，就可以提现啦！\n" +
+                "\uD83D\uDD25京东11.11优惠券抢购中，链接 https://w.url.cn/s/A6mete6\n"+
                 "\n]]></Content>");
         str.append("</xml>");
         return str.toString();
@@ -452,6 +453,65 @@ public class WsMessageController extends BaseController {
     }
 
     private String articlePushXml(String toUserName, String fromUserName) {
+
+        //构造消息回复XML
+        StringBuffer str = new StringBuffer();
+        str.append("<xml>");
+        str.append("<ToUserName><![CDATA[" + toUserName + "]]></ToUserName>");
+        str.append("<FromUserName><![CDATA[" + fromUserName + "]]></FromUserName>");
+        str.append("<CreateTime>" + new Date().getTime() + "</CreateTime>");
+        str.append("<MsgType><![CDATA[text]]></MsgType>");
+        str.append("<Content><![CDATA[\uD83D\uDD25京东双11全部卖场的活动，全部卖场一键直达，卖场和商品下方都自带，优惠券的，记得爬楼看活动\uD83D\uDD25\n" +
+                "----------------------\n" +
+                "\uD83D\uDE31\uD83D\uDE31\uD83D\uDE313分钟100亿\n" +
+                "\n" +
+                "\uD83D\uDD251.主会场，全品争锋，万千好货5折起！手机11.11元秒！\n" +
+                "https://w.url.cn/s/ArUBHlD\n" +
+                "\uD83D\uDD252.家电会场，家电排行榜，价保30天！抢1000元神券！\n" +
+                "https://w.url.cn/s/Af2VGYp\n" +
+                "\uD83D\uDD253.手机会场，潮流新phone爆，当燃京东！iPhone X现货抢！\n" +
+                "https://w.url.cn/s/AmypdbX\n" +
+                "\uD83D\uDD254.什么值得买，京选会场！全场低至9.9元包邮！\n" +
+                "https://w.url.cn/s/ARzilMB\n" +
+                "\uD83D\uDD255.数码会场，iPad Pro低至3688！\n" +
+                "https://w.url.cn/s/AIE8ZwQ\n" +
+                "\uD83D\uDD256.居家生活，0点抢5折神券！跨店3件7折！自营199-100！https://w.url.cn/s/Aj3sSat\n" +
+                "\uD83D\uDD257.国际大牌品质购！满199减100！\n" +
+                "https://w.url.cn/s/ASdWgGv\n" +
+                "\uD83D\uDD258.潮流服饰，5折神券嗨翻天，自营满199-100！\n" +
+                "https://w.url.cn/s/AErXPrR\n" +
+                "\uD83D\uDD259.自营图书，满200-100！最高满300-180！\n" +
+                "https://w.url.cn/s/Ak10JlZ\n" +
+                "---------------------\n" +
+                "\uD83D\uDD25【京东双十一狂欢11日领券汇总】\n" +
+                "https://w.url.cn/s/ANfIMpC \n" +
+                "\uD83D\uDD25京东双11领券大全各种免邮券，全品券速领数量有限\n" +
+                "https://w.url.cn/s/AxR1JkI\n" +
+                "\uD83D\uDD25超市全品188-100、699-200、499-150、299-90、99-30神券叠加满减\n" +
+                "https://w.url.cn/s/AvR5OWJ \n" +
+                "\uD83D\uDD25纸品清洁188-100神券叠加满减后神价\n" +
+                "https://w.url.cn/s/ATEkmEU \n" +
+                "\uD83D\uDD25食品饮料188-69、299-100\n" +
+                "https://w.url.cn/s/Ae28gr9 \n" +
+                "\uD83D\uDD25母婴748-300、348-100、299-200神券\n" +
+                "https://w.url.cn/s/AU5y9L9 \n" +
+                "\uD83D\uDD25全球购纸尿裤满900-300神券\n" +
+                "https://w.url.cn/s/AgRdCUR 图书300-180\n" +
+                "https://w.url.cn/s/AgN31gi  \n" +
+                "\uD83D\uDD25双11家电爆品排行榜\n" +
+                "https://w.url.cn/s/AMToiIr \n" +
+                "\uD83D\uDD25京东家电疯抢24小时\n" +
+                "https://w.url.cn/s/A9Kv0zb \n" +
+                "\uD83D\uDD25手机全品6000-1111、4980-700神券\n" +
+                "https://w.url.cn/s/AmyOvBr \n" +
+                "\uD83D\uDD25服饰五折神券可下黄金600-150服饰神券\n" +
+                "https://w.url.cn/s/AZeaQyw \n" +
+                "❤长按-发送给朋友分享给更多的人！\n]]></Content>");
+        str.append("</xml>");
+        return str.toString();
+    }
+
+    private String articlePushXmlOld(String toUserName, String fromUserName) {
 
         //构造消息回复XML
         StringBuffer str = new StringBuffer();
