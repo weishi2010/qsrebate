@@ -114,7 +114,7 @@ public class RegexUtils {
      * @return 验证成功返回true，验证失败返回false
      */ 
     public static boolean checkURL(String url) {
-        String regex = "(http|https|ftp|)?(\\:\\/\\/)?(([\\w-]+\\.)+(com|cn|mobi|gov|es|cn|so|be|net|org|name|me|bb|co|cm|us|comcn|netcn|lu|orgcn|tel|info|biz|cc|tv|hk|asia|ws|in|tw|im|cc|gy|gd|st|ee|ca|公司|网络|中国)+(\\/?[\\w-.\\/?%&=]*)?)";
+        String regex = "(http|https|ftp|)?(\\:\\/\\/)?(([\\w-]+\\.)+(com|cn|mobi|gov|es|cn|so|be|net|org|name|me|bb|co|cm|us|comcn|netcn|lu|orgcn|tel|info|biz|cc|tv|hk|asia|ws|in|tw|im|cc|gy|gd|st|ee|ca|公司|网络|中国)+(\\/?[\\w-.,\\/?%&=]*)?)";
         return Pattern.matches(regex, url);
     } 
     
