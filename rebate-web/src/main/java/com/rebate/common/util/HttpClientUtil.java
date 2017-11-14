@@ -317,7 +317,7 @@ public class HttpClientUtil {
                     url = convertJDPromotionUrl(links.get(0));
                 }
             }
-        }else{
+        }else if(StringUtils.isNotBlank(oriUrl) && !oriUrl.contains("error2.aspx")){
             url = oriUrl;
         }
 
