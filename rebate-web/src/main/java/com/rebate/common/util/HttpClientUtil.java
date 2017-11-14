@@ -317,6 +317,15 @@ public class HttpClientUtil {
                     url = convertJDPromotionUrl(links.get(0));
                 }
             }
+        }else if(oriUrl.contains("yiqifa")){
+            //如果获取不到原始URl则再解析HTML看是否还有跳转URL
+            String html = HttpClientUtil.get(url);
+            if(StringUtils.isNotBlank(html) && html.contains("funtz")){
+                List<String> links = getYiqifaLinks(html);
+                if(null!=links&&links.size()>0){
+                    url = convertJDPromotionUrl(links.get(0));
+                }
+            }
         }else if(StringUtils.isNotBlank(oriUrl) && !oriUrl.contains("error2.aspx")){
             url = oriUrl;
         }
@@ -337,6 +346,17 @@ public class HttpClientUtil {
         Matcher matcher = pattern.matcher(html);
         while(matcher.find()){
             urls.add(matcher.group(0).replace("hrl=","").replace("\'","").trim());
+        }
+        return urls;
+    }
+
+    public static List<String> getYiqifaLinks(String html) {
+        List<String> urls = new ArrayList<>();
+        Pattern pattern = Pattern
+                .compile("\\s*(?i)u\\s*=\\s*(\"([^\"]*\")|'[^']*'|([^'\">\\s]+))");
+        Matcher matcher = pattern.matcher(html);
+        while(matcher.find()){
+            urls.add(matcher.group(0).replace("u=","").replace("\'","").trim());
         }
         return urls;
     }

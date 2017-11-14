@@ -162,7 +162,7 @@ public class RegexUtils {
     public static List<String> getLinks(String content) {
         List<String> urls = new ArrayList<>();
         Pattern pattern = Pattern
-                .compile("(http|https|ftp|)?(\\:\\/\\/)?(([\\w-]+\\.)+(com|cn|mobi|gov|es|cn|so|be|net|org|name|me|bb|co|cm|us|comcn|netcn|lu|orgcn|tel|info|biz|cc|tv|hk|asia|ws|in|tw|im|cc|gy|gd|st|ee|ca|公司|网络|中国)+(\\/?[\\w-.\\/?%&=]*)?)");
+                .compile("(http|https|ftp|)?(\\:\\/\\/)?(([\\w-]+\\.)+(com|cn|mobi|gov|es|cn|so|be|net|org|name|me|bb|co|cm|us|comcn|netcn|lu|orgcn|tel|info|biz|cc|tv|hk|asia|ws|in|tw|im|cc|gy|gd|gg|st|ee|ca|公司|网络|中国)+(\\/?[\\w-.\\/?%&=]*)?)");
         Matcher matcher = pattern.matcher(content);
         while(matcher.find()){
             urls.add(matcher.group(0));
