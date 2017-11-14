@@ -326,6 +326,8 @@ public class HttpClientUtil {
                     url = convertJDPromotionUrl(links.get(0));
                 }
             }
+        }else if(oriUrl.contains("qingsongfan")){
+            url = convertJDPromotionUrl(oriUrl);
         }else if(StringUtils.isNotBlank(oriUrl) && !oriUrl.contains("error2.aspx")){
             url = oriUrl;
         }
