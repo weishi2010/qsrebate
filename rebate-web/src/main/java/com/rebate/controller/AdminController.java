@@ -253,7 +253,7 @@ public class AdminController extends BaseController {
     }
 
     @RequestMapping({"", "/", "/getProducts.json"})
-    public ResponseEntity<?> getProducts(HttpServletRequest request,Integer page, Integer pageSize, Integer couponType,String productName,Long productId,Integer thirdCategory) {
+    public ResponseEntity<?> getProducts(HttpServletRequest request,Integer page, Integer pageSize, Integer couponType,String productName,Long productId,Integer thirdCategory,Integer status) {
         Map<String, Object> map = new HashMap<String, Object>();
         ProductQuery query = new ProductQuery();
         if (StringUtils.isNotBlank(productName)) {
@@ -275,6 +275,7 @@ public class AdminController extends BaseController {
 
         query.setIndex(page);
         query.setPageSize(pageSize);
+        query.setStatus(status);
         query.setThirdCategory(thirdCategory);
         PaginatedArrayList<ProductVo> products = productService.findProductList(query,null);
         map.put("products", products);
