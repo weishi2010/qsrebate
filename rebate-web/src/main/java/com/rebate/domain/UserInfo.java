@@ -1,5 +1,6 @@
 package com.rebate.domain;
 
+import com.rebate.domain.query.BaseQuery;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,7 +10,7 @@ import java.util.Date;
 /**
  * 用户信息
  */
-public class UserInfo implements Serializable{
+public class UserInfo extends BaseQuery implements Serializable{
 
     /**
      * 主键

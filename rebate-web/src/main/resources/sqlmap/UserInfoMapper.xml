@@ -35,6 +35,19 @@
         modified
     </sql>
 
+    <sql id="condition">
+        <dynamic prepend="where">
+            <isNotNull property="agent" prepend="and">
+                agent = #agent#
+            </isNotNull>
+            <isNotNull property="nickName" prepend="and">
+                nick_name = #nickName#
+            </isNotNull>
+            <isNotNull property="openId" prepend="and">
+                open_id = #openId#
+            </isNotNull>
+        </dynamic>
+    </sql>
     <insert id="insert" parameterClass="UserInfo">
         insert into user_info
         (
@@ -120,10 +133,19 @@
     </select>
 
 
-    <!--根据子联盟ID查询用户信息-->
-    <select id="findAllUsers" parameterClass="UserInfo" resultMap="UserInfoResultMap">
+    <!--根据条件查询用户总数-->
+    <select id="findUserCount" parameterClass="UserInfoQuery" resultClass="int">
+        select
+        count(1)
+        from user_info
+        <include refid="condition"/>
+    </select>
+    <!--根据条件查询用户-->
+    <select id="findAllUsers" parameterClass="UserInfoQuery" resultMap="UserInfoResultMap">
         select
         <include refid="fields"/>
         from user_info
+        <include refid="condition"/>
+        limit #startRow#,#pageSize#
     </select>
 </sqlMap>

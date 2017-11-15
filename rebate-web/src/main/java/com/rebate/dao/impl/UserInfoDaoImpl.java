@@ -34,7 +34,12 @@ public class UserInfoDaoImpl extends BaseDao implements UserInfoDao {
     }
 
     @Override
-    public List<UserInfo> findAllUsers(UserInfo userInfo) {
-        return ( List<UserInfo>) queryForList("UserInfo.findAllUsers",userInfo);
+    public int findUserCount(UserInfoQuery userInfoQuery) {
+        return (int)queryForObject("UserInfo.findUserCount",userInfoQuery);
+    }
+
+    @Override
+    public List<UserInfo> findAllUsers(UserInfoQuery userInfoQuery) {
+        return ( List<UserInfo>) queryForList("UserInfo.findAllUsers",userInfoQuery);
     }
 }

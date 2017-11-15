@@ -1,9 +1,12 @@
 package com.rebate.service.userinfo;
 
+import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.domain.Commission;
 import com.rebate.domain.UserInfo;
 import com.rebate.domain.query.RecommendUserInfoQuery;
 import com.rebate.domain.query.UserInfoQuery;
+
+import java.util.List;
 
 public interface UserInfoService {
 
@@ -55,4 +58,11 @@ public interface UserInfoService {
      * @return
      */
     int findRecommendUserCount(RecommendUserInfoQuery recommendUserInfoQuery);
+
+    /**
+     * 查询用户列表
+     * @param userInfoQuery
+     * @return
+     */
+    PaginatedArrayList<UserInfo> getUserList(UserInfoQuery userInfoQuery);
 }

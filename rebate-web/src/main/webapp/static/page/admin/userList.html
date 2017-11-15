@@ -1,0 +1,146 @@
+<div>
+<div class="widget-box">
+    <div class="widget-header red">
+        <h4>用户管理</h4>
+    </div>
+    <div class="widget-body">
+        <div class="widget-main">
+            <form id="form_search" class="form-inline" >
+                <fieldset>
+                    <div class="form-group">
+                        <div class="control-group">
+                            <label class="control-label bolder no-padding-left ">微信openId：</label>
+                            <input style="width: 200px;" class="form-control" id="search_openId" name="search_openId" size="10" type="text" placeholder="请输入openId!" ng-model="search_openId" />
+                            <label class="control-label bolder  ">昵称：</label>
+                            <input style="width: 150px;" class="form-control" id="search_nickname" name="search_nickname" size="10" type="text" placeholder="请输入昵称!" ng-model="search_nickname" />
+                            <label class="control-label bolder  ">代理类型：</label>
+                            <select id="search_agent" name="search_agent">
+                                <option value="">请选择</option>
+                                <option value="99">管理员</option>
+                                <option value="1">推广代理</option>
+                                <option value="2">拉粉代理</option>
+                                <option value="3">返利用户</option>
+                            </select>
+                            <label class="control-label bolder  ">用户状态：</label>
+                            <select id="search_status" name="search_status">
+                                <option value="">请选择</option>
+                                <option value="1">有效</option>
+                                <option value="-1">无效</option>
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <div class="form-group">
+                        <div class="control-group">
+                            <button type="button" id="btn_query" class="btn btn-sm btn-primary" ng-click="query()">
+                                <i class="icon-bolt bigger-110"></i>
+                                查询
+                            </button>
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+
+        </div>
+    </div>
+    <div class="biz-approve-overlay widget-box-overlay hidden">
+        <div style="padding-top: 300px">
+            <i class="ace-icon fa fa-spinner fa-spin orange bigger-280"></i>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <!-- PAGE CONTENT BEGINS -->
+
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="table-responsive">
+                    <table id="sample-table-1" class="table table-striped table-bordered table-hover">
+                        <thead>
+                        <tr>
+                            <th class="center">
+                                <label>
+                                    <input type="checkbox" class="ace"  id="allCkb" ng-click="selectAll($event)"/>
+                                    <span class="lbl"></span>
+                                </label>
+                            </th>
+                            <th>头像</th>
+                            <th>微信openId</th>
+                            <th>昵称</th>
+                            <th>子联盟ID</th>
+                            <th>代理类型</th>
+                            <th>
+                                <i class="icon-time bigger-110 hidden-480"></i>
+                                创建时间
+                            </th>
+                            <th>
+                                <i class="icon-time bigger-110 hidden-480"></i>
+                                修改时间
+                            </th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        <tr ng-repeat="user in userList">
+                            <td class="center">
+                                <label>
+                                    <input type="checkbox" class="ace" name="ckb" id="ckb_{{user.openId}}" value="{{user.openId}}"/>
+                                    <span class="lbl"></span>
+                                </label>
+                            </td>
+                            <td>
+                                <img src="{{user.wxImage}}"  width="40" height="40"/>
+                            </td>
+                            <td style="width:20%;word-wrap:break-word;word-spacing:normal;">
+                                {{user.openId}}
+                            </td>
+                            <td>
+                                {{user.nickName}}
+                            </td>
+
+                            <td>
+                                {{user.subUnionId}}
+                            </td>
+                            <td ng-if="user.agent==99">
+                                管理员
+                            </td>
+                            <td ng-if="user.agent==1">
+                                推广代理
+                            </td>
+                            <td ng-if="user.agent==2">
+                                拉粉代理
+                            </td>
+                            <td ng-if="user.agent==3">
+                                返利用户
+                            </td>
+
+                            <td>{{user.created | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+                            <td>{{user.modified | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+
+                            <td>
+                                <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
+
+                                    <button class="btn btn-xs btn-info" id="whiteBtn{{user.subUnionId}}" ng-click="addWhiteList(user.subUnionId)">
+                                        设置白名单
+                                    </button>
+
+                                </div>
+
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div><!-- /.table-responsive -->
+            </div><!-- /span -->
+        </div><!-- /row -->
+
+        </div>
+    </div>
+
+    <tm-pagination conf="paginationConf"></tm-pagination>
+
+</div>

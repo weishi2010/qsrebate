@@ -43,5 +43,7 @@ public interface UserInfoDao {
      */
     int findRecommendUserCount(UserInfoQuery userInfoQuery);
 
-    List<UserInfo> findAllUsers(UserInfo userInfo);
+    int findUserCount(UserInfoQuery userInfoQuery);
+
+    List<UserInfo> findAllUsers(UserInfoQuery userInfoQuery);
 }

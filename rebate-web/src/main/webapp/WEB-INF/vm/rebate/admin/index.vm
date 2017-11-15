@@ -49,6 +49,7 @@
 
     <script src="/static/js/admin/index.js?v1" ></script>
     <script src="/static/js/admin/product.js?v5" ></script>
+    <script src="/static/js/admin/user.js?v5" ></script>
 
     <style>
         .page-list .pagination {float:left;}
