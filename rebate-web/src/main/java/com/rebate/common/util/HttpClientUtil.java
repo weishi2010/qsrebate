@@ -307,31 +307,33 @@ public class HttpClientUtil {
      * @return
      */
     public  static String convertJDPromotionUrl(String url){
-        String oriUrl = HttpClientUtil.getFinalURL(url);
-        if(StringUtils.isBlank(oriUrl)||oriUrl.contains("union-click.jd.com")){
-            //如果获取不到原始URl则再解析HTML看是否还有跳转URL
-            String html = HttpClientUtil.get(url);
-            if(StringUtils.isNotBlank(html) && html.contains("hrl")){
-                List<String> links = getJDPromotionLinks(html);
-                if(null!=links&&links.size()>0){
-                    url = convertJDPromotionUrl(links.get(0));
-                }
-            }
-        }else if(oriUrl.contains("yiqifa")){
-            //如果获取不到原始URl则再解析HTML看是否还有跳转URL
-            String html = HttpClientUtil.get(url);
-            if(StringUtils.isNotBlank(html) && html.contains("funtz")){
-                List<String> links = getYiqifaLinks(html);
-                if(null!=links&&links.size()>0){
-                    url = convertJDPromotionUrl(links.get(0));
-                }
-            }
-        }else if(oriUrl.contains("qingsongfan")){
-            url = convertJDPromotionUrl(oriUrl);
-        }else if(StringUtils.isNotBlank(oriUrl) && !oriUrl.contains("error2.aspx")){
-            url = oriUrl;
-        }
 
+        if(StringUtils.isNotBlank(url) && !url.contains("sale.jd.com")){
+            String oriUrl = HttpClientUtil.getFinalURL(url);
+            if (StringUtils.isBlank(oriUrl) || oriUrl.contains("union-click.jd.com")) {
+                //如果获取不到原始URl则再解析HTML看是否还有跳转URL
+                String html = HttpClientUtil.get(url);
+                if (StringUtils.isNotBlank(html) && html.contains("hrl")) {
+                    List<String> links = getJDPromotionLinks(html);
+                    if (null != links && links.size() > 0) {
+                        url = convertJDPromotionUrl(links.get(0));
+                    }
+                }
+            } else if (oriUrl.contains("yiqifa")) {
+                //如果获取不到原始URl则再解析HTML看是否还有跳转URL
+                String html = HttpClientUtil.get(url);
+                if (StringUtils.isNotBlank(html) && html.contains("funtz")) {
+                    List<String> links = getYiqifaLinks(html);
+                    if (null != links && links.size() > 0) {
+                        url = convertJDPromotionUrl(links.get(0));
+                    }
+                }
+            } else if (oriUrl.contains("qingsongfan")) {
+                url = convertJDPromotionUrl(oriUrl);
+            } else if (StringUtils.isNotBlank(oriUrl) && !oriUrl.contains("error2.aspx")) {
+                url = oriUrl;
+            }
+        }
         url = filterJDUnionParam(url);
         return url;
     }
