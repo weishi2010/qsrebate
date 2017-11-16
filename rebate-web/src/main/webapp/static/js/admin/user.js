@@ -16,11 +16,12 @@ adminModule.controller("userController", ["$scope", "$http", function ($scope, $
         nickname =$("#search_nickname").val();
         agent =$("#search_agent").val();
         status =$("#search_status").val();
+        sui =$("#search_sui").val();
 
         page =  $scope.paginationConf.currentPage;
         pageSize =  $scope.paginationConf.itemsPerPage;
 
-        $http.get("/admin/getUserList.json",{params:{nickname: encodeURIComponent(nickname),openId:openId,status:status,agent:agent,page:page,pageSize:pageSize,r:Math.random()}}).success(function (response) {
+        $http.get("/admin/getUserList.json",{params:{nickname: encodeURIComponent(nickname),openId:openId,sui:sui,status:status,agent:agent,page:page,pageSize:pageSize,r:Math.random()}}).success(function (response) {
             if (response.success) {
                 $scope.userList = response.userList;
                 $scope.paginationConf.totalItems = response.totalItem;

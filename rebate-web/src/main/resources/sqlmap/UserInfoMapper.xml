@@ -46,6 +46,9 @@
             <isNotNull property="openId" prepend="and">
                 open_id = #openId#
             </isNotNull>
+            <isNotNull property="subUnionId" prepend="and">
+                sub_union_id = #subUnionId#
+            </isNotNull>
         </dynamic>
     </sql>
     <insert id="insert" parameterClass="UserInfo">

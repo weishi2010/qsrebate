@@ -292,12 +292,17 @@ public class AdminController extends BaseController {
     }
 
     @RequestMapping({"", "/", "/getUserList.json"})
-    public ResponseEntity<?> getUserList(HttpServletRequest request,Integer page, Integer pageSize, Integer agent,String nickname,String openId,String subUnionId,Integer status) {
+    public ResponseEntity<?> getUserList(HttpServletRequest request,Integer page, Integer pageSize, Integer agent,String nickname,String openId,String subUnionId,String sui,Integer status) {
         Map<String, Object> map = new HashMap<String, Object>();
         UserInfoQuery query = new UserInfoQuery();
         if (StringUtils.isNotBlank(nickname)) {
             query.setNickName(EncodeUtils.urlDecode(nickname));
         }
+
+        if (StringUtils.isNotBlank(sui)) {
+            query.setSubUnionId(DESUtil.decrypt(jDProperty.getEncryptKey(), sui, "UTF-8"));
+        }
+
         if(null!=status){
             query.setStatus(status);
         }
