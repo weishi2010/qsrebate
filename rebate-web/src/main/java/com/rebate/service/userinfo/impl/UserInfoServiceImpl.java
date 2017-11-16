@@ -4,6 +4,7 @@ import com.jd.data.redis.RedisUtils;
 import com.rebate.common.cache.RedisKey;
 import com.rebate.common.data.seq.SequenceUtil;
 import com.rebate.common.util.JsonUtil;
+import com.rebate.common.util.des.DESUtil;
 import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.dao.*;
 import com.rebate.domain.Commission;
@@ -13,6 +14,7 @@ import com.rebate.domain.en.EIncomeType;
 import com.rebate.domain.en.ESequence;
 import com.rebate.domain.en.ESubUnionIdPrefix;
 import com.rebate.domain.en.EWhiteType;
+import com.rebate.domain.property.JDProperty;
 import com.rebate.domain.query.IncomeDetailQuery;
 import com.rebate.domain.query.RecommendUserInfoQuery;
 import com.rebate.domain.query.UserInfoQuery;
@@ -70,9 +72,9 @@ public class UserInfoServiceImpl implements UserInfoService {
     @Autowired(required = true)
     private RecommendUserInfoDao recommendUserInfoDao;
 
-    @Qualifier("whiteUserInfoDao")
-    @Autowired
-    private WhiteUserInfoDao whiteUserInfoDao;
+    @Qualifier("jDProperty")
+    @Autowired(required = true)
+    private JDProperty jDProperty;
 
     @Override
     public void addWhiteAgent(String subUnionId) {
@@ -230,6 +232,7 @@ public class UserInfoServiceImpl implements UserInfoService {
             for(UserInfo userInfo:list){
                 UserInfoVo userInfoVo = new UserInfoVo(userInfo);
                 userInfoVo.setWhiteAgent(userInfoManager.isWhiteAgent(userInfoVo.getSubUnionId()));
+                userInfoVo.setSui(DESUtil.qsEncrypt(jDProperty.getEncryptKey(),userInfoVo.getSubUnionId(),"UTF-8"));
                 result.add(userInfoVo);
             }
         }

@@ -240,7 +240,7 @@ public class AdminController extends BaseController {
     @RequestMapping({"", "/", "/manager"})
     public ModelAndView manager(HttpServletRequest request,String sui) {
         ModelAndView view = new ModelAndView();
-        String subUionId = DESUtil.decrypt(jDProperty.getEncryptKey(),sui,"UTF-8");
+        String subUionId = DESUtil.qsDecrypt(jDProperty.getEncryptKey(),sui,"UTF-8");
         if("admin".equalsIgnoreCase(subUionId)){
             view.setViewName(VIEW_PREFIX+ "/admin/index");
         }else{
@@ -301,7 +301,7 @@ public class AdminController extends BaseController {
         }
 
         if (StringUtils.isNotBlank(sui)) {
-            query.setSubUnionId(DESUtil.decrypt(jDProperty.getEncryptKey(), sui, "UTF-8"));
+            query.setSubUnionId(DESUtil.qsDecrypt(jDProperty.getEncryptKey(), sui, "UTF-8"));
         }
 
         if(null!=status){
@@ -498,7 +498,7 @@ public class AdminController extends BaseController {
         String vm = VIEW_PREFIX + "/adminStatistits";
         view.setViewName(vm);
 
-        String subUnionId = DESUtil.decrypt(jDProperty.getEncryptKey(), sui, "UTF-8");
+        String subUnionId = DESUtil.qsDecrypt(jDProperty.getEncryptKey(), sui, "UTF-8");
         if (StringUtils.isBlank(subUnionId)) {
             view.setViewName(VIEW_PREFIX + "/permission");
             return view;

@@ -75,7 +75,7 @@ public class PromotionController extends BaseController {
 
         ModelAndView view = new ModelAndView(VIEW_PREFIX + vm);
 
-        String subUnionId = DESUtil.decrypt(jDProperty.getEncryptKey(), sui, "UTF-8");
+        String subUnionId = DESUtil.qsDecrypt(jDProperty.getEncryptKey(), sui, "UTF-8");
         if (null == subUnionId) {
             subUnionId = "";
         }
@@ -105,7 +105,7 @@ public class PromotionController extends BaseController {
     public ResponseEntity<?> jdShortUrl(HttpServletRequest request,String sui, Long skuId) {
         Map<String, Object> map = new HashMap<String, Object>();
 
-        String subUnionId = DESUtil.decrypt(jDProperty.getEncryptKey(), sui, "UTF-8");
+        String subUnionId = DESUtil.qsDecrypt(jDProperty.getEncryptKey(), sui, "UTF-8");
         if(null==subUnionId){
             subUnionId ="";
         }
@@ -122,7 +122,7 @@ public class PromotionController extends BaseController {
         Map<String, Object> map = new HashMap<String, Object>();
         String subUnionId = "";
         try{
-            subUnionId = DESUtil.decrypt(jDProperty.getEncryptKey(), sui, "UTF-8");
+            subUnionId = DESUtil.qsDecrypt(jDProperty.getEncryptKey(), sui, "UTF-8");
         }catch (Exception e){
         }
 
@@ -142,7 +142,7 @@ public class PromotionController extends BaseController {
         Map<String, Object> map = new HashMap<String, Object>();
         String subUnionId = "";
         try{
-            subUnionId = DESUtil.decrypt(jDProperty.getEncryptKey(), sui, "UTF-8");
+            subUnionId = DESUtil.qsDecrypt(jDProperty.getEncryptKey(), sui, "UTF-8");
         }catch (Exception e){
         }
 
