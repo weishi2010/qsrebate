@@ -18,5 +18,6 @@ Config 2.0/" "http://ibatis.apache.org/dtd/sql-map-config-2.dtd">
 	<sqlMap resource="sqlmap/AgentRelationMapper.xml"/>
 	<sqlMap resource="sqlmap/RecommendUserInfoMapper.xml"/>
 	<sqlMap resource="sqlmap/UserSummaryMapper.xml"/>
+	<sqlMap resource="sqlmap/WhiteUserInfoMapper.xml"/>
 
 </sqlMapConfig>

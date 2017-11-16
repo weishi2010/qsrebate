@@ -15,6 +15,8 @@
                             <input style="width: 150px;" class="form-control" id="search_nickname" name="search_nickname" size="10" type="text" placeholder="请输入昵称!" ng-model="search_nickname" />
                             <label class="control-label bolder  ">sui(子联盟ID加密串)：</label>
                             <input style="width: 150px;" class="form-control" id="search_sui" name="search_sui" size="10" type="text" placeholder="请输入sui!" ng-model="search_sui" />
+                            <label class="control-label bolder  ">子联盟ID：</label>
+                            <input style="width: 150px;" class="form-control" id="search_subUnionId" name="search_subUnionId" size="10" type="text" placeholder="请输入子联盟ID!" ng-model="search_subUnionId" />
 
                             <label class="control-label bolder  ">代理类型：</label>
                             <select id="search_agent" name="search_agent">
@@ -127,8 +129,12 @@
                             <td>
                                 <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
 
-                                    <button class="btn btn-xs btn-info" id="whiteBtn{{user.subUnionId}}" ng-click="addWhiteList(user.subUnionId)">
+                                    <button class="btn btn-xs btn-info" id="addWhiteBtn{{user.subUnionId}}" ng-click="addWhiteList(user.subUnionId)" ng-hide="user.whiteAgent">
                                         设置白名单
+                                    </button>
+
+                                    <button class="btn btn-warning btn-sm popover-warning" id="cancelWhiteBtn{{user.subUnionId}}" ng-click="cancelWhiteList(user.subUnionId)" ng-hide="!user.whiteAgent">
+                                        取消白名单
                                     </button>
 
                                 </div>

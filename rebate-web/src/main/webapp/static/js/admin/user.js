@@ -17,14 +17,45 @@ adminModule.controller("userController", ["$scope", "$http", function ($scope, $
         agent =$("#search_agent").val();
         status =$("#search_status").val();
         sui =$("#search_sui").val();
+        subUnionId =$("#search_subUnionId").val();
+
 
         page =  $scope.paginationConf.currentPage;
         pageSize =  $scope.paginationConf.itemsPerPage;
 
-        $http.get("/admin/getUserList.json",{params:{nickname: encodeURIComponent(nickname),openId:openId,sui:sui,status:status,agent:agent,page:page,pageSize:pageSize,r:Math.random()}}).success(function (response) {
+        $http.get("/admin/getUserList.json",{params:{nickname: encodeURIComponent(nickname),openId:openId,subUnionId:subUnionId,sui:sui,status:status,agent:agent,page:page,pageSize:pageSize,r:Math.random()}}).success(function (response) {
             if (response.success) {
                 $scope.userList = response.userList;
                 $scope.paginationConf.totalItems = response.totalItem;
+            }
+        });
+    }
+
+    $scope.addWhiteList = function(subUnionId){
+
+        if(!confirm("确定要进行操作吗?")){
+            return;
+        }
+
+        $http.get("/admin/addWhiteAgent.json",{params:{subUnionId: subUnionId,r:Math.random()}}).success(function (response) {
+            if (response.success) {
+                $scope.query();
+                //$("#addWhiteBtn"+subUnionId).hide();
+                //$("#cancelWhiteBtn"+subUnionId).show();
+            }
+        });
+    }
+
+    $scope.cancelWhiteList = function(subUnionId){
+        if(!confirm("确定要进行操作吗?")){
+            return;
+        }
+
+        $http.get("/admin/cancelWhiteAgent.json",{params:{subUnionId: subUnionId,r:Math.random()}}).success(function (response) {
+            if (response.success) {
+                $scope.query();
+                //$("#addWhiteBtn"+subUnionId).show();
+                //$("#cancelWhiteBtn"+subUnionId).hide();
             }
         });
     }

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="WhiteUserInfo">
+
+    <typeAlias alias="WhiteUserInfo" type="com.rebate.domain.whitelist.WhiteUserInfo"/>
+
+    <resultMap class="WhiteUserInfo" id="WhiteUserInfoResultMap">
+        <result property="id" column="id"/>
+        <result property="status" column="status"/>
+        <result property="type" column="type"/>
+        <result property="subUnionId" column="sub_union_id"/>
+        <result property="created" column="created"/>
+        <result property="modified" column="modified"/>
+    </resultMap>
+
+    <sql id="fields">
+       id,
+       sub_union_id,
+        type,
+        status,
+        created,
+        modified
+    </sql>
+
+    <insert id="insert" parameterClass="WhiteUserInfo">
+        insert into white_list
+        (
+        sub_union_id,
+        type,
+        status,
+        created,
+        modified
+        )
+        values
+        (
+        #subUnionId#,
+        #type#,
+        #status#,
+        now(),
+        now()
+        )
+        <selectKey resultClass="long" keyProperty="id">
+            SELECT @@IDENTITY as id
+        </selectKey>
+    </insert>
+
+    <delete id="deleteBySubUnionId" parameterClass="WhiteUserInfo">
+       delete
+        from white_list
+        where sub_union_id=#subUnionId# and `type`=#type#
+    </delete>
+
+    <select id="findBySubUnionId" parameterClass="WhiteUserInfo" resultMap="WhiteUserInfoResultMap">
+        select
+        <include refid="fields"/>
+        from white_list
+        where sub_union_id=#subUnionId# and `type`=#type#
+        limit 1
+    </select>
+
+</sqlMap>

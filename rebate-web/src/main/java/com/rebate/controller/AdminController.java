@@ -18,6 +18,7 @@ import com.rebate.domain.query.*;
 import com.rebate.domain.vo.ExtractDetailVo;
 import com.rebate.domain.vo.ProductVo;
 import com.rebate.domain.vo.RebateDetailVo;
+import com.rebate.domain.vo.UserInfoVo;
 import com.rebate.domain.wx.WxConfig;
 import com.rebate.manager.jd.JdSdkManager;
 import com.rebate.manager.shorturl.ShortUrlManager;
@@ -324,11 +325,49 @@ public class AdminController extends BaseController {
         query.setAgent(agent);
         query.setIndex(page);
         query.setPageSize(pageSize);
-        PaginatedArrayList<UserInfo> userList = userInfoService.getUserList(query);
+        PaginatedArrayList<UserInfoVo> userList = userInfoService.getUserList(query);
         map.put("userList", userList);
         map.put("page", page);
         map.put("totalItem", userList.getTotalItem());
         map.put("success",true);
+        return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
+    }
+
+    /**
+     * 添加白名单
+     * @param subUnionId
+     * @return
+     */
+    @RequestMapping({"", "/", "/addWhiteAgent.json"})
+    public ResponseEntity<?> addWhiteAgent(String subUnionId) {
+        Map<String, Object> map = new HashMap<String, Object>();
+
+        if(StringUtils.isNotBlank(subUnionId)){
+            userInfoService.addWhiteAgent(subUnionId);
+            map.put("success", true);
+        }else{
+            map.put("success", false);
+        }
+
+        return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
+    }
+
+    /**
+     * 取消白名单
+     * @param subUnionId
+     * @return
+     */
+    @RequestMapping({"", "/", "/cancelWhiteAgent.json"})
+    public ResponseEntity<?> cancelWhiteAgent(String subUnionId) {
+        Map<String, Object> map = new HashMap<String, Object>();
+
+        if(StringUtils.isNotBlank(subUnionId)){
+            userInfoService.cancelWhiteAgent(subUnionId);
+            map.put("success", true);
+        }else{
+            map.put("success", false);
+        }
+
         return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
     }
 
