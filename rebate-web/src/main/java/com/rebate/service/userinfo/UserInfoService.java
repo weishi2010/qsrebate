@@ -12,12 +12,6 @@ import java.util.List;
 public interface UserInfoService {
 
     /**
-     * 是否白名单代理
-     * @return
-     */
-    boolean isWhiteAgent(String subUnionId);
-
-    /**
      * 添加代理白名单
      * @param subUnionId
      */

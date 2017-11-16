@@ -19,6 +19,7 @@ import com.rebate.domain.query.UserInfoQuery;
 import com.rebate.domain.vo.UserInfoVo;
 import com.rebate.domain.whitelist.WhiteUserInfo;
 import com.rebate.domain.wx.WxUserInfo;
+import com.rebate.manager.userinfo.UserInfoManager;
 import com.rebate.service.userinfo.UserInfoService;
 import com.rebate.service.wx.WxAccessTokenService;
 import com.rebate.service.wx.WxService;
@@ -44,9 +45,9 @@ public class UserInfoServiceImpl implements UserInfoService {
     @Autowired(required = true)
     private IncomeDetailDao incomeDetailDao;
 
-    @Qualifier("userInfoDao")
+    @Qualifier("userInfoManager")
     @Autowired(required = true)
-    private UserInfoDao userInfoDao;
+    private UserInfoManager userInfoManager;
 
     @Qualifier("redisUtil")
     @Autowired(required = false)
@@ -74,35 +75,13 @@ public class UserInfoServiceImpl implements UserInfoService {
     private WhiteUserInfoDao whiteUserInfoDao;
 
     @Override
-    public boolean isWhiteAgent(String subUnionId) {
-        WhiteUserInfo whiteUserInfo = new WhiteUserInfo();
-        whiteUserInfo.setType(EWhiteType.WHITE_AGENT.getCode());
-        whiteUserInfo.setSubUnionId(subUnionId);
-        WhiteUserInfo existsWhiteUserInfo = whiteUserInfoDao.findBySubUnionId(whiteUserInfo);
-        if (null != existsWhiteUserInfo) {
-            return true;
-        }
-        return false;
-    }
-
-    @Override
     public void addWhiteAgent(String subUnionId) {
-        WhiteUserInfo whiteUserInfo = new WhiteUserInfo();
-        whiteUserInfo.setStatus(0);
-        whiteUserInfo.setType(EWhiteType.WHITE_AGENT.getCode());
-        whiteUserInfo.setSubUnionId(subUnionId);
-        WhiteUserInfo existsWhiteUserInfo = whiteUserInfoDao.findBySubUnionId(whiteUserInfo);
-        if (null == existsWhiteUserInfo) {
-            whiteUserInfoDao.insert(whiteUserInfo);
-        }
+        userInfoManager.addWhiteAgent(subUnionId);
     }
 
     @Override
     public void cancelWhiteAgent(String subUnionId) {
-        WhiteUserInfo whiteUserInfo = new WhiteUserInfo();
-        whiteUserInfo.setSubUnionId(subUnionId);
-        whiteUserInfo.setType(EWhiteType.WHITE_AGENT.getCode());
-        whiteUserInfoDao.deleteBySubUnionId(whiteUserInfo);
+        userInfoManager.cancelWhiteAgent(subUnionId);
     }
 
     @Override
@@ -111,7 +90,7 @@ public class UserInfoServiceImpl implements UserInfoService {
         UserInfoQuery userInfoQuery = new UserInfoQuery();
         userInfoQuery.setStartRow(0);
         userInfoQuery.setPageSize(100000);
-        List<UserInfo> list = userInfoDao.findAllUsers(userInfoQuery);
+        List<UserInfo> list = userInfoManager.findAllUsers(userInfoQuery);
         for (UserInfo userInfo : list) {
             if (StringUtils.isNotBlank(userInfo.getRecommendAccount()) && !userInfo.getRecommendAccount().equalsIgnoreCase(userInfo.getOpenId())) {
                 RecommendUserInfo recommendUserInfo = new RecommendUserInfo();
@@ -161,10 +140,10 @@ public class UserInfoServiceImpl implements UserInfoService {
 
             try {
 
-                userInfoDao.insert(userInfo);
+                userInfoManager.insert(userInfo);
             } catch (Exception e) {
                 userInfo.setNickName(wxUserInfo.getOpenid());
-                userInfoDao.insert(userInfo);
+                userInfoManager.insert(userInfo);
             }
 
 //            IncomeDetailQuery incomeDetailQuery = new IncomeDetailQuery();
@@ -198,7 +177,7 @@ public class UserInfoServiceImpl implements UserInfoService {
             userInfo.setRecommendAccount(recommendOpenId);
             boolean flag = addRecommendUser(openId, recommendOpenId);
         }
-        userInfoDao.update(userInfo);
+        userInfoManager.update(userInfo);
 
     }
 
@@ -214,7 +193,7 @@ public class UserInfoServiceImpl implements UserInfoService {
         //从db查询
         UserInfo userInfoQuery = new UserInfo();
         userInfoQuery.setOpenId(openId);
-        UserInfo userInfo = userInfoDao.findLoginUserInfo(userInfoQuery);
+        UserInfo userInfo = userInfoManager.findLoginUserInfo(userInfoQuery);
 
         //设置缓存
         if (null != userInfo) {
@@ -243,14 +222,14 @@ public class UserInfoServiceImpl implements UserInfoService {
     @Override
     public PaginatedArrayList<UserInfoVo> getUserList(UserInfoQuery userInfoQuery) {
         PaginatedArrayList<UserInfoVo> result = new PaginatedArrayList<>(userInfoQuery.getIndex(), userInfoQuery.getPageSize());
-        int totalItem = userInfoDao.findUserCount(userInfoQuery);
+        int totalItem = userInfoManager.findUserCount(userInfoQuery);
         if (totalItem > 0) {
             result.setTotalItem(totalItem);
             userInfoQuery.setStartRow(result.getStartRow());
-            List<UserInfo> list = userInfoDao.findAllUsers(userInfoQuery);
+            List<UserInfo> list = userInfoManager.findAllUsers(userInfoQuery);
             for(UserInfo userInfo:list){
                 UserInfoVo userInfoVo = new UserInfoVo(userInfo);
-                userInfoVo.setWhiteAgent(isWhiteAgent(userInfoVo.getSubUnionId()));
+                userInfoVo.setWhiteAgent(userInfoManager.isWhiteAgent(userInfoVo.getSubUnionId()));
                 result.add(userInfoVo);
             }
         }

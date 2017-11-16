@@ -24,6 +24,7 @@ import com.rebate.domain.jd.JDConfig;
 import com.rebate.domain.property.JDProperty;
 import com.rebate.domain.query.AgentRelationQuery;
 import com.rebate.manager.jd.JdSdkManager;
+import com.rebate.manager.userinfo.UserInfoManager;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
@@ -43,21 +44,25 @@ import java.util.*;
 public class JdSdkManagerImpl implements JdSdkManager {
     private static final Logger LOG = LoggerFactory.getLogger(JdSdkManagerImpl.class);
 
+    private static final TypeReference<List<Map>> mapTypeReference = new TypeReference<List<Map>>() {
+    };
+
     @Qualifier("jdConfig")
     @Autowired(required = true)
     private JDConfig jdConfig;
+
 
     @Qualifier("jDProperty")
     @Autowired(required = true)
     private JDProperty jDProperty;
 
-
     @Qualifier("agentRelationDao")
     @Autowired(required = true)
     private AgentRelationDao agentRelationDao;
 
-    private static final TypeReference<List<Map>> mapTypeReference = new TypeReference<List<Map>>() {
-    };
+    @Qualifier("userInfoManager")
+    @Autowired(required = true)
+    private UserInfoManager userInfoManager;
 
     @Override
     public Product getMediaProduct(Long skuId) {
@@ -141,7 +146,7 @@ public class JdSdkManagerImpl implements JdSdkManager {
         //平台抽成佣金
         Double platCommission = RebateRuleUtil.computeCommission(commission, jDProperty.getSencondAgentPlatRatio());
 
-        if(jDProperty.isWhiteAgent(recommmendSubUnionId)){
+        if(userInfoManager.isWhiteAgent(recommmendSubUnionId)){
             //如果为白名单，平台不抽成
             platCommission = 0.0;
         }
@@ -167,7 +172,7 @@ public class JdSdkManagerImpl implements JdSdkManager {
 
         //平台抽成佣金
         Double platCommission = RebateRuleUtil.computeCommission(commission, jDProperty.getFirstAgentPlatRatio());
-        if(jDProperty.isWhiteAgent(subUnionId)){
+        if(userInfoManager.isWhiteAgent(subUnionId)){
             //如果为白名单，平台不抽成
             platCommission = 0.0;
         }

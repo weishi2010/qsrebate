@@ -14,6 +14,7 @@ import com.rebate.domain.vo.ProductVo;
 import com.rebate.domain.wx.WxUserInfo;
 import com.rebate.manager.jd.JdSdkManager;
 import com.rebate.manager.shorturl.ShortUrlManager;
+import com.rebate.manager.userinfo.UserInfoManager;
 import com.rebate.service.job.RebateJob;
 import com.rebate.service.product.ProductCouponService;
 import com.rebate.service.userinfo.UserInfoService;
@@ -73,6 +74,10 @@ public class RebateJobImpl implements RebateJob {
     @Qualifier("jDProperty")
     @Autowired(required = true)
     private JDProperty jDProperty;
+
+    @Qualifier("userInfoManager")
+    @Autowired(required = true)
+    private UserInfoManager userInfoManager;
 
     @Qualifier("recommendUserInfoDao")
     @Autowired(required = true)
@@ -464,7 +469,7 @@ public class RebateJobImpl implements RebateJob {
         //平台抽成佣金
         Double platCommission = RebateRuleUtil.computeCommission(rebateDetail.getCommission(), jDProperty.getSencondAgentPlatRatio());
 
-        if (jDProperty.isWhiteAgent(rebateDetail.getSubUnionId())) {
+        if (userInfoManager.isWhiteAgent(rebateDetail.getSubUnionId())) {
             //如果为白名单，平台不抽成
             platCommission = 0.0;
         }
@@ -498,7 +503,7 @@ public class RebateJobImpl implements RebateJob {
         //平台抽成佣金
         Double platCommission = RebateRuleUtil.computeCommission(rebateDetail.getCommission(), jDProperty.getFirstAgentPlatRatio());
 
-        if (jDProperty.isWhiteAgent(rebateDetail.getSubUnionId())) {
+        if (userInfoManager.isWhiteAgent(rebateDetail.getSubUnionId())) {
             //如果为白名单，平台不抽成
             platCommission = 0.0;
         }

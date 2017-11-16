@@ -26,7 +26,11 @@ public enum RedisKey {
     /**
      * 内购券商品单条缓存
      */
-    JD_PRODUCT_VO("JD_PT_VO_",60*60*24*1000);
+    JD_PRODUCT_VO("JD_PT_VO_",60*60*24*1000),
+    /**
+     * 白名单列表
+     */
+    JD_WHITE_LIST("JD_WUL",60*60*24*1000),;
 
     RedisKey(String key,int timeout){
         this.key = key;
