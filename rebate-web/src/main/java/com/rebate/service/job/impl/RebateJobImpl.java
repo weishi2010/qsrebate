@@ -443,17 +443,19 @@ public class RebateJobImpl implements RebateJob {
             //给推荐的代理用户根据比例分配佣金
             agentCommission = RebateRuleUtil.computeCommission(rebateDetail.getCommission(), jDProperty.getSencondAgentRatio());
             addIncomeDetail(rebateDetail, EIncomeType.SECOND_AGENT_REBATE.getCode(), userInfo.getRecommendAccount(), agentCommission);
+            rebateDetail.setPlatformRatio(jDProperty.getSencondAgentPlatRatio());
+
         } else {
             //平台抽成佣金
             platCommission = RebateRuleUtil.computeCommission(rebateDetail.getCommission(), jDProperty.getGeneralRebateUserPlatRatio());
+            rebateDetail.setPlatformRatio(jDProperty.getGeneralRebateUserPlatRatio());
+
         }
 
         //给返利用户返佣金
         Double userCommission = new BigDecimal(rebateDetail.getCommission() + "").subtract(new BigDecimal(platCommission + "")).subtract(new BigDecimal(agentCommission + "")).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
         addIncomeDetail(rebateDetail, EIncomeType.GENERAL_ORDER_REBATE.getCode(), rebateDetail.getOpenId(), userCommission);
 
-
-        rebateDetail.setPlatformRatio(jDProperty.getSencondAgentPlatRatio());
         rebateDetail.setUserCommission(userCommission);
         rebateDetail.setAgentCommission(agentCommission);//给推荐用户分佣金时记录到明细中
         return rebateDetail;
