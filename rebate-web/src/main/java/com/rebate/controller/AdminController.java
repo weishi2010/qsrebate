@@ -237,8 +237,14 @@ public class AdminController extends BaseController {
     }
 
     @RequestMapping({"", "/", "/manager"})
-    public ModelAndView manager(HttpServletRequest request) {
-        ModelAndView view = new ModelAndView(VIEW_PREFIX+ "/admin/index");
+    public ModelAndView manager(HttpServletRequest request,String sui) {
+        ModelAndView view = new ModelAndView();
+        String subUionId = DESUtil.decrypt(jDProperty.getEncryptKey(),sui,"UTF-8");
+        if("admin".equalsIgnoreCase(subUionId)){
+            view.setViewName(VIEW_PREFIX+ "/admin/index");
+        }else{
+            view.setViewName(VIEW_PREFIX + "/permission");
+        }
         return view;
     }
 
@@ -253,7 +259,7 @@ public class AdminController extends BaseController {
     }
 
     @RequestMapping({"", "/", "/getProducts.json"})
-    public ResponseEntity<?> getProducts(HttpServletRequest request,Integer page, Integer pageSize, Integer couponType,String productName,Long productId,Integer thirdCategory) {
+    public ResponseEntity<?> getProducts(HttpServletRequest request,Integer page, Integer pageSize, Integer couponType,String productName,Long productId,Integer thirdCategory,Integer status) {
         Map<String, Object> map = new HashMap<String, Object>();
         ProductQuery query = new ProductQuery();
         if (StringUtils.isNotBlank(productName)) {
@@ -275,6 +281,7 @@ public class AdminController extends BaseController {
 
         query.setIndex(page);
         query.setPageSize(pageSize);
+        query.setStatus(status);
         query.setThirdCategory(thirdCategory);
         PaginatedArrayList<ProductVo> products = productService.findProductList(query,null);
         map.put("products", products);
@@ -284,8 +291,44 @@ public class AdminController extends BaseController {
         return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
     }
 
+    @RequestMapping({"", "/", "/getUserList.json"})
+    public ResponseEntity<?> getUserList(HttpServletRequest request,Integer page, Integer pageSize, Integer agent,String nickname,String openId,String subUnionId,Integer status) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        UserInfoQuery query = new UserInfoQuery();
+        if (StringUtils.isNotBlank(nickname)) {
+            query.setNickName(EncodeUtils.urlDecode(nickname));
+        }
+        if(null!=status){
+            query.setStatus(status);
+        }
+        if(StringUtils.isNotBlank(subUnionId)){
+            query.setSubUnionId(subUnionId);
+        }
+
+        if(StringUtils.isNotBlank(openId)){
+            query.setOpenId(openId);
+        }
+
+        if(null==page){
+            page = 1;
+        }
+        if(null==pageSize){
+            pageSize = 20;
+        }
+
+        query.setAgent(agent);
+        query.setIndex(page);
+        query.setPageSize(pageSize);
+        PaginatedArrayList<UserInfo> userList = userInfoService.getUserList(query);
+        map.put("userList", userList);
+        map.put("page", page);
+        map.put("totalItem", userList.getTotalItem());
+        map.put("success",true);
+        return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
+    }
+
     /**
-     * 批量置顶
+     * 查询商品
      * @param productId
      * @return
      */

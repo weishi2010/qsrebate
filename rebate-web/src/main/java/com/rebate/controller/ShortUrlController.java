@@ -23,6 +23,7 @@ public class ShortUrlController extends BaseController {
     @RequestMapping({"", "/", "/qsu"})
     public String jumpJdUnionUrl( String d,String sui) {
 
+        LOG.error("jumpJdUnionUrl d;{},sui:{}",d,sui);
         //获取md5后的子联盟ID进行点击统计
         shortUrlManager.incrJDUnionUrlClick(sui);
 

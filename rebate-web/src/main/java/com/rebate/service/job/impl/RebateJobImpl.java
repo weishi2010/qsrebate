@@ -103,7 +103,10 @@ public class RebateJobImpl implements RebateJob {
     public void refreshUserClick() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         try {
-            List<UserInfo> list = userInfoDao.findAllUsers(new UserInfo());
+            UserInfoQuery userInfoQuery =  new UserInfoQuery();
+            userInfoQuery.setStartRow(0);
+            userInfoQuery.setPageSize(100000);
+            List<UserInfo> list = userInfoDao.findAllUsers(userInfoQuery);
             LOG.error("[点击数入库任务]加载第{}条用户记录！", list.size());
 
 
@@ -153,7 +156,10 @@ public class RebateJobImpl implements RebateJob {
 
     @Override
     public void refreshUserInfo() {
-        List<UserInfo> list = userInfoDao.findAllUsers(new UserInfo());
+        UserInfoQuery userInfoQuery =  new UserInfoQuery();
+        userInfoQuery.setStartRow(0);
+        userInfoQuery.setPageSize(100000);
+        List<UserInfo> list = userInfoDao.findAllUsers(userInfoQuery);
         for (UserInfo userInfo : list) {
             WxUserInfo wxUserInfo = wxService.getWxApiUserInfo(wxAccessTokenService.getApiAccessToken().getAccessToken(), userInfo.getOpenId());
             if (null != wxUserInfo) {

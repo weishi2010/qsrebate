@@ -4,6 +4,7 @@ import com.jd.data.redis.RedisUtils;
 import com.rebate.common.cache.RedisKey;
 import com.rebate.common.data.seq.SequenceUtil;
 import com.rebate.common.util.JsonUtil;
+import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.dao.CommissionDao;
 import com.rebate.dao.IncomeDetailDao;
 import com.rebate.dao.RecommendUserInfoDao;
@@ -16,6 +17,7 @@ import com.rebate.domain.en.ESequence;
 import com.rebate.domain.en.ESubUnionIdPrefix;
 import com.rebate.domain.query.IncomeDetailQuery;
 import com.rebate.domain.query.RecommendUserInfoQuery;
+import com.rebate.domain.query.UserInfoQuery;
 import com.rebate.domain.wx.WxUserInfo;
 import com.rebate.service.userinfo.UserInfoService;
 import com.rebate.service.wx.WxAccessTokenService;
@@ -70,7 +72,10 @@ public class UserInfoServiceImpl implements UserInfoService {
     @Override
     public void sysRecommendUser() {
 
-        List<UserInfo> list = userInfoDao.findAllUsers(new UserInfo());
+        UserInfoQuery userInfoQuery =  new UserInfoQuery();
+        userInfoQuery.setStartRow(0);
+        userInfoQuery.setPageSize(100000);
+        List<UserInfo> list = userInfoDao.findAllUsers(userInfoQuery);
         for (UserInfo userInfo : list) {
             if (StringUtils.isNotBlank(userInfo.getRecommendAccount()) && !userInfo.getRecommendAccount().equalsIgnoreCase(userInfo.getOpenId())) {
                 RecommendUserInfo recommendUserInfo = new RecommendUserInfo();
@@ -197,6 +202,19 @@ public class UserInfoServiceImpl implements UserInfoService {
     @Override
     public int findRecommendUserCount(RecommendUserInfoQuery recommendUserInfoQuery) {
         return recommendUserInfoDao.findRecommendUserCount(recommendUserInfoQuery);
+    }
+
+    @Override
+    public PaginatedArrayList<UserInfo> getUserList(UserInfoQuery userInfoQuery) {
+        PaginatedArrayList<UserInfo> result = new PaginatedArrayList<>(userInfoQuery.getIndex(),userInfoQuery.getPageSize());
+        int totalItem = userInfoDao.findUserCount(userInfoQuery);
+        if(totalItem>0){
+            result.setTotalItem(totalItem);
+            userInfoQuery.setStartRow(result.getStartRow());
+            List<UserInfo> list = userInfoDao.findAllUsers(userInfoQuery);
+            result.addAll(list);
+        }
+        return result;
     }
 
     /**
