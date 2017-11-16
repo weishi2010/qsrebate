@@ -5,10 +5,29 @@ import com.rebate.domain.Commission;
 import com.rebate.domain.UserInfo;
 import com.rebate.domain.query.RecommendUserInfoQuery;
 import com.rebate.domain.query.UserInfoQuery;
+import com.rebate.domain.vo.UserInfoVo;
 
 import java.util.List;
 
 public interface UserInfoService {
+
+    /**
+     * 是否白名单代理
+     * @return
+     */
+    boolean isWhiteAgent(String subUnionId);
+
+    /**
+     * 添加代理白名单
+     * @param subUnionId
+     */
+    void addWhiteAgent(String subUnionId);
+
+    /**
+     * 取消代理白名单
+     * @param subUnionId
+     */
+    void cancelWhiteAgent(String subUnionId);
 
     public void sysRecommendUser();
 
@@ -64,5 +83,5 @@ public interface UserInfoService {
      * @param userInfoQuery
      * @return
      */
-    PaginatedArrayList<UserInfo> getUserList(UserInfoQuery userInfoQuery);
+    PaginatedArrayList<UserInfoVo> getUserList(UserInfoQuery userInfoQuery);
 }

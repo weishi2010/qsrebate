@@ -5,19 +5,19 @@ import com.rebate.common.cache.RedisKey;
 import com.rebate.common.data.seq.SequenceUtil;
 import com.rebate.common.util.JsonUtil;
 import com.rebate.common.web.page.PaginatedArrayList;
-import com.rebate.dao.CommissionDao;
-import com.rebate.dao.IncomeDetailDao;
-import com.rebate.dao.RecommendUserInfoDao;
-import com.rebate.dao.UserInfoDao;
+import com.rebate.dao.*;
 import com.rebate.domain.Commission;
 import com.rebate.domain.RecommendUserInfo;
 import com.rebate.domain.UserInfo;
 import com.rebate.domain.en.EIncomeType;
 import com.rebate.domain.en.ESequence;
 import com.rebate.domain.en.ESubUnionIdPrefix;
+import com.rebate.domain.en.EWhiteType;
 import com.rebate.domain.query.IncomeDetailQuery;
 import com.rebate.domain.query.RecommendUserInfoQuery;
 import com.rebate.domain.query.UserInfoQuery;
+import com.rebate.domain.vo.UserInfoVo;
+import com.rebate.domain.whitelist.WhiteUserInfo;
 import com.rebate.domain.wx.WxUserInfo;
 import com.rebate.service.userinfo.UserInfoService;
 import com.rebate.service.wx.WxAccessTokenService;
@@ -69,10 +69,46 @@ public class UserInfoServiceImpl implements UserInfoService {
     @Autowired(required = true)
     private RecommendUserInfoDao recommendUserInfoDao;
 
+    @Qualifier("whiteUserInfoDao")
+    @Autowired
+    private WhiteUserInfoDao whiteUserInfoDao;
+
+    @Override
+    public boolean isWhiteAgent(String subUnionId) {
+        WhiteUserInfo whiteUserInfo = new WhiteUserInfo();
+        whiteUserInfo.setType(EWhiteType.WHITE_AGENT.getCode());
+        whiteUserInfo.setSubUnionId(subUnionId);
+        WhiteUserInfo existsWhiteUserInfo = whiteUserInfoDao.findBySubUnionId(whiteUserInfo);
+        if (null != existsWhiteUserInfo) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void addWhiteAgent(String subUnionId) {
+        WhiteUserInfo whiteUserInfo = new WhiteUserInfo();
+        whiteUserInfo.setStatus(0);
+        whiteUserInfo.setType(EWhiteType.WHITE_AGENT.getCode());
+        whiteUserInfo.setSubUnionId(subUnionId);
+        WhiteUserInfo existsWhiteUserInfo = whiteUserInfoDao.findBySubUnionId(whiteUserInfo);
+        if (null == existsWhiteUserInfo) {
+            whiteUserInfoDao.insert(whiteUserInfo);
+        }
+    }
+
+    @Override
+    public void cancelWhiteAgent(String subUnionId) {
+        WhiteUserInfo whiteUserInfo = new WhiteUserInfo();
+        whiteUserInfo.setSubUnionId(subUnionId);
+        whiteUserInfo.setType(EWhiteType.WHITE_AGENT.getCode());
+        whiteUserInfoDao.deleteBySubUnionId(whiteUserInfo);
+    }
+
     @Override
     public void sysRecommendUser() {
 
-        UserInfoQuery userInfoQuery =  new UserInfoQuery();
+        UserInfoQuery userInfoQuery = new UserInfoQuery();
         userInfoQuery.setStartRow(0);
         userInfoQuery.setPageSize(100000);
         List<UserInfo> list = userInfoDao.findAllUsers(userInfoQuery);
@@ -205,14 +241,18 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
-    public PaginatedArrayList<UserInfo> getUserList(UserInfoQuery userInfoQuery) {
-        PaginatedArrayList<UserInfo> result = new PaginatedArrayList<>(userInfoQuery.getIndex(),userInfoQuery.getPageSize());
+    public PaginatedArrayList<UserInfoVo> getUserList(UserInfoQuery userInfoQuery) {
+        PaginatedArrayList<UserInfoVo> result = new PaginatedArrayList<>(userInfoQuery.getIndex(), userInfoQuery.getPageSize());
         int totalItem = userInfoDao.findUserCount(userInfoQuery);
-        if(totalItem>0){
+        if (totalItem > 0) {
             result.setTotalItem(totalItem);
             userInfoQuery.setStartRow(result.getStartRow());
             List<UserInfo> list = userInfoDao.findAllUsers(userInfoQuery);
-            result.addAll(list);
+            for(UserInfo userInfo:list){
+                UserInfoVo userInfoVo = new UserInfoVo(userInfo);
+                userInfoVo.setWhiteAgent(isWhiteAgent(userInfoVo.getSubUnionId()));
+                result.add(userInfoVo);
+            }
         }
         return result;
     }
