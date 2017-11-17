@@ -46,13 +46,13 @@ public class ShortUrlManagerImpl implements ShortUrlManager {
 
     @Override
     public String getQsShortPromotinUrl(String jdUnionUrl, String subUnionId) {
-        String subUnionIdEncrpyt = DESUtil.encrypt(jDProperty.getEncryptKey(), subUnionId, "UTF-8");
+        String subUnionIdEncrpyt = DESUtil.qsEncrypt(jDProperty.getEncryptKey(), subUnionId, "UTF-8");
         return rebateUrlUtil.jdPromotionUrlToQsrebateShortUrl(jdUnionUrl, subUnionIdEncrpyt);
     }
 
     @Override
     public String getWxShortPromotinUrl(String jdUnionUrl, String subUnionId) {
-        String subUnionIdEncrpyt = DESUtil.encrypt(jDProperty.getEncryptKey(), subUnionId, "UTF-8");
+        String subUnionIdEncrpyt = DESUtil.qsEncrypt(jDProperty.getEncryptKey(), subUnionId, "UTF-8");
         String qsShortUrl = rebateUrlUtil.jdPromotionUrlToQsrebateShortUrl(jdUnionUrl, subUnionIdEncrpyt);
         qsShortUrl = wxService.getShortUrl(qsShortUrl);
         return qsShortUrl;
@@ -65,7 +65,7 @@ public class ShortUrlManagerImpl implements ShortUrlManager {
 
             subUnionIdEncrypt = subUnionIdEncrypt.replace(" ","").replace("","");
             //按子联盟ID进行统计
-            String subUnionId = DESUtil.decrypt(jDProperty.getEncryptKey(), subUnionIdEncrypt, "UTF-8");
+            String subUnionId = DESUtil.qsDecrypt(jDProperty.getEncryptKey(), subUnionIdEncrypt, "UTF-8");
 
             if(StringUtils.isNotBlank(subUnionId)){
                 //写入缓存

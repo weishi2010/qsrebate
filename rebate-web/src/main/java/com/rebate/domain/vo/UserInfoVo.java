@@ -21,6 +21,10 @@ public class UserInfoVo extends UserInfo{
     @Setter
     private boolean isWhiteAgent;
 
+    @Getter
+    @Setter
+    private String sui;
+
     public UserInfoVo(UserInfo userInfo){
         BeanUtils.copyProperties(userInfo,this);
     }

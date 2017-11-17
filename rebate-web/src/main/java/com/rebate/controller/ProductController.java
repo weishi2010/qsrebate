@@ -137,7 +137,7 @@ public class ProductController extends BaseController {
         String sui = "";
         if (null != userInfo) {
             agent = userInfo.getAgent();
-            sui = DESUtil.encrypt(jDProperty.getEncryptKey(), userInfo.getSubUnionId(), "UTF-8");
+            sui = DESUtil.qsEncrypt(jDProperty.getEncryptKey(), userInfo.getSubUnionId(), "UTF-8");
         }
 
         //独家优惠券、9.9秒杀时查询分类列表

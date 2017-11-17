@@ -24,6 +24,31 @@ public class DESUtil {
     private static final Logger LOG = LoggerFactory.getLogger(DESUtil.class);
 
     /**
+     * 加密，过滤+号等字符
+     * @param key
+     * @param value
+     * @param charsetName
+     * @return
+     */
+    public static String qsEncrypt(String key, String value, String charsetName) {
+        String encryptValue = encrypt(key, value, charsetName);
+
+        return encryptValue.replace("+", "%2B");
+    }
+
+    /**
+     * 解密，过滤+号等字符
+     * @param key
+     * @param value
+     * @param charsetName
+     * @return
+     */
+    public static String qsDecrypt(String key, String value, String charsetName) {
+        value = value.replace("%2B", "+");
+        return decrypt(key, value, charsetName);
+    }
+
+    /**
      * 加密
      * @param key  必须为32位
      * @param value
