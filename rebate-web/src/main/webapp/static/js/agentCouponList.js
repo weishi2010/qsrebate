@@ -173,7 +173,7 @@ function shareProduct(productId){
         url: '/share/sendMessage.json?productId='+productId+"&r="+Math.random(),
         dataType: 'json',
         success: function (reponse) {
-            alert("推广文案已生成，请返回对话框查看!")
+            layer.alert('推广文案已生成，请返回对话框查看!');
         },
         error: function (xhr, type) {
             console.log('数据请求错误！');

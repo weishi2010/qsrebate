@@ -19,7 +19,7 @@
 </div>
     #parse("/common/footer.vm")
 #if($agent==1 || $agent==2)
-<script type="text/javascript" src="/static/js/agentCouponList.js?v10"></script>
+<script type="text/javascript" src="/static/js/agentCouponList.js?v14"></script>
 #else
 <script type="text/javascript" src="/static/js/couponList.js?v4"></script>
     #parse("/rebate/product/redPackage.vm")

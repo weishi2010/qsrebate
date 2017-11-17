@@ -19,5 +19,5 @@
     <script type="text/javascript" src="/static/lib/jquery/jquery-2.0.3.min.js"></script>
 
     <script type="text/javascript" src="/static/js/comm.js?v10"></script>
-
+    <script src="/static/lib/layer/layer.js"></script>
 </head>
