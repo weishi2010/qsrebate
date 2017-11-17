@@ -76,6 +76,32 @@ public class UserInfoServiceImpl implements UserInfoService {
     @Autowired(required = true)
     private JDProperty jDProperty;
 
+    @Qualifier("userInfoDao")
+    @Autowired(required = true)
+    private UserInfoDao userInfoDao;
+
+    @Override
+    public void synWxUserInfo(String openId) {
+        WxUserInfo wxUserInfo = wxService.getWxApiUserInfo(wxAccessTokenService.getApiAccessToken().getAccessToken(), openId);
+        if (null != wxUserInfo) {
+            LOG.error("synWxUserInfo wxUserInfo:"+ JsonUtil.toJson(wxUserInfo));
+
+            try{
+                UserInfo userInfoQuery =new UserInfo();
+                userInfoQuery.setOpenId(openId);
+                UserInfo userInfo = userInfoDao.findLoginUserInfo(userInfoQuery);
+                LOG.error("synWxUserInfo userInfo:"+ JsonUtil.toJson(userInfo));
+                if(null!=userInfo){
+                    //更新昵称
+                    userInfo.setNickName(wxUserInfo.getNickname());
+                    userInfoDao.update(userInfo);
+                }
+            }catch (Exception e){
+                LOG.error("synWxUserInfo error!wxUserInfo:"+ JsonUtil.toJson(wxUserInfo),e);
+            }
+        }
+    }
+
     @Override
     public void addWhiteAgent(String subUnionId) {
         userInfoManager.addWhiteAgent(subUnionId);

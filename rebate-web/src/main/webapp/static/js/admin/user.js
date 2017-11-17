@@ -46,6 +46,15 @@ adminModule.controller("userController", ["$scope", "$http", function ($scope, $
         });
     }
 
+    $scope.synWxUserInfo = function(openId){
+
+        $http.get("/admin/synWxUserInfo.json",{params:{openId: openId,r:Math.random()}}).success(function (response) {
+            if (response.success) {
+                $scope.query();
+            }
+        });
+    }
+
     $scope.cancelWhiteList = function(subUnionId){
         if(!confirm("确定要进行操作吗?")){
             return;

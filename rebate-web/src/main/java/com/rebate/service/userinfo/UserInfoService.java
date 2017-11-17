@@ -11,6 +11,8 @@ import java.util.List;
 
 public interface UserInfoService {
 
+    void synWxUserInfo(String openId);
+
     /**
      * 添加代理白名单
      * @param subUnionId

@@ -259,6 +259,16 @@ public class AdminController extends BaseController {
         return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
     }
 
+    @RequestMapping({"", "/", "/synWxUserInfo.json"})
+    public ResponseEntity<?> synWxUserInfo(String openId) {
+
+        userInfoService.synWxUserInfo(openId);
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("success", true);
+        return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
+    }
+
     @RequestMapping({"", "/", "/getProducts.json"})
     public ResponseEntity<?> getProducts(HttpServletRequest request,Integer page, Integer pageSize, Integer couponType,String productName,Long productId,Integer thirdCategory,Integer status) {
         Map<String, Object> map = new HashMap<String, Object>();
