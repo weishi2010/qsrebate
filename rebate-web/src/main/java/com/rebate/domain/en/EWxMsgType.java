@@ -11,6 +11,11 @@ public enum EWxMsgType {
      * 图片
      */
     IMAGE("image"),
+
+    /**
+     * 图文
+     */
+    NEWS("news"),
     /**
      * 事件
      */
