@@ -19,7 +19,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service("rebateDetailService")
 public class RebateDetailServiceImpl implements RebateDetailService {
@@ -60,12 +64,38 @@ public class RebateDetailServiceImpl implements RebateDetailService {
     public PaginatedArrayList<OrderSummary> getOrderSummaryBySubUnionId(OrderSummary orderSummaryQuery) {
         PaginatedArrayList<OrderSummary> orderSummaryList = new PaginatedArrayList<OrderSummary>(orderSummaryQuery.getIndex(), orderSummaryQuery.getPageSize());
         try {
+            SimpleDateFormat format= new SimpleDateFormat("yyyy-MM-dd");
+            Map summaryMap =new HashMap();
+
             List<OrderSummary> list = rebateDetailDao.getOrderSummaryBySubUnionId(orderSummaryQuery);
             for(OrderSummary orderSummary:list){
-                orderSummary.setCommission(new BigDecimal(orderSummary.getCommission()+"").setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+                String dayStr =format.format(orderSummary.getSubmitDate());
+                summaryMap.put(dayStr,orderSummary);
+
+            }
+
+
+            for(int day=1;day<orderSummaryQuery.getPageSize();day++){
+                Calendar calendar = Calendar.getInstance();
+                calendar.add(Calendar.DATE,-day);
+                String dayStr =format.format(calendar.getTime());
+                Object obj = summaryMap.get(dayStr);
+                OrderSummary orderSummary =null;
+                if(null!=obj){
+                    orderSummary = (OrderSummary)obj;
+                    orderSummary.setCommission(new BigDecimal(orderSummary.getCommission()+"").setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+                }else{
+                    orderSummary = new OrderSummary();
+                    orderSummary.setCommission(0.0);
+                    orderSummary.setSubmitDate(calendar.getTime());
+                    orderSummary.setOrderCount(0l);
+                }
                 orderSummary.setClickCount(shortUrlManager.getJDUnionUrlClick(orderSummary.getSubUnionId(),orderSummary.getSubmitDate()));
                 orderSummaryList.add(orderSummary);
             }
+
+
+
         } catch (Exception e) {
             LOG.error("getOrderSummaryBySubUnionId error!orderSummaryQuery:" + JsonUtil.toJson(orderSummaryQuery), e);
         }
@@ -81,4 +111,6 @@ public class RebateDetailServiceImpl implements RebateDetailService {
     public OrderSummary getRecommendUserOrderSummaryByOpenId(RebateDetailQuery rebateDetailQuery) {
         return rebateDetailDao.getRecommendUserOrderSummaryByOpenId(rebateDetailQuery);
     }
+
+
 }
