@@ -38,10 +38,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping(PersonalController.PREFIX)
@@ -219,6 +216,7 @@ public class PersonalController extends BaseController {
 
     @RequestMapping({"", "/", "/agentStatistits"})
     public ModelAndView agentStatistits(HttpServletRequest request,Integer dayTab) {
+        Random r = new Random(System.currentTimeMillis());
         ModelAndView view = new ModelAndView();
         String vm = VIEW_PREFIX + "/agentStatistits";
         view.setViewName(vm);
@@ -324,6 +322,7 @@ public class PersonalController extends BaseController {
         view.addObject("todayOrderSummary", todayOrderSummary);
         view.addObject("list", list);
         view.addObject("userInfo", userInfo);
+        view.addObject("r", r.nextInt());
         return view;
     }
 
