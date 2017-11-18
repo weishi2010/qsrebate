@@ -588,7 +588,7 @@ public class WsMessageController extends BaseController {
             imageMessage.setMsgType(EWxMsgType.IMAGE.getValue());
             imageMessage.setFuncFlag(0);
             Media media = new Media();
-            media.setMediaId("123");
+            media.setMediaId("kFliA6bXSvdkImis8a9RHQ5RosAvYy2uVTSq9xw4qXDUidUcIitfvY6RlVdXh1m8");
             imageMessage.setImage(media);
             xml = MessageUtil.imageMessageToXml(imageMessage);
         }else{

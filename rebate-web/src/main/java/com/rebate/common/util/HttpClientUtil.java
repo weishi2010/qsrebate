@@ -23,6 +23,7 @@ import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 
 import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -144,7 +145,7 @@ public class HttpClientUtil {
         return result;
     }
 
-    public static String getJdUrl(String uri,String loginCookie) throws IOException {
+    public static String getJdUrl(String uri, String loginCookie) throws IOException {
         URL url = new URL(uri);
         URLConnection connection = url.openConnection();
         connection.setDoOutput(true);
@@ -152,7 +153,7 @@ public class HttpClientUtil {
         connection
                 .setRequestProperty(
                         "Cookie",
-                        "thor="+loginCookie+"; path=/; domain=.jd.com; HttpOnly");
+                        "thor=" + loginCookie + "; path=/; domain=.jd.com; HttpOnly");
         connection.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; Maxthon;)");
         OutputStreamWriter out = new OutputStreamWriter(connection.getOutputStream(), "gb2312");
         out.write("DF4A0ED346195BD2A969439ABFA0D1016F257513A205B84A54868E573B84CAC859B77494C24DED7996FD9CABBAE1978EA58E16F2954481B746556E453BE16A2AF9CD3E5E3FCB46EC7BD5D3B9C9A6DB4B01F694EA08FD50BD757CC5FECF70C2903699A5E6D3BAC4D05A8B05601954A720F7ED32DDD0BA2051BD90514C7B233F4C8CEB95238D9C2084BD20FB929C7BEBEF");
@@ -221,10 +222,10 @@ public class HttpClientUtil {
         return result;
     }
 
-    public static String post(String url, String paramJson,String charset) {
+    public static String post(String url, String paramJson, String charset) {
         CloseableHttpClient httpclient = HttpClients.createDefault();
         HttpPost post = new HttpPost(url);
-        post.setHeader("Content-Type", "application/json; charset="+charset);
+        post.setHeader("Content-Type", "application/json; charset=" + charset);
         String result = null;
         try {
             StringEntity s = new StringEntity(paramJson);
@@ -273,16 +274,17 @@ public class HttpClientUtil {
 
     /**
      * 过滤JD联盟参数
+     *
      * @param url
      * @return
      */
-    public  static String filterJDUnionParam(String url){
+    public static String filterJDUnionParam(String url) {
         List<String> params = new ArrayList<>();
         //获取重定向后的URL
         if (StringUtils.isNotBlank(url)) {
             String[] urlArray = url.split("\\?");
             String domainStr = urlArray[0];
-            if(urlArray.length>1){
+            if (urlArray.length > 1) {
                 String paramStr = urlArray[1];
                 String[] paramArray = paramStr.split("\\&");
                 for (String param : paramArray) {
@@ -291,9 +293,9 @@ public class HttpClientUtil {
                     }
                 }
             }
-            if(params.size()>0){
+            if (params.size() > 0) {
                 url = domainStr + "?" + Joiner.on("&").join(params);
-            }else{
+            } else {
                 url = domainStr;
             }
 
@@ -303,12 +305,13 @@ public class HttpClientUtil {
 
     /**
      * 使用递归的方式进行JD多重跳转活动链接解析
+     *
      * @param url
      * @return
      */
-    public  static String convertJDPromotionUrl(String url){
+    public static String convertJDPromotionUrl(String url) {
 
-        if(StringUtils.isNotBlank(url) && !url.contains("sale.jd.com")){
+        if (StringUtils.isNotBlank(url) && !url.contains("sale.jd.com")) {
             String oriUrl = HttpClientUtil.getFinalURL(url);
             if (StringUtils.isBlank(oriUrl) || oriUrl.contains("union-click.jd.com")) {
                 //如果获取不到原始URl则再解析HTML看是否还有跳转URL
@@ -340,6 +343,7 @@ public class HttpClientUtil {
 
     /**
      * 从html中解析出活动链接
+     *
      * @param html
      * @return
      */
@@ -348,8 +352,8 @@ public class HttpClientUtil {
         Pattern pattern = Pattern
                 .compile("\\s*(?i)hrl\\s*=\\s*(\"([^\"]*\")|'[^']*'|([^'\">\\s]+))");
         Matcher matcher = pattern.matcher(html);
-        while(matcher.find()){
-            urls.add(matcher.group(0).replace("hrl=","").replace("\'","").trim());
+        while (matcher.find()) {
+            urls.add(matcher.group(0).replace("hrl=", "").replace("\'", "").trim());
         }
         return urls;
     }
@@ -359,9 +363,109 @@ public class HttpClientUtil {
         Pattern pattern = Pattern
                 .compile("\\s*(?i)u\\s*=\\s*(\"([^\"]*\")|'[^']*'|([^'\">\\s]+))");
         Matcher matcher = pattern.matcher(html);
-        while(matcher.find()){
-            urls.add(matcher.group(0).replace("u=","").replace("\'","").trim());
+        while (matcher.find()) {
+            urls.add(matcher.group(0).replace("u=", "").replace("\'", "").trim());
         }
         return urls;
+    }
+
+    public static String uploadImage(String uploadUrl,byte[] fileBytes,String fileName) {
+
+        String result = null;
+        try {
+            URL url = new URL(uploadUrl);
+
+            URLConnection con = url.openConnection();
+            con.setDoInput(true);
+            con.setDoOutput(true);
+            con.setUseCaches(false); // post方式不能使用缓存
+            // 设置请求头信息
+            con.setRequestProperty("Connection", "Keep-Alive");
+            con.setRequestProperty("Charset", "UTF-8");
+            // 设置边界
+            String BOUNDARY = "----------" + System.currentTimeMillis();
+
+            con.setRequestProperty("Content-Type", "multipart/form-data; boundary="  + BOUNDARY);
+
+            // 请求正文信息
+            // 第一部分：
+            StringBuilder sb = new StringBuilder();
+
+            sb.append("--"); // 必须多两道线
+            sb.append(BOUNDARY);
+            sb.append("\r\n");
+            sb.append("Content-Disposition: form-data;name=\"media\";filelength=\"" + fileBytes.length + "\";filename=\""
+                    + fileName + "\"\r\n");
+            sb.append("Content-Type:application/octet-stream\r\n\r\n");
+            byte[] head = sb.toString().getBytes("utf-8");
+            // 获得输出流
+            OutputStream out = new DataOutputStream(con.getOutputStream());
+
+            // 输出表头
+
+            out.write(head);
+
+            // 文件正文部分
+            // 把文件已流文件的方式 推入到url中
+            out.write(fileBytes, 0, fileBytes.length);
+            // 结尾部分
+            byte[] foot = ("\r\n--" + BOUNDARY + "--\r\n").getBytes("utf-8");// 定义最后数据分隔线
+            out.write(foot);
+            out.flush();
+            out.close();
+            StringBuffer buffer = new StringBuffer();
+            BufferedReader reader = null;
+            // 定义BufferedReader输入流来读取URL的响应
+            reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                buffer.append(line);
+            }
+            if (result == null) {
+                result = buffer.toString();
+            }
+        } catch (IOException e) {
+            System.out.println("发送POST请求出现异常！" + e);
+            e.printStackTrace();
+            throw new RuntimeException("数据读取异常");
+
+        } finally {
+        }
+        return result;
+    }
+
+    public static byte[] downloadImage(String imgUrl){
+        byte[] imgByte =  new byte[1024];
+        try{
+            //new一个URL对象
+            URL url = new URL(imgUrl);
+            //打开链接
+            HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+            //设置请求方式为"GET"
+            conn.setRequestMethod("GET");
+            //超时响应时间为5秒
+            conn.setConnectTimeout(5 * 1000);
+            //通过输入流获取图片数据
+            InputStream inStream = conn.getInputStream();
+
+            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+            //创建一个Buffer字符串
+            byte[] buffer = new byte[1024];
+            //每次读取的字符串长度，如果为-1，代表全部读取完毕
+            int len = 0;
+            //使用一个输入流从buffer里把数据读取出来
+            while( (len=inStream.read(buffer)) != -1 ){
+                //用输出流往buffer里写入数据，中间参数代表从哪个位置开始读，len代表读取的长度
+                outStream.write(buffer, 0, len);
+            }
+            //关闭输入流
+            inStream.close();
+            //把outStream里的数据写入内存
+            imgByte = outStream.toByteArray();
+
+        }catch (Exception e){
+            LOG.error("downloadImage error!",e);
+        }
+        return imgByte;
     }
 }

@@ -533,12 +533,9 @@ public class AdminController extends BaseController {
         SimpleDateFormat formatEnd = new SimpleDateFormat("yyyy-MM-dd 23:59:59");
 
         for(OrderSummary orderSummary:list){
-            try {
-                if(orderSummary.getSubmitDate().equals(formatStart.parse(formatStart.format(queryDate)))){
-                    todayOrderSummary = orderSummary;
-                }
-            } catch (ParseException e) {
-                e.printStackTrace();
+            if (formatStart.format(orderSummary.getSubmitDate()).equals(formatStart.format(queryDate))) {
+                todayOrderSummary = orderSummary;
+                break;
             }
         }
 

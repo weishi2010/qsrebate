@@ -75,7 +75,7 @@ public class RebateDetailServiceImpl implements RebateDetailService {
             }
 
 
-            for(int day=1;day<orderSummaryQuery.getPageSize();day++){
+            for(int day=0;day<=orderSummaryQuery.getPageSize();day++){
                 Calendar calendar = Calendar.getInstance();
                 calendar.add(Calendar.DATE,-day);
                 String dayStr =format.format(calendar.getTime());
@@ -89,8 +89,9 @@ public class RebateDetailServiceImpl implements RebateDetailService {
                     orderSummary.setCommission(0.0);
                     orderSummary.setSubmitDate(calendar.getTime());
                     orderSummary.setOrderCount(0l);
+                    orderSummary.setSubUnionId(orderSummaryQuery.getSubUnionId());
                 }
-                orderSummary.setClickCount(shortUrlManager.getJDUnionUrlClick(orderSummary.getSubUnionId(),orderSummary.getSubmitDate()));
+                orderSummary.setClickCount(shortUrlManager.getJDUnionUrlClick(orderSummaryQuery.getSubUnionId(),orderSummary.getSubmitDate()));
                 orderSummaryList.add(orderSummary);
             }
 
