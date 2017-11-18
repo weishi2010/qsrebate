@@ -127,6 +127,7 @@ public class ShareController extends BaseController {
 
         ProductVo productVo = productService.findProduct(productId);
         String mediaUrl = "";
+        String imgUrl = productVo.getImgUrl();
         if (null != productVo.getProductCoupon()) {
             String couponLink = productVo.getProductCoupon().getCouponLink();
             mediaUrl = jdSdkManager.getPromotionCouponCode(productId, couponLink, subUnionId);
@@ -141,6 +142,12 @@ public class ShareController extends BaseController {
              content = messageTempManager.getAgentProductMessageTemp(productVo,mediaUrl);
         }else{
             content ="推广商品已经失效，请更换其他商品!";
+        }
+
+        if (StringUtils.isNotBlank(imgUrl)) {
+            String mediaId = wxService.getWxImageMediaId(imgUrl);
+            //发送图片消息
+            wxService.sendImageMessage(openId, mediaId);
         }
 
        String result =  wxService.sendMessage(openId,content);

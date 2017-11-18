@@ -4,6 +4,7 @@ import com.rebate.common.util.HttpClientUtil;
 import com.rebate.common.util.JsonUtil;
 import com.rebate.domain.wx.WxConfig;
 import com.rebate.domain.wx.WxUserInfo;
+import com.rebate.domain.wx.output.Media;
 import com.rebate.service.wx.WxAccessTokenService;
 import com.rebate.service.wx.WxService;
 import net.sf.json.JSON;
@@ -57,6 +58,32 @@ public class WxServiceImpl implements WxService {
             e.printStackTrace();
         }
         return wxUserInfo;
+    }
+
+    @Override
+    public String getWxImageMediaId(String imgUrl){
+        String mediaId = "";
+        try{
+            //获取文件流
+            byte[] fileBytes = HttpClientUtil.downloadImage(imgUrl);
+            //获取文件名
+            String fileName = imgUrl.substring(imgUrl.lastIndexOf("/"));
+            //获取api accessToken
+            String accessToken = wxAccessTokenService.getApiAccessToken().getAccessToken();
+            //通过微信上传接口上传
+            String type = "image";
+            String resultJson = HttpClientUtil.uploadImage(wxConfig.getUploadUrl()+"?access_token="+accessToken+"&type="+type,fileBytes,fileName);
+            Map map = JsonUtil.fromJson(resultJson,Map.class);
+            if(null!=map&& map.containsKey("media_id")){
+                mediaId = map.get("media_id").toString();
+                LOG.error("getWxImageMediaId imgUrl:{},mediaId:{}",imgUrl,mediaId);
+            }else{
+                LOG.error("getWxImageMediaId error!resultJson:{}",resultJson);
+            }
+        }catch (Exception e){
+            LOG.error("getWxImageMediaId error!imgUrl:{}",imgUrl,e);
+        }
+        return mediaId;
     }
 
     @Override
@@ -133,6 +160,31 @@ public class WxServiceImpl implements WxService {
             result = json;
         } catch (Exception e) {
             LOG.error("sendMessage error!openId:" + openId, e);
+        }
+        return result;
+    }
+    @Override
+    public String sendImageMessage(String openId,String mediaId) {
+        String result = "";
+        try {
+            Map<String, Object> params = new HashMap<String, Object>();
+            params.put("touser", openId);
+
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("media_id",mediaId);
+
+            params.put("image", jsonObject);
+            params.put("msgtype", "image");
+            String paramJson = JsonUtil.toJson(params);
+
+            paramJson = new String(paramJson.getBytes("UTF-8"), "ISO-8859-1");//参数转码
+            String json = HttpClientUtil.post(wxConfig.getSendMessageUrl() + "?access_token=" + wxAccessTokenService.getApiAccessToken().getAccessToken(), paramJson,"UTF-8");
+            LOG.error("sendImageMessage error!json:" + json);
+            Map map = JsonUtil.fromJson(json, Map.class);
+
+            result = json;
+        } catch (Exception e) {
+            LOG.error("sendImageMessage error!openId:" + openId, e);
         }
         return result;
     }

@@ -82,8 +82,7 @@
                                 创建时间
                             </th>
                             <th>
-                                <i class="icon-time bigger-110 hidden-480"></i>
-                                修改时间
+                                商品推广链接
                             </th>
                             <th>操作</th>
                         </tr>
@@ -100,7 +99,7 @@
                             <td>
                                 <img src="{{user.wxImage}}"  width="40" height="40"/>
                             </td>
-                            <td style="width:20%;word-wrap:break-word;word-spacing:normal;">
+                            <td style="width:15%;word-wrap:break-word;word-spacing:normal;">
                                 {{user.openId}}
                             </td>
                             <td>
@@ -124,7 +123,10 @@
                             </td>
 
                             <td>{{user.created | date:'yyyy-MM-dd HH:mm:ss'}}</td>
-                            <td>{{user.modified | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+                            <td>
+                                <a href="/promotion/productList?tab=1&sui={{user.sui}}" target="_blank">内购券</a>
+                                <a href="/promotion/productList?tab=2&sui={{user.sui}}" target="_blank">9.9元</a>
+                            </td>
 
                             <td>
                                 <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">

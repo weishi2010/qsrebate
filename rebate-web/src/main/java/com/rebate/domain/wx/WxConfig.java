@@ -81,6 +81,13 @@ public class WxConfig {
     @Setter
     private String sendMessageUrl;
 
+    /**
+     * 微信素材上传接口
+     */
+    @Getter
+    @Setter
+    private String uploadUrl;
+
     public String getAppId() {
         return appId;
     }

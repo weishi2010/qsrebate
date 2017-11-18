@@ -98,7 +98,7 @@
 		<property name="userInfoApiUrl" value="${wx.userInfoApiUrl}"/>
 		<property name="qrcodeUrl" value="${wx.qrcodeUrl}"/>
 		<property name="sendMessageUrl" value="${wx.sendMessageUrl}"/>
-
+		<property name="uploadUrl" value="${wx.uploadUrl}"/>
 	</bean>
 
 	<bean id="cookieUtils" class="com.rebate.common.util.CookieUtils">
