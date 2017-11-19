@@ -9,7 +9,7 @@ public enum RedisKey {
     /**
      * 微信API访问TOKEN
      */
-    WX_API_ACCESSTOKEN("wx_api_at_",7200),
+    WX_API_ACCESSTOKEN("wx_api_nat_",7200),
     /**
      * JD联盟推广链接点击
      */

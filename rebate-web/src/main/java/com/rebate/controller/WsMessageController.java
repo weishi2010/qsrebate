@@ -609,9 +609,7 @@ public class WsMessageController extends BaseController {
             sendAgentProductMessage(response,toUserName, fromUserName, msgType, content, subUnionId);
         } else if (isSaleConvert) {
             //解析活动消息进行活动链接转推广链接，通过消息回置方式进行发送
-            pushContent = salesMessageConvertJDMediaUrl(content, subUnionId);
-            //发送文本消息
-            wxService.sendMessage(toUserName,pushContent);
+            sendSalesMessage(content,toUserName, subUnionId);
 //            xml = textPushXml(toUserName, fromUserName, msgType, pushContent, subUnionId);
         } else {
             //解析优惠券消息进行券二合一推广链接转换
@@ -759,15 +757,17 @@ public class WsMessageController extends BaseController {
     }
 
 
-    private String salesMessageConvertJDMediaUrl(String content, String subUnionId) {
+    private void sendSalesMessage(String content,String toUserName, String subUnionId) {
         String result = "很抱歉，活动链接转换失败，请联系公众号管理员!";
         try {
             boolean hasSku = false;
+            List<Long> skus = new ArrayList<>();
             //包括sku的则只转sku为推广链接
             List<Long> dataList = RegexUtils.getLongList(content);
             for (Long data : dataList) {
                 //如果大于5位大数据则转为商品推广链接
                 if (data.toString().length() > 5) {
+                    skus.add(data);
                     hasSku = true;
                     String url = jdSdkManager.getShortPromotinUrl(data, subUnionId);
                     content = content.replace("" + data, url);
@@ -797,13 +797,23 @@ public class WsMessageController extends BaseController {
 
                 }
 
+            }else{
+                List<Product> products = jdSdkManager.getMediaProducts(Joiner.on(",").join(skus));
+
+                for(Product product:products){
+                    if (StringUtils.isNotBlank(product.getImgUrl())) {
+                        String mediaId = wxService.getWxImageMediaId(product.getImgUrl());
+                        //发送图片消息
+                        wxService.sendImageMessage(toUserName, mediaId);
+                    }
+                }
             }
 
-            result = content;
+            //发送文本消息
+            wxService.sendMessage(toUserName,content);
         } catch (Exception e) {
             LOG.error("salesMessageConvertJDMediaUrl", e);
         }
-        return result;
     }
 
     private class LinkTask implements Callable<Map> {

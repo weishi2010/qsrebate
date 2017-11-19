@@ -65,7 +65,7 @@ public class WxServiceImpl implements WxService {
         String mediaId = "";
         try{
             //获取文件流
-            byte[] fileBytes = HttpClientUtil.downloadImage(imgUrl);
+            byte[] fileBytes = HttpClientUtil.downloadImage(imgUrl.replace("/jfs/","/s800x800_jfs/"));
             //获取文件名
             String fileName = imgUrl.substring(imgUrl.lastIndexOf("/"));
             //获取api accessToken

@@ -382,10 +382,14 @@ public class HttpClientUtil {
             // 设置请求头信息
             con.setRequestProperty("Connection", "Keep-Alive");
             con.setRequestProperty("Charset", "UTF-8");
+            con.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8");
+            con.setRequestProperty("Accept-Encoding", "gzip, deflate, br");
+
             // 设置边界
             String BOUNDARY = "----------" + System.currentTimeMillis();
 
             con.setRequestProperty("Content-Type", "multipart/form-data; boundary="  + BOUNDARY);
+
 
             // 请求正文信息
             // 第一部分：
