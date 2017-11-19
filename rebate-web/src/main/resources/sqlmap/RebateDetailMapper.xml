@@ -38,6 +38,7 @@
         <result property="userCommission" column="user_commission"/>
         <result property="agentCommission" column="agent_commission"/>
         <result property="positionId" column="position_id"/>
+        <result property="validCode" column="valid_code"/>
 
     </resultMap>
 
@@ -64,6 +65,7 @@
         user_commission,
         agent_commission,
         position_id,
+        valid_code,
         created,
         modified
     </sql>
@@ -90,6 +92,7 @@
         user_commission,
         agent_commission,
         position_id,
+        valid_code,
         created,
         modified
         )
@@ -114,6 +117,7 @@
         #userCommission#,
         #agentCommission#,
         #positionId#,
+        #validCode#,
         now(),
         now()
         )
@@ -136,6 +140,9 @@
             <isNotNull property="productId" prepend="and">
                 product_id=#productId#
             </isNotNull>
+            <isNotNull property="validCode" prepend="and">
+                valid_code=#validCode#
+            </isNotNull>
         </dynamic>
     </sql>
     <update id="update">
@@ -156,6 +163,9 @@
             </isNotNull>
             <isNotNull property="productName" prepend=",">
                 product_name = #productName#
+            </isNotNull>
+            <isNotNull property="validCode" prepend=",">
+                valid_code=#validCode#
             </isNotNull>
         </dynamic>
         where order_id=#orderId#

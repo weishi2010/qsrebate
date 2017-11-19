@@ -147,6 +147,19 @@ public class RebateDetail extends BaseQuery {
     private String positionId;
 
     /**
+     * 无效码 1:有效,2:订单拆单,3:订单取消,
+     * 4:京东帮帮主订单,5:账户异常,6:赠品类目,
+     * 7:校园订单,8:企业订单,9:团购订单,
+     * 10:开增值税专用发票订单,
+     * 11:乡村推广员下单,12:自己推广自己下单,
+     * 13:违规订单,14:订单来源与备案网址不符,-1:无效原因未知
+     */
+    @Getter
+    @Setter
+    private Integer validCode;
+
+
+    /**
      * 创建时间
      */
     @Getter

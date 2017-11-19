@@ -10,7 +10,6 @@ import com.jd.open.api.sdk.response.cps.*;
 import com.jd.open.api.sdk.response.mall.NewWareBaseproductGetResponse;
 import com.rebate.common.util.JsonUtil;
 import com.rebate.common.util.rebate.CouponUtil;
-import com.rebate.common.util.rebate.JdMediaProductGrapUtil;
 import com.rebate.common.util.rebate.RebateRuleUtil;
 import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.dao.AgentRelationDao;
@@ -36,7 +35,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 
@@ -514,6 +512,7 @@ public class JdSdkManagerImpl implements JdSdkManager {
                     detail.setCommissionRatio(skuObj.getDouble("commissionRate"));
                     detail.setProductCount(skuObj.getInt("skuNum"));
                     detail.setProductName(skuObj.getString("skuName"));
+                    detail.setValidCode(skuObj.getInt("validCode"));
 
                     detail.setPrice(skuObj.getDouble("cosPrice"));
                     detail.setUnionId("");

@@ -610,13 +610,11 @@ public class WsMessageController extends BaseController {
         } else if (isSaleConvert) {
             //解析活动消息进行活动链接转推广链接，通过消息回置方式进行发送
             sendSalesMessage(content,toUserName, subUnionId);
-//            xml = textPushXml(toUserName, fromUserName, msgType, pushContent, subUnionId);
         } else {
             //解析优惠券消息进行券二合一推广链接转换
             pushContent = couponMessageConvertJDMediaUrl(content, subUnionId);
             //发送文本消息
             wxService.sendMessage(toUserName,pushContent);
-//            xml = textPushXml(toUserName, fromUserName, msgType, pushContent, subUnionId);
         }
 
     }

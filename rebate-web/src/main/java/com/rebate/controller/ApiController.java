@@ -1,7 +1,6 @@
 package com.rebate.controller;
 
 import com.rebate.common.util.EncodeUtils;
-import com.rebate.common.util.JsonUtil;
 import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.controller.base.BaseController;
 import com.rebate.domain.en.EPromotionTab;

@@ -4,10 +4,8 @@ import com.rebate.common.util.HttpClientUtil;
 import com.rebate.common.util.JsonUtil;
 import com.rebate.domain.wx.WxConfig;
 import com.rebate.domain.wx.WxUserInfo;
-import com.rebate.domain.wx.output.Media;
 import com.rebate.service.wx.WxAccessTokenService;
 import com.rebate.service.wx.WxService;
-import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +16,6 @@ import org.springframework.stereotype.Service;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Service("wxService")
@@ -65,7 +62,7 @@ public class WxServiceImpl implements WxService {
         String mediaId = "";
         try{
             //获取文件流
-            byte[] fileBytes = HttpClientUtil.downloadImage(imgUrl.replace("/jfs/","/s800x800_jfs/"));
+            byte[] fileBytes = HttpClientUtil.downloadImage(imgUrl.replace("/s150x150_jfs/","/s800x800_jfs/"));
             //获取文件名
             String fileName = imgUrl.substring(imgUrl.lastIndexOf("/"));
             //获取api accessToken

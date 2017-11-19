@@ -52,6 +52,13 @@ public interface ProductService {
     ProductVo findProduct(Long skuId);
 
     /**
+     * 根据skuId查询商品基础信息
+     * @param skuId
+     * @return
+     */
+    Product findProductBaseInfo(Long skuId);
+
+    /**
      * 获取内购券商品列表
      * @param subUnionId
      * @param page

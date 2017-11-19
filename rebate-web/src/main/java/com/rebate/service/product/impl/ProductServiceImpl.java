@@ -306,6 +306,13 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public Product findProductBaseInfo(Long skuId) {
+        Product productQuery = new Product();
+        productQuery.setProductId(skuId);
+        return productDao.findById(productQuery);
+    }
+
+    @Override
     public PaginatedArrayList<ApiProductVo> findCouponProducts(String subUnionId,int page,int pageSize) {
         PaginatedArrayList<ApiProductVo> list = new PaginatedArrayList<>();
 
