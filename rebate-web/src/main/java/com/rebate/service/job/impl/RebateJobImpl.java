@@ -557,7 +557,7 @@ public class RebateJobImpl implements RebateJob {
      */
     private void addIncomeDetail(RebateDetail rebateDetail, int type, String openId, Double income) {
         Long referenceId = rebateDetail.getId();
-        if (StringUtils.isNotBlank(rebateDetail.getSubUnionId()) && ERebateDetailStatus.SETTLEMENT.getCode() == rebateDetail.getStatus()) {
+        if (StringUtils.isNotBlank(rebateDetail.getSubUnionId()) && ERebateDetailStatus.SETTLEMENT.getCode() == rebateDetail.getStatus() && EOrderValidCode.VALID.getCode() == rebateDetail.getValidCode()) {
             IncomeDetailQuery incomeDetailQuery = new IncomeDetailQuery();
             incomeDetailQuery.setOpenId(openId);
             incomeDetailQuery.setReferenceId(referenceId);
