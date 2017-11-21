@@ -20,11 +20,12 @@ public interface MessageTempManager {
 
     /**
      * 获取普通用户单品推广消息模板
-     * @param product
+     * @param isRebate
+     * @param commission
      * @param mediaUrl
      * @return
      */
-    String getRebateUserProductMessageTemp(Product product, String mediaUrl);
+    String getRebateUserProductMessageTemp(boolean isRebate,Double commission, String mediaUrl);
 
     /**
      * 获取代理单品推广消息模板

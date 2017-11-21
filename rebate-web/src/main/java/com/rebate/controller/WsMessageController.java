@@ -10,12 +10,14 @@ import com.rebate.domain.Product;
 import com.rebate.domain.UserInfo;
 import com.rebate.domain.en.*;
 import com.rebate.domain.property.JDProperty;
+import com.rebate.domain.vo.ProductVo;
 import com.rebate.domain.wx.InputMessage;
 import com.rebate.domain.wx.WxConfig;
 import com.rebate.domain.wx.output.*;
 import com.rebate.manager.MessageTempManager;
 import com.rebate.manager.jd.JdSdkManager;
 import com.rebate.manager.shorturl.ShortUrlManager;
+import com.rebate.service.product.ProductService;
 import com.rebate.service.userinfo.UserInfoService;
 import com.rebate.service.wx.WxService;
 import com.thoughtworks.xstream.XStream;
@@ -89,6 +91,10 @@ public class WsMessageController extends BaseController {
     @Qualifier("wxService")
     @Autowired(required = true)
     private WxService wxService;
+
+    @Qualifier("productService")
+    @Autowired(required = true)
+    private ProductService productService;
 
 
     @RequestMapping({"", "/", "/acceptMessage.json"})
@@ -191,7 +197,7 @@ public class WsMessageController extends BaseController {
 
         //如果为代理用户则解析消息进行推广转链处理
         if (EAgent.FIRST_AGENT.getCode() == agent || EAgent.SECOND_AGENT.getCode() == agent) {
-            agentMessageAnalyzer(response,inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
+            agentMessageAnalyzer(response, inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
         } else {
             rebateUserMessageAnalyzer(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
         }
@@ -525,46 +531,53 @@ public class WsMessageController extends BaseController {
      * @return
      */
     private void rebateUserMessageAnalyzer(String toUserName, String fromUserName, String msgType, String content, String subUnionId) {
-//        String pushContent = getRecommendContent(content, subUnionId);
         StringBuffer recommendContent = new StringBuffer();
         String imgUrl = "";
         List<Long> skus = RegexUtils.getLongList(content);
         if (skus.size() > 0) {
             //消息中有SKU信息则按SKU进行搜索
             Long skuId = skus.get(0);
-            List<Product> products = jdSdkManager.getMediaProducts(skuId.toString());
 
-            if (null != products && products.size() > 0) {
+            //查询用户信息
+            UserInfo userInfoQuery = new UserInfo();
+            userInfoQuery.setSubUnionId(subUnionId);
+            UserInfo userInfo = userInfoDao.findUserInfoBySubUnionId(userInfoQuery);
 
-                Product product = products.get(0);
+            //查询商品基础信息
+            Product product = productService.findProductBaseInfo(skuId);
+            boolean isRebate = false;
+            Double commission = 0.0;
 
-                //查询是否已存在此商品，存在则获取其返利状态
-                Product productQuery = new Product();
-                productQuery.setProductId(product.getProductId());
-                productQuery.setStatus(EProductStatus.PASS.getCode());
-                Product productExists = productDao.findById(productQuery);
-                if (null != productExists) {
-                    product.setIsRebate(productExists.getIsRebate());
-                } else {
-                    product.setIsRebate(EProudctRebateType.REBATE.getCode());
+            String mediaUrl = "";
+            if (null != product && EProudctCouponType.COUPON.getCode() == product.getCouponType()) {
+                commission = jdSdkManager.getQSCommission(userInfo, product);
+                //如果是内购券商品则进行内购券二全一转链
+                ProductVo productVo = productService.findProduct(skuId);
+                isRebate = false;
+                imgUrl = productVo.getImgUrl();
+                String couponLink = productVo.getProductCoupon().getCouponLink();
+                mediaUrl = jdSdkManager.getPromotionCouponCode(skuId, couponLink, subUnionId);
+            } else {
+                //如果不是内购券商品则从联盟获取商品信息并获取图片
+                List<Product> products = jdSdkManager.getMediaProducts(skuId.toString());
+
+                if (null != products && products.size() > 0) {
+                    Product mediaProduct = products.get(0);
+                    imgUrl = mediaProduct.getImgUrl();
+                    commission =jdSdkManager.getQSCommission(userInfo, mediaProduct);
                 }
+                //转链
+                mediaUrl = jdSdkManager.getShortPromotinUrl(skuId, subUnionId);
+                isRebate = true;
+            }
 
-
-                //查询用户信息
-                UserInfo userInfoQuery = new UserInfo();
-                userInfoQuery.setSubUnionId(subUnionId);
-                UserInfo userInfo = userInfoDao.findUserInfoBySubUnionId(userInfoQuery);
-
-                String shortUrl = jdSdkManager.getShortPromotinUrl(product.getProductId(), subUnionId);
-                shortUrl = shortUrlManager.getWxShortPromotinUrl(shortUrl, subUnionId);
-
-                product.setUserCommission(jdSdkManager.getQSCommission(userInfo, product));
+            if(StringUtils.isNotBlank(mediaUrl)){
+                String shortUrl = shortUrlManager.getWxShortPromotinUrl(mediaUrl, subUnionId);
 
                 //获取返利用户消息模板
-                recommendContent.append(messageTempManager.getRebateUserProductMessageTemp(product, shortUrl));
-
-                imgUrl = product.getImgUrl();
+                recommendContent.append(messageTempManager.getRebateUserProductMessageTemp(isRebate, commission, shortUrl));
             }
+
         }
 
         if (StringUtils.isBlank(recommendContent.toString())) {
@@ -577,7 +590,7 @@ public class WsMessageController extends BaseController {
             wxService.sendImageMessage(toUserName, mediaId);
         }
         //发送文本消息
-        wxService.sendMessage(toUserName,recommendContent.toString());
+        wxService.sendMessage(toUserName, recommendContent.toString());
 //        return textPushXml(toUserName, fromUserName, msgType, recommendContent.toString(), subUnionId);
     }
 
@@ -591,7 +604,7 @@ public class WsMessageController extends BaseController {
      * @param subUnionId
      * @return
      */
-    private void agentMessageAnalyzer(HttpServletResponse response,String toUserName, String fromUserName, String msgType, String content, String subUnionId) {
+    private void agentMessageAnalyzer(HttpServletResponse response, String toUserName, String fromUserName, String msgType, String content, String subUnionId) {
         String pushContent = "";
         String jdSaleDomains = jDProperty.getSaleDomains();
         //识别是否为活动推广转链接
@@ -606,15 +619,15 @@ public class WsMessageController extends BaseController {
         }
         if (RegexUtils.checkURL(content) || StringUtils.isNumeric(content)) {
             //如果只是商品url或sku则进行商品转链接返回，通过api方式进行消息发送
-            sendAgentProductMessage(response,toUserName, fromUserName, msgType, content, subUnionId);
+            sendAgentProductMessage(response, toUserName, fromUserName, msgType, content, subUnionId);
         } else if (isSaleConvert) {
             //解析活动消息进行活动链接转推广链接，通过消息回置方式进行发送
-            sendSalesMessage(content,toUserName, subUnionId);
+            sendSalesMessage(content, toUserName, subUnionId);
         } else {
             //解析优惠券消息进行券二合一推广链接转换
             pushContent = couponMessageConvertJDMediaUrl(content, subUnionId);
             //发送文本消息
-            wxService.sendMessage(toUserName,pushContent);
+            wxService.sendMessage(toUserName, pushContent);
         }
 
     }
@@ -644,66 +657,13 @@ public class WsMessageController extends BaseController {
     }
 
     /**
-     * 获取商品推荐给用户
-     *
-     * @param content
-     * @param subUnionId
-     * @return
-     */
-    private String getRecommendContent(String content, String subUnionId) {
-        StringBuffer recommendContent = new StringBuffer();
-
-        List<Long> skus = RegexUtils.getLongList(content);
-        if (skus.size() > 0) {
-            //消息中有SKU信息则按SKU进行搜索
-            Long skuId = skus.get(0);
-            List<Product> products = jdSdkManager.getMediaProducts(skuId.toString());
-
-            if (null != products && products.size() > 0) {
-
-                Product product = products.get(0);
-
-                //查询是否已存在此商品，存在则获取其返利状态
-                Product productQuery = new Product();
-                productQuery.setProductId(product.getProductId());
-                productQuery.setStatus(EProductStatus.PASS.getCode());
-                Product productExists = productDao.findById(productQuery);
-                if (null != productExists) {
-                    product.setIsRebate(productExists.getIsRebate());
-                } else {
-                    product.setIsRebate(EProudctRebateType.REBATE.getCode());
-                }
-
-
-                //查询用户信息
-                UserInfo userInfoQuery = new UserInfo();
-                userInfoQuery.setSubUnionId(subUnionId);
-                UserInfo userInfo = userInfoDao.findUserInfoBySubUnionId(userInfoQuery);
-
-                String shortUrl = jdSdkManager.getShortPromotinUrl(product.getProductId(), subUnionId);
-                shortUrl = shortUrlManager.getWxShortPromotinUrl(shortUrl, subUnionId);
-
-                product.setUserCommission(jdSdkManager.getQSCommission(userInfo, product));
-
-                //获取返利用户消息模板
-                recommendContent.append(messageTempManager.getRebateUserProductMessageTemp(product, shortUrl));
-            }
-        }
-
-        if (StringUtils.isBlank(recommendContent.toString())) {
-            recommendContent.append("很抱歉，暂时没有可返钱的商品!");
-        }
-        return recommendContent.toString();
-    }
-
-    /**
      * 获取商品推荐给代理用户
      *
      * @param content
      * @param subUnionId
      * @return
      */
-    private void sendAgentProductMessage(HttpServletResponse response,String toUserName,String  fromUserName,String  msgType,String content,String  subUnionId) {
+    private void sendAgentProductMessage(HttpServletResponse response, String toUserName, String fromUserName, String msgType, String content, String subUnionId) {
         StringBuffer recommendContent = new StringBuffer();
         String imgUrl = "";
         List<Long> skus = RegexUtils.getLongList(content);
@@ -751,11 +711,11 @@ public class WsMessageController extends BaseController {
             wxService.sendImageMessage(toUserName, mediaId);
         }
         //发送文本消息
-        wxService.sendMessage(toUserName,recommendContent.toString());
+        wxService.sendMessage(toUserName, recommendContent.toString());
     }
 
 
-    private void sendSalesMessage(String content,String toUserName, String subUnionId) {
+    private void sendSalesMessage(String content, String toUserName, String subUnionId) {
         String result = "很抱歉，活动链接转换失败，请联系公众号管理员!";
         try {
             boolean hasSku = false;
@@ -795,10 +755,10 @@ public class WsMessageController extends BaseController {
 
                 }
 
-            }else{
+            } else {
                 List<Product> products = jdSdkManager.getMediaProducts(Joiner.on(",").join(skus));
 
-                for(Product product:products){
+                for (Product product : products) {
                     if (StringUtils.isNotBlank(product.getImgUrl())) {
                         String mediaId = wxService.getWxImageMediaId(product.getImgUrl());
                         //发送图片消息
@@ -808,7 +768,7 @@ public class WsMessageController extends BaseController {
             }
 
             //发送文本消息
-            wxService.sendMessage(toUserName,content);
+            wxService.sendMessage(toUserName, content);
         } catch (Exception e) {
             LOG.error("salesMessageConvertJDMediaUrl", e);
         }

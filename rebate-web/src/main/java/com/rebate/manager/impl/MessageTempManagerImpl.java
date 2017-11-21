@@ -49,19 +49,21 @@ public class MessageTempManagerImpl implements MessageTempManager {
     }
 
     @Override
-    public String getRebateUserProductMessageTemp(Product product, String mediaUrl) {
+    public String getRebateUserProductMessageTemp(boolean isRebate,Double commission, String mediaUrl) {
         StringBuffer recommendContent = new StringBuffer();
         //商品名
-        recommendContent.append("已成功转成返钱链接，从返利链接下单，才可以返钱哦！\n\n");
-        if (null != product && null != product.getIsRebate() && product.getIsRebate() != EProudctRebateType.NOT_REBATE.getCode()) {
 
+        if (isRebate) {
+            recommendContent.append("已成功转成返钱链接，从返利链接下单，才可以返钱哦！\n\n");
             //可返钱
-            recommendContent.append("[Packet]预估返钱：").append(product.getUserCommission()).append("元\n\n");
+            recommendContent.append("[Packet]预估返钱：").append(commission).append("元\n\n");
+            //推广地址
+            recommendContent.append("/:gift返钱链接：").append(mediaUrl).append("");
         }else{
-            recommendContent.append("[Packet]内购券商品不返佣!\n\n");
+            //推广地址
+            recommendContent.append("[Packet]此商品是内购商品，不返钱哈！您可以领取独家内购券：\n").append(mediaUrl).append("\n\n");
         }
-        //推广地址
-        recommendContent.append("/:gift返钱链接：").append(mediaUrl).append("");
+
         return recommendContent.toString();
 
     }
