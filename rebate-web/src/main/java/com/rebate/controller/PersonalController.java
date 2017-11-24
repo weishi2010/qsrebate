@@ -2,6 +2,7 @@ package com.rebate.controller;
 
 import com.rebate.common.util.CookieUtils;
 import com.rebate.common.util.JsonUtil;
+import com.rebate.common.util.des.DESUtil;
 import com.rebate.common.web.inteceptor.QsLoginInteceptor;
 import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.controller.base.BaseController;
@@ -24,6 +25,7 @@ import com.rebate.service.order.RebateDetailService;
 import com.rebate.service.userinfo.UserInfoService;
 import com.rebate.service.wx.WxService;
 import net.sf.json.JSONObject;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -217,21 +219,37 @@ public class PersonalController extends BaseController {
     }
 
     @RequestMapping({"", "/", "/mySecondAgents"})
-    public ModelAndView mySecondAgents(HttpServletRequest request,Integer page) {
+    public ModelAndView mySecondAgents(HttpServletRequest request,String sui,Integer page) {
         ModelAndView view = new ModelAndView(VIEW_PREFIX + "/agent/secondAgents");
         if (null == page) {
             page = 1;
         }
 
-        UserInfo userInfo = getUserInfo(request);
+        String subUnionId = "";
+        if(StringUtils.isNotBlank(sui)){
+            subUnionId = DESUtil.qsDecrypt(jDProperty.getEncryptKey(), sui, "UTF-8");
+        }else{
+            UserInfo userInfo = getUserInfo(request);
+            subUnionId = userInfo.getSubUnionId();
+        }
 
         AgentRelationQuery agentRelationQuery = new AgentRelationQuery();
-        agentRelationQuery.setParentAgentSubUnionId(userInfo.getSubUnionId());
+        agentRelationQuery.setParentAgentSubUnionId(subUnionId);
         agentRelationQuery.setIndex(page);
         PaginatedArrayList<AgentRelationVo> agents = userInfoService.getAgentUserByParentId(agentRelationQuery);
         view.addObject("agents", agents);
         view.addObject("totalItem", agents.getTotalItem());
         return view;
+    }
+
+    @RequestMapping({"", "/", "/updateSecondAgentCommissionRate.json"})
+    public ResponseEntity<?> updateSecondAgentCommissionRate(HttpServletRequest request,Long id,Double commissionRatio) {
+
+        userInfoService.updateSecondAgentCommissionRate(id,commissionRatio);
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("success", true);
+        return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
     }
 
     @RequestMapping({"", "/", "/agentStatistits"})

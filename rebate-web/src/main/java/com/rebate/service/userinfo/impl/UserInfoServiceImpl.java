@@ -148,6 +148,14 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
+    public void updateSecondAgentCommissionRate(Long id,Double commissionRatio) {
+        AgentRelation agentRelation = new AgentRelation();
+        agentRelation.setId(id);
+        agentRelation.setCommissionRatio(commissionRatio);
+        agentRelationDao.update(agentRelation);
+    }
+
+    @Override
     public UserInfo registUserInfo(String openId, String recommendOpenId, Integer angent, boolean isAward) {
         UserInfo userInfo = null;
         WxUserInfo wxUserInfo = wxService.getWxApiUserInfo(wxAccessTokenService.getApiAccessToken().getAccessToken(), openId);

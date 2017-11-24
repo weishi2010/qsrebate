@@ -31,6 +31,13 @@ public interface UserInfoService {
     public void sysRecommendUser();
 
     /**
+     * 更新二级代理比例
+     * @param id
+     * @param commissionRatio
+     */
+    void updateSecondAgentCommissionRate(Long id,Double commissionRatio);
+
+    /**
      * 更新代理状态
      * @param openId
      * @param agent

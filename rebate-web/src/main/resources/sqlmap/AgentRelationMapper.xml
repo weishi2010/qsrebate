@@ -54,7 +54,10 @@
         set  modified=now()
         <dynamic>
             <isNotNull property="agentSubUnionId" prepend=",">
-                agent_sub_union_id = #agentSubUnionId#
+            agent_sub_union_id = #agentSubUnionId#
+        </isNotNull>
+            <isNotNull property="commissionRatio" prepend=",">
+                commission_ratio = #commissionRatio#
             </isNotNull>
         </dynamic>
         where id=#id#

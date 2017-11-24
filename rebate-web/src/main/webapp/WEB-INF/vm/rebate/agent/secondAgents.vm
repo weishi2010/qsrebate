@@ -11,6 +11,9 @@
     <link rel="stylesheet" href="/static/css/income/incomeReport.css?v1" type="text/css">
     <link rel="stylesheet" href="/static/css/income/classic.css">
     <link rel="stylesheet" href="/static/css/income/classic.date.css">
+    <script type="text/javascript" src="/static/lib/jquery/jquery-2.0.3.min.js"></script>
+    <script src="/static/lib/layer/layer.js"></script>
+    <script type="text/javascript" src="/static/js/secondAgent.js?v=1"></script>
 
 </head>
 <body style="font-size: 12px;">
@@ -22,10 +25,10 @@
     </div>
     #foreach($agentInfo in $agents)
     <div class="tBody">
-        <div class="tr" data-timer="1508342400000">
+        <div class="tr" style="height:100px">
             <div class="td" style="height: 100px"><img src="$!{agentInfo.imgUrl}" width="80" height="80"></div>
             <div class="td">$!{agentInfo.nickName}</div>
-            <div class="td"><a href="javascript:void(0);">比例设置</a></div>
+            <div class="td"><a href="javascript:void(0);" onclick="showEdityLayer($!{agentInfo.id})">比例设置</a></div>
         </div>
     </div>
     #end
