@@ -1,0 +1,33 @@
+<html style="font-size: 25.875px;"><head>
+    <meta charset="utf-8">
+    <title>我的下级代理</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable = no">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="telephone=no" name="format-detection">
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="/static/css/income/normalize.min.css" type="text/css">
+    <link rel="stylesheet" href="/static/css/income/incomeReport.css?v1" type="text/css">
+    <link rel="stylesheet" href="/static/css/income/classic.css">
+    <link rel="stylesheet" href="/static/css/income/classic.date.css">
+
+</head>
+<body style="font-size: 12px;">
+<div class="reportTable">
+    <div class="tHeader">
+        <div class="th">微信头像</div>
+        <div class="th">微信昵称</div>
+        <div class="th"></div>
+    </div>
+    #foreach($agentInfo in $agents)
+    <div class="tBody">
+        <div class="tr" data-timer="1508342400000">
+            <div class="td" style="height: 100px"><img src="$!{agentInfo.imgUrl}" width="80" height="80"></div>
+            <div class="td">$!{agentInfo.nickName}</div>
+            <div class="td"><a href="javascript:void(0);">比例设置</a></div>
+        </div>
+    </div>
+    #end
+</div>
+</body><style id="igor_ext_nofollow">a[rel~='nofollow']{outline:.14em dotted red !important;outline-offset:.2em;}a[rel~='nofollow'] > img{outline:thin dotted red !important;outline-offset:.2em;}</style></html>

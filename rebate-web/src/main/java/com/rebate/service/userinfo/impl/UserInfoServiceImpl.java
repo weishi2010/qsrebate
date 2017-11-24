@@ -10,14 +10,17 @@ import com.rebate.dao.*;
 import com.rebate.domain.Commission;
 import com.rebate.domain.RecommendUserInfo;
 import com.rebate.domain.UserInfo;
+import com.rebate.domain.agent.AgentRelation;
 import com.rebate.domain.en.EIncomeType;
 import com.rebate.domain.en.ESequence;
 import com.rebate.domain.en.ESubUnionIdPrefix;
 import com.rebate.domain.en.EWhiteType;
 import com.rebate.domain.property.JDProperty;
+import com.rebate.domain.query.AgentRelationQuery;
 import com.rebate.domain.query.IncomeDetailQuery;
 import com.rebate.domain.query.RecommendUserInfoQuery;
 import com.rebate.domain.query.UserInfoQuery;
+import com.rebate.domain.vo.AgentRelationVo;
 import com.rebate.domain.vo.UserInfoVo;
 import com.rebate.domain.whitelist.WhiteUserInfo;
 import com.rebate.domain.wx.WxUserInfo;
@@ -79,6 +82,10 @@ public class UserInfoServiceImpl implements UserInfoService {
     @Qualifier("userInfoDao")
     @Autowired(required = true)
     private UserInfoDao userInfoDao;
+
+    @Qualifier("agentRelationDao")
+    @Autowired(required = true)
+    private AgentRelationDao agentRelationDao;
 
     @Override
     public void synWxUserInfo(String openId) {
@@ -260,6 +267,29 @@ public class UserInfoServiceImpl implements UserInfoService {
                 userInfoVo.setWhiteAgent(userInfoManager.isWhiteAgent(userInfoVo.getSubUnionId()));
                 userInfoVo.setSui(DESUtil.qsEncrypt(jDProperty.getEncryptKey(),userInfoVo.getSubUnionId(),"UTF-8"));
                 result.add(userInfoVo);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public PaginatedArrayList<AgentRelationVo> getAgentUserByParentId(AgentRelationQuery agentRelationQuery) {
+        PaginatedArrayList<AgentRelationVo> result = new PaginatedArrayList<>(agentRelationQuery.getIndex(), agentRelationQuery.getPageSize());
+        int totalItem = agentRelationDao.findCountByParentId(agentRelationQuery);
+        if (totalItem > 0) {
+            result.setTotalItem(totalItem);
+            agentRelationQuery.setStartRow(result.getStartRow());
+            List<AgentRelation> list = agentRelationDao.findByParentId(agentRelationQuery);
+            for(AgentRelation agentRelation:list){
+                AgentRelationVo agentRelationVo = new AgentRelationVo(agentRelation);
+                //查询用户信息
+                UserInfo userInfoQuery = new UserInfo();
+                userInfoQuery.setSubUnionId(agentRelation.getAgentSubUnionId());
+                UserInfo userInfo = userInfoDao.findUserInfoBySubUnionId(userInfoQuery);
+                agentRelationVo.setNickName(userInfo.getNickName());
+                agentRelationVo.setImgUrl(userInfo.getWxImage());
+
+                result.add(agentRelationVo);
             }
         }
         return result;

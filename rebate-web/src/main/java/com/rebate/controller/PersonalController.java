@@ -8,12 +8,14 @@ import com.rebate.controller.base.BaseController;
 import com.rebate.domain.ExtractDetail;
 import com.rebate.domain.OrderSummary;
 import com.rebate.domain.UserInfo;
+import com.rebate.domain.agent.AgentRelation;
 import com.rebate.domain.en.EAgent;
 import com.rebate.domain.en.EExtractCode;
 import com.rebate.domain.en.EExtractStatus;
 import com.rebate.domain.en.EPromotionTab;
 import com.rebate.domain.property.JDProperty;
 import com.rebate.domain.query.*;
+import com.rebate.domain.vo.AgentRelationVo;
 import com.rebate.domain.vo.ExtractDetailVo;
 import com.rebate.domain.vo.RebateDetailVo;
 import com.rebate.manager.shorturl.ShortUrlManager;
@@ -211,6 +213,24 @@ public class PersonalController extends BaseController {
         UserInfo userInfo = getUserInfo(request);
 
         view.addObject("userInfo", userInfo);
+        return view;
+    }
+
+    @RequestMapping({"", "/", "/mySecondAgents"})
+    public ModelAndView mySecondAgents(HttpServletRequest request,Integer page) {
+        ModelAndView view = new ModelAndView(VIEW_PREFIX + "/agent/secondAgents");
+        if (null == page) {
+            page = 1;
+        }
+
+        UserInfo userInfo = getUserInfo(request);
+
+        AgentRelationQuery agentRelationQuery = new AgentRelationQuery();
+        agentRelationQuery.setParentAgentSubUnionId(userInfo.getSubUnionId());
+        agentRelationQuery.setIndex(page);
+        PaginatedArrayList<AgentRelationVo> agents = userInfoService.getAgentUserByParentId(agentRelationQuery);
+        view.addObject("agents", agents);
+        view.addObject("totalItem", agents.getTotalItem());
         return view;
     }
 

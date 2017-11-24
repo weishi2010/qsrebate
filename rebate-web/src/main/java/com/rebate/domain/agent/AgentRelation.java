@@ -1,5 +1,6 @@
 package com.rebate.domain.agent;
 
+import com.rebate.domain.query.BaseQuery;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,7 +11,7 @@ import java.util.Date;
  * @author little four
  * @version 1.0.0
  */
-public class AgentRelation {
+public class AgentRelation extends BaseQuery {
     /**
      * 主键
      */

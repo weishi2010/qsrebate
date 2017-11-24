@@ -3,8 +3,11 @@ package com.rebate.service.userinfo;
 import com.rebate.common.web.page.PaginatedArrayList;
 import com.rebate.domain.Commission;
 import com.rebate.domain.UserInfo;
+import com.rebate.domain.agent.AgentRelation;
+import com.rebate.domain.query.AgentRelationQuery;
 import com.rebate.domain.query.RecommendUserInfoQuery;
 import com.rebate.domain.query.UserInfoQuery;
+import com.rebate.domain.vo.AgentRelationVo;
 import com.rebate.domain.vo.UserInfoVo;
 
 import java.util.List;
@@ -80,4 +83,11 @@ public interface UserInfoService {
      * @return
      */
     PaginatedArrayList<UserInfoVo> getUserList(UserInfoQuery userInfoQuery);
+
+    /**
+     * 代理模式一:查询二级代理列表
+     * @param agentRelationQuery
+     * @return
+     */
+    PaginatedArrayList<AgentRelationVo> getAgentUserByParentId(AgentRelationQuery agentRelationQuery);
 }

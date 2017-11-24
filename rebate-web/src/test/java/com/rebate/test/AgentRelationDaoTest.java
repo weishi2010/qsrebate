@@ -33,8 +33,8 @@ public class AgentRelationDaoTest extends AbstractJUnit4SpringContextTests {
     public void testInsert() {
         AgentRelation agentRelation = new AgentRelation();
         agentRelation.setStatus(0);
-        agentRelation.setAgentSubUnionId("");
-        agentRelation.setParentAgentSubUnionId("111");
+        agentRelation.setAgentSubUnionId("JD100001251");
+        agentRelation.setParentAgentSubUnionId("JD100003901");
         agentRelation.setCommissionRatio(0.3);
         agentRelationDao.insert(agentRelation);
     }
@@ -57,5 +57,16 @@ public class AgentRelationDaoTest extends AbstractJUnit4SpringContextTests {
         agentRelationQuery.setAgentSubUnionId("111");
         AgentRelation agentRelation2 =   agentRelationDao.findByAgentSubUnionId(agentRelationQuery);
         System.out.println("agentRelation2:"+JsonUtil.toJson(agentRelation2));
+    }
+
+    @Test
+    public void testFindByParentId() {
+        AgentRelationQuery agentRelationQuery = new AgentRelationQuery();
+        agentRelationQuery.setParentAgentSubUnionId("21321");
+        agentRelationQuery.setStartRow(1);
+        agentRelationQuery.setPageSize(10);
+        List<AgentRelation> list= agentRelationDao.findByParentId(agentRelationQuery);
+        System.out.println("list:"+JsonUtil.toJson(list));
+
     }
 }

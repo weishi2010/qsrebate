@@ -75,4 +75,19 @@
         limit 1
     </select>
 
+    <select id="findByParentId" parameterClass="AgentRelationQuery" resultMap="AgentRelationResultMap">
+        select
+        <include refid="fields"/>
+        from agent_relation
+        where parent_agent_sub_union_id=#parentAgentSubUnionId#
+        limit #startRow#,#pageSize#
+    </select>
+
+    <select id="findCountByParentId" parameterClass="AgentRelationQuery" resultClass="int">
+        select
+        count(1)
+        from agent_relation
+        where parent_agent_sub_union_id=#parentAgentSubUnionId#
+    </select>
+
 </sqlMap>

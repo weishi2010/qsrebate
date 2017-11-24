@@ -5,6 +5,8 @@ import com.rebate.dao.AgentRelationDao;
 import com.rebate.domain.agent.AgentRelation;
 import com.rebate.domain.query.AgentRelationQuery;
 
+import java.util.List;
+
 public class AgentRelationDaoImpl extends BaseDao implements AgentRelationDao {
     @Override
     public long insert(AgentRelation agentRelation) {
@@ -24,5 +26,15 @@ public class AgentRelationDaoImpl extends BaseDao implements AgentRelationDao {
     @Override
     public AgentRelation findByAgentSubUnionId(AgentRelationQuery agentRelationQuery) {
         return (AgentRelation)queryForObject("AgentRelation.findByAgentSubUnionId",agentRelationQuery);
+    }
+
+    @Override
+    public List<AgentRelation> findByParentId(AgentRelationQuery agentRelationQuery) {
+        return (List<AgentRelation>)queryForList("AgentRelation.findByParentId",agentRelationQuery);
+    }
+
+    @Override
+    public int findCountByParentId(AgentRelationQuery agentRelationQuery) {
+        return (int)queryForObject("AgentRelation.findCountByParentId",agentRelationQuery);
     }
 }

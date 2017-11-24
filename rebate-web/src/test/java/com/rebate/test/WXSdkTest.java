@@ -1,5 +1,6 @@
 package com.rebate.test;
 
+import com.rebate.common.util.HttpClientUtil;
 import com.rebate.common.util.JsonUtil;
 import com.rebate.common.util.SerializeXmlUtil;
 import com.rebate.domain.UserInfo;
@@ -7,6 +8,7 @@ import com.rebate.domain.wx.AuthorizationCodeInfo;
 import com.rebate.domain.wx.InputMessage;
 import com.rebate.domain.wx.WxUserInfo;
 import com.rebate.service.wx.WxAccessTokenService;
+import com.rebate.service.wx.WxService;
 import com.thoughtworks.xstream.XStream;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -15,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+
+import java.util.Map;
 
 @ContextConfiguration(locations = {"/spring-config.xml"})
 public class WXSdkTest extends AbstractJUnit4SpringContextTests {
@@ -30,6 +34,28 @@ public class WXSdkTest extends AbstractJUnit4SpringContextTests {
     @Qualifier("wxAccessTokenService")
     @Autowired(required = true)
     private WxAccessTokenService wxAccessTokenService;
+
+    @Qualifier("wxService")
+    @Autowired(required = true)
+    private WxService wxService;
+
+    @Test
+    public void testSendImageMessage() {
+
+        String imgUrl = "http://img14.360buyimg.com/n1/s800x800_jfs/t11077/113/796708275/72801/dd8bd87f/59f92ce8N86a68785.jpg";
+        byte[] fileBytes = HttpClientUtil.downloadImage(imgUrl);
+        String fileName = imgUrl.substring(imgUrl.lastIndexOf("/"));
+
+        String accessToken = "dWClymjhgXmERx_M37myMX5OM5VZd-dA4hg0h0F0BdfUOhKI649AEWpvKn7HjGrwTsNHghryFWoBLqKUPdhoG1XIc9J1KFnbAztmNJEv8RT2KBH0GLXwXYyKmNj01_sMIXTfADAQFB";
+        String result = HttpClientUtil.uploadImage("https://api.weixin.qq.com/cgi-bin/media/upload?access_token="+accessToken+"&type=image",fileBytes,fileName);
+        Map map = JsonUtil.fromJson(result,Map.class);
+        if(null!=map&& map.containsKey("media_id")){
+            String mediaId = map.get("media_id").toString();
+            String openId = "oIAUmv8x60aC5B7FrxVy8Z9-imyY";
+            wxService.sendImageMessage(openId,mediaId);
+        }
+
+    }
 
     @Test
     public void getAccessTokenUrl() {
