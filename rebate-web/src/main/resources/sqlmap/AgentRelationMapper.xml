@@ -60,7 +60,7 @@
                 commission_ratio = #commissionRatio#
             </isNotNull>
         </dynamic>
-        where id=#id#
+        where id=#id# and parent_agent_sub_union_id=#parentAgentSubUnionId#
     </update>
 
     <select id="findById" parameterClass="AgentRelationQuery" resultMap="AgentRelationResultMap">

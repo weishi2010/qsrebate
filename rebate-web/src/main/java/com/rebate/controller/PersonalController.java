@@ -244,8 +244,10 @@ public class PersonalController extends BaseController {
 
     @RequestMapping({"", "/", "/updateSecondAgentCommissionRate.json"})
     public ResponseEntity<?> updateSecondAgentCommissionRate(HttpServletRequest request,Long id,Double commissionRatio) {
+        UserInfo userInfo = getUserInfo(request);
 
-        userInfoService.updateSecondAgentCommissionRate(id,commissionRatio);
+        //只能更新当前登录用户自己的二级代理比例
+        userInfoService.updateSecondAgentCommissionRate(userInfo.getSubUnionId(),id,commissionRatio);
 
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("success", true);

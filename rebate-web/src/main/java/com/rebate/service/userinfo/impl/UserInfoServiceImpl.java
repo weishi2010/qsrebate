@@ -148,9 +148,10 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
-    public void updateSecondAgentCommissionRate(Long id,Double commissionRatio) {
+    public void updateSecondAgentCommissionRate(String agentUserByParentId,Long id,Double commissionRatio) {
         AgentRelation agentRelation = new AgentRelation();
         agentRelation.setId(id);
+        agentRelation.setParentAgentSubUnionId(agentUserByParentId);
         agentRelation.setCommissionRatio(commissionRatio);
         agentRelationDao.update(agentRelation);
     }

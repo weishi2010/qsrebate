@@ -32,10 +32,11 @@ public interface UserInfoService {
 
     /**
      * 更新二级代理比例
+     * @param agentUserByParentId
      * @param id
      * @param commissionRatio
      */
-    void updateSecondAgentCommissionRate(Long id,Double commissionRatio);
+    void updateSecondAgentCommissionRate(String agentUserByParentId,Long id,Double commissionRatio);
 
     /**
      * 更新代理状态

@@ -11,24 +11,30 @@
     <link rel="stylesheet" href="/static/css/income/incomeReport.css?v1" type="text/css">
     <link rel="stylesheet" href="/static/css/income/classic.css">
     <link rel="stylesheet" href="/static/css/income/classic.date.css">
+    <link rel="stylesheet" href="/static/lib/layui/css/layui.css">
+
+
     <script type="text/javascript" src="/static/lib/jquery/jquery-2.0.3.min.js"></script>
     <script src="/static/lib/layer/layer.js"></script>
+    <script src="/static/lib/layui/layui.js"></script>
     <script type="text/javascript" src="/static/js/secondAgent.js?v=1"></script>
 
 </head>
 <body style="font-size: 12px;">
 <div class="reportTable">
     <div class="tHeader">
-        <div class="th">微信头像</div>
-        <div class="th">微信昵称</div>
-        <div class="th"></div>
+        <div class="th" style="width:30%;">微信头像</div>
+        <div class="th" style="width:50%;text-align:center">微信昵称</div>
+        <div class="th" style="width:20%;"></div>
     </div>
     #foreach($agentInfo in $agents)
     <div class="tBody">
-        <div class="tr" style="height:100px">
-            <div class="td" style="height: 100px"><img src="$!{agentInfo.imgUrl}" width="80" height="80"></div>
-            <div class="td">$!{agentInfo.nickName}</div>
-            <div class="td"><a href="javascript:void(0);" onclick="showEdityLayer($!{agentInfo.id})">比例设置</a></div>
+        <div class="tr" style="height:90px">
+            <div class="td" style="width:30%;"><img src="$!{agentInfo.imgUrl}" width="80" height="80"></div>
+            <div class="td" style="width:50%;text-align:center">$!{agentInfo.nickName}</div>
+            <div class="td" style="width:20%;">
+                <a href="javascript:void(0);" onclick="showEdityLayer($!{agentInfo.id},$!{agentInfo.commissionRatio})" style="color:#e43837;font-size:medium;text-decoration:none;">比例设置</a>
+            </div>
         </div>
     </div>
     #end
