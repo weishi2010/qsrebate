@@ -49,6 +49,10 @@ public class RebateDetailServiceImpl implements RebateDetailService {
                     List<RebateDetail> list = rebateDetailDao.findListBySubUnionId(rebateDetailQuery);
                     for (RebateDetail rebateDetail : list) {
                         RebateDetailVo vo = new RebateDetailVo(rebateDetail);
+                        //如果订单中的子联盟ID不是当前查询的用户则说明是粉丝引入的订单，佣金显示按代理分成显示
+                        if(!rebateDetail.getSubUnionId().equalsIgnoreCase(rebateDetailQuery.getSubUnionId())){
+                            vo.setUserCommission(rebateDetail.getAgentCommission());
+                        }
                         rebateDetails.add(vo);
                     }
                 }

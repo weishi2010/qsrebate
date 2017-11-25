@@ -175,14 +175,33 @@
         select
         count(1)
         from rebate_detail
-        where sub_union_id=#subUnionId# and submit_date>=#startDate#
+        where sub_union_id=#subUnionId#
+        OR sub_union_id IN(
+        SELECT ui.sub_union_id AS subUnionId FROM recommend_user_info rui
+        LEFT JOIN user_info ui
+        ON rui.open_id=ui.open_id
+        LEFT JOIN user_info uii
+        ON rui.recommend_account=uii.open_id
+        WHERE uii.sub_union_id =#subUnionId#
+        )
+        and valid_code=1
+        and submit_date>=#startDate#
     </select>
 
     <select id="findListBySubUnionId" parameterClass="RebateDetailQuery" resultMap="RebateDetailResultMap">
         select
         <include refid="fields"/>
         from rebate_detail
-        where sub_union_id=#subUnionId# and submit_date>=#startDate#
+        where sub_union_id=#subUnionId# OR sub_union_id IN(
+        SELECT ui.sub_union_id AS subUnionId FROM recommend_user_info rui
+        LEFT JOIN user_info ui
+        ON rui.open_id=ui.open_id
+        LEFT JOIN user_info uii
+        ON rui.recommend_account=uii.open_id
+        WHERE uii.sub_union_id =#subUnionId#
+        )
+        and valid_code=1
+        and submit_date>=#startDate#
         order by submit_date desc
         limit #startRow#,#pageSize#
     </select>
