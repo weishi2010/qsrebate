@@ -256,17 +256,27 @@ public class PersonalController extends BaseController {
         return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
     }
 
-    @RequestMapping({"", "/", "/updateSecondAgentCommissionRate.json"})
-    public ResponseEntity<?> updateSecondAgentCommissionRate(HttpServletRequest request,Long id,Double commissionRatio) {
+    @RequestMapping({"", "/", "/registNextAgentQrCode.json"})
+    public ResponseEntity<?> registNextAgentQrCode(HttpServletRequest request,Double commissionRatio) {
         UserInfo userInfo = getUserInfo(request);
 
-        //只能更新当前登录用户自己的二级代理比例
-        userInfoService.updateSecondAgentCommissionRate(userInfo.getSubUnionId(),id,commissionRatio);
+        //生成二维码
+        String sceneStr = userInfo.getOpenId()+"#"+EQrCodeType.REGIST_SECOND_AGENT_REBATE_USER_QR_CODE.getCode()+"#"+commissionRatio;
+        String qrCodeUrl = wxService.getQrcodeUrl(sceneStr);
+        //下载二维码
+        String mediaId = wxService.getWxImageMediaId(qrCodeUrl);
+        //发送图片消息
+        wxService.sendImageMessage(userInfo.getOpenId(), mediaId);
+
+        //发送文本消息
+        String content = "下级代理推广二维码已生成！返佣金比例:"+commissionRatio;
+        wxService.sendMessage(userInfo.getOpenId(),content);
 
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("success", true);
         return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
     }
+
 
     @RequestMapping({"", "/", "/agentStatistits"})
     public ModelAndView agentStatistits(HttpServletRequest request,Integer dayTab) {
@@ -398,7 +408,7 @@ public class PersonalController extends BaseController {
             openId = userInfo.getOpenId();
         }
 
-        String sceneStr = openId+"#"+EAgent.FIRST_AGENT.getCode();
+        String sceneStr = openId+"#"+EQrCodeType.REGIST_FIRST_AGENT_QR_CODE.getCode();
         view.addObject("qrcodeUrl", wxService.getQrcodeUrl(sceneStr));
         return view;
     }
@@ -413,7 +423,7 @@ public class PersonalController extends BaseController {
             openId = userInfo.getOpenId();
         }
 
-        String sceneStr = openId+"#"+EAgent.SECOND_AGENT.getCode();
+        String sceneStr = openId+"#"+EQrCodeType.REGIST_SECOND_AGENT_QR_CODE.getCode();
         view.addObject("qrcodeUrl", wxService.getQrcodeUrl(sceneStr));
         return view;
     }
@@ -428,10 +438,11 @@ public class PersonalController extends BaseController {
             openId = userInfo.getOpenId();
         }
 
-        String sceneStr = openId+"#"+EAgent.GENERAL_REBATE_USER.getCode();
+        String sceneStr = openId+"#"+EQrCodeType.REGIST_SECOND_AGENT_REBATE_USER_QR_CODE.getCode();
         view.addObject("qrcodeUrl", wxService.getQrcodeUrl(sceneStr));
         return view;
     }
+
     //---------------------------------------------------------------
 
     /**

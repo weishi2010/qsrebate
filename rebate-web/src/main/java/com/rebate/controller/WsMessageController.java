@@ -264,24 +264,24 @@ public class WsMessageController extends BaseController {
         }
     }
 
-    public String getPushXml(String openId, String agentOpenId, UserInfo userInfo, Integer agentType, InputMessage inputMsg, String subUnionId) {
+    public String getPushXml(String openId, String agentOpenId, UserInfo userInfo, Integer codeType, InputMessage inputMsg, String subUnionId) {
         String eventXml = "";
         if (null == userInfo) {
-            if (null != agentType) {
+            if (null != codeType) {
                 //代理用户扫码，带参数
-                if (EAgent.FIRST_AGENT.getCode() == agentType) {
+                if (EQrCodeType.REGIST_FIRST_AGENT_QR_CODE.getCode() == codeType) {
                     //代理模式1-注册代理用户
                     userInfo = userInfoService.registUserInfo(openId, "", EAgent.FIRST_AGENT.getCode(), true);
                     //代理用户关注消息
                     eventXml = agentTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), userInfo.getSubUnionId());
 
-                } else if (EAgent.SECOND_AGENT.getCode() == agentType) {
+                } else if (EQrCodeType.REGIST_SECOND_AGENT_QR_CODE.getCode() == codeType) {
                     //代理模式2-注册代理用户
                     userInfo = userInfoService.registUserInfo(openId, "", EAgent.SECOND_AGENT.getCode(), true);
                     //代理用户关注消息
                     eventXml = agentTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), userInfo.getSubUnionId());
 
-                } else if (EAgent.GENERAL_REBATE_USER.getCode() == agentType) {
+                } else if (EQrCodeType.REGIST_SECOND_AGENT_REBATE_USER_QR_CODE.getCode() == codeType) {
                     //代理模式2-拉粉丝返利用户
                     userInfoService.registUserInfo(openId, agentOpenId, EAgent.GENERAL_REBATE_USER.getCode(), true);
                     eventXml = subscribeTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), subUnionId);
@@ -300,21 +300,21 @@ public class WsMessageController extends BaseController {
 
         } else {
 
-            if (null != agentType) {
+            if (null != codeType) {
                 //代理用户扫码，带参数
-                if (EAgent.FIRST_AGENT.getCode() == agentType) {
+                if (EQrCodeType.REGIST_FIRST_AGENT_QR_CODE.getCode() == codeType) {
                     //代理模式1-注册代理用户
                     userInfoService.updateUserInfoAgent(openId, "", EAgent.FIRST_AGENT.getCode());
 
                     //代理用户关注消息
                     eventXml = agentTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), userInfo.getSubUnionId());
 
-                } else if (EAgent.SECOND_AGENT.getCode() == agentType) {
+                } else if (EQrCodeType.REGIST_SECOND_AGENT_QR_CODE.getCode() == codeType) {
                     //代理模式2-注册代理用户
                     userInfoService.updateUserInfoAgent(openId, "", EAgent.SECOND_AGENT.getCode());
                     //代理用户关注消息
                     eventXml = agentTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), userInfo.getSubUnionId());
-                } else if (EAgent.GENERAL_REBATE_USER.getCode() == agentType) {
+                } else if (EQrCodeType.REGIST_SECOND_AGENT_REBATE_USER_QR_CODE.getCode() == codeType) {
                     //代理模式2-拉粉丝返利用户
                     if (StringUtils.isBlank(userInfo.getRecommendAccount())) {
                         userInfoService.updateUserInfoAgent(openId, agentOpenId, EAgent.GENERAL_REBATE_USER.getCode());
