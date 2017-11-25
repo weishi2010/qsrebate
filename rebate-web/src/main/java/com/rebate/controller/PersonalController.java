@@ -10,10 +10,7 @@ import com.rebate.domain.ExtractDetail;
 import com.rebate.domain.OrderSummary;
 import com.rebate.domain.UserInfo;
 import com.rebate.domain.agent.AgentRelation;
-import com.rebate.domain.en.EAgent;
-import com.rebate.domain.en.EExtractCode;
-import com.rebate.domain.en.EExtractStatus;
-import com.rebate.domain.en.EPromotionTab;
+import com.rebate.domain.en.*;
 import com.rebate.domain.property.JDProperty;
 import com.rebate.domain.query.*;
 import com.rebate.domain.vo.AgentRelationVo;
@@ -240,6 +237,23 @@ public class PersonalController extends BaseController {
         view.addObject("agents", agents);
         view.addObject("totalItem", agents.getTotalItem());
         return view;
+    }
+
+    @RequestMapping({"", "/", "/addSecondAgent.json"})
+    public ResponseEntity<?> addSecondAgent(HttpServletRequest request,String agentSubUnionId,Double commissionRatio) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        UserInfo userInfo = getUserInfo(request);
+
+        //只能更新当前登录用户自己的二级代理比例
+        int code = userInfoService.addSecondAgent(userInfo.getSubUnionId(),agentSubUnionId,commissionRatio);
+        if(code== EAgentResultCode.SUCCESS.getCode()){
+            map.put("success", true);
+        }else{
+            map.put("code", code);
+            map.put("success", false);
+        }
+
+        return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
     }
 
     @RequestMapping({"", "/", "/updateSecondAgentCommissionRate.json"})

@@ -31,12 +31,19 @@ public interface UserInfoService {
     public void sysRecommendUser();
 
     /**
-     * 更新二级代理比例
+     * 代理模式一(多级代理)：更新二级代理比例
      * @param agentUserByParentId
      * @param id
      * @param commissionRatio
      */
     void updateSecondAgentCommissionRate(String agentUserByParentId,Long id,Double commissionRatio);
+
+    /**
+     * 代理模式一(多级代理)：添加下级代理
+     * @param agentSubUnionId
+     * @param secondAgentSubUnionId
+     */
+    int addSecondAgent(String agentSubUnionId,String secondAgentSubUnionId,Double commissionRatio);
 
     /**
      * 更新代理状态

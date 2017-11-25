@@ -11,10 +11,7 @@ import com.rebate.domain.Commission;
 import com.rebate.domain.RecommendUserInfo;
 import com.rebate.domain.UserInfo;
 import com.rebate.domain.agent.AgentRelation;
-import com.rebate.domain.en.EIncomeType;
-import com.rebate.domain.en.ESequence;
-import com.rebate.domain.en.ESubUnionIdPrefix;
-import com.rebate.domain.en.EWhiteType;
+import com.rebate.domain.en.*;
 import com.rebate.domain.property.JDProperty;
 import com.rebate.domain.query.AgentRelationQuery;
 import com.rebate.domain.query.IncomeDetailQuery;
@@ -91,20 +88,20 @@ public class UserInfoServiceImpl implements UserInfoService {
     public void synWxUserInfo(String openId) {
         WxUserInfo wxUserInfo = wxService.getWxApiUserInfo(wxAccessTokenService.getApiAccessToken().getAccessToken(), openId);
         if (null != wxUserInfo) {
-            LOG.error("synWxUserInfo wxUserInfo:"+ JsonUtil.toJson(wxUserInfo));
+            LOG.error("synWxUserInfo wxUserInfo:" + JsonUtil.toJson(wxUserInfo));
 
-            try{
-                UserInfo userInfoQuery =new UserInfo();
+            try {
+                UserInfo userInfoQuery = new UserInfo();
                 userInfoQuery.setOpenId(openId);
                 UserInfo userInfo = userInfoDao.findLoginUserInfo(userInfoQuery);
-                LOG.error("synWxUserInfo userInfo:"+ JsonUtil.toJson(userInfo));
-                if(null!=userInfo){
+                LOG.error("synWxUserInfo userInfo:" + JsonUtil.toJson(userInfo));
+                if (null != userInfo) {
                     //更新昵称
                     userInfo.setNickName(wxUserInfo.getNickname());
                     userInfoDao.update(userInfo);
                 }
-            }catch (Exception e){
-                LOG.error("synWxUserInfo error!wxUserInfo:"+ JsonUtil.toJson(wxUserInfo),e);
+            } catch (Exception e) {
+                LOG.error("synWxUserInfo error!wxUserInfo:" + JsonUtil.toJson(wxUserInfo), e);
             }
         }
     }
@@ -148,12 +145,43 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
-    public void updateSecondAgentCommissionRate(String agentUserByParentId,Long id,Double commissionRatio) {
+    public void updateSecondAgentCommissionRate(String agentUserByParentId, Long id, Double commissionRatio) {
         AgentRelation agentRelation = new AgentRelation();
         agentRelation.setId(id);
         agentRelation.setParentAgentSubUnionId(agentUserByParentId);
         agentRelation.setCommissionRatio(commissionRatio);
         agentRelationDao.update(agentRelation);
+    }
+
+    @Override
+    public int addSecondAgent(String agentSubUnionId, String secondAgentSubUnionId, Double commissionRatio) {
+        int code = EAgentResultCode.SUCCESS.getCode();
+        try {
+            UserInfo userInfoQuery = new UserInfo();
+            userInfoQuery.setSubUnionId(secondAgentSubUnionId);
+            UserInfo userInfo = userInfoDao.findUserInfoBySubUnionId(userInfoQuery);
+            if (null == userInfo) {
+                return EAgentResultCode.NOT_EXISTS_USER.getCode();
+            }
+
+            //查询此二级代理用户是否已存在，不存在则再进行添加
+            AgentRelationQuery agentRelationQuery = new AgentRelationQuery();
+            agentRelationQuery.setAgentSubUnionId(secondAgentSubUnionId);
+            if (null == agentRelationDao.findByAgentSubUnionId(agentRelationQuery)) {
+                AgentRelation agentRelation = new AgentRelation();
+                agentRelation.setParentAgentSubUnionId(agentSubUnionId);
+                agentRelation.setAgentSubUnionId(secondAgentSubUnionId);
+                agentRelation.setStatus(0);
+                agentRelation.setCommissionRatio(commissionRatio);
+                agentRelationDao.insert(agentRelation);
+            } else {
+                code = EAgentResultCode.EXISTS.getCode();
+            }
+        } catch (Exception e) {
+            code = EAgentResultCode.ERROR.getCode();
+            LOG.error("addSecondAgent error!agentSubUnionId:" + agentSubUnionId + ",secondAgentSubUnionId:" + secondAgentSubUnionId, e);
+        }
+        return code;
     }
 
     @Override
@@ -271,10 +299,10 @@ public class UserInfoServiceImpl implements UserInfoService {
             result.setTotalItem(totalItem);
             userInfoQuery.setStartRow(result.getStartRow());
             List<UserInfo> list = userInfoManager.findAllUsers(userInfoQuery);
-            for(UserInfo userInfo:list){
+            for (UserInfo userInfo : list) {
                 UserInfoVo userInfoVo = new UserInfoVo(userInfo);
                 userInfoVo.setWhiteAgent(userInfoManager.isWhiteAgent(userInfoVo.getSubUnionId()));
-                userInfoVo.setSui(DESUtil.qsEncrypt(jDProperty.getEncryptKey(),userInfoVo.getSubUnionId(),"UTF-8"));
+                userInfoVo.setSui(DESUtil.qsEncrypt(jDProperty.getEncryptKey(), userInfoVo.getSubUnionId(), "UTF-8"));
                 result.add(userInfoVo);
             }
         }
@@ -289,7 +317,7 @@ public class UserInfoServiceImpl implements UserInfoService {
             result.setTotalItem(totalItem);
             agentRelationQuery.setStartRow(result.getStartRow());
             List<AgentRelation> list = agentRelationDao.findByParentId(agentRelationQuery);
-            for(AgentRelation agentRelation:list){
+            for (AgentRelation agentRelation : list) {
                 AgentRelationVo agentRelationVo = new AgentRelationVo(agentRelation);
                 //查询用户信息
                 UserInfo userInfoQuery = new UserInfo();
