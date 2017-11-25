@@ -6,7 +6,7 @@ function showAddSecondAgent(){
         ,offset: ['100px']
         ,anim: 'up'
         ,content: '<div>佣金比例:<input type="text" id="commissionRatio" class="layui-layer-input" /></div>'
-        ,btn: [ '确认','取消']
+        ,btn: [ '生成推广二维码','取消']
         ,yes: function(index){
             var commissionRatio = $("#commissionRatio").val();
             if(isNaN(commissionRatio) || commissionRatio>1 ||commissionRatio<0){
@@ -21,10 +21,8 @@ function showAddSecondAgent(){
                     if(reponse.success){
                         layer.close(index)
                         layer.alert("下级代理推广二维码已生成，请返回对话框查看!");
-                    }else if(reponse.code==2){
-                        layer.alert("此代理已存在!");
-                    }else if(reponse.code==-2){
-                        layer.alert("不存在子联盟ID用户!");
+                    }else{
+                        layer.alert("二维码生成失败，请稍后重试!");
                     }
                 },
                 error: function (xhr, type) {
