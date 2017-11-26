@@ -9,10 +9,11 @@ function showAddSecondAgent(){
         ,btn: [ '生成推广二维码','取消']
         ,yes: function(index){
             var commissionRatio = $("#commissionRatio").val();
-            if(isNaN(commissionRatio) || commissionRatio>100 ||commissionRatio<0){
+            if(isNaN(commissionRatio) || ''==commissionRatio || commissionRatio>100 ||commissionRatio<0){
                 alert("填写的佣金比例应该在1-100%范围内!");
                 return;
             }
+            commissionRatio = commissionRatio/100;
             $.ajax({
                 type: 'GET',
                 url: '/personal/registNextAgentQrCode.json?commissionRatio='+commissionRatio+ '&r=' + Math.random(),
@@ -44,10 +45,16 @@ function showEdityLayer(id,commissionRatio){
         ]
         ,offset: ['100px']
         ,anim: 'up'
-        ,content: '<div>佣金比例:<input type="text" id="agentCommissionRatio" class="layui-layer-input" value=" '+commissionRatio+'" /></div>'
+        ,content: '<div>佣金比例(%):<input type="text" id="agentCommissionRatio" class="layui-layer-input" value=" '+commissionRatio+'" /></div>'
         ,btn: [ '确认','取消']
         ,yes: function(index){
             var agentCommissionRatio = $("#agentCommissionRatio").val();
+            if(isNaN(agentCommissionRatio) || ''==agentCommissionRatio || agentCommissionRatio>100 ||agentCommissionRatio<0){
+                alert("填写的佣金比例应该在1-100%范围内!");
+                return;
+            }
+
+            agentCommissionRatio = agentCommissionRatio/100;
             $.ajax({
                 type: 'GET',
                 url: '/personal/updateSecondAgentCommissionRate.json?id='+id+'&commissionRatio='+agentCommissionRatio+ '&r=' + Math.random(),

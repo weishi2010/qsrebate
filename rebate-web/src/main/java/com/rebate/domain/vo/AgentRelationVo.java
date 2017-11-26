@@ -26,4 +26,11 @@ public class AgentRelationVo extends AgentRelation {
         BeanUtils.copyProperties(agentRelation, this);
     }
 
+    public Double getCommissionRatioShow() {
+        if (null != this.getCommissionRatio()) {
+            return getCommissionRatio() * 100;
+        }
+        return 0.0;
+    }
+
 }

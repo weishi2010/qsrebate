@@ -36,7 +36,7 @@ public interface UserInfoService {
      * @param id
      * @param commissionRatio
      */
-    void updateSecondAgentCommissionRate(String agentUserByParentId,Long id,Double commissionRatio);
+    void updateSecondAgentCommissionRate(String userByParentId,Long id,Double commissionRatio);
 
     /**
      * 代理模式一(多级代理)：添加下级代理

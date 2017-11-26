@@ -256,11 +256,25 @@ public class PersonalController extends BaseController {
         return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
     }
 
+    @RequestMapping({"", "/", "/updateSecondAgentCommissionRate.json"})
+    public ResponseEntity<?> updateSecondAgentCommissionRate(HttpServletRequest request,Long id,Double commissionRatio) {
+        UserInfo userInfo = getUserInfo(request);
+        Map<String, Object> map = new HashMap<String, Object>();
+        if(null!=commissionRatio && commissionRatio>0 && commissionRatio<=1){
+            map.put("success", true);
+            userInfoService.updateSecondAgentCommissionRate(userInfo.getSubUnionId(),id,commissionRatio);
+        }else{
+            map.put("success", false);
+        }
+
+        return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
+    }
+
     @RequestMapping({"", "/", "/registNextAgentQrCode.json"})
     public ResponseEntity<?> registNextAgentQrCode(HttpServletRequest request,Double commissionRatio) {
         UserInfo userInfo = getUserInfo(request);
         Map<String, Object> map = new HashMap<String, Object>();
-        if(null!=commissionRatio && commissionRatio>0 && commissionRatio<=100){
+        if(null!=commissionRatio && commissionRatio>0 && commissionRatio<=1){
             map.put("success", true);
 
             //生成二维码
@@ -272,7 +286,7 @@ public class PersonalController extends BaseController {
             wxService.sendImageMessage(userInfo.getOpenId(), mediaId);
 
             //发送文本消息
-            String content = "代理推广二维码已生成!佣金比例:"+commissionRatio+"%";
+            String content = "代理推广二维码已生成!佣金比例:"+commissionRatio*100+"%";
             wxService.sendMessage(userInfo.getOpenId(),content);
         }else{
             map.put("success", false);

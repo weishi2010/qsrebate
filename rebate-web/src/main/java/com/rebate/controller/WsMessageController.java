@@ -343,14 +343,8 @@ public class WsMessageController extends BaseController {
                         parentAgentQuery.setOpenId(agentOpenId);
                         UserInfo parentUserInfo = userInfoDao.findLoginUserInfo(parentAgentQuery);
 
-                        //将比例转为小数形式
-                        BigDecimal b1 = new BigDecimal(Double.toString(commissionRatio));
-                        BigDecimal b2 = new BigDecimal(Double.toString(100));
-
-                        commissionRatio =b2.divide(b1, BigDecimal.ROUND_HALF_UP,0).doubleValue();//精确2位小数
-
                         //添加代理关系
-                        userInfoService.addSecondAgent(userInfo.getSubUnionId(),parentUserInfo.getSubUnionId(),commissionRatio);
+                        userInfoService.addSecondAgent(parentUserInfo.getSubUnionId(),userInfo.getSubUnionId(),commissionRatio);
                     }
                     //代理用户关注消息
                     eventXml = agentTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), userInfo.getSubUnionId());

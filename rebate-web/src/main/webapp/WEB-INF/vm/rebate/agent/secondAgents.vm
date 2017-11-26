@@ -17,7 +17,7 @@
     <script type="text/javascript" src="/static/lib/jquery/jquery-2.0.3.min.js"></script>
     <script src="/static/lib/layer/layer.js"></script>
     <script src="/static/lib/layui/layui.js"></script>
-    <script type="text/javascript" src="/static/js/secondAgent.js?v=7"></script>
+    <script type="text/javascript" src="/static/js/secondAgent.js?v=10"></script>
 
 </head>
 <body style="font-size: 12px;">
@@ -35,7 +35,7 @@
             <div class="td" style="width:30%;"><img src="$!{agentInfo.imgUrl}" width="80" height="80"></div>
             <div class="td" style="width:40%;text-align:center">$!{agentInfo.nickName}</div>
             <div class="td" style="width:30%;">
-                <a href="javascript:void(0);" onclick="showEdityLayer($!{agentInfo.id},$!{agentInfo.commissionRatio})" style="color:#e43837;font-size:medium;text-decoration:none;">比例设置</a>
+                <a href="javascript:void(0);" onclick="showEdityLayer($!{agentInfo.id},$!{agentInfo.commissionRatioShow})" style="color:#e43837;font-size:medium;text-decoration:none;">比例设置</a>
             </div>
         </div>
     </div>
