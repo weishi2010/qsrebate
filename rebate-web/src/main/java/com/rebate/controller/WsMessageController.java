@@ -37,6 +37,7 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.util.*;
 import java.util.concurrent.Callable;
@@ -242,20 +243,8 @@ public class WsMessageController extends BaseController {
 
 
         String eventKey = inputMsg.getEventKey();
-        Integer agentType = null;
-        String agentOpenId = null;
-        if (StringUtils.isNotBlank(eventKey) && eventKey.contains(EWxEventCode.QRCODE_SUBSCRIBE.getValue())) {
-            String paramJson = eventKey.replace(EWxEventCode.QRCODE_SUBSCRIBE.getValue(), "");//前缀去掉
 
-            if (StringUtils.isNotBlank(paramJson)) {
-                //如果扫码带数据则进行代理参数解析
-                String[] paramArray = paramJson.split("#");
-                agentOpenId = paramArray[0];
-                agentType = Integer.parseInt(paramArray[1]);
-            }
-        }
-
-        String eventXml = getPushXml(openId, agentOpenId, userInfo, agentType, inputMsg, subUnionId);
+        String eventXml = getPushXml(openId, eventKey, userInfo, inputMsg, subUnionId);
 
         try {
             response.getWriter().write(eventXml.toString());
@@ -264,8 +253,27 @@ public class WsMessageController extends BaseController {
         }
     }
 
-    public String getPushXml(String openId, String agentOpenId, UserInfo userInfo, Integer codeType, InputMessage inputMsg, String subUnionId) {
+    public String getPushXml(String openId, String eventKey, UserInfo userInfo,  InputMessage inputMsg, String subUnionId) {
         String eventXml = "";
+        Integer codeType = null;
+        String agentOpenId = null;
+        Double commissionRatio = 0.0;
+        if (StringUtils.isNotBlank(eventKey)) {
+            String paramJson = eventKey.replace(EWxEventCode.QRCODE_SUBSCRIBE.getValue(), "");//前缀去掉
+
+            if (StringUtils.isNotBlank(paramJson)) {
+                //如果扫码带数据则进行代理参数解析
+                String[] paramArray = paramJson.split("#");
+                if (paramArray.length > 0) {
+                    agentOpenId = paramArray[0];
+                    codeType = Integer.parseInt(paramArray[1]);
+                    if(codeType==EQrCodeType.REGIST_FIRST_AGENT_NEXT_AGENT_QR_CODE.getCode()){
+                        commissionRatio = Double.parseDouble(paramArray[2]);
+                    }
+                }
+            }
+        }
+
         if (null == userInfo) {
             if (null != codeType) {
                 //代理用户扫码，带参数
@@ -274,6 +282,24 @@ public class WsMessageController extends BaseController {
                     userInfo = userInfoService.registUserInfo(openId, "", EAgent.FIRST_AGENT.getCode(), true);
                     //代理用户关注消息
                     eventXml = agentTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), userInfo.getSubUnionId());
+
+                }else if (EQrCodeType.REGIST_FIRST_AGENT_NEXT_AGENT_QR_CODE.getCode() == codeType) {
+                    //代理模式1-注册下级代理用户
+                    userInfo = userInfoService.registUserInfo(openId, "", EAgent.FIRST_AGENT.getCode(), true);
+
+                    if(StringUtils.isNotBlank(agentOpenId) && !agentOpenId.equalsIgnoreCase(openId)){
+
+                        //查询上级代理用户信息
+                        UserInfo parentAgentQuery = new UserInfo();
+                        parentAgentQuery.setOpenId(agentOpenId);
+                        UserInfo parentUserInfo = userInfoDao.findLoginUserInfo(parentAgentQuery);
+
+                        //添加代理关系
+                        userInfoService.addSecondAgent(userInfo.getSubUnionId(),parentUserInfo.getSubUnionId(),commissionRatio);
+                    }
+                    //代理用户关注消息
+                    eventXml = agentTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), userInfo.getSubUnionId());
+
 
                 } else if (EQrCodeType.REGIST_SECOND_AGENT_QR_CODE.getCode() == codeType) {
                     //代理模式2-注册代理用户
@@ -309,7 +335,28 @@ public class WsMessageController extends BaseController {
                     //代理用户关注消息
                     eventXml = agentTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), userInfo.getSubUnionId());
 
-                } else if (EQrCodeType.REGIST_SECOND_AGENT_QR_CODE.getCode() == codeType) {
+                } else if (EQrCodeType.REGIST_FIRST_AGENT_NEXT_AGENT_QR_CODE.getCode() == codeType) {
+                    if(StringUtils.isNotBlank(agentOpenId) && !agentOpenId.equalsIgnoreCase(openId)){
+
+                        //查询上级代理用户信息
+                        UserInfo parentAgentQuery = new UserInfo();
+                        parentAgentQuery.setOpenId(agentOpenId);
+                        UserInfo parentUserInfo = userInfoDao.findLoginUserInfo(parentAgentQuery);
+
+                        //将比例转为小数形式
+                        BigDecimal b1 = new BigDecimal(Double.toString(commissionRatio));
+                        BigDecimal b2 = new BigDecimal(Double.toString(100));
+
+                        commissionRatio =b2.divide(b1, BigDecimal.ROUND_HALF_UP,0).doubleValue();//精确2位小数
+
+                        //添加代理关系
+                        userInfoService.addSecondAgent(userInfo.getSubUnionId(),parentUserInfo.getSubUnionId(),commissionRatio);
+                    }
+                    //代理用户关注消息
+                    eventXml = agentTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), userInfo.getSubUnionId());
+
+
+                }else if (EQrCodeType.REGIST_SECOND_AGENT_QR_CODE.getCode() == codeType) {
                     //代理模式2-注册代理用户
                     userInfoService.updateUserInfoAgent(openId, "", EAgent.SECOND_AGENT.getCode());
                     //代理用户关注消息
@@ -349,22 +396,9 @@ public class WsMessageController extends BaseController {
         UserInfo userInfo = userInfoDao.findLoginUserInfo(userInfoQuery);
 
         String eventKey = inputMsg.getEventKey();
-        Integer agentType = null;
-        String agentOpenId = null;
-        if (StringUtils.isNotBlank(eventKey)) {
-            String paramJson = eventKey.replace(EWxEventCode.QRCODE_SUBSCRIBE.getValue(), "");//前缀去掉
 
-            if (StringUtils.isNotBlank(paramJson)) {
-                //如果扫码带数据则进行代理参数解析
-                String[] paramArray = paramJson.split("#");
-                if (paramArray.length > 0) {
-                    agentType = Integer.parseInt(paramArray[paramArray.length - 1]);
-                    agentOpenId = paramArray[paramArray.length - 2];
-                }
-            }
-        }
 
-        String eventXml = getPushXml(openId, agentOpenId, userInfo, agentType, inputMsg, subUnionId);
+        String eventXml = getPushXml(openId, eventKey, userInfo, inputMsg, subUnionId);
 
 
         LOG.error("output wx eventXml:" + eventXml);

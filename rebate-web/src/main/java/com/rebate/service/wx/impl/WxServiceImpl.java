@@ -2,6 +2,7 @@ package com.rebate.service.wx.impl;
 
 import com.rebate.common.util.HttpClientUtil;
 import com.rebate.common.util.JsonUtil;
+import com.rebate.common.util.RegexUtils;
 import com.rebate.domain.wx.WxConfig;
 import com.rebate.domain.wx.WxUserInfo;
 import com.rebate.service.wx.WxAccessTokenService;
@@ -17,6 +18,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @Service("wxService")
 public class WxServiceImpl implements WxService {
@@ -65,6 +67,11 @@ public class WxServiceImpl implements WxService {
             byte[] fileBytes = HttpClientUtil.downloadImage(imgUrl.replace("/s150x150_jfs/","/s800x800_jfs/"));
             //获取文件名
             String fileName = imgUrl.substring(imgUrl.lastIndexOf("/"));
+
+            if(!RegexUtils.checkImage(fileName)){
+                fileName = UUID.randomUUID().toString()+".jpg";
+            }
+
             //获取api accessToken
             String accessToken = wxAccessTokenService.getApiAccessToken().getAccessToken();
             //通过微信上传接口上传
@@ -134,6 +141,9 @@ public class WxServiceImpl implements WxService {
         } catch (Exception e) {
             LOG.error("getQrcodeUrl error!paramJson:" + paramJson, e);
         }
+
+        LOG.error("[getQrcodeUrl]===============> qrcodeUrl:{}", qrcodeUrl);
+
         return qrcodeUrl;
     }
 

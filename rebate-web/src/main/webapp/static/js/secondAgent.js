@@ -5,12 +5,12 @@ function showAddSecondAgent(){
         ]
         ,offset: ['100px']
         ,anim: 'up'
-        ,content: '<div>佣金比例:<input type="text" id="commissionRatio" class="layui-layer-input" /></div>'
+        ,content: '<div>佣金比例(%):<input type="text" id="commissionRatio" class="layui-layer-input" /></div>'
         ,btn: [ '生成推广二维码','取消']
         ,yes: function(index){
             var commissionRatio = $("#commissionRatio").val();
-            if(isNaN(commissionRatio) || commissionRatio>1 ||commissionRatio<0){
-                alert("填写的佣金比例应该在0-1范围内!");
+            if(isNaN(commissionRatio) || commissionRatio>100 ||commissionRatio<0){
+                alert("填写的佣金比例应该在1-100%范围内!");
                 return;
             }
             $.ajax({

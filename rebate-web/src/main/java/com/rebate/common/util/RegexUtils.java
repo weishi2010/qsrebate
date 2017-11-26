@@ -142,7 +142,19 @@ public class RegexUtils {
     public static boolean checkPostcode(String postcode) { 
         String regex = "[1-9]\\d{5}"; 
         return Pattern.matches(regex, postcode); 
-    } 
+    }
+
+    /**
+     * 是否为图片
+     * @param content
+     * @return
+     */
+    public static boolean checkImage(String content){
+        String reg = ".+(.JPEG|.jpeg|.JPG|.jpg|.GIF|.gif|.BMP|.bmp|.PNG|.png)$";
+        Pattern pattern = Pattern.compile(reg);
+        Matcher matcher = pattern.matcher(content.toLowerCase());
+        return matcher.find();
+    }
      
     /**
      * 匹配IP地址(简单匹配，格式，如：192.168.1.1，127.0.0.1，没有匹配IP段的大小)

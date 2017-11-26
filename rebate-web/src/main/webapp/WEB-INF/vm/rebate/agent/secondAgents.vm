@@ -17,7 +17,7 @@
     <script type="text/javascript" src="/static/lib/jquery/jquery-2.0.3.min.js"></script>
     <script src="/static/lib/layer/layer.js"></script>
     <script src="/static/lib/layui/layui.js"></script>
-    <script type="text/javascript" src="/static/js/secondAgent.js?v=4"></script>
+    <script type="text/javascript" src="/static/js/secondAgent.js?v=7"></script>
 
 </head>
 <body style="font-size: 12px;">
