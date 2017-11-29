@@ -29,6 +29,20 @@ public class RebateDetailDaoTest extends AbstractJUnit4SpringContextTests {
 
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
+
+    @Test
+    public void testGetCommissionRebateDetails() {
+        String queryTime = "20171112";//yyyyMMddHHmm,yyyyMMddHHmmss或者yyyyMMddHH格式之一
+        int page = 1;
+        int pageSize = 10;
+        List<RebateDetail> list1 = jdSdkManager.getCommissionRebateDetails(queryTime, page, pageSize);
+        List<RebateDetail> list2 = jdSdkManager.getRebateDetails(queryTime, page, pageSize);
+        System.out.println(list1.size()+"-------"+list2.size());
+
+    }
+
+
+
     @Test
     public void batchInsert() {
         String queryTime = "20171007";//yyyyMMddHHmm,yyyyMMddHHmmss或者yyyyMMddHH格式之一

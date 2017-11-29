@@ -470,6 +470,71 @@ public class JdSdkManagerImpl implements JdSdkManager {
     }
 
     @Override
+    public List<RebateDetail> getCommissionRebateDetails(String queryTime, int page, int pageSize) {
+        List<RebateDetail> list = new ArrayList<>();
+        String json = getQueryCommissionOrdersResult(queryTime, page, pageSize);
+        JSONObject resultObj = JsonUtil.fromJson(json, JSONObject.class);
+        if (null != resultObj && 1 == resultObj.getInt("success") && resultObj.containsKey("data")) {
+            JSONArray data = resultObj.getJSONArray("data");
+            Iterator it = data.iterator();
+
+            while (it.hasNext()) {
+                JSONObject orderObj = (JSONObject) it.next();
+
+                JSONArray skuArray = orderObj.getJSONArray("skus");
+                Iterator skuIterator = skuArray.iterator();
+                while (skuIterator.hasNext()) {
+                    JSONObject skuObj = (JSONObject) skuIterator.next();
+
+                    RebateDetail detail = new RebateDetail();
+                    if (orderObj.containsKey("orderTime")) {
+                        detail.setSubmitDate(new Date(orderObj.getLong("orderTime")));
+                    } else {
+                        //未完成的订单，订单时间完成时间设置为一个超大的时间
+                        detail.setSubmitDate(new Date(3505625155l));
+                    }
+
+                    if (orderObj.containsKey("finishTime")) {
+                        detail.setFinishDate(new Date(orderObj.getLong("finishTime")));
+                    } else {
+                        //未完成的订单，订单时间完成时间设置为一个超大的时间
+                        detail.setFinishDate(new Date(3505625155l));
+                    }
+                    if (orderObj.containsKey("subUnionId")) {
+                        detail.setOpenId(orderObj.getString("subUnionId"));
+                    }
+                    detail.setStatus(orderObj.getInt("balance"));
+                    detail.setOrderStatus(orderObj.getInt("yn"));
+                    detail.setOrderId(orderObj.getLong("orderId"));
+
+                    detail.setProductId(skuObj.getLong("skuId"));
+                    detail.setRebateRatio(skuObj.getDouble("subsidyRate"));
+                    detail.setCommissionRatio(skuObj.getDouble("commissionRate"));
+                    detail.setProductCount(skuObj.getInt("skuNum"));
+                    detail.setProductName(skuObj.getString("skuName"));
+                    detail.setValidCode(skuObj.getInt("validCode"));
+
+                    detail.setPrice(skuObj.getDouble("cosPrice"));
+                    detail.setUnionId("");
+                    if (skuObj.containsKey("subUnionId")) {
+                        detail.setSubUnionId(skuObj.getString("subUnionId"));
+                    } else {
+                        detail.setSubUnionId("");
+                    }
+                    detail.setCommission(skuObj.getDouble("commission"));
+                    detail.setPositionId(orderObj.getString("positionId"));
+                    detail.setPlatformRatio(RebateRuleUtil.PLATFORM_COMMISSION_RATIO * detail.getCommissionRatio());//用户订单明细看到的分成比例为平台抽成比例*联盟返佣比例
+                    detail.setPlatformRatio(new BigDecimal(detail.getPlatformRatio()+"").setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());//精确2位小数
+
+                    list.add(detail);
+                }
+
+            }
+        }
+        return list;
+    }
+
+    @Override
     public List<RebateDetail> getRebateDetails(String queryTime, int page, int pageSize) {
         List<RebateDetail> list = new ArrayList<>();
         String json = getQueryImportOrdersResult(queryTime, page, pageSize);
@@ -701,11 +766,11 @@ public class JdSdkManagerImpl implements JdSdkManager {
             json = response.getGetcodebysubunionidResult();
 
             if(StringUtils.isBlank(json)){
-                LOG.error("[获取推广链接]调用异常!json:{}", json);
+                LOG.error("[获取二合一转码链接]调用异常!json:{}", json);
             }
 
         } catch (Exception e) {
-            LOG.error("[获取推广链接]调用异常!skuIds:{},subUnionId:{},couponUrl:" + couponUrl, skuIds, subUnionId);
+            LOG.error("[获取二合一转码链接]调用异常!skuIds:{},subUnionId:{},couponUrl:" + couponUrl, skuIds, subUnionId);
             throw new RuntimeException("[获取推广链接]调用异常!");
         }
         return json;
@@ -734,10 +799,10 @@ public class JdSdkManagerImpl implements JdSdkManager {
 
             json = response.getGetcodebysubunionidResult();
             if(StringUtils.isBlank(json)){
-                LOG.error("[获取推广链接]调用异常!json:{}", json);
+                LOG.error("[获取自定义推广链接]调用异常!json:{}", json);
             }
         } catch (Exception e) {
-            LOG.error("[获取推广短链接]调用异常!materialIds:{},subUnionId:{}", materialIds, subUnionId);
+            LOG.error("[获取自定义推广链接]调用异常!materialIds:{},subUnionId:{}", materialIds, subUnionId);
         }
         return json;
     }
@@ -765,10 +830,43 @@ public class JdSdkManagerImpl implements JdSdkManager {
 
             json = response.getQueryCouponGoodsResult();
             if(StringUtils.isBlank(json)){
-                LOG.error("[获取推广链接]调用异常!json:{}", json);
+                LOG.error("[获取优惠商品]调用异常!json:{}", json);
             }
         } catch (Exception e) {
             LOG.error("[获取优惠商品]调用异常!page:" + page);
+        }
+        return json;
+    }
+
+    /**
+     * 查询业绩订单
+     * success：接口调用是否成功（1：成功，0：失败）;
+     * msg: 接口调用失败success为0时的信息描述;
+     * hasMore：是否还有数据(true：还有数据 false:已查询完毕，没有数据了);
+     *
+     * @return
+     */
+    private String getQueryCommissionOrdersResult(String queryTime, int page, int pageSize) {
+        String json = "";
+        try {
+
+            JdClient client = new DefaultJdClient(jdConfig.getApiUrl(), jdConfig.getAccessToken(), jdConfig.getAppKey(), jdConfig.getAppSecret());
+
+            UnionServiceQueryCommissionOrdersRequest request=new UnionServiceQueryCommissionOrdersRequest();
+
+            request.setUnionId(jdConfig.getUnionId());
+            request.setTime(queryTime);
+            request.setPageIndex(page);
+            request.setPageSize(pageSize);
+
+            UnionServiceQueryCommissionOrdersResponse response=client.execute(request);
+
+            json = response.getQueryCommissionOrdersResult();
+            if(StringUtils.isBlank(json)){
+                LOG.error("[查询业绩订单]调用异常!json:{}", json);
+            }
+        } catch (Exception e) {
+            LOG.error("[查询业绩订单]调用异常!", e);
         }
         return json;
     }

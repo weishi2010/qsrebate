@@ -329,6 +329,90 @@ public class RebateJobImpl implements RebateJob {
         }
     }
 
+    /**
+     * 更新业绩订单状态
+     */
+    @Override
+    public void updateCommissionOrderStatus() {
+        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+
+        int pageSize = 10;
+        //获取近30天订单进行更新
+        for (int days = 0; days < 30; days++) {
+            int page = 1;
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(new Date());
+            calendar.add(Calendar.DAY_OF_WEEK, -days);
+            String queryTime = format.format(calendar.getTime());
+
+            List<RebateDetail> rebateDetails = jdSdkManager.getCommissionRebateDetails(queryTime, page, pageSize);
+            while (rebateDetails.size() > 0) {
+                LOG.error("[联盟业绩订单状态更新任务]加载[" + queryTime + "]第" + page + "页{}条订单明细记录！", rebateDetails.size());
+                for (RebateDetail rebateDetail : rebateDetails) {
+                    try {
+
+                        if (StringUtils.isNotBlank(rebateDetail.getSubUnionId())) {
+                            //查询用户信息
+                            UserInfo userInfoQuery = new UserInfo();
+                            userInfoQuery.setSubUnionId(rebateDetail.getSubUnionId());
+                            UserInfo userInfo = userInfoDao.findUserInfoBySubUnionId(userInfoQuery);
+                            if (null != userInfo) {
+                                if (EAgent.FIRST_AGENT.getCode() == userInfo.getAgent()) {
+                                    //如果为代理模式一，则根据给上级代理进行分佣
+                                    rebateDetail = addFirstAgentIncomeDetail(rebateDetail);
+                                } else if (EAgent.SECOND_AGENT.getCode() == userInfo.getAgent()) {
+                                    //代理模式二
+                                    rebateDetail = addSecondAgentIncomeDetail(rebateDetail);
+                                }else if (EAgent.ADMIN.getCode() == userInfo.getAgent()) {
+                                    //管理员则不处理
+                                    rebateDetail.setUserCommission(0.0);
+                                    rebateDetail.setPlatformRatio(0.0);
+                                    rebateDetail.setAgentCommission(0.0);
+                                }  else {
+                                    //普通返利用户
+                                    rebateDetail = addGeneralRebateUserIncomeDetail(rebateDetail, userInfo);
+                                }
+                            } else {
+                                rebateDetail.setUserCommission(0.0);
+                            }
+                        } else {
+                            rebateDetail.setUserCommission(0.0);
+                        }
+
+
+                        if (null == rebateDetail.getAgentCommission()) {
+                            rebateDetail.setAgentCommission(0.0);
+                        }
+
+                        //查询是否已存在订单明细
+                        RebateDetailQuery rebateDetailQuery = new RebateDetailQuery();
+                        rebateDetailQuery.setOrderId(rebateDetail.getOrderId());
+                        rebateDetailQuery.setProductId(rebateDetail.getProductId());
+                        RebateDetail existsRebateDetail = rebateDetailDao.queryRebateDetailByOrderId(rebateDetailQuery);
+
+                        if (null == existsRebateDetail) {
+                            List<Product> mediaProducts = jdSdkManager.getMediaProducts(rebateDetail.getProductId().toString());
+                            if (null != mediaProducts && mediaProducts.size() > 0) {
+                                rebateDetail.setImgUrl(mediaProducts.get(0).getImgUrl());
+                            } else {
+                                rebateDetail.setImgUrl("");
+                            }
+                            //插入明细
+                            rebateDetailDao.insert(rebateDetail);
+                        } else {
+                            //更新明细状态
+                            rebateDetailDao.update(rebateDetail);
+                        }
+                    } catch (Exception e) {
+                        LOG.error("subUnionId:{}", rebateDetail.getSubUnionId(), e);
+                    }
+                }
+
+                page++;
+                rebateDetails = jdSdkManager.getCommissionRebateDetails(queryTime, page, pageSize);
+            }
+        }
+    }
 
     @Override
     public void importMediaOrder() {
