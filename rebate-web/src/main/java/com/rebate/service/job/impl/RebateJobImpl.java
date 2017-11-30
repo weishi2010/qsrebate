@@ -338,7 +338,7 @@ public class RebateJobImpl implements RebateJob {
 
         int pageSize = 10;
         //获取近30天订单进行更新
-        for (int days = 0; days < 30; days++) {
+        for (int days = 0; days < 50; days++) {
             int page = 1;
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(new Date());
@@ -357,6 +357,9 @@ public class RebateJobImpl implements RebateJob {
                             userInfoQuery.setSubUnionId(rebateDetail.getSubUnionId());
                             UserInfo userInfo = userInfoDao.findUserInfoBySubUnionId(userInfoQuery);
                             if (null != userInfo) {
+
+                                rebateDetail.setOpenId(userInfo.getOpenId());
+
                                 if (EAgent.FIRST_AGENT.getCode() == userInfo.getAgent()) {
                                     //如果为代理模式一，则根据给上级代理进行分佣
                                     rebateDetail = addFirstAgentIncomeDetail(rebateDetail);
@@ -375,6 +378,7 @@ public class RebateJobImpl implements RebateJob {
                             } else {
                                 rebateDetail.setUserCommission(0.0);
                             }
+
                         } else {
                             rebateDetail.setUserCommission(0.0);
                         }
@@ -439,6 +443,7 @@ public class RebateJobImpl implements RebateJob {
                             userInfoQuery.setSubUnionId(rebateDetail.getSubUnionId());
                             UserInfo userInfo = userInfoDao.findUserInfoBySubUnionId(userInfoQuery);
                             if (null != userInfo) {
+                                rebateDetail.setOpenId(userInfo.getOpenId());
                                 if (EAgent.FIRST_AGENT.getCode() == userInfo.getAgent()) {
                                     //如果为代理模式一，则根据给上级代理进行分佣
                                     rebateDetail = addFirstAgentIncomeDetail(rebateDetail);
@@ -454,9 +459,12 @@ public class RebateJobImpl implements RebateJob {
                                     //普通返利用户
                                     rebateDetail = addGeneralRebateUserIncomeDetail(rebateDetail, userInfo);
                                 }
+
                             } else {
                                 rebateDetail.setUserCommission(0.0);
                             }
+
+
                         } else {
                             rebateDetail.setUserCommission(0.0);
                         }
@@ -640,7 +648,7 @@ public class RebateJobImpl implements RebateJob {
      * @param income
      */
     private void addIncomeDetail(RebateDetail rebateDetail, int type, String openId, Double income) {
-        Long referenceId = rebateDetail.getId();
+        Long referenceId = rebateDetail.getOrderId();
         if (StringUtils.isNotBlank(rebateDetail.getSubUnionId()) && ERebateDetailStatus.SETTLEMENT.getCode() == rebateDetail.getStatus() && EOrderValidCode.VALID.getCode() == rebateDetail.getValidCode()) {
             IncomeDetailQuery incomeDetailQuery = new IncomeDetailQuery();
             incomeDetailQuery.setOpenId(openId);

@@ -35,7 +35,25 @@
 			</bean>
 		</property>
 		<property name="cronExpression">
-			<value>0 0/2 * * * ?</value>
+			<value>0 0/5 * * * ?</value>
+		</property>
+	</bean>
+
+
+	<bean id="synCommissionOrderStatusJobTimer" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="concurrent" value="false"></property>
+				<property name="targetObject">
+					<ref bean="rebateJob" />
+				</property>
+				<property name="targetMethod">
+					<value>updateCommissionOrderStatus</value>
+				</property>
+			</bean>
+		</property>
+		<property name="cronExpression">
+			<value>0 0 0/1 * * ?</value>
 		</property>
 	</bean>
 	<bean id="freshProductsJobTimer" class="org.springframework.scheduling.quartz.CronTriggerBean">
