@@ -329,7 +329,7 @@ public class WsMessageController extends BaseController {
             if (null != codeType) {
                 //代理用户扫码，带参数
                 if (EQrCodeType.REGIST_FIRST_AGENT_QR_CODE.getCode() == codeType) {
-                    //代理模式1-注册代理用户
+                    //更新用户代理类型
                     userInfoService.updateUserInfoAgent(openId, "", EAgent.FIRST_AGENT.getCode());
 
                     //代理用户关注消息
@@ -337,6 +337,9 @@ public class WsMessageController extends BaseController {
 
                 } else if (EQrCodeType.REGIST_FIRST_AGENT_NEXT_AGENT_QR_CODE.getCode() == codeType) {
                     if(StringUtils.isNotBlank(agentOpenId) && !agentOpenId.equalsIgnoreCase(openId)){
+
+                        //更新用户代理类型
+                        userInfoService.updateUserInfoAgent(openId, "", EAgent.FIRST_AGENT.getCode());
 
                         //查询上级代理用户信息
                         UserInfo parentAgentQuery = new UserInfo();
