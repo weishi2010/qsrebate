@@ -560,12 +560,16 @@ public class RebateJobImpl implements RebateJob {
      * @return
      */
     private RebateDetail addSecondAgentIncomeDetail(RebateDetail rebateDetail) {
+        rebateDetail.setPlatformRatio(jDProperty.getSencondAgentPlatRatio());
+
         //平台抽成佣金
         Double platCommission = RebateRuleUtil.computeCommission(rebateDetail.getCommission(), jDProperty.getSencondAgentPlatRatio());
 
         if (userInfoManager.isWhiteAgent(rebateDetail.getSubUnionId())) {
             //如果为白名单，平台不抽成
             platCommission = 0.0;
+            rebateDetail.setPlatformRatio(0.0);
+
         }
 
         //给返利用户返佣金
@@ -573,7 +577,6 @@ public class RebateJobImpl implements RebateJob {
         addIncomeDetail(rebateDetail, EIncomeType.SECOND_ORDER_REBATE.getCode(), rebateDetail.getOpenId(), userCommission);
 
 
-        rebateDetail.setPlatformRatio(jDProperty.getSencondAgentPlatRatio());
         rebateDetail.setUserCommission(userCommission);
         rebateDetail.setAgentCommission(0.0);
 
