@@ -102,6 +102,14 @@ public interface JdSdkManager {
     String getSalesActivityPromotinUrl(String salesUrl, String subUnionId);
 
     /**
+     * 获取业绩订单明细
+     * @param queryTime
+     * @param page
+     * @param pageSize
+     * @return
+     */
+    List<RebateDetail> getCommissionRebateDetails(String queryTime, int page, int pageSize);
+    /**
      * 查询返佣明细
      *
      * @param queryTime
