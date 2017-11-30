@@ -295,7 +295,7 @@ public class WsMessageController extends BaseController {
                         UserInfo parentUserInfo = userInfoDao.findLoginUserInfo(parentAgentQuery);
 
                         //添加代理关系
-                        userInfoService.addSecondAgent(userInfo.getSubUnionId(),parentUserInfo.getSubUnionId(),commissionRatio);
+                        userInfoService.addSecondAgent(parentUserInfo.getSubUnionId(),userInfo.getSubUnionId(),commissionRatio);
                     }
                     //代理用户关注消息
                     eventXml = agentTextPushXml(inputMsg.getFromUserName(), inputMsg.getToUserName(), inputMsg.getMsgType(), inputMsg.getContent(), userInfo.getSubUnionId());
