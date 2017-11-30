@@ -588,6 +588,7 @@ public class RebateJobImpl implements RebateJob {
      */
     private RebateDetail addFirstAgentIncomeDetail(RebateDetail rebateDetail) {
         Double resultCommission = null;
+        rebateDetail.setPlatformRatio(jDProperty.getFirstAgentPlatRatio());
 
         //根据子联盟id查询代理关系
         AgentRelationQuery agentRelationQuery = new AgentRelationQuery();
@@ -600,6 +601,7 @@ public class RebateJobImpl implements RebateJob {
         if (userInfoManager.isWhiteAgent(rebateDetail.getSubUnionId())) {
             //如果为白名单，平台不抽成
             platCommission = 0.0;
+            rebateDetail.setPlatformRatio(0.0);
         }
 
         Double commission = new BigDecimal(rebateDetail.getCommission() + "").subtract(new BigDecimal(platCommission + "")).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
@@ -607,14 +609,14 @@ public class RebateJobImpl implements RebateJob {
         //如果当前用户为二级代理，则给一级代理进行分佣，所分佣金为平台抽成后的
         if (null != agentRelation && StringUtils.isNotBlank(agentRelation.getParentAgentSubUnionId())) {
             //二级代理用户根据比例获取佣金
-            agentCommission = commission * agentRelation.getCommissionRatio();
-            agentCommission = new BigDecimal(agentCommission + "").setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();//精确2位小数
+            Double userCommission = commission * agentRelation.getCommissionRatio();
+            userCommission = new BigDecimal(userCommission + "").setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();//精确2位小数
 
             //给上一级代理即一级代理进行分佣
-            Double parentAgentCommission = new BigDecimal(commission + "").subtract(new BigDecimal(agentCommission + "")).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+            Double parentAgentCommission = new BigDecimal(commission + "").subtract(new BigDecimal(userCommission + "")).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
 
             //代理用户,根据比例获取佣金
-            addIncomeDetail(rebateDetail, EIncomeType.FIRST_ORDER_REBATE.getCode(), rebateDetail.getOpenId(), agentCommission);
+            addIncomeDetail(rebateDetail, EIncomeType.FIRST_ORDER_REBATE.getCode(), rebateDetail.getOpenId(), userCommission);
 
             //给上级代理进行分佣
             String parentAgentOpenId = "";
@@ -625,7 +627,8 @@ public class RebateJobImpl implements RebateJob {
                 parentAgentOpenId = parentAgentUserInfo.getSubUnionId();
                 addIncomeDetail(rebateDetail, EIncomeType.FIRST_AGENT_REBATE.getCode(), parentAgentOpenId, parentAgentCommission);
             }
-            resultCommission = agentCommission;
+            resultCommission = userCommission;
+            agentCommission = parentAgentCommission;
         } else {
             //没有上级代理，则直接返佣
             addIncomeDetail(rebateDetail, EIncomeType.FIRST_ORDER_REBATE.getCode(), rebateDetail.getOpenId(), commission);
@@ -633,7 +636,7 @@ public class RebateJobImpl implements RebateJob {
 
         }
 
-        rebateDetail.setPlatformRatio(jDProperty.getFirstAgentPlatRatio());
+
         rebateDetail.setUserCommission(resultCommission);
         rebateDetail.setAgentCommission(agentCommission);
         return rebateDetail;

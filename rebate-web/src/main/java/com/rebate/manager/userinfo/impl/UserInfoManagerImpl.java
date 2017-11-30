@@ -71,7 +71,7 @@ public class UserInfoManagerImpl implements UserInfoManager {
             whiteUserInfo.setType(EWhiteType.WHITE_AGENT.getCode());
             whiteUserInfo.setSubUnionId(subUnionId);
             WhiteUserInfo existsWhiteUserInfo = whiteUserInfoDao.findBySubUnionId(whiteUserInfo);
-            if (null == existsWhiteUserInfo) {
+            if (null != existsWhiteUserInfo) {
                 ret = true;
             }
 
