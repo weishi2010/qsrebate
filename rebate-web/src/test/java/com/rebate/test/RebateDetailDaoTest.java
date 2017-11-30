@@ -4,9 +4,15 @@ package com.rebate.test;
 import com.rebate.common.util.JsonUtil;
 import com.rebate.dao.RebateDetailDao;
 import com.rebate.domain.OrderSummary;
+import com.rebate.domain.Product;
 import com.rebate.domain.RebateDetail;
+import com.rebate.domain.UserInfo;
+import com.rebate.domain.en.EAgent;
+import com.rebate.domain.en.EOrderStatus;
+import com.rebate.domain.en.ERebateDetailStatus;
 import com.rebate.domain.query.RebateDetailQuery;
 import com.rebate.manager.jd.JdSdkManager;
+import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -15,6 +21,7 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @ContextConfiguration(locations = {"/spring-config.xml"})
@@ -32,13 +39,55 @@ public class RebateDetailDaoTest extends AbstractJUnit4SpringContextTests {
 
     @Test
     public void testGetCommissionRebateDetails() {
-        String queryTime = "20171112";//yyyyMMddHHmm,yyyyMMddHHmmss或者yyyyMMddHH格式之一
+
+        String queryTime = "20171017";//yyyyMMddHHmm,yyyyMMddHHmmss或者yyyyMMddHH格式之一
         int page = 1;
         int pageSize = 10;
+        int count1=0;
+        int count2=0;
         List<RebateDetail> list1 = jdSdkManager.getCommissionRebateDetails(queryTime, page, pageSize);
+        for(RebateDetail rebateDetail:list1){
+            if(rebateDetail.getStatus()== ERebateDetailStatus.SETTLEMENT.getCode()){
+                count1++;
+            }
+        }
         List<RebateDetail> list2 = jdSdkManager.getRebateDetails(queryTime, page, pageSize);
-        System.out.println(list1.size()+"-------"+list2.size());
+        for(RebateDetail rebateDetail:list2){
+            if(rebateDetail.getStatus()== ERebateDetailStatus.SETTLEMENT.getCode()){
+                count2++;
+            }
+        }
+        System.out.println(count1+"-------"+count2);
 
+    }
+
+    @Test
+    public void testLoadAllRebateDetails(){
+        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+
+        int pageSize = 10;
+        //获取近30天订单进行更新
+        for (int days = 0; days < 50; days++) {
+            int count1 = 0;
+            int page = 1;
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(new Date());
+            calendar.add(Calendar.DAY_OF_WEEK, -days);
+            String queryTime = format.format(calendar.getTime());
+
+            List<RebateDetail> rebateDetails = jdSdkManager.getCommissionRebateDetails(queryTime, page, pageSize);
+            while (rebateDetails.size() > 0) {
+                for (RebateDetail rebateDetail : rebateDetails) {
+                    if(rebateDetail.getStatus()== ERebateDetailStatus.SETTLEMENT.getCode()){
+                        count1++;
+                    }
+                }
+
+                page++;
+                rebateDetails = jdSdkManager.getCommissionRebateDetails(queryTime, page, pageSize);
+            }
+            System.out.println(queryTime+"===="+count1);
+        }
     }
 
 

@@ -1,5 +1,6 @@
 package com.rebate.service.userinfo.impl;
 
+import com.google.common.base.Joiner;
 import com.jd.data.redis.RedisUtils;
 import com.rebate.common.cache.RedisKey;
 import com.rebate.common.data.seq.SequenceUtil;
@@ -32,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service("userInfoService")
@@ -342,10 +344,14 @@ public class UserInfoServiceImpl implements UserInfoService {
         //计算收入、支出
         IncomeDetailQuery incomeDetailQuery = new IncomeDetailQuery();
         incomeDetailQuery.setOpenId(openId);
-        incomeDetailQuery.setTypeList(EIncomeType.REGIST.getCode() + ","
-                + EIncomeType.FIRST_ORDER_REBATE.getCode() + "," + EIncomeType.FIRST_AGENT_REBATE.getCode()
-                + EIncomeType.SECOND_ORDER_REBATE.getCode() + "," + EIncomeType.SECOND_AGENT_REBATE.getCode()
-                + EIncomeType.GENERAL_ORDER_REBATE.getCode());
+        List<Integer> codes = new ArrayList<>();
+        codes.add(EIncomeType.REGIST.getCode());
+        codes.add(EIncomeType.FIRST_ORDER_REBATE.getCode());
+        codes.add(EIncomeType.FIRST_AGENT_REBATE.getCode());
+        codes.add(EIncomeType.SECOND_AGENT_REBATE.getCode());
+        codes.add(EIncomeType.SECOND_ORDER_REBATE.getCode());
+        codes.add(EIncomeType.GENERAL_ORDER_REBATE.getCode());
+        incomeDetailQuery.setTypeList(Joiner.on(",").join(codes));
         Double income = incomeDetailDao.findIncomeStatistisByType(incomeDetailQuery);
         if (null == income) {
             income = 0.0;
