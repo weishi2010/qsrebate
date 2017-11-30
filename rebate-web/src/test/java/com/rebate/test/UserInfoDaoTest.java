@@ -7,10 +7,13 @@ import com.rebate.common.util.HttpClientUtil;
 import com.rebate.common.util.JsonUtil;
 import com.rebate.dao.CommentDao;
 import com.rebate.dao.UserInfoDao;
+import com.rebate.dao.WhiteUserInfoDao;
 import com.rebate.domain.Comment;
 import com.rebate.domain.UserInfo;
 import com.rebate.domain.en.ESequence;
 import com.rebate.domain.en.ESubUnionIdPrefix;
+import com.rebate.domain.en.EWhiteType;
+import com.rebate.domain.whitelist.WhiteUserInfo;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -30,6 +33,9 @@ public class UserInfoDaoTest extends AbstractJUnit4SpringContextTests {
     @Autowired
     private UserInfoDao userInfoDao;
 
+    @Autowired
+    private WhiteUserInfoDao whiteUserInfoDao;
+
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     @Qualifier("sequenceUtil")
@@ -46,21 +52,43 @@ public class UserInfoDaoTest extends AbstractJUnit4SpringContextTests {
         userInfo.setEmail("weishi@163.com");
         userInfo.setWxImage("http://11");
         //生成子联盟ID
-        String subUnionId = ESubUnionIdPrefix.getSubUnionId(ESubUnionIdPrefix.JD.getCode(),sequenceUtil.get(ESequence.SUB_UNION_ID.getSequenceName()));
+        String subUnionId = ESubUnionIdPrefix.getSubUnionId(ESubUnionIdPrefix.JD.getCode(), sequenceUtil.get(ESequence.SUB_UNION_ID.getSequenceName()));
         userInfo.setSubUnionId(subUnionId);
         userInfo.setRecommendAccount("weishi2010");
         UserInfo existsUserInfo = userInfoDao.findLoginUserInfo(userInfo);
         if (null == existsUserInfo) {
             userInfoDao.insert(userInfo);
-        }else{
-            System.out.println("existsUserInfo:"+JsonUtil.toJson(existsUserInfo));
+        } else {
+            System.out.println("existsUserInfo:" + JsonUtil.toJson(existsUserInfo));
         }
     }
 
+    @Test
+    public void insertWhiteUser(){
+        WhiteUserInfo whiteUserInfo = new WhiteUserInfo();
+        whiteUserInfo.setStatus(0);
+        whiteUserInfo.setType(EWhiteType.WHITE_AGENT.getCode());
+        whiteUserInfo.setSubUnionId("111");
+        WhiteUserInfo existsWhiteUserInfo = whiteUserInfoDao.findBySubUnionId(whiteUserInfo);
+        if (null == existsWhiteUserInfo) {
+            whiteUserInfoDao.insert(whiteUserInfo);
+        } else {
+            System.out.println("existsUserInfo:" + JsonUtil.toJson(existsWhiteUserInfo));
+        }
+    }
 
-    public static void main(String[] args){
-    String userInfoJson = "{\"id\":3,\"openId\":\"oIAUmv8x60aC5B7FrxVy8Z9-imyY\",\"wxImage\":\"http://wx.qlogo.cn/mmopen/vi_32/DYAIOgq83eqpJdBmwaEgG5QfqPAyxvUBtEtPmeoIP9Zmmxkic8EJvKUXj9FjUAoMwnvb0KySL7NMPJXc6Kic4lOQ/0\",\"phone\":\"\",\"nickName\":\"wsh\",\"email\":\"\",\"status\":0,\"subUnionId\":\"JD100000251\",\"recommendAccount\":\"\",\"created\":\"2017-09-23 16:26:57\",\"modified\":\"2017-09-23 16:26:57\"}";
-    UserInfo userInfo = JsonUtil.fromJson(userInfoJson,UserInfo.class);
-    System.out.println(userInfo.getOpenId());
+    @Test
+    public void testDeleteBySubUionId() {
+        WhiteUserInfo whiteUserInfo = new WhiteUserInfo();
+        whiteUserInfo.setSubUnionId("111");
+        whiteUserInfo.setType(EWhiteType.WHITE_AGENT.getCode());
+        whiteUserInfoDao.deleteBySubUnionId(whiteUserInfo);
+    }
+
+
+    public static void main(String[] args) {
+        String userInfoJson = "{\"id\":3,\"openId\":\"oIAUmv8x60aC5B7FrxVy8Z9-imyY\",\"wxImage\":\"http://wx.qlogo.cn/mmopen/vi_32/DYAIOgq83eqpJdBmwaEgG5QfqPAyxvUBtEtPmeoIP9Zmmxkic8EJvKUXj9FjUAoMwnvb0KySL7NMPJXc6Kic4lOQ/0\",\"phone\":\"\",\"nickName\":\"wsh\",\"email\":\"\",\"status\":0,\"subUnionId\":\"JD100000251\",\"recommendAccount\":\"\",\"created\":\"2017-09-23 16:26:57\",\"modified\":\"2017-09-23 16:26:57\"}";
+        UserInfo userInfo = JsonUtil.fromJson(userInfoJson, UserInfo.class);
+        System.out.println(userInfo.getOpenId());
     }
 }
