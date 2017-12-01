@@ -32,7 +32,6 @@ public interface UserInfoService {
 
     /**
      * 代理模式一(多级代理)：更新二级代理比例
-     * @param agentUserByParentId
      * @param id
      * @param commissionRatio
      */
@@ -84,6 +83,13 @@ public interface UserInfoService {
      * @return
      */
     Commission getUserCommission(String openId);
+
+    /**
+     * 获取用户提现金额
+     * @param openId
+     * @return
+     */
+    Double getUserExtractCommission(String openId);
 
     /**
      * 按时间查询推荐过来的粉丝用户

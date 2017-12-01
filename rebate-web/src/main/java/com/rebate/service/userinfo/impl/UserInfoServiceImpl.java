@@ -289,6 +289,21 @@ public class UserInfoServiceImpl implements UserInfoService {
         return commission;
     }
 
+
+    @Override
+    public Double getUserExtractCommission(String openId) {
+        IncomeDetailQuery incomeDetailQuery = new IncomeDetailQuery();
+        incomeDetailQuery.setOpenId(openId);
+        incomeDetailQuery.setTypeList(EIncomeType.EXTRACT.getCode() + "");
+        Double payment = incomeDetailDao.findIncomeStatistisByType(incomeDetailQuery);
+        if(null!=payment){
+            payment = new BigDecimal(payment+"").setScale(1, BigDecimal.ROUND_HALF_UP).doubleValue();//保留一位小数
+        }else{
+            payment = 0.0;
+        }
+        return payment;
+    }
+
     @Override
     public int findRecommendUserCount(RecommendUserInfoQuery recommendUserInfoQuery) {
         return recommendUserInfoDao.findRecommendUserCount(recommendUserInfoQuery);

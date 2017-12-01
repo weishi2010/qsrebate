@@ -9,7 +9,7 @@
         <img src="$!{userInfo.wxImage}" alt="">
     </div>
     <div class="getMoney-record mui-flex justify-between">
-        <span>您共提现$!{commission.totalCommission}元。</span>
+        <span>您共提现$!{extractCommission}元。</span>
         <a href="/personal/extractDetail">提现记录&gt;</a>
     </div>
 </div>
