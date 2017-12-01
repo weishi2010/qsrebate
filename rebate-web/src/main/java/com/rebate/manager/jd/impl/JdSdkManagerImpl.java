@@ -174,18 +174,20 @@ public class JdSdkManagerImpl implements JdSdkManager {
             //如果为白名单，平台不抽成
             platCommission = 0.0;
         }
-
-        Double subCommission = new BigDecimal(commission + "").subtract(new BigDecimal(platCommission + "")).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-
         //如果当前用户为二级代理，则给一级代理进行分佣，所分佣金为平台抽成后的
         if (null != agentRelation && StringUtils.isNotBlank(agentRelation.getParentAgentSubUnionId())) {
+            if(userInfoManager.isWhiteAgent(agentRelation.getParentAgentSubUnionId())){
+                //如果为白名单，平台不抽成
+                platCommission = 0.0;
+            }
+
+            Double subCommission = new BigDecimal(commission + "").subtract(new BigDecimal(platCommission + "")).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
             //二级代理用户根据比例获取佣金
             Double agentCommission = subCommission * agentRelation.getCommissionRatio();
             agentCommission = new BigDecimal(agentCommission+"").setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();//精确2位小数
             resultCommission = agentCommission;
         } else {
-            resultCommission = subCommission;
-
+            resultCommission = new BigDecimal(commission + "").subtract(new BigDecimal(platCommission + "")).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
         }
         LOG.error("computeFirstAgentCommission,commission:"+resultCommission+",platCommission:"+platCommission);
 

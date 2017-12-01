@@ -600,17 +600,21 @@ public class RebateJobImpl implements RebateJob {
 
         //平台抽成佣金
         Double platCommission = RebateRuleUtil.computeCommission(rebateDetail.getCommission(), jDProperty.getFirstAgentPlatRatio());
-
         if (userInfoManager.isWhiteAgent(rebateDetail.getSubUnionId())) {
             //如果为白名单，平台不抽成
             platCommission = 0.0;
             rebateDetail.setPlatformRatio(0.0);
         }
-
-        Double commission = new BigDecimal(rebateDetail.getCommission() + "").subtract(new BigDecimal(platCommission + "")).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
         Double agentCommission = 0.0;
         //如果当前用户为二级代理，则给一级代理进行分佣，所分佣金为平台抽成后的
         if (null != agentRelation && StringUtils.isNotBlank(agentRelation.getParentAgentSubUnionId())) {
+            if (userInfoManager.isWhiteAgent(agentRelation.getParentAgentSubUnionId())) {
+                //如果为白名单，平台不抽成
+                platCommission = 0.0;
+                rebateDetail.setPlatformRatio(0.0);
+            }
+            Double commission = new BigDecimal(rebateDetail.getCommission() + "").subtract(new BigDecimal(platCommission + "")).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+
             //二级代理用户根据比例获取佣金
             Double userCommission = commission * agentRelation.getCommissionRatio();
             userCommission = new BigDecimal(userCommission + "").setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();//精确2位小数
@@ -633,6 +637,7 @@ public class RebateJobImpl implements RebateJob {
             resultCommission = userCommission;
             agentCommission = parentAgentCommission;
         } else {
+            Double commission = new BigDecimal(rebateDetail.getCommission() + "").subtract(new BigDecimal(platCommission + "")).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
             //没有上级代理，则直接返佣
             addIncomeDetail(rebateDetail, EIncomeType.FIRST_ORDER_REBATE.getCode(), rebateDetail.getOpenId(), commission);
             resultCommission = commission;
