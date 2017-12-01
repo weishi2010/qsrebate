@@ -33,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -363,7 +364,9 @@ public class UserInfoServiceImpl implements UserInfoService {
             payment = 0.0;
         }
 
-        Double totalCommission = income - payment;//收入减少余额
+        Double totalCommission = income - payment;//收入减支出=余额
+        totalCommission = new BigDecimal(totalCommission+"").setScale(1, BigDecimal.ROUND_HALF_UP).doubleValue();//保留一位小数
+
         //更新用户提现余额
         Commission commission = new Commission();
         commission.setOpenId(openId);
