@@ -141,10 +141,9 @@ public class AdminController extends BaseController {
 
         //导入优惠券商品
         try {
-            long extSortWeight = 0;
 
             //导入优惠券商品，
-            productService.importCouponProducts(couponMapList,EProudctCouponType.COUPON.getCode(),extSortWeight);
+            productService.importCouponProducts(couponMapList,EProudctCouponType.COUPON.getCode());
             map.put("success", success);
         } catch (Exception e) {
             map.put("success", false);
@@ -154,7 +153,7 @@ public class AdminController extends BaseController {
     }
 
     @RequestMapping({"", "/", "/importConvertCouponProduct.json"})
-    public ResponseEntity<?> importConvertCouponProduct(HttpServletRequest request,Integer importSource, String paramJson) {
+    public ResponseEntity<?> importConvertCouponProduct(HttpServletRequest request, String paramJson) {
 
         List<ProductCoupon> couponMapList = null;
         Map<String, Object> map = new HashMap<String, Object>();
@@ -168,12 +167,9 @@ public class AdminController extends BaseController {
             map.put("msg", "param error!");
         }
 
-
         //导入优惠券商品
         try {
-            long extSortWeight = EProudctImportSource.getExtSortWeight(importSource);
-
-            productService.importCouponProducts(couponMapList,EProudctCouponType.CONVERT_COUPON.getCode(),extSortWeight);
+            productService.importCouponProducts(couponMapList,EProudctCouponType.CONVERT_COUPON.getCode());
             map.put("success", success);
         } catch (Exception e) {
             map.put("success", false);
@@ -183,7 +179,7 @@ public class AdminController extends BaseController {
     }
 
     @RequestMapping({"", "/", "/updateProductExtSortWeight.json"})
-    public ResponseEntity<?> updateProductExtSortWeight(HttpServletRequest request,Integer importSource, String paramJson) {
+    public ResponseEntity<?> updateProductExtSortWeight(HttpServletRequest request, String paramJson) {
 
         List<Product> productList = null;
         Map<String, Object> map = new HashMap<String, Object>();
@@ -200,7 +196,7 @@ public class AdminController extends BaseController {
 
         try {
             //更新商品扩展排序
-            productService.updateProductExtSortWeight(productList,importSource);
+            productService.updateProductExtSortWeight(productList);
             map.put("success", success);
         } catch (Exception e) {
             map.put("success", false);

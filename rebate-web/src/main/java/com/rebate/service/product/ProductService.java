@@ -31,7 +31,7 @@ public interface ProductService {
      * @param couponType 优惠券类型
      * @param extSortWeight 扩展排序值
      */
-    void importCouponProducts(List<ProductCoupon> couponMapList,Integer couponType,Long extSortWeight);
+    void importCouponProducts(List<ProductCoupon> couponMapList,Integer couponType);
 
     /**
      * 查询有效分类
@@ -91,8 +91,7 @@ public interface ProductService {
     /**
      * 更新商品扩展排序字段
      * @param products
-     * @param importSource
      */
-    void updateProductExtSortWeight(List<Product> products,Integer importSource);
+    void updateProductExtSortWeight(List<Product> products);
 
 }

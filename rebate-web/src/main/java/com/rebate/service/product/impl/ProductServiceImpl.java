@@ -102,7 +102,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void importCouponProducts(List<ProductCoupon> couponMapList,Integer couponType,Long extSortWeight) {
+    public void importCouponProducts(List<ProductCoupon> couponMapList,Integer couponType) {
         if (couponMapList.size() == 0) {
             return;
         }
@@ -125,7 +125,13 @@ public class ProductServiceImpl implements ProductService {
             ProductCoupon productCoupon = productToCoupon(product);
 
             if (null != couponInfo) {
-
+                if(null!=couponInfo.getSourcePlatform()){
+                    //从导入的优惠券数据中获取来源
+                    product.setSourcePlatform(couponInfo.getSourcePlatform());
+                }else{
+                    //没有则默认为JD联盟商品
+                    product.setSourcePlatform(EProductSource.JD.getCode());
+                }
 
                 //如果传入的优惠券限额和面额不为空
                 if (null != couponInfo.getDiscount() && null != couponInfo.getQuota()) {
@@ -177,6 +183,7 @@ public class ProductServiceImpl implements ProductService {
                 product.setCouponType(couponType);
                 product.setCouponPrice(productCoupon.getCouponPrice());
                 product.setSortWeight(0);
+                long extSortWeight = EProductSource.getExtSortWeight(product.getSourcePlatform());
                 product.setExtSortWeight(extSortWeight);
                 //计算优惠券商品返利规则
                 product.setIsRebate(RebateRuleUtil.couponProductRebateRule(product.getCommissionWl()));
@@ -414,13 +421,13 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void updateProductExtSortWeight(List<Product> products, Integer importSource) {
+    public void updateProductExtSortWeight(List<Product> products) {
         if (null != products) {
             for (Product product : products) {
                 Product productUpdate = new Product();
                 productUpdate.setProductId(product.getProductId());
                 //基于之前排序值继续排序，格式：默认排序值+增量值
-                long extSortWeight = EProudctImportSource.getExtSortWeight(importSource) + sequenceUtil.get(ESequence.PRODUCT_EXT_SORTWEIGHT.getSequenceName()) + product.getExtSortWeight();
+                long extSortWeight = EProductSource.getExtSortWeight(product.getSourcePlatform()) + sequenceUtil.get(ESequence.PRODUCT_EXT_SORTWEIGHT.getSequenceName()) + product.getExtSortWeight();
                 productUpdate.setExtSortWeight(extSortWeight);
                 productDao.update(productUpdate);
             }
@@ -442,7 +449,6 @@ public class ProductServiceImpl implements ProductService {
         coupon.setEndDate(product.getEndDate());
         coupon.setCouponTab(0);
         coupon.setCouponNote("");
-        coupon.setSourcePlatform(EProductSource.JD.getCode());
         coupon.setYn(0);
         coupon.setNum(0);
         coupon.setRemainNum(0);
