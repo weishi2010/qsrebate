@@ -195,6 +195,7 @@ public class AdminController extends BaseController {
 
 
         try {
+            LOG.error("updateProductExtSortWeight=======>paramJson:paramJson"+paramJson);
             //更新商品扩展排序
             productService.updateProductExtSortWeight(productList);
             map.put("success", success);

@@ -380,6 +380,13 @@
             <isNotNull property="thirdCategory" prepend=",">
                 third_category=#thirdCategory#
             </isNotNull>
+            <isNotNull property="sourcePlatform" prepend=",">
+                source_platform=#sourcePlatform#
+            </isNotNull>
+            <isNotNull property="extSortWeight" prepend=",">
+                ext_sort_weight=#extSortWeight#
+            </isNotNull>
+
         </dynamic>
         where product_id=#productId#
     </update>

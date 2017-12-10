@@ -128,9 +128,11 @@ public class ProductServiceImpl implements ProductService {
                 if(null!=couponInfo.getSourcePlatform()){
                     //从导入的优惠券数据中获取来源
                     product.setSourcePlatform(couponInfo.getSourcePlatform());
+                    productCoupon.setSourcePlatform(couponInfo.getSourcePlatform());
                 }else{
                     //没有则默认为JD联盟商品
                     product.setSourcePlatform(EProductSource.JD.getCode());
+                    productCoupon.setSourcePlatform(EProductSource.JD.getCode());
                 }
 
                 //如果传入的优惠券限额和面额不为空
@@ -423,11 +425,12 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void updateProductExtSortWeight(List<Product> products) {
         if (null != products) {
+            long seqSortWeight = sequenceUtil.get(ESequence.PRODUCT_EXT_SORTWEIGHT.getSequenceName());
             for (Product product : products) {
                 Product productUpdate = new Product();
                 productUpdate.setProductId(product.getProductId());
                 //基于之前排序值继续排序，格式：默认排序值+增量值
-                long extSortWeight = EProductSource.getExtSortWeight(product.getSourcePlatform()) + sequenceUtil.get(ESequence.PRODUCT_EXT_SORTWEIGHT.getSequenceName()) + product.getExtSortWeight();
+                long extSortWeight = EProductSource.getExtSortWeight(product.getSourcePlatform()) + seqSortWeight + product.getExtSortWeight();
                 productUpdate.setExtSortWeight(extSortWeight);
                 productDao.update(productUpdate);
             }
