@@ -1,6 +1,7 @@
 package com.rebate.service.product.impl;
 
 import com.google.common.base.Joiner;
+import com.rebate.common.data.seq.SequenceUtil;
 import com.rebate.common.util.JsonUtil;
 import com.rebate.common.util.rebate.RebateRuleUtil;
 import com.rebate.common.web.page.PaginatedArrayList;
@@ -25,10 +26,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service("productService")
 public class ProductServiceImpl implements ProductService {
@@ -36,6 +34,10 @@ public class ProductServiceImpl implements ProductService {
 
     private final static String IMG_SIZE = "s150x150_jfs";
     private final static String DEFAULT_IMG_SIZE = "jfs";
+
+    @Qualifier("sequenceUtil")
+    @Autowired(required = true)
+    private SequenceUtil sequenceUtil;
 
     @Qualifier("productDao")
     @Autowired(required = true)
@@ -100,7 +102,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void importCouponProducts(List<ProductCoupon> couponMapList) {
+    public void importCouponProducts(List<ProductCoupon> couponMapList,Integer couponType,Long extSortWeight) {
         if (couponMapList.size() == 0) {
             return;
         }
@@ -138,9 +140,18 @@ public class ProductServiceImpl implements ProductService {
                 productCoupon.setDiscount(new BigDecimal(productCoupon.getDiscount()+"").setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
                 productCoupon.setQuota(new BigDecimal(productCoupon.getQuota()+"").setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
 
+                if (null != couponInfo.getStartDate()) {
+                    productCoupon.setStartDate(couponInfo.getStartDate());
+                } else {
+                    productCoupon.setStartDate(new Date());
+                }
+                if (null != couponInfo.getEndDate()) {
+                    productCoupon.setEndDate(couponInfo.getEndDate());
+                } else {
+                    productCoupon.setEndDate(new Date());
+                }
 
-                productCoupon.setStartDate(couponInfo.getStartDate());
-                productCoupon.setEndDate(couponInfo.getEndDate());
+
                 productCoupon.setCouponLink(couponInfo.getCouponLink());
                 //原价
                 productCoupon.setOriginalPrice(product.getOriginalPrice());
@@ -163,9 +174,10 @@ public class ProductServiceImpl implements ProductService {
 
 
                 product.setStatus(EProductStatus.PASS.getCode());
-                product.setCouponType(EProudctCouponType.COUPON.getCode());
+                product.setCouponType(couponType);
                 product.setCouponPrice(productCoupon.getCouponPrice());
                 product.setSortWeight(0);
+                product.setExtSortWeight(extSortWeight);
                 //计算优惠券商品返利规则
                 product.setIsRebate(RebateRuleUtil.couponProductRebateRule(product.getCommissionWl()));
 
@@ -399,6 +411,20 @@ public class ProductServiceImpl implements ProductService {
         LOG.error("getPromotionCouponCode===============>skuId:" + skuId + ",couponLink:" + couponLink + ",url:" + url + ",subUnionId:" + subUnionId);
 
         return url;
+    }
+
+    @Override
+    public void updateProductExtSortWeight(List<Product> products, Integer importSource) {
+        if (null != products) {
+            for (Product product : products) {
+                Product productUpdate = new Product();
+                productUpdate.setProductId(product.getProductId());
+                //基于之前排序值继续排序，格式：默认排序值+增量值
+                long extSortWeight = EProudctImportSource.getExtSortWeight(importSource) + sequenceUtil.get(ESequence.PRODUCT_EXT_SORTWEIGHT.getSequenceName()) + product.getExtSortWeight();
+                productUpdate.setExtSortWeight(extSortWeight);
+                productDao.update(productUpdate);
+            }
+        }
     }
 
 //------------------------------------------------------------------------------

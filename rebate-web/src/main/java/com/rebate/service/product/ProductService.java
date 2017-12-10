@@ -28,15 +28,17 @@ public interface ProductService {
     /**
      * 导入优惠券商品
      * @param couponMapList
+     * @param couponType 优惠券类型
+     * @param extSortWeight 扩展排序值
      */
-    void importCouponProducts(List<ProductCoupon> couponMapList);
+    void importCouponProducts(List<ProductCoupon> couponMapList,Integer couponType,Long extSortWeight);
 
     /**
      * 查询有效分类
      * @param recommendCategory
      * @return
      */
-    public List<RecommendCategory> findByRecommendCategories(RecommendCategory recommendCategory);
+    List<RecommendCategory> findByRecommendCategories(RecommendCategory recommendCategory);
     /**
      * 查询列表
      * @param productQuery
@@ -85,5 +87,12 @@ public interface ProductService {
     long batchResetProductSortWeight(ProductQuery productQuery);
 
     String getCouponPromotionUrl(Long skuId,String subUnionId);
+
+    /**
+     * 更新商品扩展排序字段
+     * @param products
+     * @param importSource
+     */
+    void updateProductExtSortWeight(List<Product> products,Integer importSource);
 
 }

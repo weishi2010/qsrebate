@@ -160,11 +160,18 @@ public class Product extends BaseQuery {
     @Setter
     private Integer isRebate;
     /**
-     * 排序权重
+     * 排序权重，第一排序字段
      */
     @Getter
     @Setter
     private Integer sortWeight;
+
+    /**
+     * 扩展排序权重，第二排序字段
+     */
+    @Getter
+    @Setter
+    private Long extSortWeight;
 
     /**
      * PC单价

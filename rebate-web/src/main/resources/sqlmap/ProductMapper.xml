@@ -348,6 +348,9 @@
             <isNotNull property="sortWeight" prepend=",">
                 sort_weight = #sortWeight#
             </isNotNull>
+            <isNotNull property="couponType" prepend=",">
+                coupon_type = #couponType#
+            </isNotNull>
             <isNotNull property="originalPrice" prepend=",">
                 original_price = #originalPrice#
             </isNotNull>

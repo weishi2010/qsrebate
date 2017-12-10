@@ -60,7 +60,8 @@ public class AdminController extends BaseController {
     public static final String VIEW_PREFIX = "/rebate";
 
     private static final Logger LOG = LoggerFactory.getLogger(AdminController.class);
-
+    private static final TypeReference<List<Product>> productReference = new TypeReference<List<Product>>() {
+    };
 
     private static final TypeReference<List<ProductCoupon>> productCouponTypeReference = new TypeReference<List<ProductCoupon>>() {
     };
@@ -140,7 +141,66 @@ public class AdminController extends BaseController {
 
         //导入优惠券商品
         try {
-            productService.importCouponProducts(couponMapList);
+            long extSortWeight = 0;
+
+            //导入优惠券商品，
+            productService.importCouponProducts(couponMapList,EProudctCouponType.COUPON.getCode(),extSortWeight);
+            map.put("success", success);
+        } catch (Exception e) {
+            map.put("success", false);
+            LOG.error("json analysis error!json:" + paramJson, e);
+        }
+        return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
+    }
+
+    @RequestMapping({"", "/", "/importConvertCouponProduct.json"})
+    public ResponseEntity<?> importConvertCouponProduct(HttpServletRequest request,Integer importSource, String paramJson) {
+
+        List<ProductCoupon> couponMapList = null;
+        Map<String, Object> map = new HashMap<String, Object>();
+        boolean success = true;
+
+        try {
+            couponMapList = JsonUtil.fromJson(paramJson, productCouponTypeReference);
+        } catch (Exception e) {
+            LOG.error("paramJson error!", e);
+            success = false;
+            map.put("msg", "param error!");
+        }
+
+
+        //导入优惠券商品
+        try {
+            long extSortWeight = EProudctImportSource.getExtSortWeight(importSource);
+
+            productService.importCouponProducts(couponMapList,EProudctCouponType.CONVERT_COUPON.getCode(),extSortWeight);
+            map.put("success", success);
+        } catch (Exception e) {
+            map.put("success", false);
+            LOG.error("json analysis error!json:" + paramJson, e);
+        }
+        return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
+    }
+
+    @RequestMapping({"", "/", "/updateProductExtSortWeight.json"})
+    public ResponseEntity<?> updateProductExtSortWeight(HttpServletRequest request,Integer importSource, String paramJson) {
+
+        List<Product> productList = null;
+        Map<String, Object> map = new HashMap<String, Object>();
+        boolean success = true;
+
+        try {
+            productList = JsonUtil.fromJson(paramJson, productReference);
+        } catch (Exception e) {
+            LOG.error("paramJson error!", e);
+            success = false;
+            map.put("msg", "param error!");
+        }
+
+
+        try {
+            //更新商品扩展排序
+            productService.updateProductExtSortWeight(productList,importSource);
             map.put("success", success);
         } catch (Exception e) {
             map.put("success", false);

@@ -236,6 +236,7 @@ public class JdSdkManagerImpl implements JdSdkManager {
                     product.setStock(0);
                     product.setStatus(EProductStatus.PASS.getCode());
                     product.setSortWeight(0);
+                    product.setExtSortWeight(0l);
                     product.setFirstCategoryName("");
                     product.setSecondCategoryName("");
                     product.setThirdCategoryName("");
