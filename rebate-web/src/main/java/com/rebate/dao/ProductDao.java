@@ -89,4 +89,11 @@ public interface ProductDao {
      */
     int findDaxueProductsCount(ProductQuery productQuery);
 
+    /**
+     * 获取最大排序值
+     * @param productQuery
+     * @return
+     */
+    long findMaxExtSortWeight(ProductQuery productQuery);
+
 }

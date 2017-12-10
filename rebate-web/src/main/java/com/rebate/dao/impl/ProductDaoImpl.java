@@ -73,4 +73,10 @@ public class ProductDaoImpl extends BaseDao implements ProductDao {
     public int findDaxueProductsCount(ProductQuery productQuery) {
         return (int)queryForObject("Product.findDaxueProductsCount",productQuery);
     }
+
+    @Override
+    public long findMaxExtSortWeight(ProductQuery productQuery) {
+        return (long)queryForObject("Product.findMaxExtSortWeight",productQuery);
+
+    }
 }

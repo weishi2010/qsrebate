@@ -384,7 +384,9 @@
                 source_platform=#sourcePlatform#
             </isNotNull>
             <isNotNull property="extSortWeight" prepend=",">
-                ext_sort_weight=#extSortWeight#
+                <isGreaterThan property="extSortWeight" compareValue="0">
+                    ext_sort_weight = #extSortWeight#
+                </isGreaterThan>
             </isNotNull>
 
         </dynamic>
@@ -439,6 +441,10 @@
         <include refid="condition"></include>
         order by sort_weight desc,ext_sort_weight desc,created desc
         limit #startRow#,#pageSize#
+    </select>
+
+    <select id="findMaxExtSortWeight" parameterClass="ProductQuery" resultClass="long">
+        SELECT ext_sort_weight FROM product ORDER BY ext_sort_weight DESC LIMIT 1
     </select>
 
     <select id="findDaxueProductsCount" parameterClass="ProductQuery" resultClass="int">

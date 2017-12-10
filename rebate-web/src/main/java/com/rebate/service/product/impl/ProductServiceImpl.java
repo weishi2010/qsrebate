@@ -1,6 +1,8 @@
 package com.rebate.service.product.impl;
 
 import com.google.common.base.Joiner;
+import com.jd.data.redis.RedisUtils;
+import com.jd.data.redis.connection.RedisAccessException;
 import com.rebate.common.data.seq.SequenceUtil;
 import com.rebate.common.util.JsonUtil;
 import com.rebate.common.util.rebate.RebateRuleUtil;
@@ -68,6 +70,10 @@ public class ProductServiceImpl implements ProductService {
     @Qualifier("jDProperty")
     @Autowired(required = true)
     private JDProperty jDProperty;
+
+    @Qualifier("redisUtil")
+    @Autowired(required = false)
+    private RedisUtils redisUtil;
 
     @Override
     public void update(Product product) {
@@ -424,13 +430,15 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void updateProductExtSortWeight(List<Product> products) {
-        if (null != products) {
-            long seqSortWeight = sequenceUtil.get(ESequence.PRODUCT_EXT_SORTWEIGHT.getSequenceName());
+        if (null != products && products.size()>0) {
+            int sourcePlatform = products.get(0).getSourcePlatform();
+            long cacheSortWeight = getCacheSortWeight(sourcePlatform,products.size());
+
             for (Product product : products) {
+                //从缓存中获取
                 Product productUpdate = new Product();
                 productUpdate.setProductId(product.getProductId());
-                //基于之前排序值继续排序，格式：默认排序值+增量值
-                long extSortWeight = EProductSource.getExtSortWeight(product.getSourcePlatform()) + seqSortWeight + product.getExtSortWeight();
+                long extSortWeight =cacheSortWeight + product.getExtSortWeight();
                 productUpdate.setExtSortWeight(extSortWeight);
                 productDao.update(productUpdate);
             }
@@ -438,6 +446,21 @@ public class ProductServiceImpl implements ProductService {
     }
 
 //------------------------------------------------------------------------------
+    long getCacheSortWeight(Integer productSource,long incrValue){
+        String key = "max_sort_weight"+productSource;
+        long value = 0l;
+        try {
+            if (null == redisUtil.get(key)) {
+                long defaultSortWeight = EProductSource.getExtSortWeight(productSource);
+                value = redisUtil.incrBy(key, defaultSortWeight);
+            } else {
+                value = redisUtil.incrBy(key,incrValue);
+            }
+        } catch (RedisAccessException e) {
+            throw new RuntimeException(e);
+        }
+        return value;
+    }
 
     /**
      * 商品信息转优惠券信息
