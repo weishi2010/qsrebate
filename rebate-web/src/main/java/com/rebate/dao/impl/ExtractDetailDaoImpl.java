@@ -14,6 +14,11 @@ public class ExtractDetailDaoImpl extends BaseDao implements ExtractDetailDao {
     }
 
     @Override
+    public void updateExtractDetail(ExtractDetail extractDetail) {
+        update("ExtractDetail.updateExtractDetail",extractDetail);
+    }
+
+    @Override
     public int findExtractDetailCount(ExtractDetailQuery extractDetailQuery) {
         return (int)queryForObject("ExtractDetail.findExtractDetailCount",extractDetailQuery);
     }

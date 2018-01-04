@@ -50,6 +50,7 @@
     <script src="/static/js/admin/index.js?v1" ></script>
     <script src="/static/js/admin/product.js?v5" ></script>
     <script src="/static/js/admin/user.js?v6" ></script>
+    <script src="/static/js/admin/extract.js?v1" ></script>
 
     <style>
         .page-list .pagination {float:left;}
@@ -166,6 +167,12 @@
                     <a href="#/user/list">
                         <i class="icon-dashboard"></i>
                         <span class="menu-text"> 用户管理 </span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#/extract/list">
+                        <i class="icon-dashboard"></i>
+                        <span class="menu-text"> 用户提现管理 </span>
                     </a>
                 </li>
             </ul><!-- /.nav-list -->

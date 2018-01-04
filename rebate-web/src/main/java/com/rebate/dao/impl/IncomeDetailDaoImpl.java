@@ -6,6 +6,8 @@ import com.rebate.domain.IncomeDetail;
 import com.rebate.domain.query.ExtractDetailQuery;
 import com.rebate.domain.query.IncomeDetailQuery;
 
+import java.util.List;
+
 /**
  * @author weishi
  * @version 1.0.0
@@ -24,6 +26,16 @@ public class IncomeDetailDaoImpl extends BaseDao implements IncomeDetailDao {
     @Override
     public IncomeDetail findIncomeDetail(IncomeDetailQuery incomeDetailQuery) {
         return (IncomeDetail) queryForObject("IncomeDetail.findIncomeDetail", incomeDetailQuery);
+    }
+
+    @Override
+    public int findIncomeDetailCount(IncomeDetailQuery incomeDetailQuery) {
+        return (int) queryForObject("IncomeDetail.findIncomeDetailCount", incomeDetailQuery);
+    }
+
+    @Override
+    public List<IncomeDetail> findIncomeDetails(IncomeDetailQuery incomeDetailQuery) {
+        return (List<IncomeDetail>) queryForList("IncomeDetail.findIncomeDetails", incomeDetailQuery);
     }
 
     @Override

@@ -49,24 +49,57 @@
         </selectKey>
     </insert>
 
+    <update id="updateExtractDetail" parameterClass="ExtractDetail" >
+        update extract_detail
+        set status=#status#
+        where open_id=#openId# and id=#id#
+    </update>
+
     <!--查询总数-->
     <select id="findExtractDetailCount" parameterClass="ExtractDetailQuery" resultClass="int">
         select
         count(1)
         from extract_detail
-        where open_id=#openId#
-        <![CDATA[  and extract_date>#beginDate# and  extract_date<#endDate# ]]>
+        <dynamic prepend="where">
+            <isNotNull property="openId" prepend="and">
+                open_id=#openId#
+            </isNotNull>
+            <isNotNull property="status" prepend="and">
+                status=#status#
+            </isNotNull>
+            <isNotNull property="beginDate" prepend="and">
+                <![CDATA[ extract_date>#beginDate# ]]>
+            </isNotNull>
+            <isNotNull property="endDate" prepend="and">
+                <![CDATA[ extract_date<#endDate# ]]>
+            </isNotNull>
+        </dynamic>
+
     </select>
     <!--查询列表-->
     <select id="findExtractDetailList" parameterClass="ExtractDetailQuery" resultMap="ExtractDetailResultMap">
         select
         <include refid="fields"/>
         from extract_detail
-        where open_id=#openId#
-        <![CDATA[  and extract_date>#beginDate# and  extract_date<#endDate# ]]>
+        <dynamic prepend="where">
+            <isNotNull property="openId" prepend="and">
+                open_id=#openId#
+            </isNotNull>
+            <isNotNull property="status" prepend="and">
+                status=#status#
+            </isNotNull>
+            <isNotNull property="beginDate" prepend="and">
+                <![CDATA[ extract_date>#beginDate# ]]>
+            </isNotNull>
+            <isNotNull property="endDate" prepend="and">
+                <![CDATA[ extract_date<#endDate# ]]>
+            </isNotNull>
+        </dynamic>
         order by extract_date desc
         limit #startRow#,#pageSize#
     </select>
+
+
 
     <!--用户总提现金额-->
     <select id="findUserTotalExtract" parameterClass="RebateDetailQuery"  resultClass="double">

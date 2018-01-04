@@ -1,5 +1,6 @@
 package com.rebate.domain;
 
+import com.rebate.domain.query.BaseQuery;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,7 +9,7 @@ import java.util.Date;
 /**
  * 收入明细
  */
-public class IncomeDetail {
+public class IncomeDetail extends BaseQuery {
     private Long id;
     /**
      * 微信openId

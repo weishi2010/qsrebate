@@ -102,9 +102,11 @@ public class PersonalController extends BaseController {
     public ResponseEntity<?> getExtractDetails(HttpServletRequest request, int year) {
 
         ExtractDetailQuery extractDetailQuery = initExtractQuery(request, year);
-
         //查询列表
-        PaginatedArrayList<ExtractDetailVo> result = extractDetailService.findExtractDetailList(extractDetailQuery);
+        PaginatedArrayList<ExtractDetailVo> result = null;
+        if (StringUtils.isNotBlank(extractDetailQuery.getOpenId())) {
+            result = extractDetailService.findExtractDetailList(extractDetailQuery);
+        }
 
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("detailList", result);

@@ -4,6 +4,8 @@ import com.rebate.domain.IncomeDetail;
 import com.rebate.domain.query.ExtractDetailQuery;
 import com.rebate.domain.query.IncomeDetailQuery;
 
+import java.util.List;
+
 public interface IncomeDetailDao {
     /**
      * 插入
@@ -18,6 +20,21 @@ public interface IncomeDetailDao {
      * @return
      */
     IncomeDetail findIncomeDetail(IncomeDetailQuery incomeDetailQuery);
+
+
+    /**
+     * 根据条件查询列表
+     * @param incomeDetailQuery
+     * @return
+     */
+    int findIncomeDetailCount(IncomeDetailQuery incomeDetailQuery);
+
+    /**
+     * 根据条件查询列表
+     * @param incomeDetailQuery
+     * @return
+     */
+    List<IncomeDetail> findIncomeDetails(IncomeDetailQuery incomeDetailQuery);
 
     /**
      * 根据类型查询统计

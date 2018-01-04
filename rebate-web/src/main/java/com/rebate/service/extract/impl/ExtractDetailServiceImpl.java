@@ -8,6 +8,7 @@ import com.rebate.dao.IncomeDetailDao;
 import com.rebate.domain.Commission;
 import com.rebate.domain.ExtractDetail;
 import com.rebate.domain.IncomeDetail;
+import com.rebate.domain.UserInfo;
 import com.rebate.domain.en.EExtractCode;
 import com.rebate.domain.en.EIncomeType;
 import com.rebate.domain.query.ExtractDetailQuery;
@@ -84,6 +85,11 @@ public class ExtractDetailServiceImpl implements ExtractDetailService {
     }
 
     @Override
+    public void updateExtractDetail(ExtractDetail extractDetail) {
+        extractDetailDao.updateExtractDetail(extractDetail);
+    }
+
+    @Override
     public PaginatedArrayList<ExtractDetailVo> findExtractDetailList(ExtractDetailQuery extractDetailQuery) {
         PaginatedArrayList<ExtractDetailVo> vos = new PaginatedArrayList<ExtractDetailVo>(extractDetailQuery.getIndex(), extractDetailQuery.getPageSize());
         try {
@@ -93,7 +99,12 @@ public class ExtractDetailServiceImpl implements ExtractDetailService {
                 extractDetailQuery.setStartRow(vos.getStartRow());
                List<ExtractDetail> list =  extractDetailDao.findExtractDetailList(extractDetailQuery);
                for(ExtractDetail detail :list){
-                   vos.add(new ExtractDetailVo(detail));
+                   ExtractDetailVo vo = new ExtractDetailVo(detail);
+                   UserInfo userInfo = userInfoService.getUserInfo(detail.getOpenId());
+                   if (null != userInfo) {
+                       vo.setNickName(userInfo.getNickName());
+                   }
+                   vos.add(vo);
                }
             }
 

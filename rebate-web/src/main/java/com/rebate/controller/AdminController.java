@@ -114,6 +114,11 @@ public class AdminController extends BaseController {
     @Autowired(required = true)
     private RebateDetailService rebateDetailService;
 
+    @Qualifier("extractDetailService")
+    @Autowired(required = true)
+    private ExtractDetailService extractDetailService;
+
+
     @RequestMapping({"", "/", "/importProducts.json"})
     public ResponseEntity<?> importProducts(HttpServletRequest request, String productIds) {
         //导入普通返利商品
@@ -399,6 +404,70 @@ public class AdminController extends BaseController {
         map.put("success",true);
         return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
     }
+
+    /**
+     * 查询提现收入
+     * @param request
+     * @param page
+     * @param pageSize
+     * @param openId
+     * @param status
+     * @return
+     */
+    @RequestMapping({"", "/", "/getExtractDetails.json"})
+    public ResponseEntity<?> getExtractDetails(HttpServletRequest request,Integer page, Integer pageSize,String openId,Integer status) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        ExtractDetailQuery query = new ExtractDetailQuery();
+
+        if(null!=status){
+            query.setStatus(status);
+        }
+
+        if(StringUtils.isNotBlank(openId)){
+            query.setOpenId(openId);
+        }
+
+        if(null==page||page<=0){
+            page = 1;
+        }
+        if(null==pageSize){
+            pageSize = 20;
+        }
+
+        query.setIndex(page);
+        query.setPageSize(pageSize);
+        //查询列表
+        PaginatedArrayList<ExtractDetailVo> result =  extractDetailService.findExtractDetailList(query);
+
+        map.put("extractList", result);
+        map.put("totalItem", result.getTotalItem());
+        map.put("success",true);
+        return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
+    }
+
+    /**
+     * 更新提现记录状态
+     * @param openId
+     * @return
+     */
+    @RequestMapping({"", "/", "/updateExtractDetail.json"})
+    public ResponseEntity<?> updateExtractDetail(String openId,Long id) {
+        Map<String, Object> map = new HashMap<String, Object>();
+
+        if(StringUtils.isNotBlank(openId) && id!=null){
+            ExtractDetail extractDetail = new ExtractDetail();
+            extractDetail.setId(id);
+            extractDetail.setOpenId(openId);
+            extractDetail.setStatus(1);
+            extractDetailService.updateExtractDetail(extractDetail);
+            map.put("success", true);
+        }else{
+            map.put("success", false);
+        }
+
+        return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
+    }
+
 
     /**
      * 添加白名单

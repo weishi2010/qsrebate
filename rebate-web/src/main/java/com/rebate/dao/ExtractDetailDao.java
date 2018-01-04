@@ -16,6 +16,9 @@ public interface ExtractDetailDao {
      */
     long insert(ExtractDetail extractDetail);
 
+    void updateExtractDetail(ExtractDetail extractDetail);
+
+
     /**
      * 根据openId查询总数
      * @param extractDetailQuery

@@ -16,6 +16,12 @@ public interface ExtractDetailService {
     EExtractCode extract(ExtractDetail extractDetail);
 
     /**
+     * 更新
+     * @param extractDetail
+     */
+    void updateExtractDetail(ExtractDetail extractDetail);
+
+    /**
      * 查询列表
      *
      * @param extractDetailQuery

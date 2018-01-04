@@ -11,6 +11,10 @@ import org.springframework.beans.BeanUtils;
 import java.util.Date;
 
 public class ExtractDetailVo extends ExtractDetail {
+    @Getter
+    @Setter
+    private String nickName;
+
     public ExtractDetailVo(ExtractDetail extractDetail) {
         BeanUtils.copyProperties(extractDetail, this);
     }
