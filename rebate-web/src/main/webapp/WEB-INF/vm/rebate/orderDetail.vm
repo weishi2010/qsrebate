@@ -15,10 +15,10 @@
         <ul class="sorts"  id="sorts">
             <li data="0"  #if($tab==1) class="sort selected" #else class="sort" #end>我的订单</li>
             #if($userInfo.agent==1)
-                <li data="1" #if($tab==1) class="sort selected" #else class="sort" #end>下级引入订单</li>
+                <li data="1" #if($tab==1) class="sort selected" #else class="sort" #end>代理引入订单</li>
             #end
             #if($userInfo.agent==2)
-                <li data="2" #if($tab==2) class="sort selected" #else class="sort" #end>下级引入订单</li>
+                <li data="2" #if($tab==2) class="sort selected" #else class="sort" #end>代理引入订单</li>
             #end
 
         </ul>
