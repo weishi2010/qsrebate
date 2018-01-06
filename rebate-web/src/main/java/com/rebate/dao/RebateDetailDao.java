@@ -40,7 +40,7 @@ public interface RebateDetailDao {
      * @param rebateDetailQuery
      * @return
      */
-    int findCountBySubUnionId(RebateDetailQuery rebateDetailQuery);
+    int findCount(RebateDetailQuery rebateDetailQuery);
 
     /**
      * 查询用户总佣金余额
@@ -55,7 +55,7 @@ public interface RebateDetailDao {
      * @param rebateDetailQuery
      * @return
      */
-    List<RebateDetail> findListBySubUnionId(RebateDetailQuery rebateDetailQuery);
+    List<RebateDetail> findList(RebateDetailQuery rebateDetailQuery);
 
     /**
      * 订单统计

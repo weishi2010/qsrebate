@@ -10,6 +10,14 @@ import java.util.Date;
  * 返利明细查询对象
  */
 public class RebateDetailQuery extends RebateDetail {
+
+    /**
+     *  子联盟ID列表
+     */
+    @Getter
+    @Setter
+    private String subUnionIds;
+
     @Getter
     @Setter
     private Date startDate;

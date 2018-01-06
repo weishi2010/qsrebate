@@ -5,6 +5,8 @@ import com.rebate.domain.UserInfo;
 import com.rebate.domain.query.RecommendUserInfoQuery;
 import com.rebate.domain.query.UserInfoQuery;
 
+import java.util.List;
+
 public interface RecommendUserInfoDao {
     /**
      * 插入
@@ -32,4 +34,6 @@ public interface RecommendUserInfoDao {
      * @return
      */
     int findRecommendUserCount(RecommendUserInfoQuery recommendUserInfoQuery);
+
+    List<RecommendUserInfo> findRecommendUserInfos(RecommendUserInfoQuery recommendUserInfoQuery);
 }

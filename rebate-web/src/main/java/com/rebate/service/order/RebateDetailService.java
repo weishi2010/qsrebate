@@ -18,6 +18,20 @@ public interface RebateDetailService {
     PaginatedArrayList<RebateDetailVo> findRebateDetailList(RebateDetailQuery rebateDetailQuery);
 
     /**
+     * 代理模式一：查询下级代理订单明细
+     * @param query
+     * @return
+     */
+    PaginatedArrayList<RebateDetailVo> findFirstAgentSonRebateDetailList(RebateDetailQuery query);
+
+    /**
+     * 代理模式二：查询推广粉丝订单明细
+     * @param query
+     * @return
+     */
+     PaginatedArrayList<RebateDetailVo> findSecondAgentRecommendRebateDetailList(RebateDetailQuery query);
+
+    /**
      * 订单统计
      * @param orderSummary
      * @return

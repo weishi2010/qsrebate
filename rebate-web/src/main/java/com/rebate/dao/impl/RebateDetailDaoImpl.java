@@ -26,8 +26,8 @@ public class RebateDetailDaoImpl extends BaseDao implements RebateDetailDao {
     }
 
     @Override
-    public int findCountBySubUnionId(RebateDetailQuery rebateDetailQuery) {
-        return (int) queryForObject("RebateDetail.findCountBySubUnionId", rebateDetailQuery);
+    public int findCount(RebateDetailQuery rebateDetailQuery) {
+        return (int) queryForObject("RebateDetail.findCount", rebateDetailQuery);
     }
 
     @Override
@@ -36,8 +36,8 @@ public class RebateDetailDaoImpl extends BaseDao implements RebateDetailDao {
     }
 
     @Override
-    public List<RebateDetail> findListBySubUnionId(RebateDetailQuery rebateDetailQuery) {
-        return (List<RebateDetail>) queryForList("RebateDetail.findListBySubUnionId", rebateDetailQuery);
+    public List<RebateDetail> findList(RebateDetailQuery rebateDetailQuery) {
+        return (List<RebateDetail>) queryForList("RebateDetail.findList", rebateDetailQuery);
     }
 
     @Override

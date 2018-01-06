@@ -116,8 +116,8 @@ public class RebateDetailDaoTest extends AbstractJUnit4SpringContextTests {
     @Test
     public void query() {
         RebateDetailQuery query = new RebateDetailQuery();
-        query.setSubUnionId("JD100001251");
-        int count = rebateDetailDao.findCountBySubUnionId(query);
+        query.setSubUnionIds("'JD100001251','JD100001251'");
+        int count = rebateDetailDao.findCount(query);
 
         query.setStartRow(0);
         query.setPageSize(100);
@@ -125,7 +125,7 @@ public class RebateDetailDaoTest extends AbstractJUnit4SpringContextTests {
         cal.add(Calendar.DATE, -100);
         query.setStartDate(cal.getTime());
 
-        List list = rebateDetailDao.findListBySubUnionId(query);
+        List list = rebateDetailDao.findList(query);
         System.out.println("count," + count + ",list" + JsonUtil.toJson(list));
     }
 

@@ -1,12 +1,12 @@
 $(function () {
 
-
+    var Uarry=$("#sorts li");//获取所有的li元素
     $("#sorts li").click(function(){//点击事件
 
         var count=$(this).index();//获取li的下标
-        var days = Uarry.eq(count).data;
-        $("#days").val(days);
-        loadOrderData(days);
+        var tab = Uarry.eq(count).attr("data");
+        $("#tab").val(tab);
+        loadOrderData(1);
     })
 
     //初始化
@@ -14,32 +14,35 @@ $(function () {
 
 
     //首次加载
-    loadOrderData(counter,30);
+    loadOrderData(counter);
     //监听加载更多
     $(window).scroll(function () {
         var totalheight = parseFloat($(window).height()) + parseFloat($(window).scrollTop());
         if ($(document).height() <= totalheight) {
             counter++;
-            var days = $("#days").val();
-            loadOrderData(counter,days);
+            loadOrderData(counter);
         }
     });
 
 });
 
 
-function loadOrderData(page,days) {
-
+function loadOrderData(page) {
+    var tab = $("#tab").val();
+    if(1==page){
+        $('.o-list').html("");
+    }
     $.ajax({
         type: 'GET',
-        url: '/personal/orders.json?days='+days+'&page='+page+"&r="+Math.random(),
+        url: '/personal/orders.json?tab='+tab+'&page='+page+"&r="+Math.random(),
         dataType: 'json',
         success: function (reponse) {
             var list = reponse.detailList;
+            var tab = reponse.tab;
             var sum = list.length;
             var result = '';
             for (var i = 0; i < sum; i++) {
-                result += getTemplate(list[i]);
+                result += getTemplate(list[i],tab);
             }
             $('.o-list').append(result);
         },
@@ -48,7 +51,7 @@ function loadOrderData(page,days) {
         }
     });
 
-    function getTemplate(detail){
+    function getTemplate(detail,tab){
         var statusTemp = "";
         if(1==detail.orderStatus){
             if(1==detail.status){
@@ -84,17 +87,24 @@ function loadOrderData(page,days) {
             "            <div class=\"item cell\">" +
             "                <p>购买金额</p>" +
             "                <span>¥"+detail.price+"</span>" +
-            "            </div>" +
-            "            <div class=\"item cell\">" +
-            "                <p>可返钱</p>" +
-            "                <span>¥"+detail.userCommission+"</span>" +
-            "            </div>" +
-            "        </div>" +
+            "            </div>";
+                if(0==tab) {
+                    htmlTemp+="            <div class=\"item cell\">" +
+                    "                <p>可返钱</p>" +
+                    "                <span>¥" + detail.userCommission + "</span>" +
+                    "            </div>";
+                }
+        htmlTemp+="        </div>" +
             "        <div class=\"ft\">"+
         "            <div class=\"return-m\" style='float: left'>下单时间："+detail.submitDateShow+"</div>" +
-        "            <div class=\"return-m\">" +
-            "                预估返钱：¥<b>"+detail.userCommission+"</b>" +
-            "            </div>" +
+        "            <div class=\"return-m\">";
+            if(0!=tab){
+                htmlTemp+="预估返钱：¥<b>"+detail.agentCommission+"</b>";
+            }else{
+                htmlTemp+="预估返钱：¥<b>"+detail.userCommission+"</b>";
+            }
+
+        htmlTemp+="            </div>" +
             "        </div>" +
             "    </div>";
         return htmlTemp;

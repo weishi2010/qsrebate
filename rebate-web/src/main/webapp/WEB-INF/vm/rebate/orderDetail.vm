@@ -7,15 +7,20 @@
         <a href="javascript:;"><img src="/static/img/ico-arrow-left-01.png" alt=""></a>
     </div>
     <div class="title cell">
-        <span class="text">订单明细</span>
+        <span class="text">我的订单</span>
         <span class="arrow"></span>
     </div>
     <div class="droplist" name="droplist">
-        <input id="days" type="hidden"/>
+        <input id="tab" type="hidden" value="0"/>
         <ul class="sorts"  id="sorts">
-            <li data="30"  #if($days==30) class="sort selected" #else class="sort" #end>30天</li>
-            <li data="90" #if($days==90) class="sort selected" #else class="sort" #end>90天</li>
-            <li data="180" #if($days==180) class="sort selected" #else class="sort" #end>近半年</li>
+            <li data="0"  #if($tab==1) class="sort selected" #else class="sort" #end>我的订单</li>
+            #if($userInfo.agent==1)
+                <li data="1" #if($tab==1) class="sort selected" #else class="sort" #end>下级引入订单</li>
+            #end
+            #if($userInfo.agent==2)
+                <li data="2" #if($tab==2) class="sort selected" #else class="sort" #end>下级引入订单</li>
+            #end
+
         </ul>
     </div>
 </div>
@@ -25,6 +30,6 @@
 </div>
 
     #parse("/common/footer.vm")
-<script type="text/javascript" src="/static/js/order.js?v=16"></script>
+<script type="text/javascript" src="/static/js/order.js?v=20"></script>
 
 </body></html>

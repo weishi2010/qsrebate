@@ -206,6 +206,38 @@
         limit #startRow#,#pageSize#
     </select>
 
+    <select id="findCount" parameterClass="RebateDetailQuery" resultClass="int">
+        select
+        count(1)
+        from rebate_detail
+        <dynamic prepend="where">
+            valid_code=1
+            <isNotNull property="subUnionIds" open="and">
+                sub_union_id IN($subUnionIds$)
+            </isNotNull>
+            <isNotNull property="subUnionId" open="and">
+                sub_union_id =#subUnionId#
+            </isNotNull>
+        </dynamic>
+    </select>
+
+    <select id="findList" parameterClass="RebateDetailQuery" resultMap="RebateDetailResultMap">
+        select
+        <include refid="fields"/>
+        from rebate_detail
+        <dynamic prepend="where">
+            valid_code=1
+            <isNotNull property="subUnionIds" open="and">
+                sub_union_id IN($subUnionIds$)
+            </isNotNull>
+            <isNotNull property="subUnionId" open="and">
+                sub_union_id =#subUnionId#
+            </isNotNull>
+        </dynamic>
+        order by submit_date desc
+        limit #startRow#,#pageSize#
+    </select>
+
     <select id="queryRebateDetailByOrderId" parameterClass="RebateDetailQuery" resultMap="RebateDetailResultMap">
         select
         <include refid="fields"/>

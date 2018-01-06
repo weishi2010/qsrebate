@@ -136,6 +136,13 @@ public class RebateDetailVo extends BaseQuery{
     @Getter
     @Setter
     private Double userCommission;
+
+    /**
+     * 给上线代理返的佣金
+     */
+    @Getter
+    @Setter
+    private Double agentCommission;
     /**
      * 推广位
      */

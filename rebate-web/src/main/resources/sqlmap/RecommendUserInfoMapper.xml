@@ -88,4 +88,20 @@
             </isNotNull>
         </dynamic>
     </select>
+
+    <select id="findRecommendUserInfos" parameterClass="RecommendUserInfoQuery" resultMap="RecommendUserInfoResultMap">
+        select
+        <include refid="fields"/>
+        from recommend_user_info
+        <dynamic prepend="where">
+            <isNotNull property="openId" prepend="and">
+                open_id=#openId#
+            </isNotNull>
+
+            <isNotNull property="recommendAccount" prepend="and">
+                recommend_account = #recommendAccount#
+            </isNotNull>
+        </dynamic>
+        limit #startRow#,#pageSize#
+    </select>
 </sqlMap>

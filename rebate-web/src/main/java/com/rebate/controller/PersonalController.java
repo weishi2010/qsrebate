@@ -166,15 +166,15 @@ public class PersonalController extends BaseController {
         if (days > 180) {
             days = 180;//大于180天则只取180天
         }
-        RebateDetailQuery query = new RebateDetailQuery();
-        query.setOpenId(userInfo.getSubUnionId());
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, -days);
-        query.setStartDate(cal.getTime());
-        PaginatedArrayList<RebateDetailVo> result = rebateDetailService.findRebateDetailList(query);
-
-        view.addObject("detailList", result);
-        view.addObject("totalItem", result.getTotalItem());
+//        RebateDetailQuery query = new RebateDetailQuery();
+//        query.setOpenId(userInfo.getSubUnionId());
+//        Calendar cal = Calendar.getInstance();
+//        cal.add(Calendar.DATE, -days);
+//        query.setStartDate(cal.getTime());
+//        PaginatedArrayList<RebateDetailVo> result = rebateDetailService.findRebateDetailList(query);
+//
+//        view.addObject("detailList", result);
+//        view.addObject("totalItem", result.getTotalItem());
         view.addObject("userInfo", userInfo);
         view.addObject("days", days);
 
@@ -182,10 +182,17 @@ public class PersonalController extends BaseController {
     }
 
     @RequestMapping({"", "/", "/orders.json"})
-    public ResponseEntity<?> orders(HttpServletRequest request, Integer page, Integer days) {
+    public ResponseEntity<?> orders(HttpServletRequest request, Integer page, Integer days,Integer tab) {
         Map<String, Object> map = new HashMap<String, Object>();
         UserInfo userInfo = getUserInfo(request);
 
+        if (null == page) {
+            page = 1;//默认只查30天
+        }
+
+        if (null == tab) {
+            tab = 0;//默认查询自己的订单
+        }
         if (null == days) {
             days = 30;//默认只查30天
         }
@@ -194,17 +201,31 @@ public class PersonalController extends BaseController {
         }
         RebateDetailQuery query = new RebateDetailQuery();
         query.setSubUnionId(userInfo.getSubUnionId());
+        query.setOpenId(userInfo.getOpenId());
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -days);
         query.setStartDate(cal.getTime());
         query.setIndex(page);
-        PaginatedArrayList<RebateDetailVo> result = rebateDetailService.findRebateDetailList(query);
+
+        PaginatedArrayList<RebateDetailVo> result = null;
+        if(1==tab){
+            //查询代理模式一下级代理订单列表
+            result = rebateDetailService.findFirstAgentSonRebateDetailList(query);
+        }else if(2==tab){
+            //查询代理模式二粉丝订单列表
+            result = rebateDetailService.findSecondAgentRecommendRebateDetailList(query);
+        }else{
+            //查询自己的订单明细
+            result = rebateDetailService.findRebateDetailList(query);
+        }
+
         LOG.error("page:{},size:{}", page, result.size());
 
         map.put("detailList", result);
         map.put("totalItem", result.getTotalItem());
         map.put("userInfo", userInfo);
         map.put("days", days);
+        map.put("tab", tab);
         return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
     }
 
