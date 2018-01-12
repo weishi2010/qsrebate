@@ -8,11 +8,26 @@ import java.util.Date;
 
 public class OrderSummary extends BaseQuery {
   /**
+   * 微信openId
+   */
+  @Getter
+  @Setter
+  private String openId;
+
+  /**
    * 子联盟ID
    */
   @Getter
   @Setter
   private String subUnionId;
+
+  /**
+   * 子联盟ID列表
+   */
+  @Getter
+  @Setter
+  private String subUnionIds;
+
 
   /**
    * 订单时间
@@ -34,11 +49,18 @@ public class OrderSummary extends BaseQuery {
   private Long orderCount;
 
   /**
-   * 有效订单量
+   * 佣金
    */
   @Getter
   @Setter
   private Double commission;
+
+  /**
+   * 代理佣金
+   */
+  @Getter
+  @Setter
+  private Double agentCommission;
 
   /**
    * 订单渠道

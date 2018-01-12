@@ -39,6 +39,20 @@ public interface RebateDetailService {
     PaginatedArrayList<OrderSummary> getOrderSummaryBySubUnionId(OrderSummary orderSummary);
 
     /**
+     * 代理模式一获取子代理订单汇总
+     * @param subUnionId
+     * @return
+     */
+    PaginatedArrayList<OrderSummary> getFirstAgentSonOrderSummary(String subUnionId);
+
+    /**
+     * 代理模式二获取粉丝订单汇总
+     * @param openId
+     * @return
+     */
+    PaginatedArrayList<OrderSummary> getSecondAgentRecommendUserOrderSummary(String openId);
+
+    /**
      * 根据时间查询全部统计
      * @param orderSummaryQuery
      * @return

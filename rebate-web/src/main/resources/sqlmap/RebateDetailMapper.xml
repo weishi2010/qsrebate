@@ -12,6 +12,8 @@
         <result property="submitDate" column="submitDate"/>
         <result property="orderCount" column="orderCount"/>
         <result property="commission" column="commission"/>
+        <result property="agentCommission" column="agentCommission"/>
+
     </resultMap>
     <resultMap class="RebateDetail" id="RebateDetailResultMap">
         <result property="id" column="id"/>
@@ -255,11 +257,18 @@
         limit 1
     </select>
     <select id="getOrderSummaryBySubUnionId" parameterClass="OrderSummary" resultMap="OrderSummaryResultMap">
-        SELECT COUNT(distinct order_id) AS orderCount,SUM(user_commission) AS commission
+        SELECT COUNT(distinct order_id) AS orderCount,SUM(user_commission) AS commission,SUM(agent_commission) AS agentCommission
         ,DATE_FORMAT(submit_date,"%Y-%m-%d") AS submitDate,sub_union_id AS subUnionId
         FROM rebate_detail
-        WHERE sub_union_id=#subUnionId#
-        AND order_status=1
+        <dynamic prepend="where">
+            order_status=1
+            <isNotNull property="subUnionIds" open="and">
+                sub_union_id IN($subUnionIds$)
+            </isNotNull>
+            <isNotNull property="subUnionId" open="and">
+                sub_union_id =#subUnionId#
+            </isNotNull>
+        </dynamic>
         GROUP BY submitDate,sub_union_id
         ORDER BY submitDate DESC
         LIMIT #pageSize#

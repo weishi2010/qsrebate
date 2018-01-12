@@ -1,0 +1,40 @@
+<html style="font-size: 25.875px;"><head>
+    <meta charset="utf-8">
+    <title>代理引入业绩报表</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable = no">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="telephone=no" name="format-detection">
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="/static/css/income/normalize.min.css" type="text/css">
+    <link rel="stylesheet" href="/static/css/income/incomeReport.css?v1" type="text/css">
+    <link rel="stylesheet" href="/static/css/income/classic.css">
+    <link rel="stylesheet" href="/static/css/income/classic.date.css">
+
+</head>
+<body style="font-size: 12px;">
+<div class="searchLayer">
+</div>
+<div class="commissionByDay">
+    <div class="commissionType">
+        <span class="active" id="">最近30天收益</span>
+    </div>
+</div>
+<div class="reportTable">
+    <div class="tHeader">
+        <div class="th">时间</div>
+        <div class="th">订单数</div>
+        <div class="th">预计佣金</div>
+    </div>
+    #foreach($orderSummary in $list)
+    <div class="tBody">
+        <div class="tr" data-timer="1508342400000">
+        <div class="td"> $!date.format('MM-dd',$!orderSummary.submitDate)</div>
+        <div class="td">$!{orderSummary.orderCount}</div>
+        <div class="td"><span class="money">$!{orderSummary.commission}</span></div>
+        </div>
+    </div>
+    #end
+</div>
+</body><style id="igor_ext_nofollow">a[rel~='nofollow']{outline:.14em dotted red !important;outline-offset:.2em;}a[rel~='nofollow'] > img{outline:thin dotted red !important;outline-offset:.2em;}</style></html>

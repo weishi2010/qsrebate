@@ -182,12 +182,16 @@ public class PersonalController extends BaseController {
     }
 
     @RequestMapping({"", "/", "/orders.json"})
-    public ResponseEntity<?> orders(HttpServletRequest request, Integer page, Integer days,Integer tab) {
+    public ResponseEntity<?> orders(HttpServletRequest request, Integer page,Integer pageSize, Integer days,Integer tab) {
         Map<String, Object> map = new HashMap<String, Object>();
         UserInfo userInfo = getUserInfo(request);
 
         if (null == page) {
             page = 1;//默认只查30天
+        }
+
+        if (null == pageSize) {
+            pageSize = 10;//默认10条
         }
 
         if (null == tab) {
@@ -206,7 +210,7 @@ public class PersonalController extends BaseController {
         cal.add(Calendar.DATE, -days);
         query.setStartDate(cal.getTime());
         query.setIndex(page);
-
+        query.setPageSize(pageSize);
         PaginatedArrayList<RebateDetailVo> result = null;
         if(1==tab){
             //查询代理模式一下级代理订单列表
@@ -319,6 +323,35 @@ public class PersonalController extends BaseController {
         return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
     }
 
+    @RequestMapping({"", "/", "/sonAgentStatistits"})
+    public ModelAndView getSonAgentStatistits(HttpServletRequest request,Integer dayTab) {
+        Random r = new Random(System.currentTimeMillis());
+        ModelAndView view = new ModelAndView();
+        String vm = VIEW_PREFIX + "/sonAgentStatistits";
+        view.setViewName(vm);
+        UserInfo userInfo = getUserInfo(request);
+
+        if (null == userInfo || userInfo.getAgent() == EAgent.NOT_AGENT.getCode()) {
+            view.setViewName(VIEW_PREFIX + "/permission");
+            return view;
+        }
+
+        OrderSummary orderSummaryQuery = new OrderSummary();
+        orderSummaryQuery.setSubUnionId(userInfo.getSubUnionId());
+        orderSummaryQuery.setOpenId(userInfo.getOpenId());
+        orderSummaryQuery.setPageSize(30);//取近30天记录
+        PaginatedArrayList<OrderSummary>  list = null;
+        if(userInfo.getAgent() == EAgent.FIRST_AGENT.getCode()){
+            list =  rebateDetailService.getFirstAgentSonOrderSummary(userInfo.getSubUnionId());
+        }else if(userInfo.getAgent() == EAgent.SECOND_AGENT.getCode()){
+            list =  rebateDetailService.getSecondAgentRecommendUserOrderSummary(userInfo.getOpenId());
+        }
+
+        view.addObject("list", list);
+        view.addObject("userInfo", userInfo);
+        view.addObject("r", r.nextInt());
+        return view;
+    }
 
     @RequestMapping({"", "/", "/agentStatistits"})
     public ModelAndView agentStatistits(HttpServletRequest request,Integer dayTab) {

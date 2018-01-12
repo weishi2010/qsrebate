@@ -20,6 +20,9 @@
     <span class="switch #if($dayTab==1) active#end" id="today" style="font-size:0.65rem"><a href="/personal/agentStatistits?dayTab=1&r=${r}" style="color:#666;text-decoration:none;" target="_blank">今日</a></span>
     <span class="switch #if($dayTab==2) active#end" id="yesterday" style="font-size:0.65rem"><a href="/personal/agentStatistits?dayTab=2&r=${r}" style="color:#666;text-decoration:none;" target="_blank">昨日</a></span>
 </div>
+    #if($!userInfo.agent==1 || $!userInfo.agent==2)
+        <a href="/personal/sonAgentStatistits" target="_blank">代理业绩报表</a>
+    #end
 </div>
 <div class="totalCommission">
     <div class="totalCommissionDetail">
