@@ -40,7 +40,10 @@
     #if($!userInfo.agent==2)
         <div>
             <label style="color:#59d625">粉丝：$!{recommendUserCount} 订单数：$!{recommendUserOrderSummary.orderCount} 佣金：$!{recommendUserOrderSummary.commission} 总粉丝：$!{allRecommendUserCount}</label>
-            <img src="/static/img/hand.png" style="vertical-align: bottom"/><span style=""><a style="font-size:18px;color:#f3600a;text-decoration:none;font-family: sans-serif;" href="/personal/recommendUserCode">去拉粉>></a></span>
+            <img src="/static/img/hand.png" style="vertical-align: bottom"/>
+            <span style="">
+##                <a style="font-size:18px;color:#f3600a;text-decoration:none;font-family: sans-serif;" href="/personal/recommendUserCode">去拉粉>></a>
+            </span>
         </div>
     #end
     <div class="totalCommissionInfo">

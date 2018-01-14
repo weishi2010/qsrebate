@@ -138,7 +138,7 @@ public class RebateDetailServiceImpl implements RebateDetailService {
             OrderSummaryQuery orderSummaryQuery = new OrderSummaryQuery();
             orderSummaryQuery.setPageSize(30);
             orderSummaryQuery.setSubUnionIds(Joiner.on(",").join(recommendSubUnionIds));
-            orderSummaryList = getOrderSummaryBySubUnionId(orderSummaryQuery);
+            orderSummaryList = getOrderSummaryBySubUnionIds(orderSummaryQuery);
         }
         return orderSummaryList;
     }
@@ -153,7 +153,51 @@ public class RebateDetailServiceImpl implements RebateDetailService {
             OrderSummaryQuery orderSummaryQuery = new OrderSummaryQuery();
             orderSummaryQuery.setPageSize(30);
             orderSummaryQuery.setSubUnionIds(Joiner.on(",").join(recommendSubUnionIds));
-            orderSummaryList = getOrderSummaryBySubUnionId(orderSummaryQuery);
+            orderSummaryList = getOrderSummaryBySubUnionIds(orderSummaryQuery);
+        }
+        return orderSummaryList;
+    }
+
+    @Override
+    public PaginatedArrayList<OrderSummary> getOrderSummaryBySubUnionIds(OrderSummary orderSummaryQuery) {
+        PaginatedArrayList<OrderSummary> orderSummaryList = new PaginatedArrayList<OrderSummary>(orderSummaryQuery.getIndex(), orderSummaryQuery.getPageSize());
+        try {
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            Map summaryMap = new HashMap();
+
+            List<OrderSummary> list = rebateDetailDao.getOrderSummaryBySubUnionIds(orderSummaryQuery);
+            for (OrderSummary orderSummary : list) {
+                String dayStr = format.format(orderSummary.getSubmitDate());
+                summaryMap.put(dayStr, orderSummary);
+
+            }
+
+
+            for (int day = 0; day <= orderSummaryQuery.getPageSize(); day++) {
+                Calendar calendar = Calendar.getInstance();
+                calendar.add(Calendar.DATE, -day);
+                String dayStr = format.format(calendar.getTime());
+                Object obj = summaryMap.get(dayStr);
+                OrderSummary orderSummary = null;
+                if (null != obj) {
+                    orderSummary = (OrderSummary) obj;
+                    orderSummary.setCommission(new BigDecimal(orderSummary.getCommission() + "").setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+                    orderSummary.setAgentCommission(new BigDecimal(orderSummary.getAgentCommission() + "").setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+
+                } else {
+                    orderSummary = new OrderSummary();
+                    orderSummary.setCommission(0.0);
+                    orderSummary.setSubmitDate(calendar.getTime());
+                    orderSummary.setOrderCount(0l);
+                    orderSummary.setSubUnionId(orderSummaryQuery.getSubUnionId());
+                }
+                orderSummary.setClickCount(0l);
+                orderSummaryList.add(orderSummary);
+            }
+
+
+        } catch (Exception e) {
+            LOG.error("getOrderSummaryBySubUnionIds error!orderSummaryQuery:" + JsonUtil.toJson(orderSummaryQuery), e);
         }
         return orderSummaryList;
     }

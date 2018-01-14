@@ -38,6 +38,13 @@ public interface RebateDetailService {
      */
     PaginatedArrayList<OrderSummary> getOrderSummaryBySubUnionId(OrderSummary orderSummary);
 
+
+    /**
+     * 根据子联盟ID列表订单统计
+     * @param orderSummary
+     * @return
+     */
+    PaginatedArrayList<OrderSummary> getOrderSummaryBySubUnionIds(OrderSummary orderSummary);
     /**
      * 代理模式一获取子代理订单汇总
      * @param subUnionId

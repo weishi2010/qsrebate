@@ -46,6 +46,11 @@ public class RebateDetailDaoImpl extends BaseDao implements RebateDetailDao {
     }
 
     @Override
+    public List<OrderSummary> getOrderSummaryBySubUnionIds(OrderSummary orderSummary) {
+        return (List<OrderSummary>) queryForList("RebateDetail.getOrderSummaryBySubUnionIds", orderSummary);
+    }
+
+    @Override
     public OrderSummary getAllOrderSummaryByDate(OrderSummaryQuery orderSummaryQuery) {
         return (OrderSummary) queryForObject("RebateDetail.getAllOrderSummaryByDate", orderSummaryQuery);
     }

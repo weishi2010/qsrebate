@@ -8,11 +8,11 @@
     <typeAlias alias="OrderSummaryQuery" type="com.rebate.domain.query.OrderSummaryQuery"/>
 
     <resultMap class="OrderSummary" id="OrderSummaryResultMap">
-        <result property="subUnionId" column="subUnionId"/>
+        <result property="subUnionId" column="subUnionId" nullValue=""/>
         <result property="submitDate" column="submitDate"/>
-        <result property="orderCount" column="orderCount"/>
-        <result property="commission" column="commission"/>
-        <result property="agentCommission" column="agentCommission"/>
+        <result property="orderCount" column="orderCount" nullValue="0"/>
+        <result property="commission" column="commission" nullValue="0"/>
+        <result property="agentCommission" column="agentCommission" nullValue=""/>
 
     </resultMap>
     <resultMap class="RebateDetail" id="RebateDetailResultMap">
@@ -256,19 +256,22 @@
         where sub_union_id=#subUnionId# and status=#status#
         limit 1
     </select>
+
+    <select id="getOrderSummaryBySubUnionIds" parameterClass="OrderSummary" resultMap="OrderSummaryResultMap">
+        SELECT COUNT(distinct order_id) AS orderCount,SUM(user_commission) AS commission,SUM(agent_commission) AS agentCommission
+        ,DATE_FORMAT(submit_date,"%Y-%m-%d") AS submitDate,'' AS subUnionId
+        FROM rebate_detail
+        where  order_status=1 and sub_union_id IN($subUnionIds$)
+        GROUP BY submitDate
+        ORDER BY submitDate DESC
+        LIMIT #pageSize#
+    </select>
+
     <select id="getOrderSummaryBySubUnionId" parameterClass="OrderSummary" resultMap="OrderSummaryResultMap">
         SELECT COUNT(distinct order_id) AS orderCount,SUM(user_commission) AS commission,SUM(agent_commission) AS agentCommission
         ,DATE_FORMAT(submit_date,"%Y-%m-%d") AS submitDate,sub_union_id AS subUnionId
         FROM rebate_detail
-        <dynamic prepend="where">
-            order_status=1
-            <isNotNull property="subUnionIds" open="and">
-                sub_union_id IN($subUnionIds$)
-            </isNotNull>
-            <isNotNull property="subUnionId" open="and">
-                sub_union_id =#subUnionId#
-            </isNotNull>
-        </dynamic>
+        WHERE order_status=1 and sub_union_id =#subUnionId#
         GROUP BY submitDate,sub_union_id
         ORDER BY submitDate DESC
         LIMIT #pageSize#

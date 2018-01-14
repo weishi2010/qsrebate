@@ -64,6 +64,13 @@ public interface RebateDetailDao {
      */
     List<OrderSummary> getOrderSummaryBySubUnionId(OrderSummary orderSummary);
 
+
+    /**
+     * 根据子联盟ID列表查询订单统计
+     * @param orderSummary
+     * @return
+     */
+    List<OrderSummary> getOrderSummaryBySubUnionIds(OrderSummary orderSummary);
     /**
      * 根据时间查询全部统计
      * @param orderSummaryQuery
