@@ -261,6 +261,7 @@ public class PersonalController extends BaseController {
         AgentRelationQuery agentRelationQuery = new AgentRelationQuery();
         agentRelationQuery.setParentAgentSubUnionId(subUnionId);
         agentRelationQuery.setIndex(page);
+        agentRelationQuery.setPageSize(10000);
         PaginatedArrayList<AgentRelationVo> agents = userInfoService.getAgentUserByParentId(agentRelationQuery);
         view.addObject("agents", agents);
         view.addObject("totalItem", agents.getTotalItem());
