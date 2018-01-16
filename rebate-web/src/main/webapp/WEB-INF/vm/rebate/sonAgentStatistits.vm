@@ -32,7 +32,7 @@
         <div class="tr" data-timer="1508342400000">
         <div class="td"> $!date.format('MM-dd',$!orderSummary.submitDate)</div>
         <div class="td">$!{orderSummary.orderCount}</div>
-        <div class="td"><span class="money">$!{orderSummary.commission}</span></div>
+        <div class="td"><span class="money">$!{orderSummary.agentCommission}</span></div>
         </div>
     </div>
     #end
