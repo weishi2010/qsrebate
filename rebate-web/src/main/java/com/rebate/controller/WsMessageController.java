@@ -498,13 +498,7 @@ public class WsMessageController extends BaseController {
         str.append("<MsgType><![CDATA[text]]></MsgType>");
         str.append("<Content><![CDATA[\uD83D\uDCB0\uD83D\uDCB0【免费发放京东全品类优惠券】\n" +
                 "\n" +
-                "\uD83D\uDD25\uD83D\uDD25\uD83D\uDD25京东全品类15元优惠券\n" +
-                "https://w.url.cn/s/A6R1o5T\n" +
-                "\n" +
-                "\uD83D\uDD25\uD83D\uDD25京东全品类10元优惠券\n" +
-                "https://w.url.cn/s/AiuOBlu\n" +
-                "\n" +
-                "\uD83D\uDD25京东全品类5元优惠券，数量有限速度抢https://w.url.cn/s/AaIXaV0\n]]></Content>");
+                "\uD83D\uDD25免费优惠券地址https://w.url.cn/s/AU0zziw\n]]></Content>");
         str.append("</xml>");
         return str.toString();
     }
