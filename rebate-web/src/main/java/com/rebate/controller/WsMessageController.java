@@ -631,6 +631,53 @@ public class WsMessageController extends BaseController {
      */
     private void agentMessageAnalyzer(HttpServletResponse response, String toUserName, String fromUserName, String msgType, String content, String subUnionId) {
         String pushContent = "";
+        List<String> links = RegexUtils.getLinks(content);
+
+        if(isJDCouponProductMsg(links)) {
+            //如果为二合一转链消息则解析优惠券消息进行券二合一推广链接转换
+            pushContent = couponMessageConvertJDMediaUrl(content, subUnionId);
+            //发送文本消息
+            wxService.sendMessage(toUserName, pushContent);
+        }else if ((RegexUtils.isJDProductUrl(content) && RegexUtils.checkURL(content)) || StringUtils.isNumeric(content)) {
+            //如果只是商品url或sku则进行商品转链接返回，通过api方式进行消息发送
+            sendAgentProductMessage(response, toUserName, fromUserName, msgType, content, subUnionId);
+        }else{
+            //普通商品和活动url转链
+            sendSalesMessageNew(content,links, toUserName, subUnionId);
+        }
+
+    }
+
+    /**
+     * 是否二合一转链
+     * @param links
+     * @return
+     */
+    private boolean isJDCouponProductMsg(List<String> links){
+        boolean flag = false;
+        boolean hasCouponLink = false;
+        boolean hasProductLink = false;
+        //如果有两个链接，一个为优惠券链接，一个为商品链接则进行二合一转链
+        if(links.size()==2){
+            for(String link:links){
+                if (RegexUtils.isJDCouponUrl(link)) {
+                    hasCouponLink = true;
+                }else{
+                    link = HttpClientUtil.convertJDPromotionUrl(link);//获取转换后链接
+                    if (RegexUtils.isJDProductUrl(link)) {
+                        hasProductLink = true;
+                    }
+                }
+
+            }
+
+        }
+        flag = hasCouponLink && hasProductLink;
+        return flag;
+    }
+
+    private void agentMessageAnalyzerOld(HttpServletResponse response, String toUserName, String fromUserName, String msgType, String content, String subUnionId) {
+        String pushContent = "";
         String jdSaleDomains = jDProperty.getSaleDomains();
         //识别是否为活动推广转链接
         boolean isSaleConvert = false;
@@ -656,7 +703,6 @@ public class WsMessageController extends BaseController {
         }
 
     }
-
     /**
      * 文本消息回复
      *
@@ -739,6 +785,56 @@ public class WsMessageController extends BaseController {
         wxService.sendMessage(toUserName, recommendContent.toString());
     }
 
+    private void sendSalesMessageNew(String content,List<String> list, String toUserName, String subUnionId) {
+        String errorMsg = "很抱歉，活动链接转换失败，请联系公众号管理员!";
+        try {
+            for (String link : list) {
+
+                if (RegexUtils.isJDProductUrl(link)) {
+                    //包括sku的则只转sku为推广链接
+                    List<Long> dataList = RegexUtils.getLongList(content);
+                    if (dataList.size() > 0) {
+
+                        List<Product> products = jdSdkManager.getMediaProducts(Joiner.on(",").join(dataList));
+
+                        for (Product product : products) {
+                            if (StringUtils.isNotBlank(product.getImgUrl())) {
+                                String mediaId = wxService.getWxImageMediaId(product.getImgUrl());
+                                //发送图片消息
+                                wxService.sendImageMessage(toUserName, mediaId);
+                            }
+                        }
+                    }
+                }
+            }
+
+            List<LinkTask> tasks = new ArrayList<>();
+            for (String link : list) {
+                tasks.add(new LinkTask(link, subUnionId));
+            }
+
+            //通过并发获取
+            List<Future<Map>> futures = threadPoolTaskExecutor.getThreadPoolExecutor().invokeAll(tasks, 5000, TimeUnit.MILLISECONDS);
+
+            for (int i = 0; i < futures.size(); i++) {
+                Map map = futures.get(i).get();
+                if (null != map) {
+                    Iterator it = map.keySet().iterator();
+                    while (it.hasNext()) {
+                        String key = it.next().toString();
+                        content = content.replace(key, map.get(key).toString());
+                    }
+                }
+
+            }
+
+        } catch (Exception e) {
+            content = errorMsg;
+            LOG.error("sendSalesMessageNew", e);
+        }
+        //发送文本消息
+        wxService.sendMessage(toUserName, content);
+    }
 
     private void sendSalesMessage(String content, String toUserName, String subUnionId) {
         String result = "很抱歉，活动链接转换失败，请联系公众号管理员!";
@@ -810,11 +906,17 @@ public class WsMessageController extends BaseController {
 
         @Override
         public Map call() throws Exception {
-            //JD活动多重跳转解析
-            String convertJDPromotionUrl = HttpClientUtil.convertJDPromotionUrl(url);
-            //转换为推广链接
-            String jdMediaUrl = jdSdkManager.getSalesActivityPromotinUrl(convertJDPromotionUrl, subUnionId);
-            jdMediaUrl = shortUrlManager.getWxShortPromotinUrl(jdMediaUrl, subUnionId);
+            String jdMediaUrl = "";
+            if (RegexUtils.isJDCouponUrl(url)) {
+                //如果为京东优惠券链接则不做京东联盟推广转链，因为转换会跳转登录无法做转链
+                jdMediaUrl = url;
+            }else{
+                //JD活动多重跳转解析
+                String convertJDPromotionUrl = HttpClientUtil.convertJDPromotionUrl(url);
+                //转换为推广链接
+                jdMediaUrl = jdSdkManager.getSalesActivityPromotinUrl(convertJDPromotionUrl, subUnionId);
+                jdMediaUrl = shortUrlManager.getWxShortPromotinUrl(jdMediaUrl, subUnionId);
+            }
 
             Map map = new HashMap();
             map.put(url, jdMediaUrl);
@@ -843,17 +945,21 @@ public class WsMessageController extends BaseController {
                 List<String> list = RegexUtils.getLinks(line);
                 if (list.size() > 0) {
                     String url = list.get(0);
-                    if (url.contains("coupon.m.jd.com") || url.contains("coupon.jd.com")) {
+
+                    if (RegexUtils.isJDCouponUrl(url)) {
                         couponLink = url;
                         line = linkMark;//链接占位符
-                    } else if (url.contains("item.jd.com")) {
-                        List<Long> dataList = RegexUtils.getLongList(url);
-                        if (null != dataList && dataList.size() > 0) {
-                            skuId = dataList.get(0);
-                            line = "";
+                    }else{
+                        url = HttpClientUtil.convertJDPromotionUrl(url);//获取转换后链接
+                        if (RegexUtils.isJDProductUrl(url)) {
+                            List<Long> dataList = RegexUtils.getLongList(url);
+                            if (null != dataList && dataList.size() > 0) {
+                                skuId = dataList.get(0);
+                                line = "";
+                            }
+                            //解析完商品链接后停止解析后边的内容
+                            stop = true;
                         }
-                        //解析完商品链接后停止解析后边的内容
-                        stop = true;
                     }
                 }
 
@@ -872,7 +978,8 @@ public class WsMessageController extends BaseController {
 
                 String jdMediaUrl = jdSdkManager.getPromotionCouponCode(skuId, couponLink, subUnionId);
                 jdMediaUrl = shortUrlManager.getQsShortPromotinUrl(jdMediaUrl, subUnionId);
-
+                //转微信链接
+                jdMediaUrl = shortUrlManager.getWxShortPromotinUrl(jdMediaUrl,subUnionId);
                 if (StringUtils.isNotBlank(jdMediaUrl)) {
                     result = sb.toString().replace(linkMark, jdMediaUrl);
                 } else {

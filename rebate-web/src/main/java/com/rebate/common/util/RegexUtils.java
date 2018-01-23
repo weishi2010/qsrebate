@@ -145,6 +145,30 @@ public class RegexUtils {
     }
 
     /**
+     * 是否为京东优惠券链接
+     * @param url
+     * @return
+     */
+    public static boolean isJDCouponUrl(String url){
+        if (url.contains("coupon.m.jd.com") || url.contains("coupon.jd.com")) {
+           return true;
+        }
+        return false;
+    }
+
+    /**
+     * 是否为京东商品链接
+     * @param url
+     * @return
+     */
+    public static boolean isJDProductUrl(String url){
+        String reg = "item.jd.com/product/(\\d+).html|item.jd.com/(\\d+).html|www.jd.com/product/(\\d+).html|item.jd.hk/product/(\\d+).html|item.jd360.hk/product/(\\d+).html|item.yhd.com/(\\d+).html|m.jd.com/product/(\\d+).html|item.m.jd.com/ware/view/action\\?([^.]*?)wareId=(\\d+)|item.m.jd.com/product/(\\d+).html|wi.jd.com/fcgi\\-bin/view\\?([^.]*?)sku=(\\d+)|qitem.jd.com/fcgi\\-bin/view\\?([^.]*?)sku=(\\d+)|wq.jd.com/item/view\\?([^.]*?)sku=(\\d+)|m.jd.hk/ware/view.action\\?([^.]*?)wareId=(\\d+)|m.jd.hk/product/(\\d+).html|wqs.jd.com/smartstore/detail.shtml\\?([^.]*?)sku=(\\d+)|wqitem.jd.com/item/view\\?([^.]*?)sku=(\\d+)|jingfen.jd.com/item.html\\?([^.]*?)sku=(\\d+)|item.m.yhd.com/(\\d+).html";
+        Pattern pattern = Pattern.compile(reg);
+        Matcher matcher = pattern.matcher(url.toLowerCase());
+        return matcher.find();
+    }
+
+    /**
      * 是否为图片
      * @param content
      * @return
