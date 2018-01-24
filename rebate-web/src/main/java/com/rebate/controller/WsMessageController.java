@@ -558,7 +558,7 @@ public class WsMessageController extends BaseController {
     private void rebateUserMessageAnalyzer(String toUserName, String fromUserName, String msgType, String content, String subUnionId) {
         StringBuffer recommendContent = new StringBuffer();
         String imgUrl = "";
-        List<Long> skus = RegexUtils.getLongList(content);
+        List<Long> skus = RegexUtils.getJDProductIdList(content);
         if (skus.size() > 0) {
             //消息中有SKU信息则按SKU进行搜索
             Long skuId = skus.get(0);
@@ -676,56 +676,6 @@ public class WsMessageController extends BaseController {
         return flag;
     }
 
-    private void agentMessageAnalyzerOld(HttpServletResponse response, String toUserName, String fromUserName, String msgType, String content, String subUnionId) {
-        String pushContent = "";
-        String jdSaleDomains = jDProperty.getSaleDomains();
-        //识别是否为活动推广转链接
-        boolean isSaleConvert = false;
-        if (StringUtils.isNotBlank(jdSaleDomains)) {
-            String[] doaminsArray = jdSaleDomains.split(",");
-            for (String domain : doaminsArray) {
-                if (content.toLowerCase().contains(domain.toLowerCase())) {
-                    isSaleConvert = true;
-                }
-            }
-        }
-        if (RegexUtils.checkURL(content) || StringUtils.isNumeric(content)) {
-            //如果只是商品url或sku则进行商品转链接返回，通过api方式进行消息发送
-            sendAgentProductMessage(response, toUserName, fromUserName, msgType, content, subUnionId);
-        } else if (isSaleConvert) {
-            //解析活动消息进行活动链接转推广链接，通过消息回置方式进行发送
-            sendSalesMessage(content, toUserName, subUnionId);
-        } else {
-            //解析优惠券消息进行券二合一推广链接转换
-            pushContent = couponMessageConvertJDMediaUrl(content, subUnionId);
-            //发送文本消息
-            wxService.sendMessage(toUserName, pushContent);
-        }
-
-    }
-    /**
-     * 文本消息回复
-     *
-     * @param toUserName
-     * @param fromUserName
-     * @param msgType
-     * @param content
-     * @param subUnionId
-     * @return
-     */
-    private String textPushXml(String toUserName, String fromUserName, String msgType, String content, String subUnionId) {
-        //构造消息回复XML
-        String xml = "";
-        TextMessage txtmsg = new TextMessage();
-        txtmsg.setToUserName(toUserName);
-        txtmsg.setFromUserName(fromUserName);
-        txtmsg.setCreateTime(new Date().getTime());
-        txtmsg.setMsgType(EWxMsgType.TEXT.getValue());
-        txtmsg.setContent(content);
-        xml = MessageUtil.textMessageToXml(txtmsg);
-
-        return xml;
-    }
 
     /**
      * 获取商品推荐给代理用户
@@ -737,7 +687,7 @@ public class WsMessageController extends BaseController {
     private void sendAgentProductMessage(HttpServletResponse response, String toUserName, String fromUserName, String msgType, String content, String subUnionId) {
         StringBuffer recommendContent = new StringBuffer();
         String imgUrl = "";
-        List<Long> skus = RegexUtils.getLongList(content);
+        List<Long> skus = RegexUtils.getJDProductIdList(content);
         if (skus.size() > 0) {
             //消息中有SKU信息则按SKU进行搜索
             Long skuId = skus.get(0);
@@ -792,7 +742,7 @@ public class WsMessageController extends BaseController {
 
                 if (RegexUtils.isJDProductUrl(link)) {
                     //包括sku的则只转sku为推广链接
-                    List<Long> dataList = RegexUtils.getLongList(content);
+                    List<Long> dataList = RegexUtils.getJDProductIdList(content);
                     if (dataList.size() > 0) {
 
                         List<Product> products = jdSdkManager.getMediaProducts(Joiner.on(",").join(dataList));
@@ -832,67 +782,44 @@ public class WsMessageController extends BaseController {
             content = errorMsg;
             LOG.error("sendSalesMessageNew", e);
         }
+        content = convertProductIdToPromotionUrl(content,subUnionId);
         //发送文本消息
         wxService.sendMessage(toUserName, content);
     }
 
-    private void sendSalesMessage(String content, String toUserName, String subUnionId) {
-        String result = "很抱歉，活动链接转换失败，请联系公众号管理员!";
+    /**
+     * 将内容中的商品编号进行转换为推广链接
+     * @param content
+     * @param subUnionId
+     * @return
+     */
+    private String convertProductIdToPromotionUrl(String content, String subUnionId){
+        StringBuffer sb = new StringBuffer();
         try {
-            boolean hasSku = false;
-            List<Long> skus = new ArrayList<>();
-            //包括sku的则只转sku为推广链接
-            List<Long> dataList = RegexUtils.getLongList(content);
-            for (Long data : dataList) {
-                //如果大于5位大数据则转为商品推广链接
-                if (data.toString().length() > 5) {
-                    skus.add(data);
-                    hasSku = true;
-                    String url = jdSdkManager.getShortPromotinUrl(data, subUnionId);
-                    content = content.replace("" + data, url);
-                }
-            }
+            BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(content.getBytes(Charset.forName("utf8"))), Charset.forName("utf8")));
+            String line = "";
+            while ((line = br.readLine()) != null) {
 
-            //不包含sku的则按活动转链处理
-            if (!hasSku) {
-                List<String> list = RegexUtils.getLinks(content);
-                List<LinkTask> tasks = new ArrayList<>();
-                for (String link : list) {
-                    tasks.add(new LinkTask(link, subUnionId));
-                }
+                List<String> list = RegexUtils.getLinks(line);
+                //每行没有URL再进行商品编号识别，防止将url中的数据做为商品编号进行识别和转换
+                if (StringUtils.isNotBlank(line) && list.size() == 0) {
+                    List<Long> skus = RegexUtils.getJDProductIdList(line);
+                    for (Long sku : skus) {
 
-                //通过并发获取
-                List<Future<Map>> futures = threadPoolTaskExecutor.getThreadPoolExecutor().invokeAll(tasks, 5000, TimeUnit.MILLISECONDS);
-
-                for (int i = 0; i < futures.size(); i++) {
-                    Map map = futures.get(i).get();
-                    if (null != map) {
-                        Iterator it = map.keySet().iterator();
-                        while (it.hasNext()) {
-                            String key = it.next().toString();
-                            content = content.replace(key, map.get(key).toString());
+                        String shortUrl = jdSdkManager.getShortPromotinUrl(sku, subUnionId);
+                        shortUrl = shortUrlManager.getWxShortPromotinUrl(shortUrl, subUnionId);
+                        if (StringUtils.isNotBlank(shortUrl)) {
+                            line = line.replace(sku.toString(), shortUrl);
                         }
                     }
-
                 }
-
-            } else {
-                List<Product> products = jdSdkManager.getMediaProducts(Joiner.on(",").join(skus));
-
-                for (Product product : products) {
-                    if (StringUtils.isNotBlank(product.getImgUrl())) {
-                        String mediaId = wxService.getWxImageMediaId(product.getImgUrl());
-                        //发送图片消息
-                        wxService.sendImageMessage(toUserName, mediaId);
-                    }
-                }
+                sb.append(line).append("\n");
             }
 
-            //发送文本消息
-            wxService.sendMessage(toUserName, content);
         } catch (Exception e) {
-            LOG.error("salesMessageConvertJDMediaUrl", e);
+            LOG.error("couponMessageConvertJDMediaUrl", e);
         }
+        return sb.toString();
     }
 
     private class LinkTask implements Callable<Map> {
@@ -952,7 +879,7 @@ public class WsMessageController extends BaseController {
                     }else{
                         url = HttpClientUtil.convertJDPromotionUrl(url);//获取转换后链接
                         if (RegexUtils.isJDProductUrl(url)) {
-                            List<Long> dataList = RegexUtils.getLongList(url);
+                            List<Long> dataList = RegexUtils.getJDProductIdList(url);
                             if (null != dataList && dataList.size() > 0) {
                                 skuId = dataList.get(0);
                                 line = "";

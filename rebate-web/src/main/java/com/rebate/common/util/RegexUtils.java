@@ -212,6 +212,26 @@ public class RegexUtils {
      * @param content
      * @return
      */
+    public static List<Long> getJDProductIdList(String content) {
+        List<Long> skus = new ArrayList<>();
+
+        String regEx = "[^0-9]";
+        Pattern p = Pattern.compile(regEx);
+        Matcher m = p.matcher(content);
+        String[] skuList = m.replaceAll(",").trim().split(",");
+        for (String value : skuList) {
+            if (StringUtils.isNotBlank(value) && StringUtils.isNumeric(value) && value.length()>5 && value.length()<=20) {
+                skus.add(Long.parseLong(value));
+            }
+        }
+        return skus;
+    }
+
+    /**
+     * 获取数字列表
+     * @param content
+     * @return
+     */
     public static List<Long> getLongList(String content) {
         List<Long> skus = new ArrayList<>();
 
