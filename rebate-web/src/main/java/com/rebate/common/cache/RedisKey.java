@@ -5,7 +5,7 @@ public enum RedisKey {
     /**
      * 用户信息
      */
-    USER_INFO ("nsu_i_",60*60*30),
+    USER_INFO ("nsu_info_",60*60*30),
     /**
      * 微信API访问TOKEN
      */

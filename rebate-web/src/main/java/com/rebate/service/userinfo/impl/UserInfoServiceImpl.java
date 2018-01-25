@@ -265,7 +265,7 @@ public class UserInfoServiceImpl implements UserInfoService {
 
         //从wx接口实时获取昵称
         WxUserInfo wxUserInfo = wxService.getWxApiUserInfo(wxAccessTokenService.getApiAccessToken().getAccessToken(), openId);
-        if (null != wxUserInfo) {
+        if (null != wxUserInfo && StringUtils.isNotBlank(wxUserInfo.getNickname())) {
             userInfo.setNickName(wxUserInfo.getNickname());
         }
 

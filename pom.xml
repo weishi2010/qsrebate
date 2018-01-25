@@ -453,6 +453,12 @@
                 <artifactId>xstream</artifactId>
                 <version>1.2</version>
             </dependency>
+            <!-- alibaba druid数据源 -->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid</artifactId>
+                <version>1.0.15</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
