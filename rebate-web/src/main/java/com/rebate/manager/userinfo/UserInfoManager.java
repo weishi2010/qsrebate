@@ -20,6 +20,24 @@ public interface UserInfoManager {
     void update(UserInfo userInfo);
 
     /**
+     * 获取用户缓存
+     * @param openId
+     * @return
+     */
+    UserInfo getUserInfoCache(String openId);
+
+    /**
+     * 设置缓存
+     * @param userInfo
+     */
+    void setUserInfoCache(UserInfo userInfo);
+
+    /**
+     * 清除缓存
+     * @param openId
+     */
+    void delUserInfoCache(String openId);
+    /**
      * 根据openId查询
      * @param userInfo
      * @return

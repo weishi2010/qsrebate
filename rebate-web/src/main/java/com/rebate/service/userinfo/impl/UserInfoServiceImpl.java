@@ -54,10 +54,6 @@ public class UserInfoServiceImpl implements UserInfoService {
     @Autowired(required = true)
     private UserInfoManager userInfoManager;
 
-    @Qualifier("redisUtil")
-    @Autowired(required = false)
-    private RedisUtils redisUtil;
-
     @Qualifier("wxService")
     @Autowired(required = false)
     private WxService wxService;
@@ -79,10 +75,6 @@ public class UserInfoServiceImpl implements UserInfoService {
     @Autowired(required = true)
     private JDProperty jDProperty;
 
-    @Qualifier("userInfoDao")
-    @Autowired(required = true)
-    private UserInfoDao userInfoDao;
-
     @Qualifier("agentRelationDao")
     @Autowired(required = true)
     private AgentRelationDao agentRelationDao;
@@ -96,12 +88,13 @@ public class UserInfoServiceImpl implements UserInfoService {
             try {
                 UserInfo userInfoQuery = new UserInfo();
                 userInfoQuery.setOpenId(openId);
-                UserInfo userInfo = userInfoDao.findLoginUserInfo(userInfoQuery);
+                UserInfo userInfo = userInfoManager.findLoginUserInfo(userInfoQuery);
                 LOG.error("synWxUserInfo userInfo:" + JsonUtil.toJson(userInfo));
                 if (null != userInfo) {
                     //更新昵称
                     userInfo.setNickName(wxUserInfo.getNickname());
-                    userInfoDao.update(userInfo);
+                    userInfo.setWxImage(wxUserInfo.getHeadimgurl());
+                    userInfoManager.update(userInfo);
                 }
             } catch (Exception e) {
                 LOG.error("synWxUserInfo error!wxUserInfo:" + JsonUtil.toJson(wxUserInfo), e);
@@ -162,7 +155,7 @@ public class UserInfoServiceImpl implements UserInfoService {
         try {
             UserInfo userInfoQuery = new UserInfo();
             userInfoQuery.setSubUnionId(secondAgentSubUnionId);
-            UserInfo userInfo = userInfoDao.findUserInfoBySubUnionId(userInfoQuery);
+            UserInfo userInfo = userInfoManager.findUserInfoBySubUnionId(userInfoQuery);
             if (null == userInfo) {
                 return EAgentResultCode.NOT_EXISTS_USER.getCode();
             }
@@ -259,20 +252,26 @@ public class UserInfoServiceImpl implements UserInfoService {
     @Override
     public UserInfo getUserInfo(String openId) {
         //从缓存获取用户信息
-//        UserInfo userInfo = getUserInfoCache(openId);
-//        if (null != userInfo) {
-//            LOG.error("[getUserInfo]userInfo cache:" + JsonUtil.toJson(userInfo));
-//            return userInfo;
-//        }
+        UserInfo userInfo = userInfoManager.getUserInfoCache(openId);
+        if (null != userInfo) {
+            LOG.error("[getUserInfo]userInfo cache:" + JsonUtil.toJson(userInfo));
+            return userInfo;
+        }
 
         //从db查询
         UserInfo userInfoQuery = new UserInfo();
         userInfoQuery.setOpenId(openId);
-        UserInfo userInfo = userInfoManager.findLoginUserInfo(userInfoQuery);
+        userInfo = userInfoManager.findLoginUserInfo(userInfoQuery);
+
+        //从wx接口实时获取昵称
+        WxUserInfo wxUserInfo = wxService.getWxApiUserInfo(wxAccessTokenService.getApiAccessToken().getAccessToken(), openId);
+        if (null != wxUserInfo) {
+            userInfo.setNickName(wxUserInfo.getNickname());
+        }
 
         //设置缓存
         if (null != userInfo) {
-            setUserInfoCache(userInfo);
+            userInfoManager.setUserInfoCache(userInfo);
         }
         return userInfo;
     }
@@ -321,6 +320,11 @@ public class UserInfoServiceImpl implements UserInfoService {
                 UserInfoVo userInfoVo = new UserInfoVo(userInfo);
                 userInfoVo.setWhiteAgent(userInfoManager.isWhiteAgent(userInfoVo.getSubUnionId()));
                 userInfoVo.setSui(DESUtil.qsEncrypt(jDProperty.getEncryptKey(), userInfoVo.getSubUnionId(), "UTF-8"));
+                //获取用户缓存，从缓存中获取最新昵称
+                UserInfo userInfoCache = getUserInfo(userInfo.getOpenId());
+                if (null != userInfoCache) {
+                    userInfoVo.setNickName(userInfoCache.getNickName());
+                }
                 result.add(userInfoVo);
             }
         }
@@ -340,7 +344,7 @@ public class UserInfoServiceImpl implements UserInfoService {
                 //查询用户信息
                 UserInfo userInfoQuery = new UserInfo();
                 userInfoQuery.setSubUnionId(agentRelation.getAgentSubUnionId());
-                UserInfo userInfo = userInfoDao.findUserInfoBySubUnionId(userInfoQuery);
+                UserInfo userInfo = userInfoManager.findUserInfoBySubUnionId(userInfoQuery);
                 agentRelationVo.setNickName(userInfo.getNickName());
                 agentRelationVo.setImgUrl(userInfo.getWxImage());
 
@@ -440,36 +444,4 @@ public class UserInfoServiceImpl implements UserInfoService {
         }
     }
 
-    /**
-     * 查询用户缓存
-     *
-     * @param openId
-     */
-    private UserInfo getUserInfoCache(String openId) {
-        UserInfo userInfo = null;
-        try {
-            //设置到缓存
-            String json = redisUtil.get(RedisKey.USER_INFO.getPrefix(openId));
-            if (StringUtils.isNotBlank(json)) {
-                userInfo = JsonUtil.fromJson(json, UserInfo.class);
-            }
-        } catch (Exception e) {
-            LOG.error("getUserInfoCache error!openId:{}", openId);
-        }
-        return userInfo;
-    }
-
-    /**
-     * 设置缓存
-     *
-     * @param userInfo
-     */
-    private void setUserInfoCache(UserInfo userInfo) {
-        try {
-            //设置到缓存
-            redisUtil.set(RedisKey.USER_INFO.getPrefix(userInfo.getOpenId()), RedisKey.USER_INFO.getTimeout(), JsonUtil.toJson(userInfo));
-        } catch (Exception e) {
-            LOG.error("setUserInfoCache error!userInfo:{}", JsonUtil.toJson(userInfo));
-        }
-    }
 }

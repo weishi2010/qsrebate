@@ -98,6 +98,9 @@
             <isNotNull property="recommendAccount" prepend=",">
                 recommend_account = #recommendAccount#
             </isNotNull>
+            <isNotNull property="wxImage" prepend=",">
+                wx_image = #wxImage#
+            </isNotNull>
         </dynamic>
         where open_id=#openId#
     </update>

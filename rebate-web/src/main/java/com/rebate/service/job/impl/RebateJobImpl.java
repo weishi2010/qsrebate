@@ -59,10 +59,6 @@ public class RebateJobImpl implements RebateJob {
     @Autowired(required = true)
     private ProductDao productDao;
 
-    @Qualifier("userInfoDao")
-    @Autowired(required = true)
-    private UserInfoDao userInfoDao;
-
     @Qualifier("agentRelationDao")
     @Autowired(required = true)
     private AgentRelationDao agentRelationDao;
@@ -111,7 +107,7 @@ public class RebateJobImpl implements RebateJob {
             UserInfoQuery userInfoQuery =  new UserInfoQuery();
             userInfoQuery.setStartRow(0);
             userInfoQuery.setPageSize(100000);
-            List<UserInfo> list = userInfoDao.findAllUsers(userInfoQuery);
+            List<UserInfo> list = userInfoManager.findAllUsers(userInfoQuery);
             LOG.error("[点击数入库任务]加载第{}条用户记录！", list.size());
 
 
@@ -164,7 +160,7 @@ public class RebateJobImpl implements RebateJob {
         UserInfoQuery userInfoQuery =  new UserInfoQuery();
         userInfoQuery.setStartRow(0);
         userInfoQuery.setPageSize(100000);
-        List<UserInfo> list = userInfoDao.findAllUsers(userInfoQuery);
+        List<UserInfo> list = userInfoManager.findAllUsers(userInfoQuery);
         for (UserInfo userInfo : list) {
             WxUserInfo wxUserInfo = wxService.getWxApiUserInfo(wxAccessTokenService.getApiAccessToken().getAccessToken(), userInfo.getOpenId());
             if (null != wxUserInfo) {
@@ -172,7 +168,8 @@ public class RebateJobImpl implements RebateJob {
 
                     //更新昵称
                     userInfo.setNickName(wxUserInfo.getNickname());
-                    userInfoDao.update(userInfo);
+                    userInfo.setWxImage(wxUserInfo.getHeadimgurl());
+                    userInfoManager.update(userInfo);
                 }catch (Exception e){
                     LOG.error("refreshUserInfo error!wxUserInfo:"+ JsonUtil.toJson(wxUserInfo));
                 }
@@ -355,7 +352,7 @@ public class RebateJobImpl implements RebateJob {
                             //查询用户信息
                             UserInfo userInfoQuery = new UserInfo();
                             userInfoQuery.setSubUnionId(rebateDetail.getSubUnionId());
-                            UserInfo userInfo = userInfoDao.findUserInfoBySubUnionId(userInfoQuery);
+                            UserInfo userInfo = userInfoManager.findUserInfoBySubUnionId(userInfoQuery);
                             if (null != userInfo) {
 
                                 rebateDetail.setOpenId(userInfo.getOpenId());
@@ -441,7 +438,7 @@ public class RebateJobImpl implements RebateJob {
                             //查询用户信息
                             UserInfo userInfoQuery = new UserInfo();
                             userInfoQuery.setSubUnionId(rebateDetail.getSubUnionId());
-                            UserInfo userInfo = userInfoDao.findUserInfoBySubUnionId(userInfoQuery);
+                            UserInfo userInfo = userInfoManager.findUserInfoBySubUnionId(userInfoQuery);
                             if (null != userInfo) {
                                 rebateDetail.setOpenId(userInfo.getOpenId());
                                 if (EAgent.FIRST_AGENT.getCode() == userInfo.getAgent()) {
@@ -629,7 +626,7 @@ public class RebateJobImpl implements RebateJob {
             String parentAgentOpenId = "";
             UserInfo parentAgentQuery = new UserInfo();
             parentAgentQuery.setSubUnionId(agentRelation.getParentAgentSubUnionId());
-            UserInfo parentAgentUserInfo = userInfoDao.findUserInfoBySubUnionId(parentAgentQuery);
+            UserInfo parentAgentUserInfo = userInfoManager.findUserInfoBySubUnionId(parentAgentQuery);
             if (null != parentAgentUserInfo) {
                 parentAgentOpenId = parentAgentUserInfo.getSubUnionId();
                 addIncomeDetail(rebateDetail, EIncomeType.FIRST_AGENT_REBATE.getCode(), parentAgentOpenId, parentAgentCommission);

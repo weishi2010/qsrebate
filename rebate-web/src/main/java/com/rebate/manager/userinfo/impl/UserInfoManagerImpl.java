@@ -3,6 +3,7 @@ package com.rebate.manager.userinfo.impl;
 import com.jd.data.redis.RedisUtils;
 import com.jd.data.redis.connection.RedisAccessException;
 import com.rebate.common.cache.RedisKey;
+import com.rebate.common.util.JsonUtil;
 import com.rebate.dao.UserInfoDao;
 import com.rebate.dao.WhiteUserInfoDao;
 import com.rebate.domain.UserInfo;
@@ -10,6 +11,7 @@ import com.rebate.domain.en.EWhiteType;
 import com.rebate.domain.query.UserInfoQuery;
 import com.rebate.domain.whitelist.WhiteUserInfo;
 import com.rebate.manager.userinfo.UserInfoManager;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,6 +91,8 @@ public class UserInfoManagerImpl implements UserInfoManager {
     @Override
     public void update(UserInfo userInfo) {
         userInfoDao.update(userInfo);
+        //清除缓存
+        delUserInfoCache(userInfo.getOpenId());
     }
 
     @Override
@@ -115,6 +119,56 @@ public class UserInfoManagerImpl implements UserInfoManager {
     public List<UserInfo> findAllUsers(UserInfoQuery userInfoQuery) {
         return userInfoDao.findAllUsers(userInfoQuery);
     }
+    /**
+     * 查询用户缓存
+     *
+     * @param openId
+     */
+    @Override
+    public UserInfo getUserInfoCache(String openId) {
+        UserInfo userInfo = null;
+        try {
+            //设置到缓存
+            String json = redisUtil.get(RedisKey.USER_INFO.getPrefix(openId));
+            if (StringUtils.isNotBlank(json)) {
+                userInfo = JsonUtil.fromJson(json, UserInfo.class);
+            }
+        } catch (Exception e) {
+            LOG.error("getUserInfoCache error!openId:{}", openId);
+        }
+        return userInfo;
+    }
+
+    /**
+     * 设置缓存
+     *
+     * @param userInfo
+     */
+    @Override
+    public void setUserInfoCache(UserInfo userInfo) {
+        try {
+            //设置到缓存
+            redisUtil.set(RedisKey.USER_INFO.getPrefix(userInfo.getOpenId()), RedisKey.USER_INFO.getTimeout(), JsonUtil.toJson(userInfo));
+        } catch (Exception e) {
+            LOG.error("setUserInfoCache error!userInfo:{}", JsonUtil.toJson(userInfo));
+        }
+    }
+
+    /**
+     * 设置缓存
+     *
+     * @param openId
+     */
+    @Override
+    public void delUserInfoCache(String openId) {
+        try {
+            //设置到缓存
+            redisUtil.del(RedisKey.USER_INFO.getPrefix(openId));
+        } catch (Exception e) {
+            LOG.error("delUserInfoCache error!openId:{}", openId);
+        }
+    }
+
     //----------------------------private methods-------------------------------------------
 
     private void addWhiteList(String subUnionId) {
