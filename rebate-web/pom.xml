@@ -252,6 +252,11 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!-- alibaba druid数据源 -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

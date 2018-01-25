@@ -4,20 +4,22 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
        default-autowire="byName" default-lazy-init="false">
 
-    <bean id="parentDataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
-        <property name="initialSize" value="0" />
+    <!-- alibaba druid数据源 -->
+    <!-- 数据源配置,使用DruidDataSource数据库连接池 -->
+    <bean id="parentDataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init"
+          destroy-method="close" abstract="true">
+        <property name="initialSize" value="20" />
         <property name="minIdle" value="5" />
-        <property name="maxIdle" value="80" />
-        <property name="maxTotal" value="80" />
-        <property name="maxWaitMillis" value="5000"></property>
+        <property name="maxActive" value="50" />
+        <property name="maxWait" value="5000" />
+        <property name="testWhileIdle" value="false" />
+        <property name="testOnBorrow" value="false" />
+        <property name="testOnReturn" value="false" />
         <property name="validationQuery" value="SELECT 1"></property>
-        <property name="testOnBorrow" value="false"></property>
-        <property name="testWhileIdle" value="true"></property>
-        <property name="timeBetweenEvictionRunsMillis">
-            <value>0</value>
-        </property>
+        <property name="dbType" value="mysql" />
+        <property name="filters" value="stat" />
+        <property name="connectionInitSqls" value="set names utf8mb4"/>
     </bean>
-
 
     <bean id="dataSource" parent="parentDataSource">
         <property name="driverClassName" value="${rebate.jdbc.driver}"/>
