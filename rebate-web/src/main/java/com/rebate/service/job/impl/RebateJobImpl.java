@@ -660,12 +660,14 @@ public class RebateJobImpl implements RebateJob {
         if (StringUtils.isNotBlank(rebateDetail.getSubUnionId()) && ERebateDetailStatus.SETTLEMENT.getCode() == rebateDetail.getStatus() && EOrderValidCode.VALID.getCode() == rebateDetail.getValidCode()) {
             IncomeDetailQuery incomeDetailQuery = new IncomeDetailQuery();
             incomeDetailQuery.setOpenId(openId);
+            incomeDetailQuery.setProductId(rebateDetail.getProductId());
             incomeDetailQuery.setReferenceId(referenceId);
             if (null == incomeDetailDao.findIncomeDetail(incomeDetailQuery)) {
                 //插入收支记录
                 IncomeDetail incomeDetail = new IncomeDetail();
                 incomeDetail.setOpenId(openId);
                 incomeDetail.setReferenceId(referenceId);
+                incomeDetail.setProductId(rebateDetail.getProductId());
                 incomeDetail.setIncome(income);
                 incomeDetail.setStatus(0);
                 incomeDetail.setDealt(0);

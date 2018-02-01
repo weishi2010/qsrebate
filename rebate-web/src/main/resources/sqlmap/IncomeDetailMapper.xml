@@ -9,6 +9,7 @@
         <result property="id" column="id"/>
         <result property="openId" column="open_id"/>
         <result property="referenceId" column="reference_id"/>
+        <result property="productId" column="product_id"/>
         <result property="income" column="income"/>
         <result property="type" column="type"/>
         <result property="dealt" column="dealt"/>
@@ -21,6 +22,7 @@
       id,
       open_id,
       reference_id,
+      product_id,
       income,
       type,
       dealt,
@@ -34,6 +36,7 @@
         (
         open_id,
         reference_id,
+        product_id,
         income,
         type,
         dealt,
@@ -45,6 +48,7 @@
         (
         #openId#,
         #referenceId#,
+        #productId#,
         #income#,
         #type#,
         #dealt#,
@@ -73,6 +77,9 @@
             </isNotNull>
             <isNotNull property="referenceId" prepend="and">
                 reference_id=#referenceId#
+            </isNotNull>
+            <isNotNull property="productId" prepend="and">
+                product_id=#productId#
             </isNotNull>
             <isNotNull property="type" prepend="and">
                 type=#type#

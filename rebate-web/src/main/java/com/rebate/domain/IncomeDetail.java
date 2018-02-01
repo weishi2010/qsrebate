@@ -25,6 +25,14 @@ public class IncomeDetail extends BaseQuery {
     @Setter
     private Long referenceId;
 
+
+    /**
+     * 商品编号
+     */
+    @Getter
+    @Setter
+    private Long productId;
+
     /**
      * 佣金总额
      */
