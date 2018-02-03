@@ -220,6 +220,22 @@
             <isNotNull property="subUnionId" open="and">
                 sub_union_id =#subUnionId#
             </isNotNull>
+            <isNotNull property="status" open="and">
+                status =#status#
+            </isNotNull>
+            <isNotNull property="validCode" open="and">
+                valid_code =#validCode#
+            </isNotNull>
+            <isNotNull property="orderId" open="and">
+                order_id =#orderId#
+            </isNotNull>
+            <isNotNull property="startDate" open="and">
+                <![CDATA[  submit_date >=#startDate# ]]>
+            </isNotNull>
+
+            <isNotNull property="endDate" open="and">
+                <![CDATA[   submit_date <=#endDate# ]]>
+            </isNotNull>
         </dynamic>
     </select>
 
@@ -234,6 +250,22 @@
             </isNotNull>
             <isNotNull property="subUnionId" open="and">
                 sub_union_id =#subUnionId#
+            </isNotNull>
+            <isNotNull property="status" open="and">
+                status =#status#
+            </isNotNull>
+            <isNotNull property="validCode" open="and">
+                valid_code =#validCode#
+            </isNotNull>
+            <isNotNull property="orderId" open="and">
+                order_id =#orderId#
+            </isNotNull>
+            <isNotNull property="startDate" open="and">
+                <![CDATA[  submit_date >=#startDate# ]]>
+            </isNotNull>
+
+            <isNotNull property="endDate" open="and">
+                <![CDATA[   submit_date <=#endDate# ]]>
             </isNotNull>
         </dynamic>
         order by submit_date desc

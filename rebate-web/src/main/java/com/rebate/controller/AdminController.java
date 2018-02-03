@@ -405,6 +405,51 @@ public class AdminController extends BaseController {
         return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
     }
 
+    @RequestMapping({"", "/", "/orders.json"})
+    public ResponseEntity<?> orders(HttpServletRequest request,String subUnionId,String startDate,String endDate,Long orderId, Integer page,Integer pageSize,Integer status,Integer validCode) {
+        Map<String, Object> map = new HashMap<String, Object>();
+
+        if (null == page || page<=0) {
+            page = 1;//默认只查第一页
+        }
+
+        if (null == pageSize) {
+            pageSize = 10;//默认10条
+        }
+
+        RebateDetailQuery query = new RebateDetailQuery();
+
+
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+
+
+        try {
+            if (StringUtils.isNotBlank(startDate)) {
+                query.setStartDate(format.parse(startDate));
+            }
+            if (StringUtils.isNotBlank(endDate)) {
+                query.setEndDate(format.parse(endDate));
+            }
+        } catch (ParseException e) {
+            LOG.error("date format error!");
+        }
+
+        if (StringUtils.isNotBlank(subUnionId)) {
+            query.setSubUnionId(subUnionId);
+        }
+        query.setIndex(page);
+        query.setPageSize(pageSize);
+        query.setStatus(status);
+        query.setOrderId(orderId);
+        query.setValidCode(validCode);
+        PaginatedArrayList<RebateDetailVo> result = rebateDetailService.findRebateDetailList(query);
+
+        map.put("detailList", result);
+        map.put("totalItem", result.getTotalItem());
+        map.put("success",true);
+        return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
+    }
+
     /**
      * 查询提现收入
      * @param request

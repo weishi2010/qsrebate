@@ -2,6 +2,7 @@ package com.rebate.domain.vo;
 
 import com.rebate.domain.RebateDetail;
 import com.rebate.domain.en.EOrderStatus;
+import com.rebate.domain.en.EOrderValidCode;
 import com.rebate.domain.en.ERebateDetailStatus;
 import com.rebate.domain.query.BaseQuery;
 import lombok.Getter;
@@ -113,6 +114,13 @@ public class RebateDetailVo extends BaseQuery{
     private Integer status;
 
     /**
+     * 有效状态
+     */
+    @Getter
+    @Setter
+    private Integer validCode;
+
+    /**
      * 联盟ID
      */
     @Getter
@@ -181,5 +189,9 @@ public class RebateDetailVo extends BaseQuery{
 
     public String getRebateDetailStatusShow(){
         return ERebateDetailStatus.getStatusShow(orderStatus);
+    }
+
+    public String getValidCodeShow(){
+        return EOrderValidCode.getStatusShow(validCode);
     }
 }

@@ -1,0 +1,145 @@
+<div>
+<div class="widget-box">
+    <div class="widget-header red">
+        <h4>订单管理</h4>
+    </div>
+    <div class="widget-body">
+        <div class="widget-main">
+            <form id="form_search" class="form-inline" >
+                <fieldset>
+                    <div class="form-group">
+                        <div class="control-group">
+                            <label class="control-label bolder no-padding-left ">子联盟ID：</label>
+                            <input style="width: 200px;" class="form-control" id="search_subUnionId" name="search_subUnionId" size="10" type="text" placeholder="请输入子联盟ID!" ng-model="search_subUnionId" />
+                            <label class="control-label bolder no-padding-left ">订单号：</label>
+                            <input style="width: 200px;" class="form-control" id="search_orderId" name="search_orderId" size="10" type="text" placeholder="请输入子联盟ID!" ng-model="search_orderId" />
+
+                            <label class="control-label bolder no-padding-left ">开始时间：</label>
+                            <input style="width: 200px;" class="form-control" id="search_startDate" name="search_startDate" size="10" type="text" ng-model="search_startDate" />
+                            <label class="control-label bolder no-padding-left ">结束时间：</label>
+                            <input style="width: 200px;" class="form-control" id="search_endDate" name="search_endDate" size="10" type="text" ng-model="search_endDate" />
+
+                            <br/>
+                            <label class="control-label bolder no-padding-left ">订单状态：</label>
+                            <select id="search_status" name="search_status">
+                                <option value="">请选择</option>
+                                <option value="1">已结算</option>
+                                <option value="0">未结算</option>
+                            </select>
+                            <label class="control-label bolder no-padding-left ">订单有效状态：</label>
+                            <select id="search_validCode" name="search_validCode">
+                                <option value="">请选择</option>
+                                <option value="1">有效</option>
+                                <option value="-1">无效未知</option>
+                                <option value="3">订单取消</option>
+                                <option value="13">违规订单</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="control-group">
+                            <button type="button" id="btn_query" class="btn btn-sm btn-primary" ng-click="query()">
+                                <i class="icon-bolt bigger-110"></i>
+                                查询
+                            </button>
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+
+        </div>
+    </div>
+    <div class="biz-approve-overlay widget-box-overlay hidden">
+        <div style="padding-top: 300px">
+            <i class="ace-icon fa fa-spinner fa-spin orange bigger-280"></i>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <!-- PAGE CONTENT BEGINS -->
+
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="table-responsive">
+                    <table id="sample-table-1" class="table table-striped table-bordered table-hover">
+                        <thead>
+                        <tr>
+                            <th class="center">
+                                <label>
+                                    <input type="checkbox" class="ace"  id="allCkb" ng-click="selectAll($event)"/>
+                                    <span class="lbl"></span>
+                                </label>
+                            </th>
+                            <th>子联盟</th>
+                            <th>订单编号</th>
+                            <th>订单时间</th>
+                            <th>商品编号</th>
+                            <th>商品名称</th>
+                            <th>订单金额</th>
+                            <th>订单状态</th>
+                            <th>结算状态</th>
+                            <th>有效状态</th>
+                            <th>联盟佣金</th>
+                            <th>联盟佣金比例</th>
+                            <th>平台返佣比例</th>
+                            <th>用户佣金</th>
+                            <th>代理佣金</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        <tr ng-repeat="detail in detailList">
+                            <td class="center">
+                                <label>
+                                    <input type="checkbox" class="ace" name="ckb" id="ckb_{{detail.id}}" value="{{detail.id}}"/>
+                                    <span class="lbl"></span>
+                                </label>
+                            </td>
+                            <td style="width:10%;word-wrap:break-word;word-spacing:normal;">
+                                {{detail.subUnionId}}
+                            </td>
+                            <td>
+                                {{detail.orderId}}
+                            </td>
+                            <td>
+                                {{detail.submitDateShow}}
+                            </td>
+                            <td>
+                                {{detail.productId}}
+                            </td>
+                            <td>
+                                {{detail.productName}}
+                            </td>
+                            <td>
+                                {{detail.price}}
+                            </td>
+                            <td>
+                                {{detail.orderStatusShow}}
+                            </td>
+                            <td>
+                                {{detail.rebateDetailStatusShow}}
+                            </td>
+                            <td>
+                                {{detail.validCodeShow}}
+                            </td>
+                            <th>{{detail.commission}}</th>
+                            <th>{{detail.commissionRatio}}</th>
+                            <th>{{detail.platformRatio}}</th>
+                            <th>{{detail.userCommission}}</th>
+                            <th>{{detail.agentCommission}}</th>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div><!-- /.table-responsive -->
+            </div><!-- /span -->
+        </div><!-- /row -->
+
+        </div>
+    </div>
+
+    <tm-pagination conf="paginationConf"></tm-pagination>
+
+</div>

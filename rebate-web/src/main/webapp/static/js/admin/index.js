@@ -5,6 +5,9 @@ var adminModule = angular.module("admin", ["ngRoute","tm.pagination"]).config(fu
     }).when("/extract/list", {
         templateUrl : "/static/page/admin/extractList.html",
         controller : "extractController"
+    }).when("/order/list", {
+        templateUrl : "/static/page/admin/orderList.html",
+        controller : "orderController"
     }).otherwise({
         templateUrl : "/static/page/admin/userList.html",
         controller : "userController"
