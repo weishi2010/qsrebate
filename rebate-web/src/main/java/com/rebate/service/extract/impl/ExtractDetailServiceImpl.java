@@ -67,6 +67,7 @@ public class ExtractDetailServiceImpl implements ExtractDetailService {
                 incomeDetail.setIncome(extractDetail.getExtractPrice());
                 incomeDetail.setStatus(0);
                 incomeDetail.setDealt(0);
+                incomeDetail.setProductId(0l);
                 incomeDetail.setType(EIncomeType.EXTRACT.getCode());
                 incomeDetailDao.insert(incomeDetail);
 
