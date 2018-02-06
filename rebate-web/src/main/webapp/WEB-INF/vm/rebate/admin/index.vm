@@ -45,7 +45,10 @@
     <script src="/static/lib/angular/angular.js"></script>
     <script src="/static/lib/angular/angular-route.js"></script>
     <script src="/static/lib/page/tm.pagination.js"></script>
+    <script src="/static/lib/moment/moment-with-locales.js"></script>
 
+    <script src="/static/lib/moment/angular-moment-picker.min.js"></script>
+    <link rel="stylesheet" href="/static/lib/moment/angular-moment-picker.min.css" />
 
     <script src="/static/js/admin/index.js?v1" ></script>
     <script src="/static/js/admin/product.js?v5" ></script>

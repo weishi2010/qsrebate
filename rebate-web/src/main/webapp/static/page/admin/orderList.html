@@ -12,12 +12,13 @@
                             <label class="control-label bolder no-padding-left ">子联盟ID：</label>
                             <input style="width: 200px;" class="form-control" id="search_subUnionId" name="search_subUnionId" size="10" type="text" placeholder="请输入子联盟ID!" ng-model="search_subUnionId" />
                             <label class="control-label bolder no-padding-left ">订单号：</label>
-                            <input style="width: 200px;" class="form-control" id="search_orderId" name="search_orderId" size="10" type="text" placeholder="请输入子联盟ID!" ng-model="search_orderId" />
+                            <input style="width: 200px;" class="form-control" id="search_orderId" name="search_orderId" size="10" type="text" placeholder="请输入订单号!" ng-model="search_orderId" />
 
                             <label class="control-label bolder no-padding-left ">开始时间：</label>
-                            <input style="width: 200px;" class="form-control" id="search_startDate" name="search_startDate" size="10" type="text" ng-model="search_startDate" />
+
+                            <input style="width: 200px;" class="form-control" id="search_startDate" name="search_startDate" size="10" type="text" ng-model="search_startDate" moment-picker="search_startDate" locale="zh-CN" format="YYYY-MM-DD"/>
                             <label class="control-label bolder no-padding-left ">结束时间：</label>
-                            <input style="width: 200px;" class="form-control" id="search_endDate" name="search_endDate" size="10" type="text" ng-model="search_endDate" />
+                            <input style="width: 200px;" class="form-control" id="search_endDate" name="search_endDate" size="10" type="text" ng-model="search_endDate" moment-picker="search_endDate" locale="zh-CN" format="YYYY-MM-DD"/>
 
                             <br/>
                             <label class="control-label bolder no-padding-left ">订单状态：</label>

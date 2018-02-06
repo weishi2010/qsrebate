@@ -1,4 +1,4 @@
-var adminModule = angular.module("admin", ["ngRoute","tm.pagination"]).config(function ($routeProvider) {
+var adminModule = angular.module("admin", ["ngRoute","tm.pagination","moment-picker"]).config(function ($routeProvider) {
     $routeProvider.when("/product/list", {
         templateUrl : "/static/page/admin/productList.html",
         controller : "productController"

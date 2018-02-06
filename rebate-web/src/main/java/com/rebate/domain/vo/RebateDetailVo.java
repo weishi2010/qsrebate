@@ -184,11 +184,11 @@ public class RebateDetailVo extends BaseQuery{
         return show;
     }
     public String getOrderStatusShow(){
-        return EOrderStatus.getStatusShow(status);
+        return EOrderStatus.getStatusShow(orderStatus);
     }
 
     public String getRebateDetailStatusShow(){
-        return ERebateDetailStatus.getStatusShow(orderStatus);
+        return ERebateDetailStatus.getStatusShow(status);
     }
 
     public String getValidCodeShow(){
