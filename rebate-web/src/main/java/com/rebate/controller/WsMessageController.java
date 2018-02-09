@@ -660,17 +660,24 @@ public class WsMessageController extends BaseController {
         //如果有两个链接，一个为优惠券链接，一个为商品链接则进行二合一转链
         if(links.size()==2){
             for(String link:links){
+                try{
+
+                    link = HttpClientUtil.convertJDPromotionUrl(link);//获取转换后链接
+                }catch (Exception e){
+                    LOG.error("isJDCouponProductMsg convertJDPromotionUrl error!link:{}",link,e);
+                }
+
                 if (RegexUtils.isJDCouponUrl(link)) {
                     hasCouponLink = true;
                 }else{
-                    link = HttpClientUtil.convertJDPromotionUrl(link);//获取转换后链接
+
                     if (RegexUtils.isJDProductUrl(link)) {
                         hasProductLink = true;
                     }
                 }
 
             }
-
+            LOG.error("isJDCouponProductMsg convertJDPromotionUrl hasCouponLink:"+hasCouponLink +",hasProductLink:"+hasProductLink);
         }
         flag = hasCouponLink && hasProductLink;
         return flag;
@@ -873,11 +880,18 @@ public class WsMessageController extends BaseController {
                 if (list.size() > 0) {
                     String url = list.get(0);
 
+                    try{
+
+                        url = HttpClientUtil.convertJDPromotionUrl(url);//获取转换后链接
+                    }catch (Exception e){
+                        LOG.error("couponMessageConvertJDMediaUrl convertJDPromotionUrl error!link:{}",url,e);
+                    }
+
                     if (RegexUtils.isJDCouponUrl(url)) {
                         couponLink = url;
                         line = linkMark;//链接占位符
                     }else{
-                        url = HttpClientUtil.convertJDPromotionUrl(url);//获取转换后链接
+//                        url = HttpClientUtil.convertJDPromotionUrl(url);//获取转换后链接
                         if (RegexUtils.isJDProductUrl(url)) {
                             List<Long> dataList = RegexUtils.getJDProductIdList(url);
                             if (null != dataList && dataList.size() > 0) {
@@ -904,15 +918,20 @@ public class WsMessageController extends BaseController {
                 sb.append("京东商城  正品保证\n");
 
                 String jdMediaUrl = jdSdkManager.getPromotionCouponCode(skuId, couponLink, subUnionId);
-                jdMediaUrl = shortUrlManager.getQsShortPromotinUrl(jdMediaUrl, subUnionId);
-                //转微信链接
-                jdMediaUrl = shortUrlManager.getWxShortPromotinUrl(jdMediaUrl,subUnionId);
-                if (StringUtils.isNotBlank(jdMediaUrl)) {
-                    result = sb.toString().replace(linkMark, jdMediaUrl);
-                } else {
-                    result = "优惠券链接已经失效!";
+                if(StringUtils.isNotBlank(jdMediaUrl)){
+
+                    jdMediaUrl = shortUrlManager.getQsShortPromotinUrl(jdMediaUrl, subUnionId);
+                    //转微信链接
+                    jdMediaUrl = shortUrlManager.getWxShortPromotinUrl(jdMediaUrl,subUnionId);
+                    if (StringUtils.isNotBlank(jdMediaUrl)) {
+                        result = sb.toString().replace(linkMark, jdMediaUrl);
+                    } else {
+                        result = "优惠券链接已经失效!";
+                    }
+                    LOG.error("couponMessageConvertJDMediaUrl sb:"+result+",jdMediaUrl:"+jdMediaUrl+",couponLink:"+couponLink);
+                }else{
+                    result = content;
                 }
-                LOG.error("couponMessageConvertJDMediaUrl sb:{}jdMediaUrl:{}", sb.toString(), jdMediaUrl);
 
             } else {
                 List<Long> list = RegexUtils.getLongList(content);
@@ -925,7 +944,7 @@ public class WsMessageController extends BaseController {
                 }
                 result = content;
             }
-            LOG.error("couponMessageConvertJDMediaUrl couponLink:{}skuId:{}", couponLink, skuId);
+            LOG.error("couponMessageConvertJDMediaUrl couponLink:{},skuId:{}", couponLink, skuId);
 
         } catch (Exception e) {
             LOG.error("couponMessageConvertJDMediaUrl", e);
