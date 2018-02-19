@@ -76,6 +76,7 @@
                             <th>微信openId</th>
                             <th>昵称</th>
                             <th>子联盟ID</th>
+                            <th>下线代理</th>
                             <th>代理类型</th>
                             <th>
                                 <i class="icon-time bigger-110 hidden-480"></i>
@@ -109,6 +110,10 @@
                             <td>
                                 <a href="/admin/agentStatistits?dayTab=1&sui={{user.sui}}" target="_blank">{{user.subUnionId}}</a>
                             </td>
+                            <td>
+                                <a href="/admin/secondAgents?sui={{user.sui}}" target="_blank">查看下线代理</a>
+                            </td>
+
                             <td ng-if="user.agent==99">
                                 管理员
                             </td>
