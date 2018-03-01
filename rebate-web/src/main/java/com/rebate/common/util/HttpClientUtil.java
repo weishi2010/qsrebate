@@ -312,7 +312,7 @@ public class HttpClientUtil {
      */
     public static String convertJDPromotionUrl(String url) {
 
-        if (StringUtils.isNotBlank(url) && !url.contains("sale.jd.com")) {
+        if (StringUtils.isNotBlank(url) && !url.contains("sale.jd.com") && !RegexUtils.isJDCouponUrl(url)) {
             String oriUrl = HttpClientUtil.getFinalURL(url);
             if (StringUtils.isBlank(oriUrl) || oriUrl.contains("union-click.jd.com")) {
                 //如果获取不到原始URl则再解析HTML看是否还有跳转URL
@@ -334,14 +334,14 @@ public class HttpClientUtil {
                 }
             } else if (oriUrl.contains("qingsongfan")) {
                 url = convertJDPromotionUrl(oriUrl);
-            }else if(oriUrl.contains("plogin.m.jd.com/user/login.action")){
+            }else if(oriUrl.contains("/user/login.action")){
                 //如果是京东m端登录则从returnUrl中获取登录跳转后URL作为链接返回
                 try {
                     String[] array = oriUrl.split("returnurl=");
                     String returnUrl = array[1];
 
                     if(returnUrl.indexOf("&")>0){
-                        returnUrl = returnUrl.substring(0,url.indexOf("&"));
+                        returnUrl = returnUrl.substring(0,returnUrl.indexOf("&"));
                     }
                     url = URLDecoder.decode(returnUrl, "UTF-8");
 
