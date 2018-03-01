@@ -15,10 +15,7 @@ import com.rebate.domain.*;
 import com.rebate.domain.en.*;
 import com.rebate.domain.property.JDProperty;
 import com.rebate.domain.query.*;
-import com.rebate.domain.vo.ExtractDetailVo;
-import com.rebate.domain.vo.ProductVo;
-import com.rebate.domain.vo.RebateDetailVo;
-import com.rebate.domain.vo.UserInfoVo;
+import com.rebate.domain.vo.*;
 import com.rebate.domain.wx.WxConfig;
 import com.rebate.manager.jd.JdSdkManager;
 import com.rebate.manager.shorturl.ShortUrlManager;
@@ -671,6 +668,28 @@ public class AdminController extends BaseController {
         map.put("success", true);
         map.put("thirdCategoryList",adminService.getThirdCategory(categoryId) );
         return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
+    }
+
+    @RequestMapping({"", "/", "/secondAgents"})
+    public ModelAndView secondAgents(HttpServletRequest request,String sui,Integer page) {
+        ModelAndView view = new ModelAndView(VIEW_PREFIX + "/agent/secondAgents");
+        if (null == page) {
+            page = 1;
+        }
+
+        String subUnionId = "";
+        if(StringUtils.isNotBlank(sui)){
+            subUnionId = DESUtil.qsDecrypt(jDProperty.getEncryptKey(), sui, "UTF-8");
+        }
+
+        AgentRelationQuery agentRelationQuery = new AgentRelationQuery();
+        agentRelationQuery.setParentAgentSubUnionId(subUnionId);
+        agentRelationQuery.setIndex(page);
+        agentRelationQuery.setPageSize(10000);
+        PaginatedArrayList<AgentRelationVo> agents = userInfoService.getAgentUserByParentId(agentRelationQuery);
+        view.addObject("agents", agents);
+        view.addObject("totalItem", agents.getTotalItem());
+        return view;
     }
 
     @RequestMapping({"", "/", "/agentStatistits"})
