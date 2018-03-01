@@ -26,6 +26,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -333,6 +334,21 @@ public class HttpClientUtil {
                 }
             } else if (oriUrl.contains("qingsongfan")) {
                 url = convertJDPromotionUrl(oriUrl);
+            }else if(oriUrl.contains("plogin.m.jd.com/user/login.action")){
+                //如果是京东m端登录则从returnUrl中获取登录跳转后URL作为链接返回
+                try {
+                    String[] array = oriUrl.split("returnurl=");
+                    String returnUrl = array[1];
+
+                    if(returnUrl.indexOf("&")>0){
+                        returnUrl = returnUrl.substring(0,url.indexOf("&"));
+                    }
+                    url = URLDecoder.decode(returnUrl, "UTF-8");
+
+                } catch (UnsupportedEncodingException e) {
+                    LOG.error("[plogin.m.jd.com]check url is error!oriUrl:"+oriUrl,e);
+                    url = oriUrl;
+                }
             } else if (StringUtils.isNotBlank(oriUrl) && !oriUrl.contains("error2.aspx")) {
                 url = oriUrl;
             }
