@@ -49,6 +49,12 @@ public class OrderSummary extends BaseQuery {
   private Long orderCount;
 
   /**
+   * 销售额
+   */
+  @Getter
+  @Setter
+  private Double totalMoney;
+  /**
    * 佣金
    */
   @Getter

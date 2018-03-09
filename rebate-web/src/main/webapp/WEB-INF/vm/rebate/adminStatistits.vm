@@ -53,14 +53,16 @@
         <div class="th">点击数</div>
         <div class="th">订单数</div>
         <div class="th">预计佣金</div>
+        <div class="th">GMV</div>
     </div>
     #foreach($orderSummary in $list)
     <div class="tBody">
         <div class="tr" data-timer="1508342400000">
-        <div class="td"> $!date.format('MM-dd',$!orderSummary.submitDate)</div>
-       <div class="td">$!{orderSummary.clickCount}</div>
-        <div class="td">$!{orderSummary.orderCount}</div>
-        <div class="td"><span class="money">$!{orderSummary.commission}</span></div>
+            <div class="td"> $!date.format('MM-dd',$!orderSummary.submitDate)</div>
+            <div class="td">$!{orderSummary.clickCount}</div>
+            <div class="td">$!{orderSummary.orderCount}</div>
+            <div class="td"><span class="money">$!{orderSummary.commission}</span></div>
+            <div class="td"><span class="money">$!{orderSummary.totalMoney}</span></div>
         </div>
     </div>
     #end

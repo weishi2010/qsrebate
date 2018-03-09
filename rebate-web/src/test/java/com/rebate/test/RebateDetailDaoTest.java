@@ -94,22 +94,12 @@ public class RebateDetailDaoTest extends AbstractJUnit4SpringContextTests {
 
     @Test
     public void batchInsert() {
-        String queryTime = "20171007";//yyyyMMddHHmm,yyyyMMddHHmmss或者yyyyMMddHH格式之一
+        String queryTime = "20180307";//yyyyMMddHHmm,yyyyMMddHHmmss或者yyyyMMddHH格式之一
         int page = 1;
         int pageSize = 10;
         List<RebateDetail> list = jdSdkManager.getRebateDetails(queryTime, page, pageSize);
 
 
-        for (RebateDetail rebateDetail : list) {
-            RebateDetailQuery rebateDetailQuery = new RebateDetailQuery();
-            rebateDetailQuery.setOrderId(rebateDetail.getOrderId());
-            if (null == rebateDetailDao.queryRebateDetailByOrderId(rebateDetailQuery)) {
-                rebateDetailDao.insert(rebateDetail);
-            } else {
-                rebateDetailDao.update(rebateDetail);
-            }
-
-        }
     }
 
 

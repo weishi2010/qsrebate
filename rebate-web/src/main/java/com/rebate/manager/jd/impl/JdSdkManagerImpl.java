@@ -200,7 +200,7 @@ public class JdSdkManagerImpl implements JdSdkManager {
         List<Product> list = new ArrayList<>();
         String json = getGetpromotioninfoResult(skuIds);
         JSONObject resultObj = JsonUtil.fromJson(json, JSONObject.class);
-        if (null != resultObj && resultObj.getBoolean("sucessed")) {
+        if (null != resultObj && resultObj.getBoolean("sucessed") && resultObj.containsKey("result")) {
             String resultJson = resultObj.get("result").toString();
             List<Map> mapList = JsonUtil.fromJson(resultJson, mapTypeReference);
             if (null != mapList) {
@@ -265,6 +265,8 @@ public class JdSdkManagerImpl implements JdSdkManager {
                 }
 
             }
+        }else{
+            LOG.error("[getMediaProducts]skuIds:{},result:{}",skuIds,resultObj.toString());
         }
         return list;
     }
@@ -494,14 +496,14 @@ public class JdSdkManagerImpl implements JdSdkManager {
                         detail.setSubmitDate(new Date(orderObj.getLong("orderTime")));
                     } else {
                         //未完成的订单，订单时间完成时间设置为一个超大的时间
-                        detail.setSubmitDate(new Date(3505625155l));
+                        detail.setSubmitDate(new Date(3505625155L));
                     }
 
                     if (orderObj.containsKey("finishTime")) {
                         detail.setFinishDate(new Date(orderObj.getLong("finishTime")));
                     } else {
                         //未完成的订单，订单时间完成时间设置为一个超大的时间
-                        detail.setFinishDate(new Date(3505625155l));
+                        detail.setFinishDate(new Date(3505625155L));
                     }
                     if (orderObj.containsKey("subUnionId")) {
                         detail.setOpenId(orderObj.getString("subUnionId"));
@@ -581,6 +583,8 @@ public class JdSdkManagerImpl implements JdSdkManager {
                     detail.setProductCount(skuObj.getInt("skuNum"));
                     detail.setProductName(skuObj.getString("skuName"));
                     detail.setValidCode(skuObj.getInt("validCode"));
+                    detail.setTotalMoney(skuObj.getDouble("price")*skuObj.getInt("skuNum"));
+                    detail.setTotalMoney(new BigDecimal(detail.getTotalMoney()+"").setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
 
                     detail.setPrice(skuObj.getDouble("cosPrice"));
                     detail.setUnionId("");

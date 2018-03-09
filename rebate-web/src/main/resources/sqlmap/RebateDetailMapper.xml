@@ -11,6 +11,7 @@
         <result property="subUnionId" column="subUnionId" nullValue=""/>
         <result property="submitDate" column="submitDate"/>
         <result property="orderCount" column="orderCount" nullValue="0"/>
+        <result property="totalMoney" column="totalMoney" nullValue="0"/>
         <result property="commission" column="commission" nullValue="0"/>
         <result property="agentCommission" column="agentCommission" nullValue=""/>
 
@@ -41,6 +42,8 @@
         <result property="agentCommission" column="agent_commission"/>
         <result property="positionId" column="position_id"/>
         <result property="validCode" column="valid_code"/>
+        <result property="totalMoney" column="total_money"/>
+
 
     </resultMap>
 
@@ -58,6 +61,7 @@
         order_status,
         status,
         price,
+        total_money,
         product_id,
         product_name,
         img_url,
@@ -81,6 +85,7 @@
         img_url,
         price,
         product_count,
+        total_money,
         commission,
         commission_ratio,
         rebate_ratio,
@@ -106,6 +111,7 @@
         #imgUrl#,
         #price#,
         #productCount#,
+        #totalMoney#,
         #commission#,
         #commissionRatio#,
         #rebateRatio#,
@@ -168,6 +174,9 @@
             </isNotNull>
             <isNotNull property="validCode" prepend=",">
                 valid_code=#validCode#
+            </isNotNull>
+            <isNotNull property="totalMoney" prepend=",">
+                total_money=#totalMoney#
             </isNotNull>
         </dynamic>
         where order_id=#orderId#
@@ -300,7 +309,7 @@
     </select>
 
     <select id="getOrderSummaryBySubUnionId" parameterClass="OrderSummary" resultMap="OrderSummaryResultMap">
-        SELECT COUNT(distinct order_id) AS orderCount,SUM(user_commission) AS commission,SUM(agent_commission) AS agentCommission
+        SELECT COUNT(distinct order_id) AS orderCount,SUM(total_money) AS totalMoney,SUM(user_commission) AS commission,SUM(agent_commission) AS agentCommission
         ,DATE_FORMAT(submit_date,"%Y-%m-%d") AS submitDate,sub_union_id AS subUnionId
         FROM rebate_detail
         WHERE order_status=1 and sub_union_id =#subUnionId#
@@ -310,7 +319,7 @@
     </select>
 
     <select id="getAllOrderSummaryByDate" parameterClass="OrderSummaryQuery" resultClass="OrderSummary">
-        SELECT COUNT(distinct order_id) AS orderCount,SUM(commission) AS commission
+        SELECT COUNT(distinct order_id) AS orderCount,SUM(total_money) AS totalMoney,SUM(commission) AS commission
         FROM rebate_detail
         WHERE
         <![CDATA[  submit_date>=#startDate# and submit_date <=#endDate# ]]>
@@ -319,7 +328,7 @@
     </select>
 
     <select id="getRecommendUserOrderSummaryByOpenId" parameterClass="RebateDetailQuery" resultClass="OrderSummary">
-        SELECT COUNT(distinct order_id) AS orderCount,SUM(agent_commission) AS commission
+        SELECT COUNT(distinct order_id) AS orderCount,SUM(total_money) AS totalMoney,SUM(agent_commission) AS commission
             FROM rebate_detail
             WHERE sub_union_id in (
             select ui.sub_union_id from recommend_user_info  rui

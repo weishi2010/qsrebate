@@ -59,6 +59,13 @@ public class RebateDetail extends BaseQuery {
     private Double price;
 
     /**
+     * 订单金额
+     */
+    @Getter
+    @Setter
+    private Double totalMoney;
+
+    /**
      * 商品数量
      */
     @Getter

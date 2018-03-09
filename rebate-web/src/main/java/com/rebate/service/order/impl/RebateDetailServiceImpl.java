@@ -211,6 +211,8 @@ public class RebateDetailServiceImpl implements RebateDetailService {
 
             List<OrderSummary> list = rebateDetailDao.getOrderSummaryBySubUnionId(orderSummaryQuery);
             for (OrderSummary orderSummary : list) {
+                orderSummary.setTotalMoney(new BigDecimal(orderSummary.getTotalMoney() + "").setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+
                 String dayStr = format.format(orderSummary.getSubmitDate());
                 summaryMap.put(dayStr, orderSummary);
 
@@ -232,8 +234,9 @@ public class RebateDetailServiceImpl implements RebateDetailService {
                     orderSummary = new OrderSummary();
                     orderSummary.setCommission(0.0);
                     orderSummary.setSubmitDate(calendar.getTime());
-                    orderSummary.setOrderCount(0l);
+                    orderSummary.setOrderCount(0L);
                     orderSummary.setSubUnionId(orderSummaryQuery.getSubUnionId());
+                    orderSummary.setTotalMoney(0.0);
                 }
                 orderSummary.setClickCount(shortUrlManager.getJDUnionUrlClick(orderSummaryQuery.getSubUnionId(), orderSummary.getSubmitDate()));
                 orderSummaryList.add(orderSummary);
