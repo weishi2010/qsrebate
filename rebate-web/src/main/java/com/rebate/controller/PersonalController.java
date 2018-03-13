@@ -464,9 +464,19 @@ public class PersonalController extends BaseController {
     }
 
     @RequestMapping({"", "/", "/logout"})
-    public ResponseEntity<?> logout(HttpServletResponse response) {
+    public ResponseEntity<?> logout(HttpServletRequest request,HttpServletResponse response) {
+        //清空登录cookie
         cookieUtils.deleteQsCookie(response, QsLoginInteceptor.USERINFO_COOKIE);
         cookieUtils.deleteQsCookie(response, QsLoginInteceptor.WX_ACCESSTOKEN_COOKIE);
+
+        UserInfo userInfo = getUserInfo(request);
+
+
+        if (null != userInfo) {
+            //清空缓存
+            userInfoService.cleanUserInfoCache(userInfo.getOpenId());
+        }
+
 
         Map<String, Object> map = new HashMap<String, Object>();
 

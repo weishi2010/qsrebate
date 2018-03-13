@@ -113,6 +113,11 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
+    public void cleanUserInfoCache(String openId) {
+        userInfoManager.delUserInfoCache(openId);
+    }
+
+    @Override
     public void sysRecommendUser() {
 
         UserInfoQuery userInfoQuery = new UserInfoQuery();

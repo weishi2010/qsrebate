@@ -28,6 +28,12 @@ public interface UserInfoService {
      */
     void cancelWhiteAgent(String subUnionId);
 
+    /**
+     * 清除缓存
+     * @param openId
+     */
+    void cleanUserInfoCache(String openId);
+
     public void sysRecommendUser();
 
     /**
