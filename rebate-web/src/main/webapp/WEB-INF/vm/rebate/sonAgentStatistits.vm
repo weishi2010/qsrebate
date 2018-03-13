@@ -18,7 +18,7 @@
 </div>
 <div class="commissionByDay">
     <div class="commissionType">
-        <span class="active" id="">最近30天收益</span>
+        <span class="active" id="">最近60天收益</span>
     </div>
 </div>
 <div class="reportTable">

@@ -52,9 +52,11 @@ public class WxServiceImpl implements WxService {
 
             if (json.contains("openid")) {
                 wxUserInfo = JsonUtil.fromJson(json, WxUserInfo.class);
+            }else{
+                LOG.error("getWxApiUserInfo error!json:{}"+json);
             }
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            LOG.error("getWxApiUserInfo error!openId:"+openId,e);
         }
         return wxUserInfo;
     }

@@ -299,7 +299,7 @@
     </select>
 
     <select id="getOrderSummaryBySubUnionIds" parameterClass="OrderSummary" resultMap="OrderSummaryResultMap">
-        SELECT COUNT(distinct order_id) AS orderCount,SUM(user_commission) AS commission,SUM(agent_commission) AS agentCommission
+        SELECT COUNT(distinct order_id) AS orderCount,SUM(total_money) AS totalMoney,SUM(user_commission) AS commission,SUM(agent_commission) AS agentCommission
         ,DATE_FORMAT(submit_date,"%Y-%m-%d") AS submitDate,'' AS subUnionId
         FROM rebate_detail
         where  order_status=1 and sub_union_id IN($subUnionIds$)

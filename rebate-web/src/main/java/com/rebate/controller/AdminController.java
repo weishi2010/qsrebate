@@ -692,6 +692,29 @@ public class AdminController extends BaseController {
         return view;
     }
 
+    @RequestMapping({"", "/", "/sonAgentStatistits"})
+    public ModelAndView getSonAgentStatistits(HttpServletRequest request,String sui,Integer agent) {
+        Random r = new Random(System.currentTimeMillis());
+        ModelAndView view = new ModelAndView();
+        String vm = VIEW_PREFIX + "/sonAgentStatistits";
+        view.setViewName(vm);
+
+        String subUnionId = DESUtil.qsDecrypt(jDProperty.getEncryptKey(), sui, "UTF-8");
+        if (StringUtils.isBlank(subUnionId)) {
+            view.setViewName(VIEW_PREFIX + "/permission");
+            return view;
+        }
+
+
+        PaginatedArrayList<OrderSummary>  list = null;
+        if(agent == EAgent.FIRST_AGENT.getCode()) {
+            list = rebateDetailService.getFirstAgentSonOrderSummary(subUnionId);
+        }
+        view.addObject("list", list);
+        view.addObject("r", r.nextInt());
+        return view;
+    }
+
     @RequestMapping({"", "/", "/agentStatistits"})
     public ModelAndView agentStatistits(HttpServletRequest request,String sui,Integer dayTab) {
         ModelAndView view = new ModelAndView();

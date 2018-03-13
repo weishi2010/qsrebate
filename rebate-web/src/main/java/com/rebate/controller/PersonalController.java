@@ -340,7 +340,7 @@ public class PersonalController extends BaseController {
         OrderSummary orderSummaryQuery = new OrderSummary();
         orderSummaryQuery.setSubUnionId(userInfo.getSubUnionId());
         orderSummaryQuery.setOpenId(userInfo.getOpenId());
-        orderSummaryQuery.setPageSize(30);//取近30天记录
+        orderSummaryQuery.setPageSize(60);//取近30天记录
         PaginatedArrayList<OrderSummary>  list = null;
         if(userInfo.getAgent() == EAgent.FIRST_AGENT.getCode()){
             list =  rebateDetailService.getFirstAgentSonOrderSummary(userInfo.getSubUnionId());
