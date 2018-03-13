@@ -268,14 +268,15 @@ public class UserInfoServiceImpl implements UserInfoService {
         userInfoQuery.setOpenId(openId);
         userInfo = userInfoManager.findLoginUserInfo(userInfoQuery);
 
-        //从wx接口实时获取昵称
-        WxUserInfo wxUserInfo = wxService.getWxApiUserInfo(wxAccessTokenService.getApiAccessToken().getAccessToken(), openId);
-        if (null != wxUserInfo && StringUtils.isNotBlank(wxUserInfo.getNickname())) {
-            userInfo.setNickName(wxUserInfo.getNickname());
-        }
 
-        //设置缓存
         if (null != userInfo) {
+            //从wx接口实时获取昵称
+            WxUserInfo wxUserInfo = wxService.getWxApiUserInfo(wxAccessTokenService.getApiAccessToken().getAccessToken(), openId);
+            if (null != wxUserInfo && StringUtils.isNotBlank(wxUserInfo.getNickname())) {
+                userInfo.setNickName(wxUserInfo.getNickname());
+            }
+
+            //设置缓存
             userInfoManager.setUserInfoCache(userInfo);
         }
         return userInfo;
