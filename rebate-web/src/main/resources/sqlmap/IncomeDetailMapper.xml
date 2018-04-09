@@ -63,7 +63,7 @@
 
     <update id="updateIncomeDetail" parameterClass="IncomeDetail" >
         update income_detail
-        set status=#status#
+        set status=#status#,modified=now()
         where open_id=#openId# and reference_id=#referenceId#
     </update>
 
