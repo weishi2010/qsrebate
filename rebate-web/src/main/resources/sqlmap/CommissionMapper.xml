@@ -46,7 +46,7 @@
 
     <update id="updateTotalCommission" parameterClass="Commission" >
         update commission
-        set total_commission=#totalCommission#
+        set total_commission=#totalCommission#,modified=now()
         where open_id=#openId#
     </update>
     <select id="findCommissionByOpenId" parameterClass="Commission" resultMap="CommissionResultMap">
