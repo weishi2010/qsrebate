@@ -222,7 +222,7 @@
         count(1)
         from rebate_detail
         <dynamic prepend="where">
-            valid_code=1
+            1=1
             <isNotNull property="subUnionIds" open="and">
                 sub_union_id IN($subUnionIds$)
             </isNotNull>
@@ -253,7 +253,7 @@
         <include refid="fields"/>
         from rebate_detail
         <dynamic prepend="where">
-            valid_code=1
+            1=1
             <isNotNull property="subUnionIds" open="and">
                 sub_union_id IN($subUnionIds$)
             </isNotNull>

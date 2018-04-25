@@ -7,12 +7,13 @@
         <a href="javascript:;"><img src="/static/img/ico-arrow-left-01.png" alt=""></a>
     </div>
     <div class="title cell">
-        <span class="text">2017年提现记录</span>
+        <span class="text">提现记录</span>
         <span class="arrow"></span>
     </div>
     <div class="droplist" name="droplist">
         <ul class="sorts">
             <li data="2017" #if($year==2017) class="sort selected" #else class="sort" #end>2017年提现记录</li>
+            <li data="2018" #if($year==2018) class="sort selected" #else class="sort" #end>2018年提现记录</li>
         </ul>
     </div>
 </div>

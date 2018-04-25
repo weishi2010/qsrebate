@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.BeanUtils;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class ExtractDetailVo extends ExtractDetail {
@@ -27,4 +28,12 @@ public class ExtractDetailVo extends ExtractDetail {
         return EExtractStatus.getStatusShow(super.getStatus());
     }
 
+    /**
+     * 获取显示方案
+     * @return
+     */
+    public String getExtractDateShow(){
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return format.format(this.getExtractDate());
+    }
 }

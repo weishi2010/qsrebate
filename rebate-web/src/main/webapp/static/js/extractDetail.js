@@ -1,13 +1,10 @@
 $(function () {
-
-
-    $("#sorts li").click(function(){//点击事件
-
-        var count=$(this).index();//获取li的下标
-        var year = Uarry.eq(count).data;
+    $(".sorts li").click(function(){
+        var year =$(this).attr("data");//获取li的下标
         $("#year").val(year);
         loadExtractData(year);
-    })
+    });
+
 
     //初始化
     var counter = 1;
@@ -29,7 +26,7 @@ $(function () {
 
 
 function loadExtractData(year) {
-
+    $('#extractDetails').html("");
     $.ajax({
         type: 'GET',
         url: '/personal/getExtractDetails.json?year='+year+"&r="+Math.random(),
@@ -50,7 +47,7 @@ function loadExtractData(year) {
 
     function getTemplate(detail){
         var htmlTemp =  "        <tr>" +
-            "            <td class=\"time\">"+detail.extractDate+"</td>" +
+            "            <td class=\"time\">"+detail.extractDateShow+"</td>" +
             "            <td>提现金额</td>" +
             "            <td><span class=\"orange\">"+detail.extractPrice+"元</span></td>" +
             "            <td class=\"state\"><span class=\"wait\">"+detail.extractStatusShow+"</span></td>" +

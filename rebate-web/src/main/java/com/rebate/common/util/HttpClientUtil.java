@@ -146,6 +146,34 @@ public class HttpClientUtil {
         return result;
     }
 
+    public static String grabBOSSUrl(String uri, String cookie) throws IOException {
+        URL url = new URL(uri);
+        URLConnection connection = url.openConnection();
+        connection.setDoOutput(true);
+        connection.setRequestProperty("referer", "http://media.jd.com");
+        connection
+                .setRequestProperty(
+                        "Cookie",
+                        "t=" + cookie + "; path=/; domain=.zhipin.com; HttpOnly");
+        connection.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; Maxthon;)");
+        OutputStreamWriter out = new OutputStreamWriter(connection.getOutputStream(), "gb2312");
+        out.flush();
+        out.close();
+        String sCurrentLine;
+        String sTotalString;
+        sCurrentLine = "";
+        sTotalString = "";
+        InputStream l_urlStream;
+        l_urlStream = connection.getInputStream();
+        BufferedReader l_reader = new BufferedReader(new InputStreamReader(l_urlStream));
+        while ((sCurrentLine = l_reader.readLine()) != null) {
+            sTotalString += sCurrentLine;
+
+        }
+
+        return sTotalString;
+    }
+
     public static String getJdUrl(String uri, String loginCookie) throws IOException {
         URL url = new URL(uri);
         URLConnection connection = url.openConnection();
