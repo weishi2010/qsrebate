@@ -716,7 +716,7 @@ public class AdminController extends BaseController {
     }
 
     @RequestMapping({"", "/", "/agentStatistits"})
-    public ModelAndView agentStatistits(HttpServletRequest request,String sui,Integer dayTab) {
+    public ModelAndView agentStatistits(HttpServletRequest request,String sui,Integer dayTab,Integer days) {
         ModelAndView view = new ModelAndView();
         String vm = VIEW_PREFIX + "/adminStatistits";
         view.setViewName(vm);
@@ -736,10 +736,14 @@ public class AdminController extends BaseController {
             dayTab = 1;
         }
 
+        if (null == days || days <= 0) {
+            days = 60;
+        }
+
 
         OrderSummary orderSummaryQuery = new OrderSummary();
         orderSummaryQuery.setSubUnionId(subUnionId);
-        orderSummaryQuery.setPageSize(30);//取近30
+        orderSummaryQuery.setPageSize(days);//取近60
         PaginatedArrayList<OrderSummary>  list =  rebateDetailService.getOrderSummaryBySubUnionId(orderSummaryQuery);
         OrderSummary todayOrderSummary = null;
         SimpleDateFormat formatStart = new SimpleDateFormat("yyyy-MM-dd 00:00:00");
