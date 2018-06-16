@@ -628,7 +628,7 @@ public class RebateJobImpl implements RebateJob {
             parentAgentQuery.setSubUnionId(agentRelation.getParentAgentSubUnionId());
             UserInfo parentAgentUserInfo = userInfoManager.findUserInfoBySubUnionId(parentAgentQuery);
             if (null != parentAgentUserInfo) {
-                parentAgentOpenId = parentAgentUserInfo.getSubUnionId();
+                parentAgentOpenId = parentAgentUserInfo.getOpenId();
                 addIncomeDetail(rebateDetail, EIncomeType.FIRST_AGENT_REBATE.getCode(), parentAgentOpenId, parentAgentCommission);
             }
             resultCommission = userCommission;
