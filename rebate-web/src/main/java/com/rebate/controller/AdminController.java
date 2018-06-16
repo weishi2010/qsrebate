@@ -786,4 +786,12 @@ public class AdminController extends BaseController {
 
         return view;
     }
+
+    @RequestMapping({"", "/", "/updateUserCommission.json"})
+    public ResponseEntity<?> updateUserCommission(String openId) {
+        userInfoService.updateUserCommission(openId);
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("success", true);
+        return new ResponseEntity<Map<String, ?>>(map, HttpStatus.OK);
+    }
 }
